@@ -3,6 +3,7 @@ package system
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"sync"
 
 	"github.com/codegangsta/cli"
@@ -77,6 +78,12 @@ func isDeb() bool {
 	if _, err := os.Stat("/etc/debian_version"); err == nil {
 		return true
 	}
+
+	// See if it has only one of the package managers
+	if hasCommand("dpkg") && !hasCommand("rpm") {
+		return true
+	}
+
 	return false
 }
 
@@ -86,6 +93,18 @@ func isRpm() bool {
 	}
 
 	if _, err := os.Stat("/etc/system-release"); err == nil {
+		return true
+	}
+
+	// See if it has only one of the package managers
+	if hasCommand("rpm") && !hasCommand("dpkg") {
+		return true
+	}
+	return false
+}
+
+func hasCommand(cmd string) bool {
+	if _, err := exec.LookPath(cmd); err == nil {
 		return true
 	}
 	return false

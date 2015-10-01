@@ -21,7 +21,7 @@ func NewPackageNull(name string, system *System) Package {
 func (p *PackageNull) Name() string { return p.name }
 
 func (p *PackageNull) Installed() (interface{}, error) {
-	return nil, ErrNullPackage
+	return false, ErrNullPackage
 }
 
 func (p *PackageNull) Versions() ([]string, error) {
