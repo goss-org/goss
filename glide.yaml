@@ -1,0 +1,12 @@
+package: github.com/aelsabbahy/goss
+import:
+  - package: github.com/coreos/go-systemd
+    ref:     3b83605751ed4d1e27268ad86e6a618a84578002
+  - package: github.com/mitchellh/go-ps
+    ref:     e6c6068076470196af082b1ff896e24a51a87b2a
+  - package: github.com/aelsabbahy/GOnetstat
+    ref:     2726176f5ee4ec606af71d937f9126c8afc58bc4
+  - package: github.com/codegangsta/cli
+    ref:     a65b733b303f0055f8d324d805f393cd3e7a7904
+  - package: github.com/godbus/dbus
+    ref:     9bb9dbf0e53309fa81d26e7230cbb6cff9373cad

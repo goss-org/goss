@@ -5,3 +5,4 @@
 /release
 /integration-tests/goss/goss
 /integration-tests/goss/goss-generated.json
+/vendor/
