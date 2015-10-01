@@ -1,0 +1,133 @@
+{
+    "files": [
+        {
+            "path": "/etc/httpd/conf.d/welcome.conf",
+            "exists": true,
+            "mode": "0644",
+            "owner": "root",
+            "group": "root",
+            "filetype": "file",
+            "contains": []
+        },
+        {
+            "path": "/tmp/goss/foobar",
+            "exists": false,
+            "contains": []
+        }
+    ],
+    "packages": [
+        {
+            "name": "httpd",
+            "installed": true,
+            "versions": [
+                "2.2.15"
+            ]
+        },
+        {
+            "name": "foobar",
+            "installed": false
+        }
+    ],
+    "addrs": [
+        {
+            "address": "tcp://google.com:443",
+            "reachable": true,
+            "timeout": 500
+        },
+        {
+            "address": "tcp://google.com:22",
+            "reachable": false,
+            "timeout": 500
+        }
+    ],
+    "ports": [
+        {
+            "port": "tcp6:80",
+            "listening": true,
+            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+        },
+        {
+            "port": "tcp:9999",
+            "listening": false
+        }
+    ],
+    "services": [
+        {
+            "service": "httpd",
+            "enabled": true,
+            "running": true
+        },
+        {
+            "service": "foobar",
+            "enabled": false,
+            "running": false
+        }
+    ],
+    "users": [
+        {
+            "username": "apache",
+            "exists": true,
+            "uid": "48",
+            "gid": "48",
+            "groups": [
+                "apache"
+            ],
+            "home": "/var/www"
+        },
+        {
+            "username": "foobar",
+            "exists": false
+        }
+    ],
+    "groups": [
+        {
+            "groupname": "apache",
+            "exists": true,
+            "gid": "48"
+        },
+        {
+            "groupname": "foobar",
+            "exists": false
+        }
+    ],
+    "commands": [
+        {
+            "command": "httpd -v",
+            "exit-status": "0",
+            "stdout": [
+                "Server version: Apache/2.2.15 (Unix)",
+                "Server built:   Aug 24 2015 17:52:49"
+            ],
+            "stderr": []
+        },
+        {
+            "command": "foobar",
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: foobar: command not found"
+            ]
+        }
+    ],
+    "dns": [
+        {
+            "host": "localhost",
+            "resolveable": true,
+            "addrs": [
+                "127.0.0.1",
+                "::1"
+            ],
+            "timeout": 500
+        }
+    ],
+    "processes": [
+        {
+            "executable": "httpd",
+            "running": true
+        },
+        {
+            "executable": "foobar",
+            "running": false
+        }
+    ]
+}
