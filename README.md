@@ -44,7 +44,7 @@
 
 ### What is goss?
 
-Goss is a [serverspec](http://serverspec.org/)-like tool for validating server configuration. It eases the process of generating tests by assuming the user already has a properly configured machine from which they can derive system state. Once the test suite is generated they can be executed on any other host for the full TDD experience.
+Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server's configuration. It eases the process of generating tests by assuming the user already has a properly configured machine from which they can derive system state. Once the test suite is generated they can be executed on any other host for the full TDD experience.
 
 ### Why use goss?
 
