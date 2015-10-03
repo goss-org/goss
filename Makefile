@@ -6,7 +6,7 @@ TRAVIS_TAG ?= "0.0.0"
 
 .PHONY: all build install test coverage deps release bench test-int lint
 
-all: install
+all: test-all
 
 install:
 	go install -v $(exe)
