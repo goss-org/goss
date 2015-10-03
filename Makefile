@@ -32,7 +32,7 @@ build: deps
 	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
 
 release: build
-	upx release/*
+	#upx release/*
 
 test-int: build
 	cd integration-tests/ && ./test.sh
