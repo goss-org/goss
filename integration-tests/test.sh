@@ -8,6 +8,9 @@ if ! docker images | grep aelsabbahy/goss_centos;then
 fi
 
 if ! docker ps | grep goss_int_test;then
+  if docker ps -a | grep goss_int_test;then
+    docker rm -vf goss_int_test
+  fi
   docker run --privileged -v $PWD/goss:/tmp/goss  -d --name goss_int_test aelsabbahy/goss_centos /sbin/init
   # Give httpd time to start up
   sleep 10
