@@ -8,27 +8,27 @@ TRAVIS_TAG ?= "0.0.0"
 
 all: test-all
 
-install:
+install: deps
 	go install -v $(exe)
 
-test:
-	go test ./...
+test: deps
+	go test $(glide novendor)
 
-lint:
+lint: deps
 	go tool vet .
-	golint ./... | grep -v 'unexported' || true
+	golint $(glide novendor) | grep -v 'unexported' || true
 
-bench:
+bench: deps
 	go test -bench=.
 
-coverage:
-	go test -cover ./...
+coverage: deps
+	go test -cover $(glide novendor)
 	#go test -coverprofile=/tmp/coverage.out .
 	#go tool cover -func=/tmp/coverage.out
 	#go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
 	#xdg-open /tmp/coverage.html
 
-build:
+build: deps
 	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
 
 release: build
@@ -38,3 +38,6 @@ test-int: build
 	cd integration-tests/ && ./test.sh
 
 test-all: test lint test-int
+
+deps:
+	glide up

@@ -9,7 +9,7 @@ fi
 if ! docker ps | grep goss_int_test;then
   docker run -v $PWD/goss:/tmp/goss  -d --name goss_int_test aelsabbahy/goss_centos /sbin/init
   # Give httpd time to start up
-  sleep 5
+  sleep 10
 fi
 
 out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
