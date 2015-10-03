@@ -10,3 +10,6 @@ before_install:
   - curl -L https://github.com/Masterminds/glide/releases/download/0.6.1/glide-linux-amd64.zip > glide.zip
   - unzip glide.zip
   - export PATH="$PATH:$PWD/linux-amd64"
+
+script:
+  - make
