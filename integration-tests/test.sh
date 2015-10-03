@@ -8,13 +8,12 @@ if ! docker images | grep aelsabbahy/goss_centos;then
 fi
 
 if ! docker ps | grep goss_int_test;then
-  docker run -v $PWD/goss:/tmp/goss  -d --name goss_int_test aelsabbahy/goss_centos /sbin/init
+  docker run --privileged -v $PWD/goss:/tmp/goss  -d --name goss_int_test aelsabbahy/goss_centos /sbin/init
   # Give httpd time to start up
   sleep 10
 fi
 
-#out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
-out=$(sudo lxc-attach -n "$(docker inspect --format '{{.Id}}' goss_int_test)" -- bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
+out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
 echo "$out"
 
 grep -q 'Count: 36 failed: 0' <<<"$out"
