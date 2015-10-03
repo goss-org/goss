@@ -13,7 +13,8 @@ if ! docker ps | grep goss_int_test;then
   sleep 10
 fi
 
-out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
+#out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
+out=$(sudo lxc-attach -n "$(docker inspect --format '{{.Id}}' goss_int_test)" -- bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
 echo "$out"
 
 grep -q 'Count: 36 failed: 0' <<<"$out"
