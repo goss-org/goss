@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -x
 cp ../release/goss-linux-amd64 goss/goss
 
 if ! docker images | grep aelsabbahy/goss_centos;then
