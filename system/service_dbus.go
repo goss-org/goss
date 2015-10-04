@@ -24,6 +24,19 @@ func (s *ServiceDbus) Service() string {
 	return s.service
 }
 
+func (s *ServiceDbus) Exists() (interface{}, error) {
+	units, err := s.dbus.ListUnits()
+	if err != nil {
+		return false, err
+	}
+	for _, u := range units {
+		if u.Name == s.service+".service" {
+			return true, nil
+		}
+	}
+	return false, err
+}
+
 func (s *ServiceDbus) Enabled() (interface{}, error) {
 	stateRaw, err := s.dbus.GetUnitProperty(s.service+".service", "UnitFileState")
 	if err != nil {

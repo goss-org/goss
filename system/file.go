@@ -5,18 +5,20 @@ import (
 	"io"
 	"os"
 	"os/user"
+	"path/filepath"
 	"syscall"
 
 	"github.com/aelsabbahy/goss/util/group"
 )
 
 type File struct {
-	ID, path, mode, owner, group, content string
-	fi                                    os.FileInfo
+	path, mode, owner, group, content string
+	fi                                os.FileInfo
 }
 
 func NewFile(path string, system *System) *File {
-	return &File{ID: path, path: path}
+	absPath, _ := filepath.Abs(path)
+	return &File{path: absPath}
 }
 
 func (f *File) Path() string {

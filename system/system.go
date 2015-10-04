@@ -6,12 +6,15 @@ import (
 	"os/exec"
 	"sync"
 
+	"github.com/aelsabbahy/GOnetstat"
 	"github.com/codegangsta/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
 )
 
-type Resource interface{}
+type Resource interface {
+	Exists() (interface{}, error)
+}
 
 type System struct {
 	NewPackage  func(string, *System) Package
@@ -26,13 +29,13 @@ type System struct {
 	NewProcess  func(string, *System) *Process
 	NewGossfile func(string, *System) *Gossfile
 	Dbus        *dbus.Conn
-	ports       map[string]map[string]string
+	ports       map[string]GOnetstat.Process
 	portsOnce   sync.Once
 }
 
-func (s *System) Ports() map[string]map[string]string {
+func (s *System) Ports() map[string]GOnetstat.Process {
 	s.portsOnce.Do(func() {
-		s.ports = GetPorts()
+		s.ports = GetPorts(false)
 	})
 	return s.ports
 }

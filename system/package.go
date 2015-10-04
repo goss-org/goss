@@ -4,6 +4,7 @@ import "errors"
 
 type Package interface {
 	Name() string
+	Exists() (interface{}, error)
 	Installed() (interface{}, error)
 	Versions() ([]string, error)
 }
@@ -19,6 +20,8 @@ func NewPackageNull(name string, system *System) Package {
 }
 
 func (p *PackageNull) Name() string { return p.name }
+
+func (p *PackageNull) Exists() (interface{}, error) { return p.Installed() }
 
 func (p *PackageNull) Installed() (interface{}, error) {
 	return false, ErrNullPackage

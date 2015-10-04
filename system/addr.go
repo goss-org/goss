@@ -20,6 +20,7 @@ func NewAddr(address string, system *System) *Addr {
 func (h *Addr) Address() string {
 	return h.address
 }
+func (h *Addr) Exists() (interface{}, error) { return h.Reachable() }
 
 func (h *Addr) Reachable() (interface{}, error) {
 	network, address := splitAddress(h.address)

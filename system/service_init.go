@@ -2,6 +2,7 @@ package system
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/aelsabbahy/goss/util"
@@ -19,6 +20,13 @@ func NewServiceInit(service string, system *System) Service {
 
 func (s *ServiceInit) Service() string {
 	return s.service
+}
+
+func (s *ServiceInit) Exists() (interface{}, error) {
+	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", s.service)); err == nil {
+		return true, err
+	}
+	return false, nil
 }
 
 func (s *ServiceInit) Enabled() (interface{}, error) {

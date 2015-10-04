@@ -27,6 +27,9 @@ docker exec goss_int_test bash -c 'time /tmp/goss/generate_goss.sh > /dev/null'
 docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-expected.json /tmp/goss/goss-generated.json'
 exit_code=$(($exit_code+$?))
 
+docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-aa-expected.json /tmp/goss/goss-aa-generated.json'
+exit_code=$(($exit_code+$?))
+
 docker exec goss_int_test bash -c 'diff -u <(/tmp/goss/goss -f /tmp/goss/goss-render.json render) /tmp/goss/goss-expected.json'
 exit_code=$(($exit_code+$?))
 #docker rm -vf goss_int_test

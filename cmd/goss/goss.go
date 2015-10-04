@@ -47,6 +47,14 @@ func main() {
 			},
 		},
 		{
+			Name:    "autoadd",
+			Aliases: []string{"aa"},
+			Usage:   "automatically add all matching resource to the test suite",
+			Action: func(c *cli.Context) {
+				goss.AutoAppendResource(c.GlobalString("gossfile"), c.Args().First(), c)
+			},
+		},
+		{
 			Name:    "add",
 			Aliases: []string{"a"},
 			Usage:   "add a resource to the test suite",

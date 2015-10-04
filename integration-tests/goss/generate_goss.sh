@@ -47,3 +47,7 @@ done
 for x in httpd foobar;do
   goss a process $x
 done
+
+
+# Auto-add
+$SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-aa-generated.json aa httpd

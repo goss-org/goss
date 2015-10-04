@@ -3,6 +3,8 @@
 
 ## Goss in 45 seconds
 
+**Note:** for an even faster way of doing this, see: [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
+
 <a href="https://asciinema.org/a/bxcuduzs3n2zo62rpe1t0s6w8?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/10236274/b708ff8e-6871-11e5-9d39-70876f5ef8f8.gif" alt="asciicast"></a>
 
 ## Table of Contents
@@ -71,7 +73,7 @@ Service:
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.1/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.2/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
 ```
 
 ## Usage
@@ -83,19 +85,22 @@ USAGE:
    goss [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.0
+   0.0.2
 
 COMMANDS:
    validate, v  Validate system
    render, r    render gossfile after imports
+   autoadd, aa  automatically add all matching resource to the test suite
    add, a       add a resource to the test suite
    help, h      Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --gossfile, -f "./goss.json" Goss file to read from / write to [$GOSS_FILE]
+   --package                    Package type to use [rpm, deb]
    --help, -h                   show help
    --generate-bash-completion
    --version, -v                print the version
+
 ```
 
 ### global options
@@ -155,6 +160,63 @@ $ cat goss.json | goss validate
 $ goss render | ssh remote-host 'goss validate'
 $ curl -s https://static/or/dynamic/goss.json | goss validate
 ```
+
+### autoadd, aa - Auto add all matching resources to test suite
+automatically adds all **existing** resources maching the provided argument.
+
+```bash
+$ goss aa httpd
+Adding to './goss.json':
+
+{
+    "name": "httpd",
+    "installed": true,
+    "versions": [
+        "2.4.16"
+    ]
+}
+
+Adding to './goss.json':
+
+{
+    "executable": "httpd",
+    "running": true
+}
+
+Adding to './goss.json':
+
+{
+    "port": "tcp6:80",
+    "listening": true,
+    "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+}
+
+Adding to './goss.json':
+
+{
+    "service": "httpd",
+    "enabled": true,
+    "running": true
+}
+
+$ goss aa foobar
+# no output
+```
+
+Will automatically add the following resources:
+* file - only if argument contains "/"
+* user
+* group
+* package
+* port
+* process - Also adding any ports it's listening to
+* service
+
+Will **NOT** automatically add:
+* commands - for safety
+* dns
+* addr
+
 
 ### add, a - Add system resource to test suite
 

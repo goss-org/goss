@@ -35,6 +35,8 @@ func (p *PackageRpm) Name() string {
 	return p.name
 }
 
+func (p *PackageRpm) Exists() (interface{}, error) { return p.Installed() }
+
 func (p *PackageRpm) Installed() (interface{}, error) {
 	p.setup()
 

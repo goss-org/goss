@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
@@ -271,6 +273,97 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 		resource := resource.NewGossfile(*sysResource)
 		resourcePrint(fileName, resource)
 		configJSON.Gossfiles = append(configJSON.Gossfiles, resource)
+	}
+
+	WriteJSON(fileName, configJSON)
+
+	return nil
+}
+
+func AutoAppendResource(fileName, key string, c *cli.Context) error {
+	var configJSON ConfigJSON
+	if _, err := os.Stat(fileName); err == nil {
+		configJSON = ReadJSON(fileName)
+	} else {
+		configJSON = ConfigJSON{}
+	}
+
+	sys := system.New(c)
+
+	// file
+	if strings.Contains(key, "/") {
+		fileResource := sys.NewFile(key, sys)
+		if e, _ := fileResource.Exists(); e == true {
+			res := resource.NewFile(*fileResource)
+			resourcePrint(fileName, res)
+			configJSON.Files = append(configJSON.Files, res)
+		}
+	}
+
+	// group
+	groupResource := sys.NewGroup(key, sys)
+	if e, _ := groupResource.Exists(); e == true {
+		res := resource.NewGroup(*groupResource)
+		resourcePrint(fileName, res)
+		configJSON.Groups = append(configJSON.Groups, res)
+	}
+
+	// package
+	packageResource := sys.NewPackage(key, sys)
+	if e, _ := packageResource.Exists(); e == true {
+		res := resource.NewPackage(packageResource)
+		resourcePrint(fileName, res)
+		configJSON.Packages = append(configJSON.Packages, res)
+	}
+
+	// port
+	portResource := sys.NewPort(key, sys)
+	if e, _ := portResource.Exists(); e == true {
+		res := resource.NewPort(*portResource)
+		resourcePrint(fileName, res)
+		configJSON.Ports = append(configJSON.Ports, res)
+	}
+
+	// process
+	processResource := sys.NewProcess(key, sys)
+	if e, _ := processResource.Exists(); e == true {
+		res := resource.NewProcess(*processResource)
+		resourcePrint(fileName, res)
+		configJSON.Processes = append(configJSON.Processes, res)
+		// Add port check based on pid here
+		ports := system.GetPorts(true)
+		pids, _ := processResource.Pids()
+		for _, pid := range pids {
+			pidS := strconv.Itoa(pid)
+			for port, entry := range ports {
+				if entry.Pid == pidS {
+					// port
+					portResource := sys.NewPort(port, sys)
+					if e, _ := portResource.Exists(); e == true {
+						res := resource.NewPort(*portResource)
+						resourcePrint(fileName, res)
+						configJSON.Ports = append(configJSON.Ports, res)
+					}
+
+				}
+			}
+		}
+	}
+
+	// Service
+	serviceResource := sys.NewService(key, sys)
+	if e, _ := serviceResource.Exists(); e == true {
+		res := resource.NewService(serviceResource)
+		resourcePrint(fileName, res)
+		configJSON.Services = append(configJSON.Services, res)
+	}
+
+	// user
+	userResource := sys.NewUser(key, sys)
+	if e, _ := userResource.Exists(); e == true {
+		res := resource.NewUser(*userResource)
+		resourcePrint(fileName, res)
+		configJSON.Users = append(configJSON.Users, res)
 	}
 
 	WriteJSON(fileName, configJSON)
