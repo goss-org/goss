@@ -162,7 +162,7 @@ $ curl -s https://static/or/dynamic/goss.json | goss validate
 ```
 
 ### autoadd, aa - Auto add all matching resources to test suite
-automatically adds all **existing** resources maching the provided argument.
+automatically adds all **existing** resources matching the provided argument.
 
 ```bash
 $ goss aa httpd
