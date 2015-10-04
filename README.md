@@ -3,7 +3,7 @@
 
 ## Goss in 45 seconds
 
-**Note:** for an even faster way of doing this, see: [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
+**Note:** For an even faster way of doing this, see: [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
 <a href="https://asciinema.org/a/bxcuduzs3n2zo62rpe1t0s6w8?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/10236274/b708ff8e-6871-11e5-9d39-70876f5ef8f8.gif" alt="asciicast"></a>
 
