@@ -8,6 +8,11 @@ func (g *Gossfile) Path() string {
 	return g.path
 }
 
-func NewGossfile(path string, system *System) *Gossfile {
-	return &Gossfile{path: path}
+// Stub out
+func (g *Gossfile) Exists() (interface{}, error) {
+	return false, nil
+}
+
+func NewGossfile(path string, system *System) Gossfile {
+	return Gossfile{path: path}
 }

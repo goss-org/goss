@@ -30,7 +30,7 @@ exit_code=$(($exit_code+$?))
 docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-aa-expected.json /tmp/goss/goss-aa-generated.json'
 exit_code=$(($exit_code+$?))
 
-docker exec goss_int_test bash -c 'diff -u <(/tmp/goss/goss -f /tmp/goss/goss-render.json render) /tmp/goss/goss-expected.json'
+docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-expected.json <(/tmp/goss/goss -f /tmp/goss/goss-render.json render)'
 exit_code=$(($exit_code+$?))
 #docker rm -vf goss_int_test
 

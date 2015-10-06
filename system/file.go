@@ -16,9 +16,9 @@ type File struct {
 	fi                                os.FileInfo
 }
 
-func NewFile(path string, system *System) *File {
+func NewFile(path string, system *System) File {
 	absPath, _ := filepath.Abs(path)
-	return &File{path: absPath}
+	return File{path: absPath}
 }
 
 func (f *File) Path() string {

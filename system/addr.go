@@ -12,9 +12,9 @@ type Addr struct {
 	Timeout   int64
 }
 
-func NewAddr(address string, system *System) *Addr {
+func NewAddr(address string, system *System) Addr {
 	addr := normalizeAddress(address)
-	return &Addr{address: addr}
+	return Addr{address: addr}
 }
 
 func (h *Addr) Address() string {

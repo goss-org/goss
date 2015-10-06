@@ -1,10 +1,11 @@
 export GO15VENDOREXPERIMENT=1
 
 exe = github.com/aelsabbahy/goss/cmd/goss
+pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 
-.PHONY: all build install test coverage deps release bench test-int lint
+.PHONY: all build install test coverage deps release bench test-int lint gen
 
 all: test-all
 
@@ -12,17 +13,17 @@ install: deps
 	go install -v $(exe)
 
 test: deps
-	go test $(glide novendor)
+	go test $(pkgs)
 
 lint: deps
 	go tool vet .
-	golint $(glide novendor) | grep -v 'unexported' || true
+	golint $(pkgs) | grep -v 'unexported' || true
 
 bench: deps
 	go test -bench=.
 
 coverage: deps
-	go test -cover $(glide novendor)
+	go test -cover $(pkgs)
 	#go test -coverprofile=/tmp/coverage.out .
 	#go tool cover -func=/tmp/coverage.out
 	#go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
@@ -41,3 +42,6 @@ test-all: test lint test-int
 
 deps:
 	glide up
+
+gen:
+	go generate -tags genny $(pkgs)

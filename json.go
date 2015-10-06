@@ -17,17 +17,17 @@ import (
 )
 
 type ConfigJSON struct {
-	Files     []*resource.File     `json:"files,omitempty"`
-	Packages  []*resource.Package  `json:"packages,omitempty"`
-	Addrs     []*resource.Addr     `json:"addrs,omitempty"`
-	Ports     []*resource.Port     `json:"ports,omitempty"`
-	Services  []*resource.Service  `json:"services,omitempty"`
-	Users     []*resource.User     `json:"users,omitempty"`
-	Groups    []*resource.Group    `json:"groups,omitempty"`
-	Commands  []*resource.Command  `json:"commands,omitempty"`
-	DNS       []*resource.DNS      `json:"dns,omitempty"`
-	Processes []*resource.Process  `json:"processes,omitempty"`
-	Gossfiles []*resource.Gossfile `json:"gossfiles,omitempty"`
+	Files     resource.FileSlice     `json:"files,omitempty"`
+	Packages  resource.PackageSlice  `json:"packages,omitempty"`
+	Addrs     resource.AddrSlice     `json:"addrs,omitempty"`
+	Ports     resource.PortSlice     `json:"ports,omitempty"`
+	Services  resource.ServiceSlice  `json:"services,omitempty"`
+	Users     resource.UserSlice     `json:"users,omitempty"`
+	Groups    resource.GroupSlice    `json:"groups,omitempty"`
+	Commands  resource.CommandSlice  `json:"commands,omitempty"`
+	DNS       resource.DNSSlice      `json:"dns,omitempty"`
+	Processes resource.ProcessSlice  `json:"processes,omitempty"`
+	Gossfiles resource.GossfileSlice `json:"gossfiles,omitempty"`
 }
 
 func (c *ConfigJSON) String() string {
@@ -116,81 +116,50 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 	return configJSON
 }
 
-// FIXME: This code made me throw up a little in my mouth.. need to fix.
 func mergeGoss(g1, g2 ConfigJSON) ConfigJSON {
-	var configJSON ConfigJSON
+	g1.Gossfiles = nil
 
-	for _, x := range g1.Files {
-		configJSON.Files = append(configJSON.Files, x)
-	}
 	for _, x := range g2.Files {
-		configJSON.Files = append(configJSON.Files, x)
+		g1.Files.Append(x)
 	}
 
-	for _, x := range g1.Packages {
-		configJSON.Packages = append(configJSON.Packages, x)
-	}
 	for _, x := range g2.Packages {
-		configJSON.Packages = append(configJSON.Packages, x)
+		g1.Packages.Append(x)
 	}
 
-	for _, x := range g1.Addrs {
-		configJSON.Addrs = append(configJSON.Addrs, x)
-	}
 	for _, x := range g2.Addrs {
-		configJSON.Addrs = append(configJSON.Addrs, x)
+		g1.Addrs.Append(x)
 	}
 
-	for _, x := range g1.Ports {
-		configJSON.Ports = append(configJSON.Ports, x)
-	}
 	for _, x := range g2.Ports {
-		configJSON.Ports = append(configJSON.Ports, x)
+		g1.Ports.Append(x)
 	}
 
-	for _, x := range g1.Services {
-		configJSON.Services = append(configJSON.Services, x)
-	}
 	for _, x := range g2.Services {
-		configJSON.Services = append(configJSON.Services, x)
+		g1.Services.Append(x)
 	}
 
-	for _, x := range g1.Users {
-		configJSON.Users = append(configJSON.Users, x)
-	}
 	for _, x := range g2.Users {
-		configJSON.Users = append(configJSON.Users, x)
+		g1.Users.Append(x)
 	}
 
-	for _, x := range g1.Groups {
-		configJSON.Groups = append(configJSON.Groups, x)
-	}
 	for _, x := range g2.Groups {
-		configJSON.Groups = append(configJSON.Groups, x)
+		g1.Groups.Append(x)
 	}
 
-	for _, x := range g1.Commands {
-		configJSON.Commands = append(configJSON.Commands, x)
-	}
 	for _, x := range g2.Commands {
-		configJSON.Commands = append(configJSON.Commands, x)
+		g1.Commands.Append(x)
 	}
 
-	for _, x := range g1.DNS {
-		configJSON.DNS = append(configJSON.DNS, x)
-	}
 	for _, x := range g2.DNS {
-		configJSON.DNS = append(configJSON.DNS, x)
+		g1.DNS.Append(x)
 	}
 
-	for _, x := range g1.Processes {
-		configJSON.Processes = append(configJSON.Processes, x)
-	}
 	for _, x := range g2.Processes {
-		configJSON.Processes = append(configJSON.Processes, x)
+		g1.Processes.Append(x)
 	}
 
-	return configJSON
+	return g1
 }
 
 func WriteJSON(filePath string, configJSON ConfigJSON) error {
@@ -219,60 +188,49 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
-		sysResource := sys.NewAddr(key, sys)
-		resource := resource.NewAddr(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Addrs = append(configJSON.Addrs, resource)
+		if res, _, ok := configJSON.Addrs.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Command":
-		sysResource := sys.NewCommand(key, sys)
-		resource := resource.NewCommand(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Commands = append(configJSON.Commands, resource)
+		if res, _, ok := configJSON.Commands.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "DNS":
-		sysResource := sys.NewDNS(key, sys)
-		resource := resource.NewDNS(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.DNS = append(configJSON.DNS, resource)
+		if res, _, ok := configJSON.DNS.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "File":
-		sysResource := sys.NewFile(key, sys)
-		resource := resource.NewFile(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Files = append(configJSON.Files, resource)
+		if res, _, ok := configJSON.Files.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Group":
-		sysResource := sys.NewGroup(key, sys)
-		resource := resource.NewGroup(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Groups = append(configJSON.Groups, resource)
+		if res, _, ok := configJSON.Groups.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Package":
-		sysResource := sys.NewPackage(key, sys)
-		resource := resource.NewPackage(sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Packages = append(configJSON.Packages, resource)
+		if res, _, ok := configJSON.Packages.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Port":
-		sysResource := sys.NewPort(key, sys)
-		resource := resource.NewPort(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Ports = append(configJSON.Ports, resource)
+		if res, _, ok := configJSON.Ports.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Process":
-		sysResource := sys.NewProcess(key, sys)
-		resource := resource.NewProcess(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Processes = append(configJSON.Processes, resource)
+		if res, _, ok := configJSON.Processes.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Service":
-		sysResource := sys.NewService(key, sys)
-		resource := resource.NewService(sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Services = append(configJSON.Services, resource)
+		if res, _, ok := configJSON.Services.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "User":
-		sysResource := sys.NewUser(key, sys)
-		resource := resource.NewUser(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Users = append(configJSON.Users, resource)
+		if res, _, ok := configJSON.Users.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	case "Gossfile":
-		sysResource := sys.NewGossfile(key, sys)
-		resource := resource.NewGossfile(*sysResource)
-		resourcePrint(fileName, resource)
-		configJSON.Gossfiles = append(configJSON.Gossfiles, resource)
+		if res, _, ok := configJSON.Gossfiles.AppendSysResource(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
 	}
 
 	WriteJSON(fileName, configJSON)
@@ -292,78 +250,52 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 
 	// file
 	if strings.Contains(key, "/") {
-		fileResource := sys.NewFile(key, sys)
-		if e, _ := fileResource.Exists(); e == true {
-			res := resource.NewFile(*fileResource)
+		if res, _, ok := configJSON.Files.AppendSysResourceIfExists(key, sys); ok == true {
 			resourcePrint(fileName, res)
-			configJSON.Files = append(configJSON.Files, res)
 		}
 	}
 
 	// group
-	groupResource := sys.NewGroup(key, sys)
-	if e, _ := groupResource.Exists(); e == true {
-		res := resource.NewGroup(*groupResource)
+	if res, _, ok := configJSON.Groups.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Groups = append(configJSON.Groups, res)
 	}
 
 	// package
-	packageResource := sys.NewPackage(key, sys)
-	if e, _ := packageResource.Exists(); e == true {
-		res := resource.NewPackage(packageResource)
+	if res, _, ok := configJSON.Packages.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Packages = append(configJSON.Packages, res)
 	}
 
 	// port
-	portResource := sys.NewPort(key, sys)
-	if e, _ := portResource.Exists(); e == true {
-		res := resource.NewPort(*portResource)
+	if res, _, ok := configJSON.Ports.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Ports = append(configJSON.Ports, res)
 	}
 
 	// process
-	processResource := sys.NewProcess(key, sys)
-	if e, _ := processResource.Exists(); e == true {
-		res := resource.NewProcess(*processResource)
+	if res, sysres, ok := configJSON.Processes.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Processes = append(configJSON.Processes, res)
-		// Add port check based on pid here
 		ports := system.GetPorts(true)
-		pids, _ := processResource.Pids()
+		pids, _ := sysres.Pids()
 		for _, pid := range pids {
 			pidS := strconv.Itoa(pid)
 			for port, entry := range ports {
 				if entry.Pid == pidS {
 					// port
-					portResource := sys.NewPort(port, sys)
-					if e, _ := portResource.Exists(); e == true {
-						res := resource.NewPort(*portResource)
+					if res, _, ok := configJSON.Ports.AppendSysResourceIfExists(port, sys); ok == true {
 						resourcePrint(fileName, res)
-						configJSON.Ports = append(configJSON.Ports, res)
 					}
-
 				}
 			}
 		}
 	}
 
 	// Service
-	serviceResource := sys.NewService(key, sys)
-	if e, _ := serviceResource.Exists(); e == true {
-		res := resource.NewService(serviceResource)
+	if res, _, ok := configJSON.Services.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Services = append(configJSON.Services, res)
 	}
 
 	// user
-	userResource := sys.NewUser(key, sys)
-	if e, _ := userResource.Exists(); e == true {
-		res := resource.NewUser(*userResource)
+	if res, _, ok := configJSON.Users.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
-		configJSON.Users = append(configJSON.Users, res)
 	}
 
 	WriteJSON(fileName, configJSON)
@@ -373,5 +305,5 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 
 func resourcePrint(fileName string, resource interface{}) {
 	out, _ := json.MarshalIndent(resource, "", "    ")
-	fmt.Printf("Adding to '%s':\n\n%s\n\n", fileName, string(out))
+	fmt.Printf("Adding %T to '%s':\n\n%s\n\n", resource, fileName, string(out))
 }

@@ -18,16 +18,16 @@ type Resource interface {
 
 type System struct {
 	NewPackage  func(string, *System) Package
-	NewFile     func(string, *System) *File
-	NewAddr     func(string, *System) *Addr
-	NewPort     func(string, *System) *Port
+	NewFile     func(string, *System) File
+	NewAddr     func(string, *System) Addr
+	NewPort     func(string, *System) Port
 	NewService  func(string, *System) Service
-	NewUser     func(string, *System) *User
-	NewGroup    func(string, *System) *Group
-	NewCommand  func(string, *System) *Command
-	NewDNS      func(string, *System) *DNS
-	NewProcess  func(string, *System) *Process
-	NewGossfile func(string, *System) *Gossfile
+	NewUser     func(string, *System) User
+	NewGroup    func(string, *System) Group
+	NewCommand  func(string, *System) Command
+	NewDNS      func(string, *System) DNS
+	NewProcess  func(string, *System) Process
+	NewGossfile func(string, *System) Gossfile
 	Dbus        *dbus.Conn
 	ports       map[string]GOnetstat.Process
 	portsOnce   sync.Once
