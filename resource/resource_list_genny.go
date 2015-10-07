@@ -16,13 +16,15 @@ type ResourceType generic.Type
 
 type ResourceTypeSlice []*ResourceType
 
-func (r *ResourceTypeSlice) Append(ne *ResourceType) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *ResourceTypeSlice) Append(neles ...*ResourceType) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 

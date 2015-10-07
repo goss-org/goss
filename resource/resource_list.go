@@ -15,13 +15,15 @@ import (
 
 type AddrSlice []*Addr
 
-func (r *AddrSlice) Append(ne *Addr) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *AddrSlice) Append(neles ...*Addr) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -47,13 +49,15 @@ func (r *AddrSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*A
 
 type CommandSlice []*Command
 
-func (r *CommandSlice) Append(ne *Command) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *CommandSlice) Append(neles ...*Command) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -79,13 +83,15 @@ func (r *CommandSlice) AppendSysResourceIfExists(sr string, sys *system.System) 
 
 type DNSSlice []*DNS
 
-func (r *DNSSlice) Append(ne *DNS) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *DNSSlice) Append(neles ...*DNS) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -111,13 +117,15 @@ func (r *DNSSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*DN
 
 type FileSlice []*File
 
-func (r *FileSlice) Append(ne *File) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *FileSlice) Append(neles ...*File) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -143,13 +151,15 @@ func (r *FileSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*F
 
 type GossfileSlice []*Gossfile
 
-func (r *GossfileSlice) Append(ne *Gossfile) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *GossfileSlice) Append(neles ...*Gossfile) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -175,13 +185,15 @@ func (r *GossfileSlice) AppendSysResourceIfExists(sr string, sys *system.System)
 
 type GroupSlice []*Group
 
-func (r *GroupSlice) Append(ne *Group) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *GroupSlice) Append(neles ...*Group) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -207,13 +219,15 @@ func (r *GroupSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*
 
 type PackageSlice []*Package
 
-func (r *PackageSlice) Append(ne *Package) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *PackageSlice) Append(neles ...*Package) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -239,13 +253,15 @@ func (r *PackageSlice) AppendSysResourceIfExists(sr string, sys *system.System) 
 
 type PortSlice []*Port
 
-func (r *PortSlice) Append(ne *Port) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *PortSlice) Append(neles ...*Port) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -271,13 +287,15 @@ func (r *PortSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 
 type ProcessSlice []*Process
 
-func (r *ProcessSlice) Append(ne *Process) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *ProcessSlice) Append(neles ...*Process) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -303,13 +321,15 @@ func (r *ProcessSlice) AppendSysResourceIfExists(sr string, sys *system.System) 
 
 type ServiceSlice []*Service
 
-func (r *ServiceSlice) Append(ne *Service) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *ServiceSlice) Append(neles ...*Service) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 
@@ -335,13 +355,15 @@ func (r *ServiceSlice) AppendSysResourceIfExists(sr string, sys *system.System) 
 
 type UserSlice []*User
 
-func (r *UserSlice) Append(ne *User) bool {
-	for _, ele := range *r {
-		if reflect.DeepEqual(ele, ne) {
-			return false
+func (r *UserSlice) Append(neles ...*User) bool {
+	for _, nele := range neles {
+		for _, ele := range *r {
+			if reflect.DeepEqual(ele, nele) {
+				return false
+			}
 		}
+		*r = append(*r, nele)
 	}
-	*r = append(*r, ne)
 	return true
 }
 

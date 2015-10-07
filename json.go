@@ -119,45 +119,25 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 func mergeGoss(g1, g2 ConfigJSON) ConfigJSON {
 	g1.Gossfiles = nil
 
-	for _, x := range g2.Files {
-		g1.Files.Append(x)
-	}
+	g1.Files.Append(g2.Files...)
 
-	for _, x := range g2.Packages {
-		g1.Packages.Append(x)
-	}
+	g1.Packages.Append(g2.Packages...)
 
-	for _, x := range g2.Addrs {
-		g1.Addrs.Append(x)
-	}
+	g1.Addrs.Append(g2.Addrs...)
 
-	for _, x := range g2.Ports {
-		g1.Ports.Append(x)
-	}
+	g1.Ports.Append(g2.Ports...)
 
-	for _, x := range g2.Services {
-		g1.Services.Append(x)
-	}
+	g1.Services.Append(g2.Services...)
 
-	for _, x := range g2.Users {
-		g1.Users.Append(x)
-	}
+	g1.Users.Append(g2.Users...)
 
-	for _, x := range g2.Groups {
-		g1.Groups.Append(x)
-	}
+	g1.Groups.Append(g2.Groups...)
 
-	for _, x := range g2.Commands {
-		g1.Commands.Append(x)
-	}
+	g1.Commands.Append(g2.Commands...)
 
-	for _, x := range g2.DNS {
-		g1.DNS.Append(x)
-	}
+	g1.DNS.Append(g2.DNS...)
 
-	for _, x := range g2.Processes {
-		g1.Processes.Append(x)
-	}
+	g1.Processes.Append(g2.Processes...)
 
 	return g1
 }
