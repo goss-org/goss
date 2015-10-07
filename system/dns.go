@@ -16,8 +16,8 @@ type DNS struct {
 	err         error
 }
 
-func NewDNS(host string, system *System) *DNS {
-	return &DNS{host: host}
+func NewDNS(host string, system *System) DNS {
+	return DNS{host: host}
 }
 
 func (d *DNS) Host() string {
@@ -58,6 +58,11 @@ func (d *DNS) Resolveable() (interface{}, error) {
 	err := d.setup()
 
 	return d.resolveable, err
+}
+
+// Stub out
+func (d *DNS) Exists() (interface{}, error) {
+	return false, nil
 }
 
 func lookupHost(host string, timeout int64) ([]string, error) {

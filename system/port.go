@@ -14,9 +14,9 @@ type Port struct {
 	sysPorts  map[string]GOnetstat.Process
 }
 
-func NewPort(port string, system *System) *Port {
+func NewPort(port string, system *System) Port {
 	p := normalizePort(port)
-	return &Port{
+	return Port{
 		port:     p,
 		sysPorts: system.Ports(),
 	}

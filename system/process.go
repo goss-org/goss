@@ -29,9 +29,9 @@ func initProcesses() {
 	}
 }
 
-func NewProcess(executable string, system *System) *Process {
+func NewProcess(executable string, system *System) Process {
 	processOnce.Do(initProcesses)
-	return &Process{executable: executable}
+	return Process{executable: executable}
 }
 
 func (p *Process) Executable() string {

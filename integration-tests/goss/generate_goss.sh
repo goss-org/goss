@@ -4,9 +4,11 @@ SCRIPT_DIR=$(readlink -f $(dirname $0))
 
 goss() {
   $SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-generated.json "$@"
+  # Validate that duplicates are ignored
+  $SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-generated.json "$@"
 }
 
-rm -f $SCRIPT_DIR/goss-generated.json
+rm -f $SCRIPT_DIR/goss*generated.json
 
 for x in /etc/httpd/conf.d/welcome.conf /tmp/goss/foobar;do
   goss a file $x
@@ -50,4 +52,6 @@ done
 
 
 # Auto-add
+$SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-aa-generated.json aa httpd
+# Validate that duplicates are ignored
 $SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-aa-generated.json aa httpd

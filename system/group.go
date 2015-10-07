@@ -8,8 +8,8 @@ type Group struct {
 	gid       string
 }
 
-func NewGroup(groupname string, system *System) *Group {
-	return &Group{groupname: groupname}
+func NewGroup(groupname string, system *System) Group {
+	return Group{groupname: groupname}
 }
 
 func (u *Group) Groupname() string {

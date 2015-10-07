@@ -16,8 +16,8 @@ type Command struct {
 	loaded     bool
 }
 
-func NewCommand(command string, system *System) *Command {
-	return &Command{command: command}
+func NewCommand(command string, system *System) Command {
+	return Command{command: command}
 }
 
 func (c *Command) setup() {
@@ -55,4 +55,9 @@ func (c *Command) Stderr() (io.Reader, error) {
 	c.setup()
 
 	return c.stderr, nil
+}
+
+// Stub out
+func (c *Command) Exists() (interface{}, error) {
+	return false, nil
 }

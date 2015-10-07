@@ -15,8 +15,8 @@ type User struct {
 	home     string
 }
 
-func NewUser(username string, system *System) *User {
-	return &User{username: username}
+func NewUser(username string, system *System) User {
+	return User{username: username}
 }
 
 func (u *User) Username() string {
