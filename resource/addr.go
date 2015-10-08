@@ -8,6 +8,8 @@ type Addr struct {
 	Timeout   int64  `json:"timeout"`
 }
 
+func (h *Addr) ID() string { return h.Address }
+
 func (h *Addr) Validate(sys *system.System) []TestResult {
 	sysAddr := sys.NewAddr(h.Address, sys)
 	sysAddr.SetTimeout(h.Timeout)

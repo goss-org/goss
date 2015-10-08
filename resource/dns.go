@@ -9,6 +9,8 @@ type DNS struct {
 	Timeout     int64    `json:"timeout"`
 }
 
+func (d *DNS) ID() string { return d.Host }
+
 func (d *DNS) Validate(sys *system.System) []TestResult {
 	sysDNS := sys.NewDNS(d.Host, sys)
 	sysDNS.SetTimeout(d.Timeout)

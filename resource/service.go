@@ -8,6 +8,8 @@ type Service struct {
 	Running bool   `json:"running"`
 }
 
+func (s *Service) ID() string { return s.Service }
+
 func (s *Service) Validate(sys *system.System) []TestResult {
 	sysservice := sys.NewService(s.Service, sys)
 

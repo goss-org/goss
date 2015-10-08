@@ -8,16 +8,18 @@ type Group struct {
 	Gid       string `json:"gid,omitempty"`
 }
 
-func (s *Group) Validate(sys *system.System) []TestResult {
-	sysgroup := sys.NewGroup(s.Groupname, sys)
+func (g *Group) ID() string { return g.Groupname }
+
+func (g *Group) Validate(sys *system.System) []TestResult {
+	sysgroup := sys.NewGroup(g.Groupname, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(s.Groupname, "exists", s.Exists, sysgroup.Exists))
-	if !s.Exists {
+	results = append(results, ValidateValue(g.Groupname, "exists", g.Exists, sysgroup.Exists))
+	if !g.Exists {
 		return results
 	}
-	results = append(results, ValidateValue(s.Gid, "gid", s.Gid, sysgroup.Gid))
+	results = append(results, ValidateValue(g.Gid, "gid", g.Gid, sysgroup.Gid))
 
 	return results
 }

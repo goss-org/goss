@@ -8,6 +8,8 @@ type Port struct {
 	IP        string `json:"ip,omitempty"`
 }
 
+func (p *Port) ID() string { return p.Port }
+
 func (p *Port) Validate(sys *system.System) []TestResult {
 	sysPort := sys.NewPort(p.Port, sys)
 

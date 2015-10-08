@@ -15,6 +15,8 @@ type Command struct {
 	Stderr     []string `json:"stderr"`
 }
 
+func (c *Command) ID() string { return c.Command }
+
 func (c *Command) Validate(sys *system.System) []TestResult {
 	syscommand := sys.NewCommand(c.Command, sys)
 

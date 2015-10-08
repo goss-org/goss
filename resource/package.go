@@ -8,6 +8,8 @@ type Package struct {
 	Versions  []string `json:"versions,omitempty"`
 }
 
+func (p *Package) ID() string { return p.Name }
+
 func (p *Package) Validate(sys *system.System) []TestResult {
 	sysPkg := sys.NewPackage(p.Name, sys)
 

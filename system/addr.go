@@ -28,6 +28,9 @@ func (h *DefAddr) SetTimeout(t int64) {
 	h.Timeout = t
 }
 
+func (h *DefAddr) ID() string {
+	return h.address
+}
 func (h *DefAddr) Address() string {
 	return h.address
 }

@@ -13,6 +13,8 @@ type File struct {
 	Contains []string `json:"contains"`
 }
 
+func (f *File) ID() string { return f.Path }
+
 func (f *File) Validate(sys *system.System) []TestResult {
 	sysFile := sys.NewFile(f.Path, sys)
 

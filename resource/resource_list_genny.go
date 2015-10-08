@@ -3,8 +3,6 @@
 package resource
 
 import (
-	"reflect"
-
 	"github.com/aelsabbahy/goss/system"
 	"github.com/cheekybits/genny/generic"
 )
@@ -14,33 +12,21 @@ import (
 
 type ResourceType generic.Type
 
-type ResourceTypeSlice []*ResourceType
+type ResourceTypeMap map[string]*ResourceType
 
-func (r *ResourceTypeSlice) Append(neles ...*ResourceType) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *ResourceTypeSlice) AppendSysResource(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
+func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System) (*ResourceType, system.ResourceType) {
 	sysres := sys.NewResourceType(sr, sys)
 	res := NewResourceType(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *ResourceTypeSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
+func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
 	sysres := sys.NewResourceType(sr, sys)
 	res := NewResourceType(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }

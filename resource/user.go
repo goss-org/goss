@@ -11,19 +11,21 @@ type User struct {
 	Home     string   `json:"home,omitempty"`
 }
 
-func (s *User) Validate(sys *system.System) []TestResult {
-	sysuser := sys.NewUser(s.Username, sys)
+func (u *User) ID() string { return u.Username }
+
+func (u *User) Validate(sys *system.System) []TestResult {
+	sysuser := sys.NewUser(u.Username, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(s.Username, "exists", s.Exists, sysuser.Exists))
-	if !s.Exists {
+	results = append(results, ValidateValue(u.Username, "exists", u.Exists, sysuser.Exists))
+	if !u.Exists {
 		return results
 	}
-	results = append(results, ValidateValue(s.Username, "uid", s.UID, sysuser.UID))
-	results = append(results, ValidateValue(s.Username, "gid", s.GID, sysuser.GID))
-	results = append(results, ValidateValue(s.Username, "home", s.Home, sysuser.Home))
-	results = append(results, ValidateValues(s.Username, "groups", s.Groups, sysuser.Groups))
+	results = append(results, ValidateValue(u.Username, "uid", u.UID, sysuser.UID))
+	results = append(results, ValidateValue(u.Username, "gid", u.GID, sysuser.GID))
+	results = append(results, ValidateValue(u.Username, "home", u.Home, sysuser.Home))
+	results = append(results, ValidateValues(u.Username, "groups", u.Groups, sysuser.Groups))
 
 	return results
 }

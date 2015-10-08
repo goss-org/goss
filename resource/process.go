@@ -7,6 +7,8 @@ type Process struct {
 	Running    bool   `json:"running"`
 }
 
+func (p *Process) ID() string { return p.Executable }
+
 func (p *Process) Validate(sys *system.System) []TestResult {
 	sysProcess := sys.NewProcess(p.Executable, sys)
 
