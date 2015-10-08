@@ -28,6 +28,6 @@ func NewAddr(sysAddr system.Addr) *Addr {
 	return &Addr{
 		Address:   address,
 		Reachable: reachable.(bool),
-		Timeout:   500,
+		Timeout:   100,
 	}
 }

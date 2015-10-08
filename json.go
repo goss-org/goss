@@ -312,7 +312,11 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 	return nil
 }
 
-func resourcePrint(fileName string, resource interface{}) {
+type IDer interface {
+	ID() string
+}
+
+func resourcePrint(fileName string, resource IDer) {
 	out, _ := json.MarshalIndent(resource, "", "    ")
-	fmt.Printf("Adding %T to '%s':\n\n%s\n\n", resource, fileName, string(out))
+	fmt.Printf("Adding '%s' to '%s':\n\n%s\n\n", resource.ID(), fileName, string(out))
 }

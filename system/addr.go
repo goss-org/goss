@@ -40,7 +40,7 @@ func (h *DefAddr) Reachable() (interface{}, error) {
 	network, address := splitAddress(h.address)
 	timeout := h.Timeout
 	if timeout == 0 {
-		timeout = 500
+		timeout = 100
 	}
 	conn, err := net.DialTimeout(network, address, time.Duration(timeout)*time.Millisecond)
 	if err != nil {
