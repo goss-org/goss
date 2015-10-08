@@ -67,9 +67,9 @@ func New(c *cli.Context) *System {
 
 	switch {
 	case c.GlobalString("package") == "rpm":
-		system.NewPackage = NewPackageRpm
+		system.NewPackage = NewRpmPackage
 	case c.GlobalString("package") == "deb":
-		system.NewPackage = NewPackageDeb
+		system.NewPackage = NewDebPackage
 	default:
 		system.NewPackage = detectPackage()
 	}
@@ -80,11 +80,11 @@ func New(c *cli.Context) *System {
 func detectPackage() func(string, *System) Package {
 	switch {
 	case isRpm():
-		return NewPackageRpm
+		return NewRpmPackage
 	case isDeb():
-		return NewPackageDeb
+		return NewDebPackage
 	default:
-		return NewPackageNull
+		return NewNullPackage
 	}
 }
 
