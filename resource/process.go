@@ -3,18 +3,19 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Process struct {
-	Executable string `json:"executable"`
+	Executable string `json:"-"`
 	Running    bool   `json:"running"`
 }
 
-func (p *Process) ID() string { return p.Executable }
+func (p *Process) ID() string      { return p.Executable }
+func (p *Process) SetID(id string) { p.Executable = id }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
 	sysProcess := sys.NewProcess(p.Executable, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(p.Executable, "running", p.Running, sysProcess.Running))
+	results = append(results, ValidateValue(p.ID(), "running", p.Running, sysProcess.Running))
 
 	return results
 }

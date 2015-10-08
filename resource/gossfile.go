@@ -3,10 +3,11 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Gossfile struct {
-	Path string `json:"path"`
+	Path string `json:"-"`
 }
 
-func (g *Gossfile) ID() string { return g.Path }
+func (g *Gossfile) ID() string      { return g.Path }
+func (g *Gossfile) SetID(id string) { g.Path = id }
 
 func NewGossfile(sysGossfile system.Gossfile) *Gossfile {
 	path := sysGossfile.Path()

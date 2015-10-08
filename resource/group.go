@@ -3,23 +3,24 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Group struct {
-	Groupname string `json:"groupname"`
+	Groupname string `json:"-"`
 	Exists    bool   `json:"exists"`
 	Gid       string `json:"gid,omitempty"`
 }
 
-func (g *Group) ID() string { return g.Groupname }
+func (g *Group) ID() string      { return g.Groupname }
+func (g *Group) SetID(id string) { g.Groupname = id }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
 	sysgroup := sys.NewGroup(g.Groupname, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(g.Groupname, "exists", g.Exists, sysgroup.Exists))
+	results = append(results, ValidateValue(g.ID(), "exists", g.Exists, sysgroup.Exists))
 	if !g.Exists {
 		return results
 	}
-	results = append(results, ValidateValue(g.Gid, "gid", g.Gid, sysgroup.Gid))
+	results = append(results, ValidateValue(g.ID(), "gid", g.Gid, sysgroup.Gid))
 
 	return results
 }

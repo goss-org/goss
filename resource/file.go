@@ -3,7 +3,7 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type File struct {
-	Path     string   `json:"path"`
+	path     string   `json:"-"`
 	Exists   bool     `json:"exists"`
 	Mode     string   `json:"mode,omitempty"`
 	Owner    string   `json:"owner,omitempty"`
@@ -13,40 +13,41 @@ type File struct {
 	Contains []string `json:"contains"`
 }
 
-func (f *File) ID() string { return f.Path }
+func (f *File) ID() string      { return f.path }
+func (f *File) SetID(id string) { f.path = id }
 
 func (f *File) Validate(sys *system.System) []TestResult {
-	sysFile := sys.NewFile(f.Path, sys)
+	sysFile := sys.NewFile(f.path, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(f.Path, "exists", f.Exists, sysFile.Exists))
+	results = append(results, ValidateValue(f.ID(), "exists", f.Exists, sysFile.Exists))
 	if !f.Exists {
 		return results
 	}
 
 	if f.Mode != "" {
-		results = append(results, ValidateValue(f.Path, "mode", f.Mode, sysFile.Mode))
+		results = append(results, ValidateValue(f.ID(), "mode", f.Mode, sysFile.Mode))
 	}
 
 	if f.Owner != "" {
-		results = append(results, ValidateValue(f.Path, "owner", f.Owner, sysFile.Owner))
+		results = append(results, ValidateValue(f.ID(), "owner", f.Owner, sysFile.Owner))
 	}
 
 	if f.Group != "" {
-		results = append(results, ValidateValue(f.Path, "group", f.Group, sysFile.Group))
+		results = append(results, ValidateValue(f.ID(), "group", f.Group, sysFile.Group))
 	}
 
 	if f.LinkedTo != "" {
-		results = append(results, ValidateValue(f.Path, "linkedto", f.LinkedTo, sysFile.LinkedTo))
+		results = append(results, ValidateValue(f.ID(), "linkedto", f.LinkedTo, sysFile.LinkedTo))
 	}
 
 	if f.Filetype != "" {
-		results = append(results, ValidateValue(f.Path, "filetype", f.Filetype, sysFile.Filetype))
+		results = append(results, ValidateValue(f.ID(), "filetype", f.Filetype, sysFile.Filetype))
 	}
 
 	if len(f.Contains) != 0 {
-		results = append(results, ValidateContains(f.Path, "contains", f.Contains, sysFile.Contains))
+		results = append(results, ValidateContains(f.ID(), "contains", f.Contains, sysFile.Contains))
 	}
 
 	return results
@@ -61,7 +62,7 @@ func NewFile(sysFile system.File) *File {
 	filetype, _ := sysFile.Filetype()
 	exists, _ := sysFile.Exists()
 	return &File{
-		Path:     path,
+		path:     path,
 		Mode:     mode.(string),
 		Owner:    owner.(string),
 		Group:    group.(string),

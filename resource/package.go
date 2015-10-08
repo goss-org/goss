@@ -3,23 +3,24 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Package struct {
-	Name      string   `json:"name"`
+	Name      string   `json:"-"`
 	Installed bool     `json:"installed"`
 	Versions  []string `json:"versions,omitempty"`
 }
 
-func (p *Package) ID() string { return p.Name }
+func (p *Package) ID() string      { return p.Name }
+func (p *Package) SetID(id string) { p.Name = id }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
 	sysPkg := sys.NewPackage(p.Name, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(p.Name, "installed", p.Installed, sysPkg.Installed))
+	results = append(results, ValidateValue(p.ID(), "installed", p.Installed, sysPkg.Installed))
 	if !p.Installed {
 		return results
 	}
-	results = append(results, ValidateValues(p.Name, "version", p.Versions, sysPkg.Versions))
+	results = append(results, ValidateValues(p.ID(), "version", p.Versions, sysPkg.Versions))
 
 	return results
 }

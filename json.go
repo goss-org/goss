@@ -56,21 +56,24 @@ func (c *ConfigJSON) String() string {
 
 func (c *ConfigJSON) Resources() []resource.Resource {
 	var tests []resource.Resource
-	gs := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
-	for _, t := range gs {
-		tests = append(tests, t.(resource.Resource))
+
+	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
+	for _, m := range gm {
+		for id, t := range m {
+			// FIXME: Can this be moved to a safer compile-time check?
+			t2 := t.(resource.Resource)
+			t2.SetID(id)
+			tests = append(tests, t2)
+		}
 	}
 
 	return tests
 }
 
-func genericConcatMaps(maps ...interface{}) []interface{} {
-	var ret []interface{}
+func genericConcatMaps(maps ...interface{}) (ret []map[string]interface{}) {
 	for _, slice := range maps {
-		is := interfaceMap(slice)
-		for _, x := range is {
-			ret = append(ret, x)
-		}
+		im := interfaceMap(slice)
+		ret = append(ret, im)
 	}
 	return ret
 }
@@ -124,8 +127,8 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 		os.Exit(1)
 	}
 
-	for _, gossfile := range configJSON.Gossfiles {
-		fpath := filepath.Join(path, gossfile.Path)
+	for id, _ := range configJSON.Gossfiles {
+		fpath := filepath.Join(path, id)
 		fdir := filepath.Dir(fpath)
 		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
 		configJSON = mergeGoss(configJSON, j)

@@ -2,7 +2,6 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-
 package resource
 
 import "github.com/aelsabbahy/goss/system"
@@ -28,7 +27,6 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 	return res, sysres, true
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type CommandMap map[string]*Command
@@ -49,7 +47,6 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 	r[res.ID()] = res
 	return res, sysres, true
 }
-
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -72,7 +69,6 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 	return res, sysres, true
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type FileMap map[string]*File
@@ -93,7 +89,6 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 	r[res.ID()] = res
 	return res, sysres, true
 }
-
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -116,7 +111,6 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 	return res, sysres, true
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type GroupMap map[string]*Group
@@ -137,7 +131,6 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 	r[res.ID()] = res
 	return res, sysres, true
 }
-
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -160,7 +153,6 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	return res, sysres, true
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type PortMap map[string]*Port
@@ -181,7 +173,6 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 	r[res.ID()] = res
 	return res, sysres, true
 }
-
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -204,7 +195,6 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	return res, sysres, true
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type ServiceMap map[string]*Service
@@ -225,7 +215,6 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 	r[res.ID()] = res
 	return res, sysres, true
 }
-
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 

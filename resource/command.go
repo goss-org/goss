@@ -9,25 +9,26 @@ import (
 )
 
 type Command struct {
-	Command    string   `json:"command"`
+	Command    string   `json:"-"`
 	ExitStatus string   `json:"exit-status"`
 	Stdout     []string `json:"stdout"`
 	Stderr     []string `json:"stderr"`
 }
 
-func (c *Command) ID() string { return c.Command }
+func (c *Command) ID() string      { return c.Command }
+func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
 	syscommand := sys.NewCommand(c.Command, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(c.Command, "exit-status", c.ExitStatus, syscommand.ExitStatus))
+	results = append(results, ValidateValue(c.ID(), "exit-status", c.ExitStatus, syscommand.ExitStatus))
 	if len(c.Stdout) > 0 {
-		results = append(results, ValidateContains(c.Command, "stdout", c.Stdout, syscommand.Stdout))
+		results = append(results, ValidateContains(c.ID(), "stdout", c.Stdout, syscommand.Stdout))
 	}
 	if len(c.Stderr) > 0 {
-		results = append(results, ValidateContains(c.Command, "stderr", c.Stderr, syscommand.Stderr))
+		results = append(results, ValidateContains(c.ID(), "stderr", c.Stderr, syscommand.Stderr))
 	}
 
 	return results
