@@ -11,28 +11,39 @@ import (
 	"github.com/aelsabbahy/goss/util/group"
 )
 
-type File struct {
+type File interface {
+	Path() string
+	Exists() (interface{}, error)
+	Contains() (io.Reader, error)
+	Mode() (interface{}, error)
+	Filetype() (interface{}, error)
+	Owner() (interface{}, error)
+	Group() (interface{}, error)
+	LinkedTo() (interface{}, error)
+}
+
+type DefFile struct {
 	path, mode, owner, group, content string
 	fi                                os.FileInfo
 }
 
-func NewFile(path string, system *System) File {
+func NewDefFile(path string, system *System) File {
 	absPath, _ := filepath.Abs(path)
-	return File{path: absPath}
+	return &DefFile{path: absPath}
 }
 
-func (f *File) Path() string {
+func (f *DefFile) Path() string {
 	return f.path
 }
 
-func (f *File) Exists() (interface{}, error) {
+func (f *DefFile) Exists() (interface{}, error) {
 	if _, err := os.Stat(f.path); os.IsNotExist(err) {
 		return false, nil
 	}
 	return true, nil
 }
 
-func (f *File) Contains() (io.Reader, error) {
+func (f *DefFile) Contains() (io.Reader, error) {
 	fh, err := os.Open(f.path)
 	if err != nil {
 		return nil, err
@@ -40,7 +51,7 @@ func (f *File) Contains() (io.Reader, error) {
 	return fh, nil
 }
 
-func (f *File) Mode() (interface{}, error) {
+func (f *DefFile) Mode() (interface{}, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -49,7 +60,7 @@ func (f *File) Mode() (interface{}, error) {
 	return fmt.Sprintf("%#o", fi.Mode().Perm()), nil
 }
 
-func (f *File) Filetype() (interface{}, error) {
+func (f *DefFile) Filetype() (interface{}, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -67,7 +78,7 @@ func (f *File) Filetype() (interface{}, error) {
 	return "file", nil
 }
 
-func (f *File) Owner() (interface{}, error) {
+func (f *DefFile) Owner() (interface{}, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -82,7 +93,7 @@ func (f *File) Owner() (interface{}, error) {
 	return user.Username, nil
 }
 
-func (f *File) Group() (interface{}, error) {
+func (f *DefFile) Group() (interface{}, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -97,7 +108,7 @@ func (f *File) Group() (interface{}, error) {
 	return group.Name, nil
 }
 
-func (f *File) LinkedTo() (interface{}, error) {
+func (f *DefFile) LinkedTo() (interface{}, error) {
 	dst, err := os.Readlink(f.path)
 	if err != nil {
 		return "", err

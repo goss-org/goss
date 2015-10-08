@@ -42,15 +42,15 @@ func (s *System) Ports() map[string]GOnetstat.Process {
 
 func New(c *cli.Context) *System {
 	system := &System{
-		NewFile:     NewFile,
-		NewAddr:     NewAddr,
-		NewPort:     NewPort,
-		NewUser:     NewUser,
-		NewGroup:    NewGroup,
-		NewCommand:  NewCommand,
-		NewDNS:      NewDNS,
-		NewProcess:  NewProcess,
-		NewGossfile: NewGossfile,
+		NewFile:     NewDefFile,
+		NewAddr:     NewDefAddr,
+		NewPort:     NewDefPort,
+		NewUser:     NewDefUser,
+		NewGroup:    NewDefGroup,
+		NewCommand:  NewDefCommand,
+		NewDNS:      NewDefDNS,
+		NewProcess:  NewDefProcess,
+		NewGossfile: NewDefGossfile,
 	}
 
 	if util.IsRunningSystemd() {

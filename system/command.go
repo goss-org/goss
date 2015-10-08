@@ -8,7 +8,15 @@ import (
 	"github.com/aelsabbahy/goss/util"
 )
 
-type Command struct {
+type Command interface {
+	Command() string
+	Exists() (interface{}, error)
+	ExitStatus() (interface{}, error)
+	Stdout() (io.Reader, error)
+	Stderr() (io.Reader, error)
+}
+
+type DefCommand struct {
 	command    string
 	exitStatus string
 	stdout     io.Reader
@@ -16,16 +24,15 @@ type Command struct {
 	loaded     bool
 }
 
-func NewCommand(command string, system *System) Command {
-	return Command{command: command}
+func NewDefCommand(command string, system *System) Command {
+	return &DefCommand{command: command}
 }
 
-func (c *Command) setup() {
+func (c *DefCommand) setup() {
 	if c.loaded {
 		return
 	}
 	c.loaded = true
-	//cmd_array := strings.Fields(c.command)
 
 	cmd := util.NewCommand("sh", "-c", c.command)
 	cmd.Run()
@@ -35,29 +42,29 @@ func (c *Command) setup() {
 	c.stderr = bytes.NewReader(cmd.Stderr.Bytes())
 }
 
-func (c *Command) Command() string {
+func (c *DefCommand) Command() string {
 	return c.command
 }
 
-func (c *Command) ExitStatus() (interface{}, error) {
+func (c *DefCommand) ExitStatus() (interface{}, error) {
 	c.setup()
 
 	return c.exitStatus, nil
 }
 
-func (c *Command) Stdout() (io.Reader, error) {
+func (c *DefCommand) Stdout() (io.Reader, error) {
 	c.setup()
 
 	return c.stdout, nil
 }
 
-func (c *Command) Stderr() (io.Reader, error) {
+func (c *DefCommand) Stderr() (io.Reader, error) {
 	c.setup()
 
 	return c.stderr, nil
 }
 
 // Stub out
-func (c *Command) Exists() (interface{}, error) {
+func (c *DefCommand) Exists() (interface{}, error) {
 	return false, nil
 }

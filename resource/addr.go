@@ -10,7 +10,7 @@ type Addr struct {
 
 func (h *Addr) Validate(sys *system.System) []TestResult {
 	sysAddr := sys.NewAddr(h.Address, sys)
-	sysAddr.Timeout = h.Timeout
+	sysAddr.SetTimeout(h.Timeout)
 
 	var results []TestResult
 

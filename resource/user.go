@@ -6,7 +6,7 @@ type User struct {
 	Username string   `json:"username"`
 	Exists   bool     `json:"exists"`
 	UID      string   `json:"uid,omitempty"`
-	Gid      string   `json:"gid,omitempty"`
+	GID      string   `json:"gid,omitempty"`
 	Groups   []string `json:"groups,omitempty"`
 	Home     string   `json:"home,omitempty"`
 }
@@ -21,7 +21,7 @@ func (s *User) Validate(sys *system.System) []TestResult {
 		return results
 	}
 	results = append(results, ValidateValue(s.Username, "uid", s.UID, sysuser.UID))
-	results = append(results, ValidateValue(s.Username, "gid", s.Gid, sysuser.Gid))
+	results = append(results, ValidateValue(s.Username, "gid", s.GID, sysuser.GID))
 	results = append(results, ValidateValue(s.Username, "home", s.Home, sysuser.Home))
 	results = append(results, ValidateValues(s.Username, "groups", s.Groups, sysuser.Groups))
 
@@ -32,14 +32,14 @@ func NewUser(sysUser system.User) *User {
 	username := sysUser.Username()
 	exists, _ := sysUser.Exists()
 	uid, _ := sysUser.UID()
-	gid, _ := sysUser.Gid()
+	gid, _ := sysUser.GID()
 	groups, _ := sysUser.Groups()
 	home, _ := sysUser.Home()
 	return &User{
 		Username: username,
 		Exists:   exists.(bool),
 		UID:      uid.(string),
-		Gid:      gid.(string),
+		GID:      gid.(string),
 		Groups:   groups,
 		Home:     home.(string),
 	}

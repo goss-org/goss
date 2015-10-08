@@ -7,7 +7,15 @@ import (
 	"time"
 )
 
-type DNS struct {
+type DNS interface {
+	Host() string
+	Addrs() ([]string, error)
+	Resolveable() (interface{}, error)
+	Exists() (interface{}, error)
+	SetTimeout(int64)
+}
+
+type DefDNS struct {
 	host        string
 	resolveable bool
 	addrs       []string
@@ -16,15 +24,19 @@ type DNS struct {
 	err         error
 }
 
-func NewDNS(host string, system *System) DNS {
-	return DNS{host: host}
+func NewDefDNS(host string, system *System) DNS {
+	return &DefDNS{host: host}
 }
 
-func (d *DNS) Host() string {
+func (d *DefDNS) Host() string {
 	return d.host
 }
 
-func (d *DNS) setup() error {
+func (d *DefDNS) SetTimeout(t int64) {
+	d.Timeout = t
+}
+
+func (d *DefDNS) setup() error {
 	if d.loaded {
 		return d.err
 	}
@@ -48,20 +60,20 @@ func (d *DNS) setup() error {
 	return nil
 }
 
-func (d *DNS) Addrs() ([]string, error) {
+func (d *DefDNS) Addrs() ([]string, error) {
 	err := d.setup()
 
 	return d.addrs, err
 }
 
-func (d *DNS) Resolveable() (interface{}, error) {
+func (d *DefDNS) Resolveable() (interface{}, error) {
 	err := d.setup()
 
 	return d.resolveable, err
 }
 
 // Stub out
-func (d *DNS) Exists() (interface{}, error) {
+func (d *DefDNS) Exists() (interface{}, error) {
 	return false, nil
 }
 

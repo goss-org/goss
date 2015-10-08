@@ -11,7 +11,7 @@ type DNS struct {
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
 	sysDNS := sys.NewDNS(d.Host, sys)
-	sysDNS.Timeout = d.Timeout
+	sysDNS.SetTimeout(d.Timeout)
 
 	var results []TestResult
 

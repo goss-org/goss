@@ -2,21 +2,27 @@ package system
 
 import "github.com/aelsabbahy/goss/util/group"
 
-type Group struct {
+type Group interface {
+	Groupname() string
+	Exists() (interface{}, error)
+	Gid() (interface{}, error)
+}
+
+type DefGroup struct {
 	groupname string
 	exists    bool
 	gid       string
 }
 
-func NewGroup(groupname string, system *System) Group {
-	return Group{groupname: groupname}
+func NewDefGroup(groupname string, system *System) Group {
+	return &DefGroup{groupname: groupname}
 }
 
-func (u *Group) Groupname() string {
+func (u *DefGroup) Groupname() string {
 	return u.groupname
 }
 
-func (u *Group) Exists() (interface{}, error) {
+func (u *DefGroup) Exists() (interface{}, error) {
 	_, err := group.LookupGroup(u.groupname)
 	if err != nil {
 		return false, nil
@@ -24,7 +30,7 @@ func (u *Group) Exists() (interface{}, error) {
 	return true, nil
 }
 
-func (u *Group) Gid() (interface{}, error) {
+func (u *DefGroup) Gid() (interface{}, error) {
 	group, err := group.LookupGroup(u.groupname)
 	if err != nil {
 		return "", nil

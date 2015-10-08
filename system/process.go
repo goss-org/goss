@@ -8,7 +8,14 @@ import (
 	"github.com/mitchellh/go-ps"
 )
 
-type Process struct {
+type Process interface {
+	Executable() string
+	Exists() (interface{}, error)
+	Running() (interface{}, error)
+	Pids() ([]int, error)
+}
+
+type DefProcess struct {
 	executable string
 	running    bool
 }
@@ -29,18 +36,18 @@ func initProcesses() {
 	}
 }
 
-func NewProcess(executable string, system *System) Process {
+func NewDefProcess(executable string, system *System) Process {
 	processOnce.Do(initProcesses)
-	return Process{executable: executable}
+	return &DefProcess{executable: executable}
 }
 
-func (p *Process) Executable() string {
+func (p *DefProcess) Executable() string {
 	return p.executable
 }
 
-func (p *Process) Exists() (interface{}, error) { return p.Running() }
+func (p *DefProcess) Exists() (interface{}, error) { return p.Running() }
 
-func (p *Process) Pids() ([]int, error) {
+func (p *DefProcess) Pids() ([]int, error) {
 	var pids []int
 	for _, proc := range pmap[p.executable] {
 		pids = append(pids, proc.Pid())
@@ -52,7 +59,7 @@ func (p *Process) Pids() ([]int, error) {
 	return pids, nil
 }
 
-func (p *Process) Running() (interface{}, error) {
+func (p *DefProcess) Running() (interface{}, error) {
 	if _, ok := pmap[p.executable]; ok {
 		return true, nil
 	}
