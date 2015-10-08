@@ -1,6 +1,6 @@
 {
-    "files": [
-        {
+    "file": {
+        "/etc/httpd/conf.d/welcome.conf": {
             "path": "/etc/httpd/conf.d/welcome.conf",
             "exists": true,
             "mode": "0644",
@@ -11,62 +11,62 @@
                 "noindex"
             ]
         },
-        {
+        "/tmp/goss/foobar": {
             "path": "/tmp/goss/foobar",
             "exists": false,
             "contains": []
         }
-    ],
-    "packages": [
-        {
+    },
+    "package": {
+        "foobar": {
+            "name": "foobar",
+            "installed": false
+        },
+        "httpd": {
             "name": "httpd",
             "installed": true,
             "versions": [
                 "2.2.15"
             ]
-        },
-        {
-            "name": "foobar",
-            "installed": false
         }
-    ],
-    "addrs": [
-        {
-            "address": "tcp://google.com:443",
-            "reachable": true,
-            "timeout": 500
-        },
-        {
+    },
+    "addr": {
+        "tcp://google.com:22": {
             "address": "tcp://google.com:22",
             "reachable": false,
             "timeout": 500
+        },
+        "tcp://google.com:443": {
+            "address": "tcp://google.com:443",
+            "reachable": true,
+            "timeout": 500
         }
-    ],
-    "ports": [
-        {
+    },
+    "port": {
+        "tcp6:80": {
             "port": "tcp6:80",
             "listening": true,
             "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
         },
-        {
+        "tcp:9999": {
             "port": "tcp:9999",
             "listening": false
         }
-    ],
-    "services": [
-        {
-            "service": "httpd",
-            "enabled": true,
-            "running": true
-        },
-        {
+    },
+    "service": {
+        "foobar": {
             "service": "foobar",
             "enabled": false,
             "running": false
+        },
+        "httpd": {
+            "service": "httpd",
+            "enabled": true,
+            "running": true
         }
-    ],
-    "users": [
-        {
+    },
+    "user": {
+        "apache": {
             "username": "apache",
             "exists": true,
             "uid": "48",
@@ -76,24 +76,32 @@
             ],
             "home": "/var/www"
         },
-        {
+        "foobar": {
             "username": "foobar",
             "exists": false
         }
-    ],
-    "groups": [
-        {
+    },
+    "group": {
+        "apache": {
             "groupname": "apache",
             "exists": true,
             "gid": "48"
         },
-        {
+        "foobar": {
             "groupname": "foobar",
             "exists": false
         }
-    ],
-    "commands": [
-        {
+    },
+    "command": {
+        "foobar": {
+            "command": "foobar",
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: foobar: command not found"
+            ]
+        },
+        "httpd -v": {
             "command": "httpd -v",
             "exit-status": "0",
             "stdout": [
@@ -101,18 +109,10 @@
                 "Server built:   Aug 24 2015 17:52:49"
             ],
             "stderr": []
-        },
-        {
-            "command": "foobar",
-            "exit-status": "127",
-            "stdout": [],
-            "stderr": [
-                "sh: foobar: command not found"
-            ]
         }
-    ],
-    "dns": [
-        {
+    },
+    "dns": {
+        "localhost": {
             "host": "localhost",
             "resolveable": true,
             "addrs": [
@@ -121,15 +121,15 @@
             ],
             "timeout": 500
         }
-    ],
-    "processes": [
-        {
-            "executable": "httpd",
-            "running": true
-        },
-        {
+    },
+    "processe": {
+        "foobar": {
             "executable": "foobar",
             "running": false
+        },
+        "httpd": {
+            "executable": "httpd",
+            "running": true
         }
-    ]
+    }
 }

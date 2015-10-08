@@ -40,6 +40,7 @@ func NewConfigJSON() *ConfigJSON {
 		Users:     make(resource.UserMap),
 		Groups:    make(resource.GroupMap),
 		Commands:  make(resource.CommandMap),
+		DNS:       make(resource.DNSMap),
 		Processes: make(resource.ProcessMap),
 		Gossfiles: make(resource.GossfileMap),
 	}
