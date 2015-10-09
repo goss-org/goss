@@ -3,7 +3,7 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type File struct {
-	path     string   `json:"-"`
+	Path     string   `json:"-"`
 	Exists   bool     `json:"exists"`
 	Mode     string   `json:"mode,omitempty"`
 	Owner    string   `json:"owner,omitempty"`
@@ -13,11 +13,11 @@ type File struct {
 	Contains []string `json:"contains"`
 }
 
-func (f *File) ID() string      { return f.path }
-func (f *File) SetID(id string) { f.path = id }
+func (f *File) ID() string      { return f.Path }
+func (f *File) SetID(id string) { f.Path = id }
 
 func (f *File) Validate(sys *system.System) []TestResult {
-	sysFile := sys.NewFile(f.path, sys)
+	sysFile := sys.NewFile(f.Path, sys)
 
 	var results []TestResult
 
@@ -62,7 +62,7 @@ func NewFile(sysFile system.File) *File {
 	filetype, _ := sysFile.Filetype()
 	exists, _ := sysFile.Exists()
 	return &File{
-		path:     path,
+		Path:     path,
 		Mode:     mode.(string),
 		Owner:    owner.(string),
 		Group:    group.(string),
