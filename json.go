@@ -59,11 +59,9 @@ func (c *ConfigJSON) Resources() []resource.Resource {
 
 	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
 	for _, m := range gm {
-		for id, t := range m {
+		for _, t := range m {
 			// FIXME: Can this be moved to a safer compile-time check?
-			t2 := t.(resource.Resource)
-			t2.SetID(id)
-			tests = append(tests, t2)
+			tests = append(tests, t.(resource.Resource))
 		}
 	}
 
@@ -127,8 +125,8 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 		os.Exit(1)
 	}
 
-	for id, _ := range configJSON.Gossfiles {
-		fpath := filepath.Join(path, id)
+	for _, g := range configJSON.Gossfiles {
+		fpath := filepath.Join(path, g.ID())
 		fdir := filepath.Dir(fpath)
 		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
 		configJSON = mergeGoss(configJSON, j)

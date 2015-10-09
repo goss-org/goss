@@ -3,6 +3,8 @@
 package resource
 
 import (
+	"encoding/json"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/cheekybits/genny/generic"
 )
@@ -29,4 +31,19 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 	}
 	r[res.ID()] = res
 	return res, sysres, true
+}
+
+func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*ResourceType
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
 }

@@ -2,9 +2,14 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
+
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"encoding/json"
+
+	"github.com/aelsabbahy/goss/system"
+)
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -27,6 +32,22 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 	return res, sysres, true
 }
 
+func (r *AddrMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Addr
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type CommandMap map[string]*Command
@@ -47,6 +68,22 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 	r[res.ID()] = res
 	return res, sysres, true
 }
+
+func (r *CommandMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Command
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -69,6 +106,22 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 	return res, sysres, true
 }
 
+func (r *DNSMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*DNS
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type FileMap map[string]*File
@@ -89,6 +142,22 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 	r[res.ID()] = res
 	return res, sysres, true
 }
+
+func (r *FileMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*File
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -111,6 +180,22 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 	return res, sysres, true
 }
 
+func (r *GossfileMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Gossfile
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type GroupMap map[string]*Group
@@ -131,6 +216,22 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 	r[res.ID()] = res
 	return res, sysres, true
 }
+
+func (r *GroupMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Group
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -153,6 +254,22 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	return res, sysres, true
 }
 
+func (r *PackageMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Package
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type PortMap map[string]*Port
@@ -173,6 +290,22 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 	r[res.ID()] = res
 	return res, sysres, true
 }
+
+func (r *PortMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Port
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
@@ -195,6 +328,22 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	return res, sysres, true
 }
 
+func (r *ProcessMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Process
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type ServiceMap map[string]*Service
@@ -216,6 +365,22 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 	return res, sysres, true
 }
 
+func (r *ServiceMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Service
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 
 type UserMap map[string]*User
@@ -235,4 +400,19 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 	}
 	r[res.ID()] = res
 	return res, sysres, true
+}
+
+func (r *UserMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*User
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
 }
