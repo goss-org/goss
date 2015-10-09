@@ -27,11 +27,11 @@
     "addr": {
         "tcp://google.com:22": {
             "reachable": false,
-            "timeout": 100
+            "timeout": 500
         },
         "tcp://google.com:443": {
             "reachable": true,
-            "timeout": 100
+            "timeout": 500
         }
     },
     "port": {
