@@ -17,4 +17,5 @@ before_install:
   - go get -u github.com/golang/lint/golint
 
 script:
+  - make deps
   - make
