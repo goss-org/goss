@@ -10,6 +10,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
+	"github.com/mitchellh/go-ps"
 )
 
 type Resource interface {
@@ -31,6 +32,8 @@ type System struct {
 	Dbus        *dbus.Conn
 	ports       map[string]GOnetstat.Process
 	portsOnce   sync.Once
+	procOnce    sync.Once
+	procMap     map[string][]ps.Process
 }
 
 func (s *System) Ports() map[string]GOnetstat.Process {
@@ -38,6 +41,13 @@ func (s *System) Ports() map[string]GOnetstat.Process {
 		s.ports = GetPorts(false)
 	})
 	return s.ports
+}
+
+func (s *System) ProcMap() map[string][]ps.Process {
+	s.procOnce.Do(func() {
+		s.procMap = GetProcs()
+	})
+	return s.procMap
 }
 
 func New(c *cli.Context) *System {
