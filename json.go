@@ -315,6 +315,11 @@ type IDer interface {
 }
 
 func resourcePrint(fileName string, resource IDer) {
-	out, _ := json.MarshalIndent(resource, "", "    ")
-	fmt.Printf("Adding '%s' to '%s':\n\n%s\n\n", resource.ID(), fileName, string(out))
+	res := map[string]IDer{resource.ID(): resource}
+
+	oj, _ := json.MarshalIndent(res, "", "    ")
+	typ := reflect.TypeOf(resource)
+	typs := strings.Split(typ.String(), ".")[1]
+
+	fmt.Printf("Adding %s to '%s':\n\n%s\n\n", typs, fileName, string(oj))
 }

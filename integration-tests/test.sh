@@ -16,7 +16,7 @@ if ! docker ps | grep goss_int_test;then
   sleep 10
 fi
 
-out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -f /tmp/goss/goss.json validate')
+out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -g /tmp/goss/goss.json validate')
 echo "$out"
 
 grep -q 'Count: 36 failed: 0' <<<"$out"
@@ -30,7 +30,7 @@ exit_code=$(($exit_code+$?))
 docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-aa-expected.json /tmp/goss/goss-aa-generated.json'
 exit_code=$(($exit_code+$?))
 
-docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-expected.json <(/tmp/goss/goss -f /tmp/goss/goss-render.json render)'
+docker exec goss_int_test bash -c 'diff -u /tmp/goss/goss-expected.json <(/tmp/goss/goss -g /tmp/goss/goss-render.json render)'
 exit_code=$(($exit_code+$?))
 #docker rm -vf goss_int_test
 

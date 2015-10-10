@@ -19,7 +19,7 @@ func main() {
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:   "gossfile, f",
+			Name:   "gossfile, g",
 			Value:  "./goss.json",
 			Usage:  "Goss file to read from / write to",
 			EnvVar: "GOSS_FILE",

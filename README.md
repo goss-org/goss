@@ -95,7 +95,7 @@ COMMANDS:
    help, h      Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --gossfile, -f "./goss.json" Goss file to read from / write to [$GOSS_FILE]
+   --gossfile, -g "./goss.json" Goss file to read from / write to [$GOSS_FILE]
    --package                    Package type to use [rpm, deb]
    --help, -h                   show help
    --generate-bash-completion
@@ -104,7 +104,7 @@ GLOBAL OPTIONS:
 ```
 
 ### global options
-#### -f gossfile
+#### -g gossfile
 The gossfile file to use when reading/writing tests.
 
 Example (default: ./goss.json):
@@ -117,7 +117,7 @@ Count: 8 failed: 0
 
 To run a different file (ex. goss_httpd.json):
 ```bash
-$ goss -f goss_httpd.json validate
+$ goss -g goss_httpd.json validate
 ......
 
 Count: 6 failed: 0
@@ -129,7 +129,7 @@ Count: 6 failed: 0
 
 `validate` will look for a test suite in the following order:
 * stdin
-* -f flag (if provided)
+* -g flag (if provided)
 * ./goss.json
 
 Success:
@@ -474,7 +474,7 @@ Adding to './goss.json':
 #### goss - Add a goss file import
 Allows you to import another goss file from this one.
 ```bash
-$ goss -f goss_httpd.json a package httpd
+$ goss -g goss_httpd.json a package httpd
 Adding to 'goss_httpd.json':
 
 {
@@ -519,7 +519,7 @@ $ cat goss.json
     ]
 }
 
-$ goss -f goss.json render
+$ goss -g goss.json render
 {
     "packages": [
         {

@@ -3,9 +3,9 @@
 SCRIPT_DIR=$(readlink -f $(dirname $0))
 
 goss() {
-  $SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-generated.json "$@"
+  $SCRIPT_DIR/goss -g $SCRIPT_DIR/goss-generated.json "$@"
   # Validate that duplicates are ignored
-  $SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-generated.json "$@"
+  $SCRIPT_DIR/goss -g $SCRIPT_DIR/goss-generated.json "$@"
 }
 
 rm -f $SCRIPT_DIR/goss*generated.json
@@ -52,6 +52,6 @@ done
 
 
 # Auto-add
-$SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-aa-generated.json aa httpd
+$SCRIPT_DIR/goss -g $SCRIPT_DIR/goss-aa-generated.json aa httpd
 # Validate that duplicates are ignored
-$SCRIPT_DIR/goss -f $SCRIPT_DIR/goss-aa-generated.json aa httpd
+$SCRIPT_DIR/goss -g $SCRIPT_DIR/goss-aa-generated.json aa httpd
