@@ -11,22 +11,22 @@ type Package interface {
 
 var ErrNullPackage = errors.New("Could not detect Package type on this system, please use --package flag to explicity set it")
 
-type PackageNull struct {
+type NullPackage struct {
 	name string
 }
 
-func NewPackageNull(name string, system *System) Package {
-	return &PackageNull{name: name}
+func NewNullPackage(name string, system *System) Package {
+	return &NullPackage{name: name}
 }
 
-func (p *PackageNull) Name() string { return p.name }
+func (p *NullPackage) Name() string { return p.name }
 
-func (p *PackageNull) Exists() (interface{}, error) { return p.Installed() }
+func (p *NullPackage) Exists() (interface{}, error) { return p.Installed() }
 
-func (p *PackageNull) Installed() (interface{}, error) {
+func (p *NullPackage) Installed() (interface{}, error) {
 	return false, ErrNullPackage
 }
 
-func (p *PackageNull) Versions() ([]string, error) {
+func (p *NullPackage) Versions() ([]string, error) {
 	return nil, ErrNullPackage
 }

@@ -7,16 +7,21 @@ import (
 	"github.com/aelsabbahy/GOnetstat"
 )
 
-type Port struct {
-	port      string
-	listening bool
-	ip        string
-	sysPorts  map[string]GOnetstat.Process
+type Port interface {
+	Port() string
+	Exists() (interface{}, error)
+	Listening() (interface{}, error)
+	IP() (interface{}, error)
 }
 
-func NewPort(port string, system *System) Port {
+type DefPort struct {
+	port     string
+	sysPorts map[string]GOnetstat.Process
+}
+
+func NewDefPort(port string, system *System) Port {
 	p := normalizePort(port)
-	return Port{
+	return &DefPort{
 		port:     p,
 		sysPorts: system.Ports(),
 	}
@@ -36,20 +41,20 @@ func normalizePort(fullport string) string {
 	return net + ":" + addr
 }
 
-func (p *Port) Port() string {
+func (p *DefPort) Port() string {
 	return p.port
 }
 
-func (p *Port) Exists() (interface{}, error) { return p.Listening() }
+func (p *DefPort) Exists() (interface{}, error) { return p.Listening() }
 
-func (p *Port) Listening() (interface{}, error) {
+func (p *DefPort) Listening() (interface{}, error) {
 	if _, ok := p.sysPorts[p.port]; ok {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (p *Port) IP() (interface{}, error) {
+func (p *DefPort) IP() (interface{}, error) {
 	return p.sysPorts[p.port].Ip, nil
 }
 

@@ -3,18 +3,21 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Service struct {
-	Service string `json:"service"`
+	Service string `json:"-"`
 	Enabled bool   `json:"enabled"`
 	Running bool   `json:"running"`
 }
+
+func (s *Service) ID() string      { return s.Service }
+func (s *Service) SetID(id string) { s.Service = id }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
 	sysservice := sys.NewService(s.Service, sys)
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(s.Service, "enabled", s.Enabled, sysservice.Enabled))
-	results = append(results, ValidateValue(s.Service, "running", s.Running, sysservice.Running))
+	results = append(results, ValidateValue(s.ID(), "enabled", s.Enabled, sysservice.Enabled))
+	results = append(results, ValidateValue(s.ID(), "running", s.Running, sysservice.Running))
 
 	return results
 }

@@ -1,31 +1,27 @@
 {
-    "packages": [
-        {
-            "name": "httpd",
+    "package": {
+        "httpd": {
             "installed": true,
             "versions": [
                 "2.2.15"
             ]
         }
-    ],
-    "ports": [
-        {
-            "port": "tcp6:80",
+    },
+    "port": {
+        "tcp6:80": {
             "listening": true,
             "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
         }
-    ],
-    "services": [
-        {
-            "service": "httpd",
+    },
+    "service": {
+        "httpd": {
             "enabled": true,
             "running": true
         }
-    ],
-    "processes": [
-        {
-            "executable": "httpd",
+    },
+    "processe": {
+        "httpd": {
             "running": true
         }
-    ]
+    }
 }

@@ -17,17 +17,33 @@ import (
 )
 
 type ConfigJSON struct {
-	Files     resource.FileSlice     `json:"files,omitempty"`
-	Packages  resource.PackageSlice  `json:"packages,omitempty"`
-	Addrs     resource.AddrSlice     `json:"addrs,omitempty"`
-	Ports     resource.PortSlice     `json:"ports,omitempty"`
-	Services  resource.ServiceSlice  `json:"services,omitempty"`
-	Users     resource.UserSlice     `json:"users,omitempty"`
-	Groups    resource.GroupSlice    `json:"groups,omitempty"`
-	Commands  resource.CommandSlice  `json:"commands,omitempty"`
-	DNS       resource.DNSSlice      `json:"dns,omitempty"`
-	Processes resource.ProcessSlice  `json:"processes,omitempty"`
-	Gossfiles resource.GossfileSlice `json:"gossfiles,omitempty"`
+	Files     resource.FileMap     `json:"file,omitempty"`
+	Packages  resource.PackageMap  `json:"package,omitempty"`
+	Addrs     resource.AddrMap     `json:"addr,omitempty"`
+	Ports     resource.PortMap     `json:"port,omitempty"`
+	Services  resource.ServiceMap  `json:"service,omitempty"`
+	Users     resource.UserMap     `json:"user,omitempty"`
+	Groups    resource.GroupMap    `json:"group,omitempty"`
+	Commands  resource.CommandMap  `json:"command,omitempty"`
+	DNS       resource.DNSMap      `json:"dns,omitempty"`
+	Processes resource.ProcessMap  `json:"processe,omitempty"`
+	Gossfiles resource.GossfileMap `json:"gossfile,omitempty"`
+}
+
+func NewConfigJSON() *ConfigJSON {
+	return &ConfigJSON{
+		Files:     make(resource.FileMap),
+		Packages:  make(resource.PackageMap),
+		Addrs:     make(resource.AddrMap),
+		Ports:     make(resource.PortMap),
+		Services:  make(resource.ServiceMap),
+		Users:     make(resource.UserMap),
+		Groups:    make(resource.GroupMap),
+		Commands:  make(resource.CommandMap),
+		DNS:       make(resource.DNSMap),
+		Processes: make(resource.ProcessMap),
+		Gossfiles: make(resource.GossfileMap),
+	}
 }
 
 func (c *ConfigJSON) String() string {
@@ -40,34 +56,36 @@ func (c *ConfigJSON) String() string {
 
 func (c *ConfigJSON) Resources() []resource.Resource {
 	var tests []resource.Resource
-	gs := genericConcatSlices(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
-	for _, t := range gs {
-		tests = append(tests, t.(resource.Resource))
+
+	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
+	for _, m := range gm {
+		for _, t := range m {
+			// FIXME: Can this be moved to a safer compile-time check?
+			tests = append(tests, t.(resource.Resource))
+		}
 	}
+
 	return tests
 }
 
-func genericConcatSlices(slices ...interface{}) []interface{} {
-	var ret []interface{}
-	for _, slice := range slices {
-		is := interfaceSlice(slice)
-		for _, x := range is {
-			ret = append(ret, x)
-		}
+func genericConcatMaps(maps ...interface{}) (ret []map[string]interface{}) {
+	for _, slice := range maps {
+		im := interfaceMap(slice)
+		ret = append(ret, im)
 	}
 	return ret
 }
 
-func interfaceSlice(slice interface{}) []interface{} {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
+func interfaceMap(slice interface{}) map[string]interface{} {
+	m := reflect.ValueOf(slice)
+	if m.Kind() != reflect.Map {
 		panic("InterfaceSlice() given a non-slice type")
 	}
 
-	ret := make([]interface{}, s.Len())
+	ret := make(map[string]interface{})
 
-	for i := 0; i < s.Len(); i++ {
-		ret[i] = s.Index(i).Interface()
+	for _, k := range m.MapKeys() {
+		ret[k.Interface().(string)] = m.MapIndex(k).Interface()
 	}
 
 	return ret
@@ -84,13 +102,13 @@ func ReadJSON(filePath string) ConfigJSON {
 }
 
 func ReadJSONData(data []byte) ConfigJSON {
-	var configJSON ConfigJSON
-	err := json.Unmarshal(data, &configJSON)
+	configJSON := NewConfigJSON()
+	err := json.Unmarshal(data, configJSON)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
-	return configJSON
+	return *configJSON
 }
 
 func RenderJSON(filePath string) string {
@@ -107,8 +125,8 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 		os.Exit(1)
 	}
 
-	for _, gossfile := range configJSON.Gossfiles {
-		fpath := filepath.Join(path, gossfile.Path)
+	for _, g := range configJSON.Gossfiles {
+		fpath := filepath.Join(path, g.ID())
 		fdir := filepath.Dir(fpath)
 		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
 		configJSON = mergeGoss(configJSON, j)
@@ -119,25 +137,45 @@ func mergeJSONData(configJSON ConfigJSON, depth int, path string) ConfigJSON {
 func mergeGoss(g1, g2 ConfigJSON) ConfigJSON {
 	g1.Gossfiles = nil
 
-	g1.Files.Append(g2.Files...)
+	for k, v := range g2.Files {
+		g1.Files[k] = v
+	}
 
-	g1.Packages.Append(g2.Packages...)
+	for k, v := range g2.Packages {
+		g1.Packages[k] = v
+	}
 
-	g1.Addrs.Append(g2.Addrs...)
+	for k, v := range g2.Addrs {
+		g1.Addrs[k] = v
+	}
 
-	g1.Ports.Append(g2.Ports...)
+	for k, v := range g2.Ports {
+		g1.Ports[k] = v
+	}
 
-	g1.Services.Append(g2.Services...)
+	for k, v := range g2.Services {
+		g1.Services[k] = v
+	}
 
-	g1.Users.Append(g2.Users...)
+	for k, v := range g2.Users {
+		g1.Users[k] = v
+	}
 
-	g1.Groups.Append(g2.Groups...)
+	for k, v := range g2.Groups {
+		g1.Groups[k] = v
+	}
 
-	g1.Commands.Append(g2.Commands...)
+	for k, v := range g2.Commands {
+		g1.Commands[k] = v
+	}
 
-	g1.DNS.Append(g2.DNS...)
+	for k, v := range g2.DNS {
+		g1.DNS[k] = v
+	}
 
-	g1.Processes.Append(g2.Processes...)
+	for k, v := range g2.Processes {
+		g1.Processes[k] = v
+	}
 
 	return g1
 }
@@ -160,7 +198,7 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	if _, err := os.Stat(fileName); err == nil {
 		configJSON = ReadJSON(fileName)
 	} else {
-		configJSON = ConfigJSON{}
+		configJSON = *NewConfigJSON()
 	}
 
 	sys := system.New(c)
@@ -168,49 +206,38 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
-		if res, _, ok := configJSON.Addrs.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Addrs.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Command":
-		if res, _, ok := configJSON.Commands.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Commands.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "DNS":
-		if res, _, ok := configJSON.DNS.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.DNS.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "File":
-		if res, _, ok := configJSON.Files.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Files.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Group":
-		if res, _, ok := configJSON.Groups.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Groups.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Package":
-		if res, _, ok := configJSON.Packages.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Packages.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Port":
-		if res, _, ok := configJSON.Ports.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Ports.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Process":
-		if res, _, ok := configJSON.Processes.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Processes.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Service":
-		if res, _, ok := configJSON.Services.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Services.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "User":
-		if res, _, ok := configJSON.Users.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Users.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	case "Gossfile":
-		if res, _, ok := configJSON.Gossfiles.AppendSysResource(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
+		res, _ := configJSON.Gossfiles.AppendSysResource(key, sys)
+		resourcePrint(fileName, res)
 	}
 
 	WriteJSON(fileName, configJSON)
@@ -223,7 +250,7 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 	if _, err := os.Stat(fileName); err == nil {
 		configJSON = ReadJSON(fileName)
 	} else {
-		configJSON = ConfigJSON{}
+		configJSON = *NewConfigJSON()
 	}
 
 	sys := system.New(c)
@@ -283,7 +310,16 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 	return nil
 }
 
-func resourcePrint(fileName string, resource interface{}) {
-	out, _ := json.MarshalIndent(resource, "", "    ")
-	fmt.Printf("Adding %T to '%s':\n\n%s\n\n", resource, fileName, string(out))
+type IDer interface {
+	ID() string
+}
+
+func resourcePrint(fileName string, resource IDer) {
+	res := map[string]IDer{resource.ID(): resource}
+
+	oj, _ := json.MarshalIndent(res, "", "    ")
+	typ := reflect.TypeOf(resource)
+	typs := strings.Split(typ.String(), ".")[1]
+
+	fmt.Printf("Adding %s to '%s':\n\n%s\n\n", typs, fileName, string(oj))
 }

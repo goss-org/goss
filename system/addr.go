@@ -6,23 +6,36 @@ import (
 	"time"
 )
 
-type Addr struct {
-	address   string
-	reachable bool
-	Timeout   int64
+type Addr interface {
+	Address() string
+	Exists() (interface{}, error)
+	Reachable() (interface{}, error)
+	SetTimeout(int64)
 }
 
-func NewAddr(address string, system *System) Addr {
+type DefAddr struct {
+	address string
+	Timeout int64
+}
+
+func NewDefAddr(address string, system *System) Addr {
 	addr := normalizeAddress(address)
-	return Addr{address: addr}
+	return &DefAddr{address: addr}
 }
 
-func (h *Addr) Address() string {
+func (h *DefAddr) SetTimeout(t int64) {
+	h.Timeout = t
+}
+
+func (h *DefAddr) ID() string {
 	return h.address
 }
-func (h *Addr) Exists() (interface{}, error) { return h.Reachable() }
+func (h *DefAddr) Address() string {
+	return h.address
+}
+func (h *DefAddr) Exists() (interface{}, error) { return h.Reachable() }
 
-func (h *Addr) Reachable() (interface{}, error) {
+func (h *DefAddr) Reachable() (interface{}, error) {
 	network, address := splitAddress(h.address)
 	timeout := h.Timeout
 	if timeout == 0 {

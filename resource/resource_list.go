@@ -2,384 +2,417 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-
 package resource
 
 import (
-	"reflect"
+	"encoding/json"
 
 	"github.com/aelsabbahy/goss/system"
 )
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type AddrSlice []*Addr
+type AddrMap map[string]*Addr
 
-func (r *AddrSlice) Append(neles ...*Addr) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *AddrSlice) AppendSysResource(sr string, sys *system.System) (*Addr, system.Addr, bool) {
+func (r AddrMap) AppendSysResource(sr string, sys *system.System) (*Addr, system.Addr) {
 	sysres := sys.NewAddr(sr, sys)
 	res := NewAddr(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *AddrSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool) {
+func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool) {
 	sysres := sys.NewAddr(sr, sys)
 	res := NewAddr(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *AddrMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Addr
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type CommandSlice []*Command
+type CommandMap map[string]*Command
 
-func (r *CommandSlice) Append(neles ...*Command) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *CommandSlice) AppendSysResource(sr string, sys *system.System) (*Command, system.Command, bool) {
+func (r CommandMap) AppendSysResource(sr string, sys *system.System) (*Command, system.Command) {
 	sysres := sys.NewCommand(sr, sys)
 	res := NewCommand(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *CommandSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool) {
+func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool) {
 	sysres := sys.NewCommand(sr, sys)
 	res := NewCommand(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *CommandMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Command
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type DNSSlice []*DNS
+type DNSMap map[string]*DNS
 
-func (r *DNSSlice) Append(neles ...*DNS) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *DNSSlice) AppendSysResource(sr string, sys *system.System) (*DNS, system.DNS, bool) {
+func (r DNSMap) AppendSysResource(sr string, sys *system.System) (*DNS, system.DNS) {
 	sysres := sys.NewDNS(sr, sys)
 	res := NewDNS(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *DNSSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool) {
+func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool) {
 	sysres := sys.NewDNS(sr, sys)
 	res := NewDNS(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *DNSMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*DNS
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type FileSlice []*File
+type FileMap map[string]*File
 
-func (r *FileSlice) Append(neles ...*File) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *FileSlice) AppendSysResource(sr string, sys *system.System) (*File, system.File, bool) {
+func (r FileMap) AppendSysResource(sr string, sys *system.System) (*File, system.File) {
 	sysres := sys.NewFile(sr, sys)
 	res := NewFile(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *FileSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool) {
+func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool) {
 	sysres := sys.NewFile(sr, sys)
 	res := NewFile(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *FileMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*File
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type GossfileSlice []*Gossfile
+type GossfileMap map[string]*Gossfile
 
-func (r *GossfileSlice) Append(neles ...*Gossfile) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *GossfileSlice) AppendSysResource(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool) {
+func (r GossfileMap) AppendSysResource(sr string, sys *system.System) (*Gossfile, system.Gossfile) {
 	sysres := sys.NewGossfile(sr, sys)
 	res := NewGossfile(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *GossfileSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool) {
+func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool) {
 	sysres := sys.NewGossfile(sr, sys)
 	res := NewGossfile(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *GossfileMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Gossfile
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type GroupSlice []*Group
+type GroupMap map[string]*Group
 
-func (r *GroupSlice) Append(neles ...*Group) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *GroupSlice) AppendSysResource(sr string, sys *system.System) (*Group, system.Group, bool) {
+func (r GroupMap) AppendSysResource(sr string, sys *system.System) (*Group, system.Group) {
 	sysres := sys.NewGroup(sr, sys)
 	res := NewGroup(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *GroupSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool) {
+func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool) {
 	sysres := sys.NewGroup(sr, sys)
 	res := NewGroup(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *GroupMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Group
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type PackageSlice []*Package
+type PackageMap map[string]*Package
 
-func (r *PackageSlice) Append(neles ...*Package) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *PackageSlice) AppendSysResource(sr string, sys *system.System) (*Package, system.Package, bool) {
+func (r PackageMap) AppendSysResource(sr string, sys *system.System) (*Package, system.Package) {
 	sysres := sys.NewPackage(sr, sys)
 	res := NewPackage(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *PackageSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool) {
+func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool) {
 	sysres := sys.NewPackage(sr, sys)
 	res := NewPackage(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *PackageMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Package
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type PortSlice []*Port
+type PortMap map[string]*Port
 
-func (r *PortSlice) Append(neles ...*Port) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *PortSlice) AppendSysResource(sr string, sys *system.System) (*Port, system.Port, bool) {
+func (r PortMap) AppendSysResource(sr string, sys *system.System) (*Port, system.Port) {
 	sysres := sys.NewPort(sr, sys)
 	res := NewPort(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *PortSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool) {
+func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool) {
 	sysres := sys.NewPort(sr, sys)
 	res := NewPort(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *PortMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Port
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type ProcessSlice []*Process
+type ProcessMap map[string]*Process
 
-func (r *ProcessSlice) Append(neles ...*Process) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *ProcessSlice) AppendSysResource(sr string, sys *system.System) (*Process, system.Process, bool) {
+func (r ProcessMap) AppendSysResource(sr string, sys *system.System) (*Process, system.Process) {
 	sysres := sys.NewProcess(sr, sys)
 	res := NewProcess(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *ProcessSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool) {
+func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool) {
 	sysres := sys.NewProcess(sr, sys)
 	res := NewProcess(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *ProcessMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Process
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type ServiceSlice []*Service
+type ServiceMap map[string]*Service
 
-func (r *ServiceSlice) Append(neles ...*Service) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *ServiceSlice) AppendSysResource(sr string, sys *system.System) (*Service, system.Service, bool) {
+func (r ServiceMap) AppendSysResource(sr string, sys *system.System) (*Service, system.Service) {
 	sysres := sys.NewService(sr, sys)
 	res := NewService(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *ServiceSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool) {
+func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool) {
 	sysres := sys.NewService(sr, sys)
 	res := NewService(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
 }
 
+func (r *ServiceMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*Service
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
-type UserSlice []*User
+type UserMap map[string]*User
 
-func (r *UserSlice) Append(neles ...*User) bool {
-	for _, nele := range neles {
-		for _, ele := range *r {
-			if reflect.DeepEqual(ele, nele) {
-				return false
-			}
-		}
-		*r = append(*r, nele)
-	}
-	return true
-}
-
-func (r *UserSlice) AppendSysResource(sr string, sys *system.System) (*User, system.User, bool) {
+func (r UserMap) AppendSysResource(sr string, sys *system.System) (*User, system.User) {
 	sysres := sys.NewUser(sr, sys)
 	res := NewUser(sysres)
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres
 }
 
-func (r *UserSlice) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool) {
+func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool) {
 	sysres := sys.NewUser(sr, sys)
 	res := NewUser(sysres)
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
-	ok := r.Append(res)
-	return res, sysres, ok
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (r *UserMap) UnmarshalJSON(data []byte) error {
+	var tmp map[string]*User
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
 }

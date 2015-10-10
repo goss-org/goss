@@ -7,18 +7,18 @@ import (
 	"github.com/aelsabbahy/goss/util"
 )
 
-type PackageDeb struct {
+type DebPackage struct {
 	name      string
 	versions  []string
 	loaded    bool
 	installed bool
 }
 
-func NewPackageDeb(name string, system *System) Package {
-	return &PackageDeb{name: name}
+func NewDebPackage(name string, system *System) Package {
+	return &DebPackage{name: name}
 }
 
-func (p *PackageDeb) setup() {
+func (p *DebPackage) setup() {
 	if p.loaded {
 		return
 	}
@@ -31,19 +31,19 @@ func (p *PackageDeb) setup() {
 	p.versions = strings.Split(strings.TrimSpace(cmd.Stdout.String()), "\n")
 }
 
-func (p *PackageDeb) Name() string {
+func (p *DebPackage) Name() string {
 	return p.name
 }
 
-func (p *PackageDeb) Exists() (interface{}, error) { return p.Installed() }
+func (p *DebPackage) Exists() (interface{}, error) { return p.Installed() }
 
-func (p *PackageDeb) Installed() (interface{}, error) {
+func (p *DebPackage) Installed() (interface{}, error) {
 	p.setup()
 
 	return p.installed, nil
 }
 
-func (p *PackageDeb) Versions() ([]string, error) {
+func (p *DebPackage) Versions() ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
 		return p.versions, errors.New("Package version not found")

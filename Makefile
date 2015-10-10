@@ -9,27 +9,27 @@ TRAVIS_TAG ?= "0.0.0"
 
 all: test-all
 
-install: deps
+install:
 	go install -v $(exe)
 
-test: deps
+test:
 	go test $(pkgs)
 
-lint: deps
+lint:
 	go tool vet .
 	golint $(pkgs) | grep -v 'unexported' || true
 
-bench: deps
+bench:
 	go test -bench=.
 
-coverage: deps
+coverage:
 	go test -cover $(pkgs)
 	#go test -coverprofile=/tmp/coverage.out .
 	#go tool cover -func=/tmp/coverage.out
 	#go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
 	#xdg-open /tmp/coverage.html
 
-build: deps
+build:
 	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
 
 release: build

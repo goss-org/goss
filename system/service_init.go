@@ -10,8 +10,6 @@ import (
 
 type ServiceInit struct {
 	service string
-	enabled bool
-	running bool
 }
 
 func NewServiceInit(service string, system *System) Service {

@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/codegangsta/cli"
@@ -75,28 +76,12 @@ func Run(specFile string, c *cli.Context) {
 		close(out)
 	}()
 
-	testCount := 0
-	var failed []resource.TestResult
-	for testResult := range out {
-		//fmt.Printf("%v: %s.\n", testResult.Duration, testResult.Desc)
-		if testResult.Result {
-			fmt.Printf(".")
-			testCount++
-		} else {
-			fmt.Printf("F")
-			failed = append(failed, testResult)
-			testCount++
-		}
-	}
-
-	for _, testResult := range failed {
-		fmt.Printf("\n%s\n", testResult.Desc)
-	}
-
-	fmt.Printf("\n\nCount: %d failed: %d\n", testCount, len(failed))
-	if len(failed) > 0 {
+	var outputer outputs.Outputer
+	outputer = outputs.Rspecish{}
+	if hasFail := outputer.Output(out); hasFail {
 		os.Exit(1)
 	}
+
 }
 
 func hasStdin() bool {

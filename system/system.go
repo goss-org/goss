@@ -10,6 +10,7 @@ import (
 	"github.com/codegangsta/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
+	"github.com/mitchellh/go-ps"
 )
 
 type Resource interface {
@@ -31,6 +32,8 @@ type System struct {
 	Dbus        *dbus.Conn
 	ports       map[string]GOnetstat.Process
 	portsOnce   sync.Once
+	procOnce    sync.Once
+	procMap     map[string][]ps.Process
 }
 
 func (s *System) Ports() map[string]GOnetstat.Process {
@@ -40,17 +43,24 @@ func (s *System) Ports() map[string]GOnetstat.Process {
 	return s.ports
 }
 
+func (s *System) ProcMap() map[string][]ps.Process {
+	s.procOnce.Do(func() {
+		s.procMap = GetProcs()
+	})
+	return s.procMap
+}
+
 func New(c *cli.Context) *System {
 	system := &System{
-		NewFile:     NewFile,
-		NewAddr:     NewAddr,
-		NewPort:     NewPort,
-		NewUser:     NewUser,
-		NewGroup:    NewGroup,
-		NewCommand:  NewCommand,
-		NewDNS:      NewDNS,
-		NewProcess:  NewProcess,
-		NewGossfile: NewGossfile,
+		NewFile:     NewDefFile,
+		NewAddr:     NewDefAddr,
+		NewPort:     NewDefPort,
+		NewUser:     NewDefUser,
+		NewGroup:    NewDefGroup,
+		NewCommand:  NewDefCommand,
+		NewDNS:      NewDefDNS,
+		NewProcess:  NewDefProcess,
+		NewGossfile: NewDefGossfile,
 	}
 
 	if util.IsRunningSystemd() {
@@ -67,9 +77,9 @@ func New(c *cli.Context) *System {
 
 	switch {
 	case c.GlobalString("package") == "rpm":
-		system.NewPackage = NewPackageRpm
+		system.NewPackage = NewRpmPackage
 	case c.GlobalString("package") == "deb":
-		system.NewPackage = NewPackageDeb
+		system.NewPackage = NewDebPackage
 	default:
 		system.NewPackage = detectPackage()
 	}
@@ -80,11 +90,11 @@ func New(c *cli.Context) *System {
 func detectPackage() func(string, *System) Package {
 	switch {
 	case isRpm():
-		return NewPackageRpm
+		return NewRpmPackage
 	case isDeb():
-		return NewPackageDeb
+		return NewDebPackage
 	default:
-		return NewPackageNull
+		return NewNullPackage
 	}
 }
 

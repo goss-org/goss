@@ -3,22 +3,52 @@ package system
 import (
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/mitchellh/go-ps"
 )
 
-type Process struct {
-	executable string
-	running    bool
+type Process interface {
+	Executable() string
+	Exists() (interface{}, error)
+	Running() (interface{}, error)
+	Pids() ([]int, error)
 }
 
-// FIXME: eww
-var processOnce sync.Once
-var pmap map[string][]ps.Process
+type DefProcess struct {
+	executable string
+	procMap    map[string][]ps.Process
+}
 
-func initProcesses() {
-	pmap = make(map[string][]ps.Process)
+func NewDefProcess(executable string, system *System) Process {
+	return &DefProcess{
+		executable: executable,
+		procMap:    system.ProcMap(),
+	}
+}
+
+func (p *DefProcess) Executable() string {
+	return p.executable
+}
+
+func (p *DefProcess) Exists() (interface{}, error) { return p.Running() }
+
+func (p *DefProcess) Pids() ([]int, error) {
+	var pids []int
+	for _, proc := range p.procMap[p.executable] {
+		pids = append(pids, proc.Pid())
+	}
+	return pids, nil
+}
+
+func (p *DefProcess) Running() (interface{}, error) {
+	if _, ok := p.procMap[p.executable]; ok {
+		return true, nil
+	}
+	return false, nil
+}
+
+func GetProcs() map[string][]ps.Process {
+	pmap := make(map[string][]ps.Process)
 	processes, err := ps.Processes()
 	if err != nil {
 		fmt.Println(err)
@@ -27,34 +57,6 @@ func initProcesses() {
 	for _, p := range processes {
 		pmap[p.Executable()] = append(pmap[p.Executable()], p)
 	}
-}
 
-func NewProcess(executable string, system *System) Process {
-	processOnce.Do(initProcesses)
-	return Process{executable: executable}
-}
-
-func (p *Process) Executable() string {
-	return p.executable
-}
-
-func (p *Process) Exists() (interface{}, error) { return p.Running() }
-
-func (p *Process) Pids() ([]int, error) {
-	var pids []int
-	for _, proc := range pmap[p.executable] {
-		pids = append(pids, proc.Pid())
-	}
-	//if proc, ok := pmap[p.executable]; ok {
-
-	//	return proc.Pid(), nil
-	//}
-	return pids, nil
-}
-
-func (p *Process) Running() (interface{}, error) {
-	if _, ok := pmap[p.executable]; ok {
-		return true, nil
-	}
-	return false, nil
+	return pmap
 }

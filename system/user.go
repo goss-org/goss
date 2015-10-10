@@ -7,23 +7,28 @@ import (
 	"github.com/aelsabbahy/goss/util/group"
 )
 
-type User struct {
+type User interface {
+	Username() string
+	Exists() (interface{}, error)
+	UID() (interface{}, error)
+	GID() (interface{}, error)
+	Groups() ([]string, error)
+	Home() (interface{}, error)
+}
+
+type DefUser struct {
 	username string
-	exists   bool
-	uid      string
-	groups   []string
-	home     string
 }
 
-func NewUser(username string, system *System) User {
-	return User{username: username}
+func NewDefUser(username string, system *System) User {
+	return &DefUser{username: username}
 }
 
-func (u *User) Username() string {
+func (u *DefUser) Username() string {
 	return u.username
 }
 
-func (u *User) Exists() (interface{}, error) {
+func (u *DefUser) Exists() (interface{}, error) {
 	_, err := user.Lookup(u.username)
 	if err != nil {
 		return false, nil
@@ -31,7 +36,7 @@ func (u *User) Exists() (interface{}, error) {
 	return true, nil
 }
 
-func (u *User) UID() (interface{}, error) {
+func (u *DefUser) UID() (interface{}, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return "", nil
@@ -40,7 +45,7 @@ func (u *User) UID() (interface{}, error) {
 	return user.Uid, nil
 }
 
-func (u *User) Gid() (interface{}, error) {
+func (u *DefUser) GID() (interface{}, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return "", nil
@@ -49,7 +54,7 @@ func (u *User) Gid() (interface{}, error) {
 	return user.Gid, nil
 }
 
-func (u *User) Home() (interface{}, error) {
+func (u *DefUser) Home() (interface{}, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return "", nil
@@ -58,7 +63,7 @@ func (u *User) Home() (interface{}, error) {
 	return user.HomeDir, nil
 }
 
-func (u *User) Groups() ([]string, error) {
+func (u *DefUser) Groups() ([]string, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return nil, err
