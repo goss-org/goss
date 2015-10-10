@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"io"
+	"os/exec"
 	"strconv"
 
 	"github.com/aelsabbahy/goss/util"
@@ -22,24 +23,31 @@ type DefCommand struct {
 	stdout     io.Reader
 	stderr     io.Reader
 	loaded     bool
+	err        error
 }
 
 func NewDefCommand(command string, system *System) Command {
 	return &DefCommand{command: command}
 }
 
-func (c *DefCommand) setup() {
+func (c *DefCommand) setup() error {
 	if c.loaded {
-		return
+		return c.err
 	}
 	c.loaded = true
 
 	cmd := util.NewCommand("sh", "-c", c.command)
-	cmd.Run()
+	err := cmd.Run()
 
+	// We don't care about ExitError since it's covered by status
+	if _, ok := err.(*exec.ExitError); !ok {
+		c.err = err
+	}
 	c.exitStatus = strconv.Itoa(cmd.Status)
 	c.stdout = bytes.NewReader(cmd.Stdout.Bytes())
 	c.stderr = bytes.NewReader(cmd.Stderr.Bytes())
+
+	return c.err
 }
 
 func (c *DefCommand) Command() string {
@@ -47,21 +55,21 @@ func (c *DefCommand) Command() string {
 }
 
 func (c *DefCommand) ExitStatus() (interface{}, error) {
-	c.setup()
+	err := c.setup()
 
-	return c.exitStatus, nil
+	return c.exitStatus, err
 }
 
 func (c *DefCommand) Stdout() (io.Reader, error) {
-	c.setup()
+	err := c.setup()
 
-	return c.stdout, nil
+	return c.stdout, err
 }
 
 func (c *DefCommand) Stderr() (io.Reader, error) {
-	c.setup()
+	err := c.setup()
 
-	return c.stderr, nil
+	return c.stderr, err
 }
 
 // Stub out

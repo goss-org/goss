@@ -8,8 +8,6 @@ import (
 
 type ServiceDbus struct {
 	service string
-	enabled bool
-	running bool
 	dbus    *dbus.Conn
 }
 

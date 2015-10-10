@@ -10,8 +10,6 @@ type Group interface {
 
 type DefGroup struct {
 	groupname string
-	exists    bool
-	gid       string
 }
 
 func NewDefGroup(groupname string, system *System) Group {

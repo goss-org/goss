@@ -17,7 +17,6 @@ type Process interface {
 
 type DefProcess struct {
 	executable string
-	running    bool
 }
 
 // FIXME: eww

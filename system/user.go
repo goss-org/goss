@@ -18,10 +18,6 @@ type User interface {
 
 type DefUser struct {
 	username string
-	exists   bool
-	uid      string
-	groups   []string
-	home     string
 }
 
 func NewDefUser(username string, system *System) User {

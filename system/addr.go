@@ -14,9 +14,8 @@ type Addr interface {
 }
 
 type DefAddr struct {
-	address   string
-	reachable bool
-	Timeout   int64
+	address string
+	Timeout int64
 }
 
 func NewDefAddr(address string, system *System) Addr {

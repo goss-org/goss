@@ -15,10 +15,8 @@ type Port interface {
 }
 
 type DefPort struct {
-	port      string
-	listening bool
-	ip        string
-	sysPorts  map[string]GOnetstat.Process
+	port     string
+	sysPorts map[string]GOnetstat.Process
 }
 
 func NewDefPort(port string, system *System) Port {

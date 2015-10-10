@@ -2,7 +2,6 @@
 // Any changes will be lost if this file is regenerated.
 // see https://github.com/cheekybits/genny
 
-
 package resource
 
 import (
@@ -12,6 +11,7 @@ import (
 )
 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type AddrMap map[string]*Addr
 
@@ -47,8 +47,8 @@ func (r *AddrMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type CommandMap map[string]*Command
 
@@ -84,8 +84,8 @@ func (r *CommandMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type DNSMap map[string]*DNS
 
@@ -121,8 +121,8 @@ func (r *DNSMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type FileMap map[string]*File
 
@@ -158,8 +158,8 @@ func (r *FileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type GossfileMap map[string]*Gossfile
 
@@ -195,8 +195,8 @@ func (r *GossfileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type GroupMap map[string]*Group
 
@@ -232,8 +232,8 @@ func (r *GroupMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type PackageMap map[string]*Package
 
@@ -269,8 +269,8 @@ func (r *PackageMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type PortMap map[string]*Port
 
@@ -306,8 +306,8 @@ func (r *PortMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type ProcessMap map[string]*Process
 
@@ -343,8 +343,8 @@ func (r *ProcessMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type ServiceMap map[string]*Service
 
@@ -380,8 +380,8 @@ func (r *ServiceMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
 
 type UserMap map[string]*User
 

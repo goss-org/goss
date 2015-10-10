@@ -23,8 +23,7 @@ type File interface {
 }
 
 type DefFile struct {
-	path, mode, owner, group, content string
-	fi                                os.FileInfo
+	path string
 }
 
 func NewDefFile(path string, system *System) File {
