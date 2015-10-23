@@ -21,33 +21,33 @@ func (f *File) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(f.ID(), "exists", f.Exists, sysFile.Exists))
+	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists))
 	if !f.Exists {
 		return results
 	}
 
 	if f.Mode != "" {
-		results = append(results, ValidateValue(f.ID(), "mode", f.Mode, sysFile.Mode))
+		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode))
 	}
 
 	if f.Owner != "" {
-		results = append(results, ValidateValue(f.ID(), "owner", f.Owner, sysFile.Owner))
+		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner))
 	}
 
 	if f.Group != "" {
-		results = append(results, ValidateValue(f.ID(), "group", f.Group, sysFile.Group))
+		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group))
 	}
 
 	if f.LinkedTo != "" {
-		results = append(results, ValidateValue(f.ID(), "linkedto", f.LinkedTo, sysFile.LinkedTo))
+		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo))
 	}
 
 	if f.Filetype != "" {
-		results = append(results, ValidateValue(f.ID(), "filetype", f.Filetype, sysFile.Filetype))
+		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype))
 	}
 
 	if len(f.Contains) != 0 {
-		results = append(results, ValidateContains(f.ID(), "contains", f.Contains, sysFile.Contains))
+		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains))
 	}
 
 	return results

@@ -18,11 +18,11 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(d.ID(), "resolveable", d.Resolveable, sysDNS.Resolveable))
+	results = append(results, ValidateValue(d, "resolveable", d.Resolveable, sysDNS.Resolveable))
 	if !d.Resolveable {
 		return results
 	}
-	results = append(results, ValidateValues(d.ID(), "addrs", d.Addrs, sysDNS.Addrs))
+	results = append(results, ValidateValues(d, "addrs", d.Addrs, sysDNS.Addrs))
 
 	return results
 }

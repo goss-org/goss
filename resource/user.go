@@ -19,14 +19,14 @@ func (u *User) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(u.ID(), "exists", u.Exists, sysuser.Exists))
+	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists))
 	if !u.Exists {
 		return results
 	}
-	results = append(results, ValidateValue(u.ID(), "uid", u.UID, sysuser.UID))
-	results = append(results, ValidateValue(u.ID(), "gid", u.GID, sysuser.GID))
-	results = append(results, ValidateValue(u.ID(), "home", u.Home, sysuser.Home))
-	results = append(results, ValidateValues(u.ID(), "groups", u.Groups, sysuser.Groups))
+	results = append(results, ValidateValue(u, "uid", u.UID, sysuser.UID))
+	results = append(results, ValidateValue(u, "gid", u.GID, sysuser.GID))
+	results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home))
+	results = append(results, ValidateValues(u, "groups", u.Groups, sysuser.Groups))
 
 	return results
 }

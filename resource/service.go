@@ -16,8 +16,8 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(s.ID(), "enabled", s.Enabled, sysservice.Enabled))
-	results = append(results, ValidateValue(s.ID(), "running", s.Running, sysservice.Running))
+	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled))
+	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running))
 
 	return results
 }

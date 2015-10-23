@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+type FakeIDer struct {
+	id string
+}
+
+func (f *FakeIDer) ID() string {
+	return f.id
+}
+
 var stringTests = []struct {
 	in, in2 interface{}
 	want    bool
@@ -23,7 +31,7 @@ func TestValidateValue(t *testing.T) {
 		inFunc := func() (interface{}, error) {
 			return c.in2, nil
 		}
-		got := ValidateValue("", "", c.in, inFunc)
+		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
@@ -35,7 +43,7 @@ func TestValidateValueErr(t *testing.T) {
 		inFunc := func() (interface{}, error) {
 			return c.in2, fmt.Errorf("some err")
 		}
-		got := ValidateValue("", "", c.in, inFunc)
+		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != false {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
 		}
@@ -47,7 +55,7 @@ func BenchmarkValidateValue(b *testing.B) {
 		return "foo", nil
 	}
 	for n := 0; n < b.N; n++ {
-		ValidateValue("", "", "foo", inFunc)
+		ValidateValue(&FakeIDer{""}, "", "foo", inFunc)
 	}
 }
 
@@ -66,7 +74,7 @@ func TestValidateValues(t *testing.T) {
 		inFunc := func() ([]string, error) {
 			return c.in2, nil
 		}
-		got := ValidateValues("", "", c.in, inFunc)
+		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
@@ -78,7 +86,7 @@ func TestValidateValuesErr(t *testing.T) {
 		inFunc := func() ([]string, error) {
 			return c.in2, fmt.Errorf("some err")
 		}
-		got := ValidateValues("", "", c.in, inFunc)
+		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != false {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
 		}
@@ -106,7 +114,7 @@ func TestValidateContains(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateContains("", "", c.in, inFunc)
+		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
@@ -119,7 +127,7 @@ func TestValidateContainsErr(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, fmt.Errorf("some err")
 		}
-		got := ValidateContains("", "", c.in, inFunc)
+		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
 		if got.Result != false {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
 		}

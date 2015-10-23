@@ -23,12 +23,12 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(c.ID(), "exit-status", c.ExitStatus, syscommand.ExitStatus))
+	results = append(results, ValidateValue(c, "exit-status", c.ExitStatus, syscommand.ExitStatus))
 	if len(c.Stdout) > 0 {
-		results = append(results, ValidateContains(c.ID(), "stdout", c.Stdout, syscommand.Stdout))
+		results = append(results, ValidateContains(c, "stdout", c.Stdout, syscommand.Stdout))
 	}
 	if len(c.Stderr) > 0 {
-		results = append(results, ValidateContains(c.ID(), "stderr", c.Stderr, syscommand.Stderr))
+		results = append(results, ValidateContains(c, "stderr", c.Stderr, syscommand.Stderr))
 	}
 
 	return results

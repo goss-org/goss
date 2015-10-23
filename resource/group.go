@@ -16,11 +16,11 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(g.ID(), "exists", g.Exists, sysgroup.Exists))
+	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists))
 	if !g.Exists {
 		return results
 	}
-	results = append(results, ValidateValue(g.ID(), "gid", g.Gid, sysgroup.Gid))
+	results = append(results, ValidateValue(g, "gid", g.Gid, sysgroup.Gid))
 
 	return results
 }

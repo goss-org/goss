@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/aelsabbahy/goss"
+	"github.com/aelsabbahy/goss/outputs"
 	"github.com/codegangsta/cli"
 	//"time"
 )
@@ -34,6 +35,19 @@ func main() {
 			Name:    "validate",
 			Aliases: []string{"v"},
 			Usage:   "Validate system",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "format, f",
+					Value:  "rspecish",
+					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
+					EnvVar: "GOSS_FMT",
+				},
+				cli.BoolFlag{
+					Name:   "no-color",
+					Usage:  "Force color off",
+					EnvVar: "GOSS_COLOR",
+				},
+			},
 			Action: func(c *cli.Context) {
 				goss.Run(c.GlobalString("gossfile"), c)
 			},

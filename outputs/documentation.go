@@ -5,25 +5,32 @@ import (
 	"github.com/fatih/color"
 )
 
-type Rspecish struct {
+type Documentation struct {
 	color bool
 }
 
-func (r *Rspecish) SetColor(t bool) {
-	r.color = t
+func (d *Documentation) SetColor(t bool) {
+	d.color = t
 }
 
-func (r Rspecish) Output(results <-chan resource.TestResult) (hasFail bool) {
-	green := color.New(color.FgGreen).PrintfFunc()
-	red := color.New(color.FgRed).PrintfFunc()
+func (r Documentation) Output(results <-chan resource.TestResult) (hasFail bool) {
 	testCount := 0
 	var failed []resource.TestResult
+	//var lastSeen string
 	for testResult := range results {
+		// Not sure if I want this or not
+		//seenKey := fmt.Sprintf("%s-%s", testResult.ResourceType, testResult.Title)
+		//if lastSeen != seenKey {
+		//	fmt.Println("")
+		//}
+		//lastSeen = seenKey
+
+		//fmt.Printf("%v: %s.\n", testResult.Duration, testResult.Desc)
 		if testResult.Result {
-			green(".")
+			color.Green(humanizeResult(testResult))
 			testCount++
 		} else {
-			red("F")
+			color.Red(humanizeResult(testResult))
 			failed = append(failed, testResult)
 			testCount++
 		}
@@ -33,6 +40,7 @@ func (r Rspecish) Output(results <-chan resource.TestResult) (hasFail bool) {
 		color.Red("\n\nFailures:")
 		for _, testResult := range failed {
 			color.Red(humanizeResult(testResult))
+			//fmt.Printf("\n%s\n", testResult.Desc)
 		}
 	}
 
@@ -45,5 +53,5 @@ func (r Rspecish) Output(results <-chan resource.TestResult) (hasFail bool) {
 }
 
 func init() {
-	RegisterOutputer("rspecish", &Rspecish{})
+	RegisterOutputer("documentation", &Documentation{})
 }

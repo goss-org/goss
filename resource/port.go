@@ -16,11 +16,11 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(p.ID(), "listening", p.Listening, sysPort.Listening))
+	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening))
 	if !p.Listening {
 		return results
 	}
-	results = append(results, ValidateValue(p.ID(), "ip", p.IP, sysPort.IP))
+	results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP))
 
 	return results
 }

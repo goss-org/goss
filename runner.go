@@ -12,6 +12,8 @@ import (
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/codegangsta/cli"
+	"github.com/fatih/color"
+	"github.com/mattn/go-isatty"
 )
 
 func Run(specFile string, c *cli.Context) {
@@ -76,9 +78,14 @@ func Run(specFile string, c *cli.Context) {
 		close(out)
 	}()
 
-	var outputer outputs.Outputer
-	outputer = outputs.Rspecish{}
-	if hasFail := outputer.Output(out, c); hasFail {
+	//var outputer outputs.Outputer
+	if c.Bool("no-color") || !isatty.IsTerminal(os.Stdout.Fd()) {
+		color.NoColor = true
+	}
+
+	outputer := outputs.GetOutputer(c.String("format"))
+
+	if hasFail := outputer.Output(out); hasFail {
 		os.Exit(1)
 	}
 

@@ -15,7 +15,7 @@ func (p *Process) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(p.ID(), "running", p.Running, sysProcess.Running))
+	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running))
 
 	return results
 }
