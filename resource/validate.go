@@ -4,25 +4,45 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
 )
 
+const (
+	Value = iota
+	Values
+	Contains
+)
+
 type TestResult struct {
-	Result   bool
-	Desc     string
-	Duration time.Duration
+	Result       bool
+	Title        string
+	ResourceType string
+	TestType     int
+	Property     string
+	Err          error
+	Expected     []string
+	Found        []string
+	Duration     time.Duration
 }
 
-func ValidateValues(title, property string, expectedValues []string, method func() ([]string, error)) TestResult {
+func ValidateValues(res IDer, property string, expectedValues []string, method func() ([]string, error)) TestResult {
+	title := res.ID()
+	typ := reflect.TypeOf(res)
+	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
 	foundValues, err := method()
 	if err != nil {
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Values,
+			Title:        title,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	set := make(map[string]bool)
@@ -39,42 +59,83 @@ func ValidateValues(title, property string, expectedValues []string, method func
 
 	if len(bad) > 0 {
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: [%s] not in: [%s]", title, property, strings.Join(bad, ", "), strings.Join(foundValues, ", ")),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Values,
+			Title:        title,
+			Property:     property,
+			Expected:     bad,
+			Found:        foundValues,
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
-		Result:   true,
-		Desc:     fmt.Sprintf("%s: %s matches", title, property),
-		Duration: time.Now().Sub(startTime),
+		Result:       true,
+		ResourceType: typs,
+		TestType:     Values,
+		Title:        title,
+		Property:     property,
+		Expected:     expectedValues,
+		Found:        foundValues,
+		Duration:     time.Now().Sub(startTime),
 	}
 
 }
 
-func ValidateValue(title, property, expectedValue interface{}, method func() (interface{}, error)) TestResult {
+func ValidateValue(res IDer, property string, expectedValue interface{}, method func() (interface{}, error)) TestResult {
+	title := res.ID()
+	typ := reflect.TypeOf(res)
+	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
 	foundValue, err := method()
 	if err != nil {
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Value,
+			Title:        title,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
 	if expectedValue == foundValue {
 		return TestResult{
-			Result:   true,
-			Desc:     fmt.Sprintf("%s: %s matches", title, property),
-			Duration: time.Now().Sub(startTime),
+			Result:       true,
+			ResourceType: typs,
+			TestType:     Value,
+			Title:        title,
+			Property:     property,
+			Expected:     []string{interfaceToString(expectedValue)},
+			Found:        []string{interfaceToString(foundValue)},
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
 	return TestResult{
-		Result:   false,
-		Desc:     fmt.Sprintf("%s: %s doesn't match, expect: %v found: %v", title, property, expectedValue, foundValue),
-		Duration: time.Now().Sub(startTime),
+		Result:       false,
+		ResourceType: typs,
+		TestType:     Value,
+		Title:        title,
+		Property:     property,
+		Expected:     []string{interfaceToString(expectedValue)},
+		Found:        []string{interfaceToString(foundValue)},
+		Duration:     time.Now().Sub(startTime),
+	}
+}
+
+// FIXME: Not sure I like this, perhaps move to more statically typed validations..
+func interfaceToString(i interface{}) string {
+	switch t := i.(type) {
+	case string:
+		return fmt.Sprintf("%s", t)
+	case bool:
+		return fmt.Sprintf("%t", t)
+	case int:
+		return fmt.Sprintf("%d", t)
+	default:
+		return fmt.Sprintf("Unexpected Type")
 	}
 }
 
@@ -160,14 +221,21 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	return slice
 }
 
-func ValidateContains(title, property string, expectedValues []string, method func() (io.Reader, error)) TestResult {
+func ValidateContains(res IDer, property string, expectedValues []string, method func() (io.Reader, error)) TestResult {
+	title := res.ID()
+	typ := reflect.TypeOf(res)
+	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
 	fh, err := method()
 	if err != nil {
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Contains,
+			Title:        title,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	scanner := bufio.NewScanner(fh)
@@ -192,9 +260,13 @@ func ValidateContains(title, property string, expectedValues []string, method fu
 	}
 	if err := scanner.Err(); err != nil {
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Contains,
+			Title:        title,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
@@ -214,17 +286,24 @@ func ValidateContains(title, property string, expectedValues []string, method fu
 	}
 
 	if len(bad) > 0 {
-		badPatterns := strings.Join(patternsToSlice(bad), ", ")
 		return TestResult{
-			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: patterns not found: [%s]", title, property, badPatterns),
-			Duration: time.Now().Sub(startTime),
+			Result:       false,
+			ResourceType: typs,
+			TestType:     Contains,
+			Title:        title,
+			Property:     property,
+			Expected:     patternsToSlice(bad),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
-		Result:   true,
-		Desc:     fmt.Sprintf("%s: %s matches", title, property),
-		Duration: time.Now().Sub(startTime),
+		Result:       true,
+		ResourceType: typs,
+		TestType:     Contains,
+		Title:        title,
+		Property:     property,
+		Expected:     expectedValues,
+		Duration:     time.Now().Sub(startTime),
 	}
 
 }

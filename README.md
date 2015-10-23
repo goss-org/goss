@@ -18,6 +18,7 @@
     * [global options](#global-options)
       * [-f gossfile](#-f-gossfile)
     * [validate, v - Validate the system](#validate-v---validate-the-system)
+      * [Flags](#flags)
     * [add, a - Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
       * [package - Add a package](#package---add-a-package)
         * [Attributes](#attributes)
@@ -160,6 +161,10 @@ $ cat goss.json | goss validate
 $ goss render | ssh remote-host 'goss validate'
 $ curl -s https://static/or/dynamic/goss.json | goss validate
 ```
+
+#### Flags
+* --format (output format)
+* --no-color (disable color)
 
 ### autoadd, aa - Auto add all matching resources to test suite
 automatically adds all **existing** resources matching the provided argument.

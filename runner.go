@@ -12,6 +12,7 @@ import (
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/codegangsta/cli"
+	"github.com/fatih/color"
 )
 
 func Run(specFile string, c *cli.Context) {
@@ -38,7 +39,7 @@ func Run(specFile string, c *cli.Context) {
 	}
 	configJSON := mergeJSONData(ReadJSONData(data), 0, path)
 
-	out := make(chan resource.TestResult)
+	out := make(chan []resource.TestResult)
 
 	in := make(chan resource.Resource)
 
@@ -63,9 +64,7 @@ func Run(specFile string, c *cli.Context) {
 		go func() {
 			defer wg.Done()
 			for f := range in {
-				for _, r := range f.Validate(sys) {
-					out <- r
-				}
+				out <- f.Validate(sys)
 			}
 
 		}()
@@ -76,8 +75,13 @@ func Run(specFile string, c *cli.Context) {
 		close(out)
 	}()
 
-	var outputer outputs.Outputer
-	outputer = outputs.Rspecish{}
+	//var outputer outputs.Outputer
+	if c.Bool("no-color") {
+		color.NoColor = true
+	}
+
+	outputer := outputs.GetOutputer(c.String("format"))
+
 	if hasFail := outputer.Output(out); hasFail {
 		os.Exit(1)
 	}

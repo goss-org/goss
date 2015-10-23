@@ -17,7 +17,7 @@ func (h *Addr) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(h.ID(), "reachable", h.Reachable, sysAddr.Reachable))
+	results = append(results, ValidateValue(h, "reachable", h.Reachable, sysAddr.Reachable))
 
 	return results
 }

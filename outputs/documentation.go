@@ -7,39 +7,40 @@ import (
 	"github.com/fatih/color"
 )
 
-type Rspecish struct{}
+type Documentation struct{}
 
-func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
+func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	testCount := 0
 	var failed []resource.TestResult
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			if testResult.Result {
-				fmt.Printf(green("."))
+				fmt.Println(humanizeResult(testResult))
 				testCount++
 			} else {
-				fmt.Printf(red("F"))
+				fmt.Println(humanizeResult(testResult))
 				failed = append(failed, testResult)
 				testCount++
 			}
 		}
+		fmt.Println("")
 	}
 
 	if len(failed) > 0 {
-		color.Red("\n\nFailures:")
+		color.Red("\nFailures:")
 		for _, testResult := range failed {
-			humanizeResult(testResult)
+			fmt.Println(humanizeResult(testResult))
 		}
 	}
 
 	if len(failed) > 0 {
-		color.Red("\n\nCount: %d failed: %d\n", testCount, len(failed))
+		color.Red("\nCount: %d failed: %d\n", testCount, len(failed))
 		return true
 	}
-	color.Green("\n\nCount: %d failed: %d\n", testCount, len(failed))
+	color.Green("\nCount: %d failed: %d\n", testCount, len(failed))
 	return false
 }
 
 func init() {
-	RegisterOutputer("rspecish", &Rspecish{})
+	RegisterOutputer("documentation", &Documentation{})
 }

@@ -16,11 +16,11 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(p.ID(), "installed", p.Installed, sysPkg.Installed))
+	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed))
 	if !p.Installed {
 		return results
 	}
-	results = append(results, ValidateValues(p.ID(), "version", p.Versions, sysPkg.Versions))
+	results = append(results, ValidateValues(p, "version", p.Versions, sysPkg.Versions))
 
 	return results
 }
