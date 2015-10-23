@@ -8,38 +8,42 @@ import (
 	"sync"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/fatih/color"
 )
 
 type Outputer interface {
 	Output(<-chan []resource.TestResult) bool
-	SetColor(bool)
 }
+
+var green = color.New(color.FgGreen).SprintfFunc()
+var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
 		return fmt.Sprintf("%s: %s: Error: %s", r.Title, r.Property, r.Err)
 	}
+
 	switch r.TestType {
 	case resource.Value:
 		if r.Result {
-			return fmt.Sprintf("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
+			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
 		} else {
-			return fmt.Sprintf("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
+			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
 		}
 	case resource.Values:
 		if r.Result {
-			return fmt.Sprintf("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return fmt.Sprintf("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		}
 	case resource.Contains:
 		if r.Result {
-			return fmt.Sprintf("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return fmt.Sprintf("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		}
 	default:
-		return fmt.Sprintf("Unexpected type %d", r.TestType)
+		return red("Unexpected type %d", r.TestType)
 	}
 }
 

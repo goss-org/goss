@@ -12,5 +12,3 @@ import:
     ref:     9bb9dbf0e53309fa81d26e7230cbb6cff9373cad
   - package: github.com/fatih/color
     ref:     76d423163af754ff6423d2d9be0057fbf03c57c2
-  - package: github.com/mattn/go-isatty
-    ref:     7fcbc72f853b92b5720db4a6b8482be612daef24

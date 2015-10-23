@@ -7,13 +7,7 @@ import (
 	"github.com/fatih/color"
 )
 
-type Documentation struct {
-	color bool
-}
-
-func (d *Documentation) SetColor(t bool) {
-	d.color = t
-}
+type Documentation struct{}
 
 func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	testCount := 0
@@ -21,10 +15,10 @@ func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail boo
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			if testResult.Result {
-				color.Green(humanizeResult(testResult))
+				fmt.Println(humanizeResult(testResult))
 				testCount++
 			} else {
-				color.Red(humanizeResult(testResult))
+				fmt.Println(humanizeResult(testResult))
 				failed = append(failed, testResult)
 				testCount++
 			}
@@ -35,7 +29,7 @@ func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail boo
 	if len(failed) > 0 {
 		color.Red("\nFailures:")
 		for _, testResult := range failed {
-			color.Red(humanizeResult(testResult))
+			fmt.Println(humanizeResult(testResult))
 		}
 	}
 

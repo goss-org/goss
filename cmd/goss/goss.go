@@ -45,7 +45,7 @@ func main() {
 				cli.BoolFlag{
 					Name:   "no-color",
 					Usage:  "Force color off",
-					EnvVar: "GOSS_COLOR",
+					EnvVar: "GOSS_NOCOLOR",
 				},
 			},
 			Action: func(c *cli.Context) {

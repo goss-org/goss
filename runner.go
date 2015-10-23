@@ -13,7 +13,6 @@ import (
 	"github.com/aelsabbahy/goss/system"
 	"github.com/codegangsta/cli"
 	"github.com/fatih/color"
-	"github.com/mattn/go-isatty"
 )
 
 func Run(specFile string, c *cli.Context) {
@@ -77,7 +76,7 @@ func Run(specFile string, c *cli.Context) {
 	}()
 
 	//var outputer outputs.Outputer
-	if c.Bool("no-color") || !isatty.IsTerminal(os.Stdout.Fd()) {
+	if c.Bool("no-color") {
 		color.NoColor = true
 	}
 

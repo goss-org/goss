@@ -1,30 +1,24 @@
 package outputs
 
 import (
+	"fmt"
+
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/fatih/color"
 )
 
-type Rspecish struct {
-	color bool
-}
-
-func (r *Rspecish) SetColor(t bool) {
-	r.color = t
-}
+type Rspecish struct{}
 
 func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
-	green := color.New(color.FgGreen).PrintfFunc()
-	red := color.New(color.FgRed).PrintfFunc()
 	testCount := 0
 	var failed []resource.TestResult
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			if testResult.Result {
-				green(".")
+				fmt.Printf(green("."))
 				testCount++
 			} else {
-				red("F")
+				fmt.Printf(red("F"))
 				failed = append(failed, testResult)
 				testCount++
 			}
@@ -34,7 +28,7 @@ func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	if len(failed) > 0 {
 		color.Red("\n\nFailures:")
 		for _, testResult := range failed {
-			color.Red(humanizeResult(testResult))
+			humanizeResult(testResult)
 		}
 	}
 
