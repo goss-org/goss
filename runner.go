@@ -78,7 +78,7 @@ func Run(specFile string, c *cli.Context) {
 
 	var outputer outputs.Outputer
 	outputer = outputs.Rspecish{}
-	if hasFail := outputer.Output(out); hasFail {
+	if hasFail := outputer.Output(out, c); hasFail {
 		os.Exit(1)
 	}
 

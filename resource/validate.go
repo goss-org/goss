@@ -9,9 +9,20 @@ import (
 	"time"
 )
 
+const (
+	Value = iota
+	Values
+	Contains
+)
+
 type TestResult struct {
 	Result   bool
-	Desc     string
+	Title    string
+	Type     int
+	Property string
+	Err      error
+	Expected []string
+	Found    []string
 	Duration time.Duration
 }
 
@@ -21,7 +32,11 @@ func ValidateValues(title, property string, expectedValues []string, method func
 	if err != nil {
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
+			Type:     Values,
+			Title:    title,
+			Property: property,
+			Err:      err,
+			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
@@ -40,25 +55,39 @@ func ValidateValues(title, property string, expectedValues []string, method func
 	if len(bad) > 0 {
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: [%s] not in: [%s]", title, property, strings.Join(bad, ", "), strings.Join(foundValues, ", ")),
+			Type:     Values,
+			Title:    title,
+			Property: property,
+			Expected: bad,
+			Found:    foundValues,
+			//Desc:     fmt.Sprintf("%s: %s: [%s] not in: [%s]", title, property, strings.Join(bad, ", "), strings.Join(foundValues, ", ")),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
 		Result:   true,
-		Desc:     fmt.Sprintf("%s: %s matches", title, property),
+		Type:     Values,
+		Title:    title,
+		Property: property,
+		Expected: bad,
+		Found:    foundValues,
+		//Desc:     fmt.Sprintf("%s: %s matches", title, property),
 		Duration: time.Now().Sub(startTime),
 	}
 
 }
 
-func ValidateValue(title, property, expectedValue interface{}, method func() (interface{}, error)) TestResult {
+func ValidateValue(title, property string, expectedValue interface{}, method func() (interface{}, error)) TestResult {
 	startTime := time.Now()
 	foundValue, err := method()
 	if err != nil {
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
+			Type:     Value,
+			Title:    title,
+			Property: property,
+			Err:      err,
+			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
@@ -66,15 +95,38 @@ func ValidateValue(title, property, expectedValue interface{}, method func() (in
 	if expectedValue == foundValue {
 		return TestResult{
 			Result:   true,
-			Desc:     fmt.Sprintf("%s: %s matches", title, property),
+			Type:     Value,
+			Title:    title,
+			Property: property,
+			Expected: []string{interfaceToString(expectedValue)},
+			Found:    []string{interfaceToString(foundValue)},
+			//Desc:     fmt.Sprintf("%s: %s matches", title, property),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
 
 	return TestResult{
 		Result:   false,
-		Desc:     fmt.Sprintf("%s: %s doesn't match, expect: %v found: %v", title, property, expectedValue, foundValue),
+		Type:     Value,
+		Title:    title,
+		Property: property,
+		Expected: []string{interfaceToString(expectedValue)},
+		Found:    []string{interfaceToString(foundValue)},
+		//Desc:     fmt.Sprintf("%s: %s doesn't match, expect: %v found: %v", title, property, expectedValue, foundValue),
 		Duration: time.Now().Sub(startTime),
+	}
+}
+
+func interfaceToString(i interface{}) string {
+	switch t := i.(type) {
+	case string:
+		return fmt.Sprintf("%s", t)
+	case bool:
+		return fmt.Sprintf("%t", t)
+	case int:
+		return fmt.Sprintf("%d", t)
+	default:
+		return fmt.Sprintf("Unexpected Type")
 	}
 }
 
@@ -166,7 +218,11 @@ func ValidateContains(title, property string, expectedValues []string, method fu
 	if err != nil {
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
+			Type:     Contains,
+			Title:    title,
+			Property: property,
+			Err:      err,
+			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
@@ -193,7 +249,11 @@ func ValidateContains(title, property string, expectedValues []string, method fu
 	if err := scanner.Err(); err != nil {
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
+			Type:     Contains,
+			Title:    title,
+			Property: property,
+			Err:      err,
+			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
@@ -214,16 +274,24 @@ func ValidateContains(title, property string, expectedValues []string, method fu
 	}
 
 	if len(bad) > 0 {
-		badPatterns := strings.Join(patternsToSlice(bad), ", ")
+		//badPatterns := strings.Join(patternsToSlice(bad), ", ")
 		return TestResult{
 			Result:   false,
-			Desc:     fmt.Sprintf("%s: %s: patterns not found: [%s]", title, property, badPatterns),
+			Type:     Contains,
+			Title:    title,
+			Property: property,
+			Expected: patternsToSlice(bad),
+			//Desc:     fmt.Sprintf("%s: %s: patterns not found: [%s]", title, property, badPatterns),
 			Duration: time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
 		Result:   true,
-		Desc:     fmt.Sprintf("%s: %s matches", title, property),
+		Type:     Contains,
+		Title:    title,
+		Property: property,
+		Found:    patternsToSlice(found),
+		//Desc:     fmt.Sprintf("%s: %s matches", title, property),
 		Duration: time.Now().Sub(startTime),
 	}
 
