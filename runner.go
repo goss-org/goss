@@ -40,7 +40,7 @@ func Run(specFile string, c *cli.Context) {
 	}
 	configJSON := mergeJSONData(ReadJSONData(data), 0, path)
 
-	out := make(chan resource.TestResult)
+	out := make(chan []resource.TestResult)
 
 	in := make(chan resource.Resource)
 
@@ -65,9 +65,7 @@ func Run(specFile string, c *cli.Context) {
 		go func() {
 			defer wg.Done()
 			for f := range in {
-				for _, r := range f.Validate(sys) {
-					out <- r
-				}
+				out <- f.Validate(sys)
 			}
 
 		}()

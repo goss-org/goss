@@ -13,19 +13,21 @@ func (r *Rspecish) SetColor(t bool) {
 	r.color = t
 }
 
-func (r Rspecish) Output(results <-chan resource.TestResult) (hasFail bool) {
+func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	green := color.New(color.FgGreen).PrintfFunc()
 	red := color.New(color.FgRed).PrintfFunc()
 	testCount := 0
 	var failed []resource.TestResult
-	for testResult := range results {
-		if testResult.Result {
-			green(".")
-			testCount++
-		} else {
-			red("F")
-			failed = append(failed, testResult)
-			testCount++
+	for resultGroup := range results {
+		for _, testResult := range resultGroup {
+			if testResult.Result {
+				green(".")
+				testCount++
+			} else {
+				red("F")
+				failed = append(failed, testResult)
+				testCount++
+			}
 		}
 	}
 

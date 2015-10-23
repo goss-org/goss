@@ -1,6 +1,8 @@
 package outputs
 
 import (
+	"fmt"
+
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/fatih/color"
 )
@@ -13,34 +15,27 @@ func (d *Documentation) SetColor(t bool) {
 	d.color = t
 }
 
-func (r Documentation) Output(results <-chan resource.TestResult) (hasFail bool) {
+func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	testCount := 0
 	var failed []resource.TestResult
-	//var lastSeen string
-	for testResult := range results {
-		// Not sure if I want this or not
-		//seenKey := fmt.Sprintf("%s-%s", testResult.ResourceType, testResult.Title)
-		//if lastSeen != seenKey {
-		//	fmt.Println("")
-		//}
-		//lastSeen = seenKey
-
-		//fmt.Printf("%v: %s.\n", testResult.Duration, testResult.Desc)
-		if testResult.Result {
-			color.Green(humanizeResult(testResult))
-			testCount++
-		} else {
-			color.Red(humanizeResult(testResult))
-			failed = append(failed, testResult)
-			testCount++
+	for resultGroup := range results {
+		for _, testResult := range resultGroup {
+			if testResult.Result {
+				color.Green(humanizeResult(testResult))
+				testCount++
+			} else {
+				color.Red(humanizeResult(testResult))
+				failed = append(failed, testResult)
+				testCount++
+			}
 		}
+		fmt.Println("")
 	}
 
 	if len(failed) > 0 {
-		color.Red("\n\nFailures:")
+		color.Red("\nFailures:")
 		for _, testResult := range failed {
 			color.Red(humanizeResult(testResult))
-			//fmt.Printf("\n%s\n", testResult.Desc)
 		}
 	}
 

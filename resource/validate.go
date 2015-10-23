@@ -42,8 +42,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 			Title:        title,
 			Property:     property,
 			Err:          err,
-			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	set := make(map[string]bool)
@@ -67,8 +66,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 			Property:     property,
 			Expected:     bad,
 			Found:        foundValues,
-			//Desc:     fmt.Sprintf("%s: %s: [%s] not in: [%s]", title, property, strings.Join(bad, ", "), strings.Join(foundValues, ", ")),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
@@ -79,8 +77,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 		Property:     property,
 		Expected:     expectedValues,
 		Found:        foundValues,
-		//Desc:     fmt.Sprintf("%s: %s matches", title, property),
-		Duration: time.Now().Sub(startTime),
+		Duration:     time.Now().Sub(startTime),
 	}
 
 }
@@ -99,8 +96,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 			Title:        title,
 			Property:     property,
 			Err:          err,
-			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
@@ -113,8 +109,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 			Property:     property,
 			Expected:     []string{interfaceToString(expectedValue)},
 			Found:        []string{interfaceToString(foundValue)},
-			//Desc:     fmt.Sprintf("%s: %s matches", title, property),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
@@ -126,8 +121,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 		Property:     property,
 		Expected:     []string{interfaceToString(expectedValue)},
 		Found:        []string{interfaceToString(foundValue)},
-		//Desc:     fmt.Sprintf("%s: %s doesn't match, expect: %v found: %v", title, property, expectedValue, foundValue),
-		Duration: time.Now().Sub(startTime),
+		Duration:     time.Now().Sub(startTime),
 	}
 }
 
@@ -240,8 +234,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Title:        title,
 			Property:     property,
 			Err:          err,
-			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	scanner := bufio.NewScanner(fh)
@@ -272,8 +265,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Title:        title,
 			Property:     property,
 			Err:          err,
-			//Desc:     fmt.Sprintf("%s: %s: Error: %s", title, property, err),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 
@@ -293,7 +285,6 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 	}
 
 	if len(bad) > 0 {
-		//badPatterns := strings.Join(patternsToSlice(bad), ", ")
 		return TestResult{
 			Result:       false,
 			ResourceType: typs,
@@ -301,8 +292,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Title:        title,
 			Property:     property,
 			Expected:     patternsToSlice(bad),
-			//Desc:     fmt.Sprintf("%s: %s: patterns not found: [%s]", title, property, badPatterns),
-			Duration: time.Now().Sub(startTime),
+			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
@@ -312,8 +302,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		Title:        title,
 		Property:     property,
 		Expected:     expectedValues,
-		//Desc:     fmt.Sprintf("%s: %s matches", title, property),
-		Duration: time.Now().Sub(startTime),
+		Duration:     time.Now().Sub(startTime),
 	}
 
 }

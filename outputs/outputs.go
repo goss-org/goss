@@ -11,7 +11,7 @@ import (
 )
 
 type Outputer interface {
-	Output(<-chan resource.TestResult) bool
+	Output(<-chan []resource.TestResult) bool
 	SetColor(bool)
 }
 
