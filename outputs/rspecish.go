@@ -28,7 +28,7 @@ func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	if len(failed) > 0 {
 		color.Red("\n\nFailures:")
 		for _, testResult := range failed {
-			humanizeResult(testResult)
+			fmt.Println(humanizeResult(testResult))
 		}
 	}
 
