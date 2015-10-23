@@ -77,7 +77,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 		TestType:     Values,
 		Title:        title,
 		Property:     property,
-		Expected:     bad,
+		Expected:     expectedValues,
 		Found:        foundValues,
 		//Desc:     fmt.Sprintf("%s: %s matches", title, property),
 		Duration: time.Now().Sub(startTime),

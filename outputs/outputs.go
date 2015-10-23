@@ -20,17 +20,17 @@ func humanizeResult(r resource.TestResult) string {
 		return fmt.Sprintf("%s: %s: Error: %s", r.Title, r.Property, r.Err)
 	}
 	switch r.TestType {
-	case resource.Values:
-		if r.Result {
-			return fmt.Sprintf("%s: %s: %s: matches", r.ResourceType, r.Title, r.Property)
-		} else {
-			return fmt.Sprintf("%s: %s: %s: [%s] not in: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "), strings.Join(r.Found, ", "))
-		}
 	case resource.Value:
 		if r.Result {
 			return fmt.Sprintf("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
 		} else {
 			return fmt.Sprintf("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
+		}
+	case resource.Values:
+		if r.Result {
+			return fmt.Sprintf("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+		} else {
+			return fmt.Sprintf("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		}
 	case resource.Contains:
 		if r.Result {
