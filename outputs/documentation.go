@@ -34,10 +34,10 @@ func (r Documentation) Output(results <-chan []resource.TestResult) (hasFail boo
 	}
 
 	if len(failed) > 0 {
-		color.Red("\n\nCount: %d failed: %d\n", testCount, len(failed))
+		color.Red("\nCount: %d failed: %d\n", testCount, len(failed))
 		return true
 	}
-	color.Green("\n\nCount: %d failed: %d\n", testCount, len(failed))
+	color.Green("\nCount: %d failed: %d\n", testCount, len(failed))
 	return false
 }
 
