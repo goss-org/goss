@@ -125,6 +125,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 	}
 }
 
+// FIXME: Not sure I like this, perhaps move to more statically typed validations..
 func interfaceToString(i interface{}) string {
 	switch t := i.(type) {
 	case string:
