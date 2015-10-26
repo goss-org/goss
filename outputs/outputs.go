@@ -20,27 +20,27 @@ var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
-		return fmt.Sprintf("%s: %s: Error: %s", r.Title, r.Property, r.Err)
+		return red("%s: %s: Error: %s", r.Title, r.Property, r.Err)
 	}
 
 	switch r.TestType {
 	case resource.Value:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
 		} else {
 			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
 		}
 	case resource.Values:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	case resource.Contains:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	default:
 		return red("Unexpected type %d", r.TestType)
@@ -84,4 +84,22 @@ func GetOutputer(name string) Outputer {
 		os.Exit(1)
 	}
 	return outputers[name]
+}
+
+func subtractSlice(x, y []string) []string {
+	m := make(map[string]bool)
+
+	for _, y := range y {
+		m[y] = true
+	}
+
+	var ret []string
+	for _, x := range x {
+		if m[x] {
+			continue
+		}
+		ret = append(ret, x)
+	}
+
+	return ret
 }

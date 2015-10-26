@@ -17,7 +17,7 @@ const (
 )
 
 type TestResult struct {
-	Result       bool
+	Successful   bool
 	Title        string
 	ResourceType string
 	TestType     int
@@ -36,7 +36,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 	foundValues, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Values,
 			Title:        title,
@@ -59,18 +59,18 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 
 	if len(bad) > 0 {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Values,
 			Title:        title,
 			Property:     property,
-			Expected:     bad,
+			Expected:     expectedValues,
 			Found:        foundValues,
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
-		Result:       true,
+		Successful:   true,
 		ResourceType: typs,
 		TestType:     Values,
 		Title:        title,
@@ -90,7 +90,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 	foundValue, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Value,
 			Title:        title,
@@ -102,7 +102,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 
 	if expectedValue == foundValue {
 		return TestResult{
-			Result:       true,
+			Successful:   true,
 			ResourceType: typs,
 			TestType:     Value,
 			Title:        title,
@@ -114,7 +114,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 	}
 
 	return TestResult{
-		Result:       false,
+		Successful:   false,
 		ResourceType: typs,
 		TestType:     Value,
 		Title:        title,
@@ -229,7 +229,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 	fh, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
@@ -247,7 +247,10 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		i := 0
 		for _, pat := range notfound {
 			if pat.Match(line) {
-				found = append(found, pat)
+				// Found it, but wasn't supposed to, don't mark it as found, but remove it from search
+				if !pat.Inverse() {
+					found = append(found, pat)
+				}
 				continue
 			}
 			notfound[i] = pat
@@ -260,7 +263,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 	}
 	if err := scanner.Err(); err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
@@ -270,39 +273,34 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		}
 	}
 
-	var bad []patternMatcher
 	for _, pat := range notfound {
-		// pat.Pattern() == "" is for empty io.Reader
+		// Didn't find it, but we didn't want to.. so we mark it as found
+		// Empty pattern should match even if input to scanner is empty
 		if pat.Inverse() || pat.Pattern() == "" {
-			continue
-		}
-		bad = append(bad, pat)
-	}
-
-	for _, pat := range found {
-		if pat.Inverse() {
-			bad = append(bad, pat)
+			found = append(found, pat)
 		}
 	}
 
-	if len(bad) > 0 {
+	if len(expectedValues) != len(found) {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
 			Property:     property,
-			Expected:     patternsToSlice(bad),
+			Expected:     expectedValues,
+			Found:        patternsToSlice(found),
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
 	return TestResult{
-		Result:       true,
+		Successful:   true,
 		ResourceType: typs,
 		TestType:     Contains,
 		Title:        title,
 		Property:     property,
 		Expected:     expectedValues,
+		Found:        patternsToSlice(found),
 		Duration:     time.Now().Sub(startTime),
 	}
 

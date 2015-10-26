@@ -32,8 +32,8 @@ func TestValidateValue(t *testing.T) {
 			return c.in2, nil
 		}
 		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
+		if got.Successful != c.want {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
 		}
 	}
 }
@@ -44,8 +44,8 @@ func TestValidateValueErr(t *testing.T) {
 			return c.in2, fmt.Errorf("some err")
 		}
 		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
+		if got.Successful != false {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
 		}
 	}
 }
@@ -75,8 +75,8 @@ func TestValidateValues(t *testing.T) {
 			return c.in2, nil
 		}
 		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
+		if got.Successful != c.want {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
 		}
 	}
 }
@@ -87,8 +87,8 @@ func TestValidateValuesErr(t *testing.T) {
 			return c.in2, fmt.Errorf("some err")
 		}
 		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
+		if got.Successful != false {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
 		}
 	}
 }
@@ -115,8 +115,8 @@ func TestValidateContains(t *testing.T) {
 			return reader, nil
 		}
 		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
+		if got.Successful != c.want {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
 		}
 	}
 }
@@ -128,8 +128,8 @@ func TestValidateContainsErr(t *testing.T) {
 			return reader, fmt.Errorf("some err")
 		}
 		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Result != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Result, false)
+		if got.Successful != false {
+			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
 		}
 	}
 }
