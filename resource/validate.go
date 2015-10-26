@@ -17,7 +17,7 @@ const (
 )
 
 type TestResult struct {
-	Result       bool
+	Successful   bool
 	Title        string
 	ResourceType string
 	TestType     int
@@ -36,7 +36,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 	foundValues, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Values,
 			Title:        title,
@@ -59,7 +59,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 
 	if len(bad) > 0 {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Values,
 			Title:        title,
@@ -70,7 +70,7 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 		}
 	}
 	return TestResult{
-		Result:       true,
+		Successful:   true,
 		ResourceType: typs,
 		TestType:     Values,
 		Title:        title,
@@ -90,7 +90,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 	foundValue, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Value,
 			Title:        title,
@@ -102,7 +102,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 
 	if expectedValue == foundValue {
 		return TestResult{
-			Result:       true,
+			Successful:   true,
 			ResourceType: typs,
 			TestType:     Value,
 			Title:        title,
@@ -114,7 +114,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, method 
 	}
 
 	return TestResult{
-		Result:       false,
+		Successful:   false,
 		ResourceType: typs,
 		TestType:     Value,
 		Title:        title,
@@ -229,7 +229,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 	fh, err := method()
 	if err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
@@ -263,7 +263,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 	}
 	if err := scanner.Err(); err != nil {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
@@ -283,7 +283,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 
 	if len(expectedValues) != len(found) {
 		return TestResult{
-			Result:       false,
+			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
 			Title:        title,
@@ -294,7 +294,7 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		}
 	}
 	return TestResult{
-		Result:       true,
+		Successful:   true,
 		ResourceType: typs,
 		TestType:     Contains,
 		Title:        title,

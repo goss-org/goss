@@ -25,19 +25,19 @@ func humanizeResult(r resource.TestResult) string {
 
 	switch r.TestType {
 	case resource.Value:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
 		} else {
 			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
 		}
 	case resource.Values:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
 			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	case resource.Contains:
-		if r.Result {
+		if r.Successful {
 			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
 			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))

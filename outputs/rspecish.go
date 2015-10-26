@@ -14,29 +14,30 @@ func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
 	var failed []resource.TestResult
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
-			if testResult.Result {
+			if testResult.Successful {
 				fmt.Printf(green("."))
-				testCount++
 			} else {
 				fmt.Printf(red("F"))
 				failed = append(failed, testResult)
-				testCount++
 			}
+			testCount++
 		}
 	}
 
+	fmt.Print("\n\n")
 	if len(failed) > 0 {
-		color.Red("\n\nFailures:")
+		color.Red("Failures:")
 		for _, testResult := range failed {
 			fmt.Println(humanizeResult(testResult))
 		}
+		fmt.Print("\n")
 	}
 
 	if len(failed) > 0 {
-		color.Red("\n\nCount: %d failed: %d\n", testCount, len(failed))
+		color.Red("Count: %d failed: %d\n", testCount, len(failed))
 		return true
 	}
-	color.Green("\n\nCount: %d failed: %d\n", testCount, len(failed))
+	color.Green("Count: %d failed: %d\n", testCount, len(failed))
 	return false
 }
 
