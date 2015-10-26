@@ -34,13 +34,13 @@ func humanizeResult(r resource.TestResult) string {
 		if r.Result {
 			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	case resource.Contains:
 		if r.Result {
 			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	default:
 		return red("Unexpected type %d", r.TestType)
@@ -84,4 +84,22 @@ func GetOutputer(name string) Outputer {
 		os.Exit(1)
 	}
 	return outputers[name]
+}
+
+func subtractSlice(x, y []string) []string {
+	m := make(map[string]bool)
+
+	for _, y := range y {
+		m[y] = true
+	}
+
+	var ret []string
+	for _, x := range x {
+		if m[x] {
+			continue
+		}
+		ret = append(ret, x)
+	}
+
+	return ret
 }
