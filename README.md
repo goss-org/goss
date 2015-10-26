@@ -74,7 +74,7 @@ Service:
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.6/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.7/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
 ```
 
 ## Usage
