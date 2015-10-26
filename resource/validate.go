@@ -273,14 +273,15 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		}
 	}
 
-	// Didn't find it, but we didn't want to.. so we mark it as found
 	for _, pat := range notfound {
-		if pat.Inverse() {
+		// Didn't find it, but we didn't want to.. so we mark it as found
+		// Empty pattern should match even if input to scanner is empty
+		if pat.Inverse() || pat.Pattern() == "" {
 			found = append(found, pat)
 		}
 	}
 
-	if !reflect.DeepEqual(sliceToPatterns(expectedValues), found) {
+	if len(expectedValues) != len(found) {
 		return TestResult{
 			Result:       false,
 			ResourceType: typs,
