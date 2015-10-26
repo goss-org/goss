@@ -20,7 +20,7 @@ var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
-		return fmt.Sprintf("%s: %s: Error: %s", r.Title, r.Property, r.Err)
+		return red("%s: %s: Error: %s", r.Title, r.Property, r.Err)
 	}
 
 	switch r.TestType {
