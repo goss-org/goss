@@ -334,8 +334,8 @@ Adding to './goss.json':
 ```
 ##### Attributes
 * service **(required)** - name of service
-* enabled - will start on startup
-* running - is currently running
+* enabled **(required)** - will start on startup
+* running **(required)** - is currently running
 
 #### user - Add a user
 ```bash

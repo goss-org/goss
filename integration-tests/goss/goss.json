@@ -65,6 +65,9 @@
             ],
             "home": "/var/www"
         },
+        "root": {
+            "exists": true
+        },
         "foobar": {
             "exists": false
         }
