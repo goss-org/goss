@@ -103,7 +103,7 @@
             "timeout": 500
         }
     },
-    "processe": {
+    "process": {
         "foobar": {
             "running": false
         },

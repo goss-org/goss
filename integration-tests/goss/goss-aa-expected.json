@@ -19,7 +19,7 @@
             "running": true
         }
     },
-    "processe": {
+    "process": {
         "httpd": {
             "running": true
         }

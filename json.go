@@ -26,7 +26,7 @@ type ConfigJSON struct {
 	Groups    resource.GroupMap    `json:"group,omitempty"`
 	Commands  resource.CommandMap  `json:"command,omitempty"`
 	DNS       resource.DNSMap      `json:"dns,omitempty"`
-	Processes resource.ProcessMap  `json:"processe,omitempty"`
+	Processes resource.ProcessMap  `json:"process,omitempty"`
 	Gossfiles resource.GossfileMap `json:"gossfile,omitempty"`
 }
 
