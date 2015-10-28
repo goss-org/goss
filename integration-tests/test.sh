@@ -19,7 +19,7 @@ fi
 out=$(docker exec goss_int_test bash -c 'time /tmp/goss/goss -g /tmp/goss/goss.json validate')
 echo "$out"
 
-grep -q 'Count: 36 failed: 0' <<<"$out"
+grep -q 'Count: 37 failed: 0' <<<"$out"
 exit_code=$?
 
 docker exec goss_int_test bash -c 'time /tmp/goss/generate_goss.sh > /dev/null'
