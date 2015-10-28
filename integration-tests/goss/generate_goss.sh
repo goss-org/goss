@@ -42,6 +42,8 @@ goss a "${args[@]}" kernel-param kernel.ostype
 
 goss a "${args[@]}" mount /dev
 
+goss a "${args[@]}" http https://www.google.com
+
 # Auto-add
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
 # Validate that duplicates are ignored

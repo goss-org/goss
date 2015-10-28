@@ -16,8 +16,9 @@ import (
 func AddResources(fileName, resourceName string, keys []string, c *cli.Context) error {
 	setStoreFormatFromFileName(fileName)
 	config := util.Config{
-		IgnoreList: c.GlobalStringSlice("exclude-attr"),
-		Timeout:    int(c.Duration("timeout") / time.Millisecond),
+		IgnoreList:    c.GlobalStringSlice("exclude-attr"),
+		Timeout:       int(c.Duration("timeout") / time.Millisecond),
+		AllowInsecure: c.Bool("insecure"),
 	}
 
 	var gossConfig GossConfig
@@ -140,6 +141,15 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 			os.Exit(1)
 		}
 		resourcePrint(fileName, res)
+	case "HTTP":
+		res, err := gossConfig.HTTPs.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		resourcePrint(fileName, res)
+	default:
+		panic("Undefined resource name: " + resourceName)
 	}
 
 	return nil
@@ -176,6 +186,13 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *cli.
 	// file
 	if strings.Contains(key, "/") {
 		if res, _, ok := gossConfig.Files.AppendSysResourceIfExists(key, sys); ok == true {
+			resourcePrint(fileName, res)
+		}
+	}
+
+	// HTTPs
+	if strings.HasPrefix(key, "http://") || strings.HasPrefix(key, "https://") {
+		if res, _, ok := gossConfig.HTTPs.AppendSysResourceIfExists(key, sys); ok == true {
 			resourcePrint(fileName, res)
 		}
 	}

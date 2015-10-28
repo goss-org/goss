@@ -33,6 +33,7 @@ type System struct {
 	NewKernelParam func(string, *System, util2.Config) KernelParam
 	NewMount       func(string, *System, util2.Config) Mount
 	NewInterface   func(string, *System, util2.Config) Interface
+	NewHTTP         func(string, *System, util2.Config) HTTP
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -67,6 +68,7 @@ func New(c *cli.Context) *System {
 		NewKernelParam: NewDefKernelParam,
 		NewMount:       NewDefMount,
 		NewInterface:   NewDefInterface,
+		NewHTTP:         NewDefHTTP,
 	}
 	sys.detectService()
 	sys.detectPackage(c)

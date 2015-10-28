@@ -112,5 +112,13 @@
                 }
             }
         }
+    },
+    "http": {
+        "https://www.google.com": {
+            "status": 200,
+            "allow-insecure": false,
+            "timeout": 5000,
+            "body": []
+        }
     }
 }

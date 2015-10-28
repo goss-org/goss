@@ -1,6 +1,7 @@
 package util
 
 type Config struct {
-	IgnoreList []string
-	Timeout    int
+	IgnoreList    []string
+	Timeout       int
+	AllowInsecure bool
 }
