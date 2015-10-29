@@ -17,9 +17,7 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening))
-	if !p.Listening {
-		return results
-	}
+
 	if p.IP != "" {
 		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP))
 	}

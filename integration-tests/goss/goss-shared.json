@@ -1,12 +1,14 @@
 {
     "file": {
-        "/etc/httpd/conf.d/welcome.conf": {
+        "/etc/passwd": {
             "exists": true,
             "mode": "0644",
             "owner": "root",
             "group": "root",
             "filetype": "file",
-            "contains": []
+            "contains": [
+                "root"
+            ]
         },
         "/tmp/goss/foobar": {
             "exists": false,
@@ -16,12 +18,6 @@
     "package": {
         "foobar": {
             "installed": false
-        },
-        "httpd": {
-            "installed": true,
-            "versions": [
-                "2.2.15"
-            ]
         }
     },
     "addr": {
@@ -47,50 +43,19 @@
         "foobar": {
             "enabled": false,
             "running": false
-        },
-        "httpd": {
-            "enabled": true,
-            "running": true
         }
     },
     "user": {
-        "apache": {
-            "exists": true,
-            "uid": "48",
-            "gid": "48",
-            "groups": [
-                "apache"
-            ],
-            "home": "/var/www"
+        "root": {
+            "exists": true
         },
         "foobar": {
             "exists": false
         }
     },
     "group": {
-        "apache": {
-            "exists": true,
-            "gid": "48"
-        },
         "foobar": {
             "exists": false
-        }
-    },
-    "command": {
-        "foobar": {
-            "exit-status": "127",
-            "stdout": [],
-            "stderr": [
-                "sh: foobar: command not found"
-            ]
-        },
-        "httpd -v": {
-            "exit-status": "0",
-            "stdout": [
-                "Server version: Apache/2.2.15 (Unix)",
-                "Server built:   Aug 24 2015 17:52:49"
-            ],
-            "stderr": []
         }
     },
     "dns": {
@@ -106,9 +71,6 @@
     "process": {
         "foobar": {
             "running": false
-        },
-        "httpd": {
-            "running": true
         }
     }
 }

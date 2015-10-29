@@ -19,9 +19,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(d, "resolveable", d.Resolveable, sysDNS.Resolveable))
-	if !d.Resolveable {
-		return results
-	}
+
 	if len(d.Addrs) > 0 {
 		results = append(results, ValidateValues(d, "addrs", d.Addrs, sysDNS.Addrs))
 	}

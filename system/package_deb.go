@@ -23,12 +23,21 @@ func (p *DebPackage) setup() {
 		return
 	}
 	p.loaded = true
-	cmd := util.NewCommand("dpkg-query", "-f", "${Version}\n", "-W", p.name)
+	cmd := util.NewCommand("dpkg-query", "-f", "${Status} ${Version}\n", "-W", p.name)
 	if err := cmd.Run(); err != nil {
 		return
 	}
-	p.installed = true
-	p.versions = strings.Split(strings.TrimSpace(cmd.Stdout.String()), "\n")
+	for _, l := range strings.Split(strings.TrimSpace(cmd.Stdout.String()), "\n") {
+		if !(strings.HasPrefix(l, "install ok installed") || strings.HasPrefix(l, "hold ok installed")) {
+			continue
+		}
+		ver := strings.Fields(l)[3]
+		p.versions = append(p.versions, ver)
+	}
+
+	if len(p.versions) > 0 {
+		p.installed = true
+	}
 }
 
 func (p *DebPackage) Name() string {

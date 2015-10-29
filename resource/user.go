@@ -20,9 +20,7 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists))
-	if !u.Exists {
-		return results
-	}
+
 	if u.UID != "" {
 		results = append(results, ValidateValue(u, "uid", u.UID, sysuser.UID))
 	}

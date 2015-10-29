@@ -17,9 +17,7 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed))
-	if !p.Installed {
-		return results
-	}
+
 	if len(p.Versions) > 0 {
 		results = append(results, ValidateValues(p, "version", p.Versions, sysPkg.Versions))
 	}
