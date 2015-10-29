@@ -25,13 +25,16 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewPort(sysPort system.Port) *Port {
+func NewPort(sysPort system.Port, ignoreList []string) *Port {
 	port := sysPort.Port()
 	listening, _ := sysPort.Listening()
-	ip, _ := sysPort.IP()
-	return &Port{
+	p := &Port{
 		Port:      port,
 		Listening: listening.(bool),
-		IP:        ip.(string),
 	}
+	if !contains(ignoreList, "ip") {
+		ip, _ := sysPort.IP()
+		p.IP = ip.(string)
+	}
+	return p
 }

@@ -20,7 +20,7 @@ func (p *Process) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewProcess(sysProcess system.Process) *Process {
+func NewProcess(sysProcess system.Process, ignoreList []string) *Process {
 	executable := sysProcess.Executable()
 	running, _ := sysProcess.Running()
 	return &Process{

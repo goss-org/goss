@@ -25,13 +25,16 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewPackage(sysPackage system.Package) *Package {
+func NewPackage(sysPackage system.Package, ignoreList []string) *Package {
 	name := sysPackage.Name()
-	versions, _ := sysPackage.Versions()
 	installed, _ := sysPackage.Installed()
-	return &Package{
+	p := &Package{
 		Name:      name,
-		Versions:  versions,
 		Installed: installed.(bool),
 	}
+	if !contains(ignoreList, "versions") {
+		versions, _ := sysPackage.Versions()
+		p.Versions = versions
+	}
+	return p
 }

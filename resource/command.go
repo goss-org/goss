@@ -35,17 +35,24 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewCommand(sysCommand system.Command) *Command {
+func NewCommand(sysCommand system.Command, ignoreList []string) *Command {
 	command := sysCommand.Command()
 	exitStatus, _ := sysCommand.ExitStatus()
-	stdout, _ := sysCommand.Stdout()
-	stderr, _ := sysCommand.Stderr()
-	return &Command{
+	c := &Command{
 		Command:    command,
 		ExitStatus: exitStatus.(string),
-		Stdout:     readerToSlice(stdout),
-		Stderr:     readerToSlice(stderr),
 	}
+
+	if !contains(ignoreList, "stdout") {
+		stdout, _ := sysCommand.Stdout()
+		c.Stdout = readerToSlice(stdout)
+	}
+	if !contains(ignoreList, "stderr") {
+		stderr, _ := sysCommand.Stderr()
+		c.Stderr = readerToSlice(stderr)
+	}
+
+	return c
 }
 
 func escapePattern(s string) string {

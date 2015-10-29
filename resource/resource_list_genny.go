@@ -17,16 +17,16 @@ type ResourceType generic.Type
 
 type ResourceTypeMap map[string]*ResourceType
 
-func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System) (*ResourceType, system.ResourceType) {
+func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*ResourceType, system.ResourceType) {
 	sysres := sys.NewResourceType(sr, sys)
-	res := NewResourceType(sysres)
+	res := NewResourceType(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
 	sysres := sys.NewResourceType(sr, sys)
-	res := NewResourceType(sysres)
+	res := NewResourceType(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}

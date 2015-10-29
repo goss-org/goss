@@ -194,6 +194,7 @@ func WriteJSON(filePath string, configJSON ConfigJSON) error {
 }
 
 func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
+	ignoreList := c.GlobalStringSlice("ignore-attrs")
 	var configJSON ConfigJSON
 	if _, err := os.Stat(fileName); err == nil {
 		configJSON = ReadJSON(fileName)
@@ -206,37 +207,37 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
-		res, _ := configJSON.Addrs.AppendSysResource(key, sys)
+		res, _ := configJSON.Addrs.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Command":
-		res, _ := configJSON.Commands.AppendSysResource(key, sys)
+		res, _ := configJSON.Commands.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "DNS":
-		res, _ := configJSON.DNS.AppendSysResource(key, sys)
+		res, _ := configJSON.DNS.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "File":
-		res, _ := configJSON.Files.AppendSysResource(key, sys)
+		res, _ := configJSON.Files.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Group":
-		res, _ := configJSON.Groups.AppendSysResource(key, sys)
+		res, _ := configJSON.Groups.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Package":
-		res, _ := configJSON.Packages.AppendSysResource(key, sys)
+		res, _ := configJSON.Packages.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Port":
-		res, _ := configJSON.Ports.AppendSysResource(key, sys)
+		res, _ := configJSON.Ports.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Process":
-		res, _ := configJSON.Processes.AppendSysResource(key, sys)
+		res, _ := configJSON.Processes.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Service":
-		res, _ := configJSON.Services.AppendSysResource(key, sys)
+		res, _ := configJSON.Services.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "User":
-		res, _ := configJSON.Users.AppendSysResource(key, sys)
+		res, _ := configJSON.Users.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	case "Gossfile":
-		res, _ := configJSON.Gossfiles.AppendSysResource(key, sys)
+		res, _ := configJSON.Gossfiles.AppendSysResource(key, sys, ignoreList)
 		resourcePrint(fileName, res)
 	}
 

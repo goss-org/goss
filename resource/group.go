@@ -25,13 +25,16 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewGroup(sysGroup system.Group) *Group {
+func NewGroup(sysGroup system.Group, ignoreList []string) *Group {
 	groupname := sysGroup.Groupname()
 	exists, _ := sysGroup.Exists()
-	gid, _ := sysGroup.Gid()
-	return &Group{
+	g := &Group{
 		Groupname: groupname,
 		Exists:    exists.(bool),
-		Gid:       gid.(string),
 	}
+	if !contains(ignoreList, "stderr") {
+		gid, _ := sysGroup.Gid()
+		g.Gid = gid.(string)
+	}
+	return g
 }
