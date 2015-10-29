@@ -1,0 +1,58 @@
+{
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.2.22-13+deb7u6"
+            ]
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        }
+    },
+    "user": {
+        "www-data": {
+            "exists": true,
+            "uid": "33",
+            "gid": "33",
+            "groups": [
+                "www-data"
+            ],
+            "home": "/var/www"
+        }
+    },
+    "group": {
+        "www-data": {
+            "exists": true,
+            "gid": "33"
+        }
+    },
+    "command": {
+        "apache2 -v": {
+            "exit-status": "0",
+            "stdout": [
+                "Server version: Apache/2.2.22 (Debian)",
+                "Server built:   Aug 18 2015 09:49:50"
+            ],
+            "stderr": []
+        },
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: 1: foobar: not found"
+            ]
+        }
+    },
+    "process": {
+        "apache2": {
+            "running": true
+        }
+    },
+    "gossfile": {
+        "../goss-shared.json": {}
+    }
+}

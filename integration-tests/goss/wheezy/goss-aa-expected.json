@@ -1,0 +1,27 @@
+{
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.2.22-13+deb7u6"
+            ]
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        }
+    },
+    "process": {
+        "apache2": {
+            "running": true
+        }
+    }
+}

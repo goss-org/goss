@@ -1,0 +1,58 @@
+{
+    "package": {
+        "httpd": {
+            "installed": true,
+            "versions": [
+                "2.2.15"
+            ]
+        }
+    },
+    "service": {
+        "httpd": {
+            "enabled": true,
+            "running": true
+        }
+    },
+    "user": {
+        "apache": {
+            "exists": true,
+            "uid": "48",
+            "gid": "48",
+            "groups": [
+                "apache"
+            ],
+            "home": "/var/www"
+        }
+    },
+    "group": {
+        "apache": {
+            "exists": true,
+            "gid": "48"
+        }
+    },
+    "command": {
+        "httpd -v": {
+            "exit-status": "0",
+            "stdout": [
+                "Server version: Apache/2.2.15 (Unix)",
+                "Server built:   Aug 24 2015 17:52:49"
+            ],
+            "stderr": []
+        },
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: foobar: command not found"
+            ]
+        }
+    },
+    "process": {
+        "httpd": {
+            "running": true
+        }
+    },
+    "gossfile": {
+        "../goss-shared.json": {}
+    }
+}

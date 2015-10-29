@@ -1,0 +1,117 @@
+{
+    "file": {
+        "/etc/passwd": {
+            "exists": true,
+            "mode": "0644",
+            "owner": "root",
+            "group": "root",
+            "filetype": "file",
+            "contains": []
+        },
+        "/tmp/goss/foobar": {
+            "exists": false,
+            "contains": []
+        }
+    },
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.2.22-13+deb7u6"
+            ]
+        },
+        "foobar": {
+            "installed": false
+        },
+        "vim-tiny": {
+            "installed": false
+        }
+    },
+    "addr": {
+        "tcp://google.com:22": {
+            "reachable": false,
+            "timeout": 500
+        },
+        "tcp://google.com:443": {
+            "reachable": true,
+            "timeout": 500
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+        },
+        "tcp:9999": {
+            "listening": false
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        },
+        "foobar": {
+            "enabled": false,
+            "running": false
+        }
+    },
+    "user": {
+        "foobar": {
+            "exists": false
+        },
+        "www-data": {
+            "exists": true,
+            "uid": "33",
+            "gid": "33",
+            "groups": [
+                "www-data"
+            ],
+            "home": "/var/www"
+        }
+    },
+    "group": {
+        "foobar": {
+            "exists": false
+        },
+        "www-data": {
+            "exists": true,
+            "gid": "33"
+        }
+    },
+    "command": {
+        "apache2 -v": {
+            "exit-status": "0",
+            "stdout": [
+                "Server version: Apache/2.2.22 (Debian)",
+                "Server built:   Aug 18 2015 09:49:50"
+            ],
+            "stderr": []
+        },
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: 1: foobar: not found"
+            ]
+        }
+    },
+    "dns": {
+        "localhost": {
+            "resolveable": true,
+            "addrs": [
+                "127.0.0.1",
+                "::1"
+            ],
+            "timeout": 500
+        }
+    },
+    "process": {
+        "apache2": {
+            "running": true
+        },
+        "foobar": {
+            "running": false
+        }
+    }
+}

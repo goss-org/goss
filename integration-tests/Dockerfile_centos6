@@ -1,6 +1,6 @@
 FROM centos:centos6
 MAINTAINER Ahmed
 
-RUN yum install -y httpd && yum clean all
+RUN yum install -y httpd-2.2.15 && yum clean all
 
 RUN chkconfig httpd on
