@@ -22,9 +22,6 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists))
-	if !f.Exists {
-		return results
-	}
 
 	if f.Mode != "" {
 		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode))

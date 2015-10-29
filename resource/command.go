@@ -24,6 +24,7 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 
 	results = append(results, ValidateValue(c, "exit-status", c.ExitStatus, syscommand.ExitStatus))
+
 	if len(c.Stdout) > 0 {
 		results = append(results, ValidateContains(c, "stdout", c.Stdout, syscommand.Stdout))
 	}
