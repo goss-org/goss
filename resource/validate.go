@@ -17,15 +17,15 @@ const (
 )
 
 type TestResult struct {
-	Successful   bool
-	Title        string
-	ResourceType string
-	TestType     int
-	Property     string
-	Err          error
-	Expected     []string
-	Found        []string
-	Duration     time.Duration
+	Successful   bool          `json:"successful"`
+	Title        string        `json:"title"`
+	ResourceType string        `json:"resource-type"`
+	TestType     int           `json:"test-type"`
+	Property     string        `json:"property"`
+	Err          error         `json:"err"`
+	Expected     []string      `json:"expected"`
+	Found        []string      `json:"found"`
+	Duration     time.Duration `json:"duration"`
 }
 
 func ValidateValues(res IDer, property string, expectedValues []string, method func() ([]string, error)) TestResult {

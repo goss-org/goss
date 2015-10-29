@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/aelsabbahy/goss"
 	"github.com/aelsabbahy/goss/outputs"
@@ -13,6 +14,7 @@ import (
 var version string
 
 func main() {
+	startTime := time.Now()
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
 	app.Version = version
@@ -49,7 +51,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) {
-				goss.Run(c.GlobalString("gossfile"), c)
+				goss.Run(c.GlobalString("gossfile"), c, startTime)
 			},
 		},
 		{

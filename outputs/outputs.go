@@ -6,13 +6,14 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/fatih/color"
 )
 
 type Outputer interface {
-	Output(<-chan []resource.TestResult) bool
+	Output(<-chan []resource.TestResult, time.Time) int
 }
 
 var green = color.New(color.FgGreen).SprintfFunc()

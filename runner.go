@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
@@ -15,7 +16,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func Run(specFile string, c *cli.Context) {
+func Run(specFile string, c *cli.Context, startTime time.Time) {
 	sys := system.New(c)
 
 	// handle stdin
@@ -82,9 +83,8 @@ func Run(specFile string, c *cli.Context) {
 
 	outputer := outputs.GetOutputer(c.String("format"))
 
-	if hasFail := outputer.Output(out); hasFail {
-		os.Exit(1)
-	}
+	exitCode := outputer.Output(out, startTime)
+	os.Exit(exitCode)
 
 }
 

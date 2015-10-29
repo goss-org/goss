@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/fatih/color"
@@ -9,7 +10,7 @@ import (
 
 type Rspecish struct{}
 
-func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
+func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	var failed []resource.TestResult
 	for resultGroup := range results {
@@ -33,12 +34,13 @@ func (r Rspecish) Output(results <-chan []resource.TestResult) (hasFail bool) {
 		fmt.Print("\n")
 	}
 
+	fmt.Printf("Total Duration: %s\n", time.Now().Sub(startTime))
 	if len(failed) > 0 {
 		color.Red("Count: %d failed: %d\n", testCount, len(failed))
-		return true
+		return 1
 	}
 	color.Green("Count: %d failed: %d\n", testCount, len(failed))
-	return false
+	return 0
 }
 
 func init() {
