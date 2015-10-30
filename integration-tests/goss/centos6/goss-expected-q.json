@@ -1,0 +1,93 @@
+{
+    "file": {
+        "/etc/passwd": {
+            "exists": true,
+            "contains": []
+        },
+        "/tmp/goss/foobar": {
+            "exists": false,
+            "contains": []
+        }
+    },
+    "package": {
+        "foobar": {
+            "installed": false
+        },
+        "httpd": {
+            "installed": true
+        },
+        "vim-tiny": {
+            "installed": false
+        }
+    },
+    "addr": {
+        "tcp://google.com:22": {
+            "reachable": false,
+            "timeout": 500
+        },
+        "tcp://google.com:443": {
+            "reachable": true,
+            "timeout": 500
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true
+        },
+        "tcp:9999": {
+            "listening": false
+        }
+    },
+    "service": {
+        "foobar": {
+            "enabled": false,
+            "running": false
+        },
+        "httpd": {
+            "enabled": true,
+            "running": true
+        }
+    },
+    "user": {
+        "apache": {
+            "exists": true
+        },
+        "foobar": {
+            "exists": false
+        }
+    },
+    "group": {
+        "apache": {
+            "exists": true
+        },
+        "foobar": {
+            "exists": false
+        }
+    },
+    "command": {
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": []
+        },
+        "httpd -v": {
+            "exit-status": "0",
+            "stdout": [],
+            "stderr": []
+        }
+    },
+    "dns": {
+        "localhost": {
+            "resolveable": true,
+            "timeout": 500
+        }
+    },
+    "process": {
+        "foobar": {
+            "running": false
+        },
+        "httpd": {
+            "running": true
+        }
+    }
+}

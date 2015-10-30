@@ -41,6 +41,8 @@ func NewCommand(sysCommand system.Command, ignoreList []string) *Command {
 	c := &Command{
 		Command:    command,
 		ExitStatus: exitStatus.(string),
+		Stdout:     []string{},
+		Stderr:     []string{},
 	}
 
 	if !contains(ignoreList, "stdout") {

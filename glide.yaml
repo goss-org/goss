@@ -7,7 +7,7 @@ import:
   - package: github.com/aelsabbahy/GOnetstat
     ref:     2726176f5ee4ec606af71d937f9126c8afc58bc4
   - package: github.com/codegangsta/cli
-    ref:     a65b733b303f0055f8d324d805f393cd3e7a7904
+    ref:     70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13
   - package: github.com/godbus/dbus
     ref:     9bb9dbf0e53309fa81d26e7230cbb6cff9373cad
   - package: github.com/fatih/color
