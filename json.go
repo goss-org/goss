@@ -194,7 +194,8 @@ func WriteJSON(filePath string, configJSON ConfigJSON) error {
 }
 
 func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
-	ignoreList := c.GlobalStringSlice("ignore-attrs")
+	ignoreList := c.GlobalStringSlice("ignore-attr")
+
 	var configJSON ConfigJSON
 	if _, err := os.Stat(fileName); err == nil {
 		configJSON = ReadJSON(fileName)
