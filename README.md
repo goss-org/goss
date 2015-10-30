@@ -20,6 +20,8 @@
     * [validate, v - Validate the system](#validate-v---validate-the-system)
       * [Flags](#flags)
     * [add, a - Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
+      * [flags](#flags-1)
+        * [--ignore-attr](#--ignore-attr)
       * [package - Add a package](#package---add-a-package)
         * [Attributes](#attributes)
       * [file - Add a file](#file---add-a-file)
@@ -74,7 +76,7 @@ Service:
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.10/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.0.11/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
 ```
 
 ## Usage
@@ -224,6 +226,67 @@ Will **NOT** automatically add:
 
 
 ### add, a - Add system resource to test suite
+#### Flags
+##### --ignore-attr
+Ignore attribute(s) matching the provided glob when adding a new resource, can be specified multiple times.
+
+Examples:
+```bash
+
+# Flags for add:
+#  --ignore-attr, -i [--ignore-attr option --ignore-attr option]  Ignore the following attributes when adding a new resource
+
+$ goss a user nobody
+Adding User to './goss.json':
+
+{
+    "nobody": {
+        "exists": true,
+        "uid": "99",
+        "gid": "99",
+        "groups": [
+            "nobody"
+        ],
+        "home": "/"
+    }
+}
+
+$ goss a --ignore-attr uid user nobody
+Adding User to './goss.json':
+
+{
+    "nobody": {
+        "exists": true,
+        "gid": "99",
+        "groups": [
+            "nobody"
+        ],
+        "home": "/"
+    }
+}
+
+$ goss a -i uid -i gid user nobody
+Adding User to './goss.json':
+
+{
+    "nobody": {
+        "exists": true,
+        "groups": [
+            "nobody"
+        ],
+        "home": "/"
+    }
+}
+
+$ goss a -i '*' user nobody
+Adding User to './goss.json':
+
+{
+    "nobody": {
+        "exists": true
+    }
+}
+```
 
 #### package - Add a package
 Adds the current state of a package to the goss file.
