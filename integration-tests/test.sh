@@ -20,7 +20,7 @@ for os in centos6 wheezy;do
   out=$(docker exec goss_int_test_$os bash -c "time /tmp/goss/goss -g /tmp/goss/$os/goss.json validate")
   echo "$out"
 
-  grep -q 'Count: 37 failed: 0' <<<"$out"
+  grep -q 'Count: 37, Failed: 0' <<<"$out"
 
   docker exec goss_int_test_$os bash -c "time /tmp/goss/generate_goss.sh $os > /dev/null"
 

@@ -36,10 +36,10 @@ func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Ti
 
 	fmt.Printf("Total Duration: %s\n", time.Now().Sub(startTime))
 	if len(failed) > 0 {
-		color.Red("Count: %d failed: %d\n", testCount, len(failed))
+		color.Red("Count: %d, Failed: %d\n", testCount, len(failed))
 		return 1
 	}
-	color.Green("Count: %d failed: %d\n", testCount, len(failed))
+	color.Green("Count: %d, Failed: %d\n", testCount, len(failed))
 	return 0
 }
 
