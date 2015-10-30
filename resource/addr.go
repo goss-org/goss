@@ -22,7 +22,7 @@ func (h *Addr) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewAddr(sysAddr system.Addr) *Addr {
+func NewAddr(sysAddr system.Addr, ignoreList []string) *Addr {
 	address := sysAddr.Address()
 	reachable, _ := sysAddr.Reachable()
 	return &Addr{

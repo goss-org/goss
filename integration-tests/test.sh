@@ -28,5 +28,9 @@ for os in centos6 wheezy;do
 
   docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-aa-expected.json /tmp/goss/${os}/goss-aa-generated.json"
 
+  docker exec goss_int_test_$os bash -c "time /tmp/goss/generate_goss.sh $os -q > /dev/null"
+
+  docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
+
   #docker rm -vf goss_int_test_$os
 done

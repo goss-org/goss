@@ -22,7 +22,7 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewService(sysService system.Service) *Service {
+func NewService(sysService system.Service, ignoreList []string) *Service {
 	service := sysService.Service()
 	enabled, _ := sysService.Enabled()
 	running, _ := sysService.Running()

@@ -27,14 +27,17 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewDNS(sysDNS system.DNS) *DNS {
+func NewDNS(sysDNS system.DNS, ignoreList []string) *DNS {
 	host := sysDNS.Host()
-	addrs, _ := sysDNS.Addrs()
 	resolveable, _ := sysDNS.Resolveable()
-	return &DNS{
+	d := &DNS{
 		Host:        host,
-		Addrs:       addrs,
 		Resolveable: resolveable.(bool),
 		Timeout:     500,
 	}
+	if !contains(ignoreList, "addrs") {
+		addrs, _ := sysDNS.Addrs()
+		d.Addrs = addrs
+	}
+	return d
 }

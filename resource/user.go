@@ -37,19 +37,29 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewUser(sysUser system.User) *User {
+func NewUser(sysUser system.User, ignoreList []string) *User {
 	username := sysUser.Username()
 	exists, _ := sysUser.Exists()
-	uid, _ := sysUser.UID()
-	gid, _ := sysUser.GID()
-	groups, _ := sysUser.Groups()
-	home, _ := sysUser.Home()
-	return &User{
+	u := &User{
 		Username: username,
 		Exists:   exists.(bool),
-		UID:      uid.(string),
-		GID:      gid.(string),
-		Groups:   groups,
-		Home:     home.(string),
 	}
+	if !contains(ignoreList, "uid") {
+		uid, _ := sysUser.UID()
+		u.UID = uid.(string)
+
+	}
+	if !contains(ignoreList, "gid") {
+		gid, _ := sysUser.GID()
+		u.GID = gid.(string)
+	}
+	if !contains(ignoreList, "groups") {
+		groups, _ := sysUser.Groups()
+		u.Groups = groups
+	}
+	if !contains(ignoreList, "home") {
+		home, _ := sysUser.Home()
+		u.Home = home.(string)
+	}
+	return u
 }

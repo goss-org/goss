@@ -50,22 +50,33 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewFile(sysFile system.File) *File {
+func NewFile(sysFile system.File, ignoreList []string) *File {
 	path := sysFile.Path()
-	mode, _ := sysFile.Mode()
-	owner, _ := sysFile.Owner()
-	group, _ := sysFile.Group()
-	linkedTo, _ := sysFile.LinkedTo()
-	filetype, _ := sysFile.Filetype()
 	exists, _ := sysFile.Exists()
-	return &File{
+	f := &File{
 		Path:     path,
-		Mode:     mode.(string),
-		Owner:    owner.(string),
-		Group:    group.(string),
-		LinkedTo: linkedTo.(string),
-		Filetype: filetype.(string),
-		Contains: []string{},
 		Exists:   exists.(bool),
+		Contains: []string{},
 	}
+	if !contains(ignoreList, "mode") {
+		mode, _ := sysFile.Mode()
+		f.Mode = mode.(string)
+	}
+	if !contains(ignoreList, "owner") {
+		owner, _ := sysFile.Owner()
+		f.Owner = owner.(string)
+	}
+	if !contains(ignoreList, "group") {
+		group, _ := sysFile.Group()
+		f.Group = group.(string)
+	}
+	if !contains(ignoreList, "linked-to") {
+		linkedTo, _ := sysFile.LinkedTo()
+		f.LinkedTo = linkedTo.(string)
+	}
+	if !contains(ignoreList, "filetype") {
+		filetype, _ := sysFile.Filetype()
+		f.Filetype = filetype.(string)
+	}
+	return f
 }

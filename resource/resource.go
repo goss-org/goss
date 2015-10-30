@@ -1,6 +1,10 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"path/filepath"
+
+	"github.com/aelsabbahy/goss/system"
+)
 
 type Resource interface {
 	Validate(*system.System) []TestResult
@@ -9,4 +13,13 @@ type Resource interface {
 
 type IDer interface {
 	ID() string
+}
+
+func contains(a []string, s string) bool {
+	for _, e := range a {
+		if m, _ := filepath.Match(e, s); m {
+			return true
+		}
+	}
+	return false
 }

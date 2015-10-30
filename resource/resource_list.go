@@ -15,16 +15,16 @@ import (
 
 type AddrMap map[string]*Addr
 
-func (r AddrMap) AppendSysResource(sr string, sys *system.System) (*Addr, system.Addr) {
+func (r AddrMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Addr, system.Addr) {
 	sysres := sys.NewAddr(sr, sys)
-	res := NewAddr(sysres)
+	res := NewAddr(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool) {
 	sysres := sys.NewAddr(sr, sys)
-	res := NewAddr(sysres)
+	res := NewAddr(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -52,16 +52,16 @@ func (r *AddrMap) UnmarshalJSON(data []byte) error {
 
 type CommandMap map[string]*Command
 
-func (r CommandMap) AppendSysResource(sr string, sys *system.System) (*Command, system.Command) {
+func (r CommandMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Command, system.Command) {
 	sysres := sys.NewCommand(sr, sys)
-	res := NewCommand(sysres)
+	res := NewCommand(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool) {
 	sysres := sys.NewCommand(sr, sys)
-	res := NewCommand(sysres)
+	res := NewCommand(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -89,16 +89,16 @@ func (r *CommandMap) UnmarshalJSON(data []byte) error {
 
 type DNSMap map[string]*DNS
 
-func (r DNSMap) AppendSysResource(sr string, sys *system.System) (*DNS, system.DNS) {
+func (r DNSMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*DNS, system.DNS) {
 	sysres := sys.NewDNS(sr, sys)
-	res := NewDNS(sysres)
+	res := NewDNS(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool) {
 	sysres := sys.NewDNS(sr, sys)
-	res := NewDNS(sysres)
+	res := NewDNS(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -126,16 +126,16 @@ func (r *DNSMap) UnmarshalJSON(data []byte) error {
 
 type FileMap map[string]*File
 
-func (r FileMap) AppendSysResource(sr string, sys *system.System) (*File, system.File) {
+func (r FileMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*File, system.File) {
 	sysres := sys.NewFile(sr, sys)
-	res := NewFile(sysres)
+	res := NewFile(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool) {
 	sysres := sys.NewFile(sr, sys)
-	res := NewFile(sysres)
+	res := NewFile(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -163,16 +163,16 @@ func (r *FileMap) UnmarshalJSON(data []byte) error {
 
 type GossfileMap map[string]*Gossfile
 
-func (r GossfileMap) AppendSysResource(sr string, sys *system.System) (*Gossfile, system.Gossfile) {
+func (r GossfileMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Gossfile, system.Gossfile) {
 	sysres := sys.NewGossfile(sr, sys)
-	res := NewGossfile(sysres)
+	res := NewGossfile(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool) {
 	sysres := sys.NewGossfile(sr, sys)
-	res := NewGossfile(sysres)
+	res := NewGossfile(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -200,16 +200,16 @@ func (r *GossfileMap) UnmarshalJSON(data []byte) error {
 
 type GroupMap map[string]*Group
 
-func (r GroupMap) AppendSysResource(sr string, sys *system.System) (*Group, system.Group) {
+func (r GroupMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Group, system.Group) {
 	sysres := sys.NewGroup(sr, sys)
-	res := NewGroup(sysres)
+	res := NewGroup(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool) {
 	sysres := sys.NewGroup(sr, sys)
-	res := NewGroup(sysres)
+	res := NewGroup(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -237,16 +237,16 @@ func (r *GroupMap) UnmarshalJSON(data []byte) error {
 
 type PackageMap map[string]*Package
 
-func (r PackageMap) AppendSysResource(sr string, sys *system.System) (*Package, system.Package) {
+func (r PackageMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Package, system.Package) {
 	sysres := sys.NewPackage(sr, sys)
-	res := NewPackage(sysres)
+	res := NewPackage(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool) {
 	sysres := sys.NewPackage(sr, sys)
-	res := NewPackage(sysres)
+	res := NewPackage(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -274,16 +274,16 @@ func (r *PackageMap) UnmarshalJSON(data []byte) error {
 
 type PortMap map[string]*Port
 
-func (r PortMap) AppendSysResource(sr string, sys *system.System) (*Port, system.Port) {
+func (r PortMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Port, system.Port) {
 	sysres := sys.NewPort(sr, sys)
-	res := NewPort(sysres)
+	res := NewPort(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool) {
 	sysres := sys.NewPort(sr, sys)
-	res := NewPort(sysres)
+	res := NewPort(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -311,16 +311,16 @@ func (r *PortMap) UnmarshalJSON(data []byte) error {
 
 type ProcessMap map[string]*Process
 
-func (r ProcessMap) AppendSysResource(sr string, sys *system.System) (*Process, system.Process) {
+func (r ProcessMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Process, system.Process) {
 	sysres := sys.NewProcess(sr, sys)
-	res := NewProcess(sysres)
+	res := NewProcess(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool) {
 	sysres := sys.NewProcess(sr, sys)
-	res := NewProcess(sysres)
+	res := NewProcess(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -348,16 +348,16 @@ func (r *ProcessMap) UnmarshalJSON(data []byte) error {
 
 type ServiceMap map[string]*Service
 
-func (r ServiceMap) AppendSysResource(sr string, sys *system.System) (*Service, system.Service) {
+func (r ServiceMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*Service, system.Service) {
 	sysres := sys.NewService(sr, sys)
-	res := NewService(sysres)
+	res := NewService(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool) {
 	sysres := sys.NewService(sr, sys)
-	res := NewService(sysres)
+	res := NewService(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
@@ -385,16 +385,16 @@ func (r *ServiceMap) UnmarshalJSON(data []byte) error {
 
 type UserMap map[string]*User
 
-func (r UserMap) AppendSysResource(sr string, sys *system.System) (*User, system.User) {
+func (r UserMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*User, system.User) {
 	sysres := sys.NewUser(sr, sys)
-	res := NewUser(sysres)
+	res := NewUser(sysres, ignoreList)
 	r[res.ID()] = res
 	return res, sysres
 }
 
 func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool) {
 	sysres := sys.NewUser(sr, sys)
-	res := NewUser(sysres)
+	res := NewUser(sysres, []string{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}
