@@ -36,7 +36,7 @@ func (r Documentation) Output(results <-chan []resource.TestResult, startTime ti
 		fmt.Print("\n")
 	}
 
-	fmt.Printf("Total Duration: %s\n", time.Now().Sub(startTime))
+	fmt.Printf("Total Duration: %.3fs\n", time.Since(startTime).Seconds())
 	if len(failed) > 0 {
 		color.Red("Count: %d, Failed: %d\n", testCount, len(failed))
 		return 1
