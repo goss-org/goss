@@ -76,8 +76,8 @@ func main() {
 			Usage:   "add a resource to the test suite",
 			Flags: []cli.Flag{
 				cli.StringSliceFlag{
-					Name:  "ignore-attr, i",
-					Usage: "Ignore the following attributes when adding a new resource",
+					Name:  "exclude-attr",
+					Usage: "Exclude the following attributes when adding a new resource",
 				},
 			},
 			Subcommands: []cli.Command{

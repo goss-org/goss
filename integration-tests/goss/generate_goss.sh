@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(readlink -f $(dirname $0))
 
 OS=$1
-[[ $2 == "-q" ]] && args=("-i" "*")
+[[ $2 == "-q" ]] && args=("--exclude-attr" "*")
 
 goss() {
   $SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"

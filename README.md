@@ -21,7 +21,7 @@
       * [Flags](#flags)
     * [add, a - Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
       * [flags](#flags-1)
-        * [--ignore-attr](#--ignore-attr)
+        * [--exclude-attr](#--exclude-attr)
       * [package - Add a package](#package---add-a-package)
         * [Attributes](#attributes)
       * [file - Add a file](#file---add-a-file)
@@ -227,14 +227,14 @@ Will **NOT** automatically add:
 
 ### add, a - Add system resource to test suite
 #### Flags
-##### --ignore-attr
+##### --exclude-attr
 Ignore attribute(s) matching the provided glob when adding a new resource, can be specified multiple times.
 
 Examples:
 ```bash
 
 # Flags for add:
-#  --ignore-attr, -i [--ignore-attr option --ignore-attr option]  Ignore the following attributes when adding a new resource
+#  --exclude-attr [--exclude-attr option --exclude-attr option]  Exclude the following attributes when adding a new resource
 
 $ goss a user nobody
 Adding User to './goss.json':
@@ -251,7 +251,7 @@ Adding User to './goss.json':
     }
 }
 
-$ goss a --ignore-attr uid user nobody
+$ goss a --exclude-attr uid user nobody
 Adding User to './goss.json':
 
 {
@@ -265,7 +265,7 @@ Adding User to './goss.json':
     }
 }
 
-$ goss a -i uid -i gid user nobody
+$ goss a --exclude-attr uid --exclude-attr gid user nobody
 Adding User to './goss.json':
 
 {
