@@ -55,7 +55,7 @@ Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server
 ### Why use goss?
 
 * Goss is EASY!  - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST!  - small-medium tests suits run in less than a second
+* Goss is FAST!  - small-medium tests suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - single self-contained binary
 * Goss is UNIXY! - small, does one thing and does it well, chainable through pipes
 
