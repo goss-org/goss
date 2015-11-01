@@ -23,6 +23,7 @@ func (r Json) Output(results <-chan []resource.TestResult, startTime time.Time) 
 			}
 			m := struct2map(testResult)
 			m["summary-line"] = humanizeResult(testResult)
+			m["duration"] = int64(m["duration"].(float64))
 			resultsOut = append(resultsOut, m)
 			testCount++
 		}
