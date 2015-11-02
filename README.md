@@ -278,7 +278,7 @@ Adding User to './goss.json':
     }
 }
 
-$ goss a -i '*' user nobody
+$ goss a --exclude-attr '*' user nobody
 Adding User to './goss.json':
 
 {
