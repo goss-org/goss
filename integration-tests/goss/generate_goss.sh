@@ -27,7 +27,7 @@ for x in google.com:443 google.com:22;do
   goss a "${args[@]}" addr $x
 done
 
-for x in tcp6:80 9999;do
+for x in tcp:80 tcp6:80 9999;do
   goss a "${args[@]}" port $x
 done
 

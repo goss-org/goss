@@ -34,6 +34,9 @@
         "tcp6:80": {
             "listening": true
         },
+        "tcp:80": {
+            "listening": false
+        },
         "tcp:9999": {
             "listening": false
         }

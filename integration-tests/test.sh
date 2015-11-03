@@ -3,7 +3,7 @@
 set -xe
 cp ../release/goss-linux-amd64 goss/goss
 
-for os in centos6 wheezy;do
+for os in centos6 wheezy precise;do
   if ! docker images | grep aelsabbahy/goss_$os;then
     docker build -t aelsabbahy/goss_$os - < Dockerfile_$os
   fi

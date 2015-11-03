@@ -52,6 +52,12 @@
             "running": true
         }
     },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+        }
+    },
     "gossfile": {
         "../goss-shared.json": {}
     }
