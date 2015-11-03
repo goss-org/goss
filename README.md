@@ -72,6 +72,7 @@ Package:
 Service:
   * systemd
   * sysV init
+  * Upstart
 
 ## Installation
 
