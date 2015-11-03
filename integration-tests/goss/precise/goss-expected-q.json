@@ -2,10 +2,6 @@
     "file": {
         "/etc/passwd": {
             "exists": true,
-            "mode": "0644",
-            "owner": "root",
-            "group": "root",
-            "filetype": "file",
             "contains": []
         },
         "/tmp/goss/foobar": {
@@ -15,10 +11,7 @@
     },
     "package": {
         "apache2": {
-            "installed": true,
-            "versions": [
-                "2.2.22-13+deb7u6"
-            ]
+            "installed": true
         },
         "foobar": {
             "installed": false
@@ -39,11 +32,10 @@
     },
     "port": {
         "tcp6:80": {
-            "listening": true,
-            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+            "listening": false
         },
         "tcp:80": {
-            "listening": false
+            "listening": true
         },
         "tcp:9999": {
             "listening": false
@@ -64,13 +56,7 @@
             "exists": false
         },
         "www-data": {
-            "exists": true,
-            "uid": "33",
-            "gid": "33",
-            "groups": [
-                "www-data"
-            ],
-            "home": "/var/www"
+            "exists": true
         }
     },
     "group": {
@@ -78,34 +64,24 @@
             "exists": false
         },
         "www-data": {
-            "exists": true,
-            "gid": "33"
+            "exists": true
         }
     },
     "command": {
         "apache2 -v": {
             "exit-status": "0",
-            "stdout": [
-                "Server version: Apache/2.2.22 (Debian)",
-                "Server built:   Aug 18 2015 09:49:50"
-            ],
+            "stdout": [],
             "stderr": []
         },
         "foobar": {
             "exit-status": "127",
             "stdout": [],
-            "stderr": [
-                "sh: 1: foobar: not found"
-            ]
+            "stderr": []
         }
     },
     "dns": {
         "localhost": {
             "resolveable": true,
-            "addrs": [
-                "127.0.0.1",
-                "::1"
-            ],
             "timeout": 500
         }
     },

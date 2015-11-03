@@ -47,6 +47,11 @@ func (s *ServiceDbus) Enabled() (interface{}, error) {
 		return true, nil
 	}
 
+	// Fall back on initv
+	if en, _ := initServiceEnabled(s.service, 3); en {
+		return true, nil
+	}
+
 	return false, nil
 }
 

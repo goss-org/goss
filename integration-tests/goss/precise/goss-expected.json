@@ -17,7 +17,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.2.22-13+deb7u6"
+                "2.2.22-1ubuntu1.10"
             ]
         },
         "foobar": {
@@ -39,11 +39,11 @@
     },
     "port": {
         "tcp6:80": {
-            "listening": true,
-            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+            "listening": false
         },
         "tcp:80": {
-            "listening": false
+            "listening": true,
+            "ip": "0.0.0.0"
         },
         "tcp:9999": {
             "listening": false
@@ -86,8 +86,8 @@
         "apache2 -v": {
             "exit-status": "0",
             "stdout": [
-                "Server version: Apache/2.2.22 (Debian)",
-                "Server built:   Aug 18 2015 09:49:50"
+                "Server version: Apache/2.2.22 (Ubuntu)",
+                "Server built:   Jul 24 2015 17:25:54"
             ],
             "stderr": []
         },

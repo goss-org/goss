@@ -1,45 +1,45 @@
 {
     "package": {
-        "httpd": {
+        "apache2": {
             "installed": true,
             "versions": [
-                "2.2.15"
+                "2.2.22-1ubuntu1.10"
             ]
         }
     },
     "service": {
-        "httpd": {
+        "apache2": {
             "enabled": true,
             "running": true
         },
         "autofs": {
-            "enabled": false,
-            "running": false
+            "enabled": true,
+            "running": true
         }
     },
     "user": {
-        "apache": {
+        "www-data": {
             "exists": true,
-            "uid": "48",
-            "gid": "48",
+            "uid": "33",
+            "gid": "33",
             "groups": [
-                "apache"
+                "www-data"
             ],
             "home": "/var/www"
         }
     },
     "group": {
-        "apache": {
+        "www-data": {
             "exists": true,
-            "gid": "48"
+            "gid": "33"
         }
     },
     "command": {
-        "httpd -v": {
+        "apache2 -v": {
             "exit-status": "0",
             "stdout": [
-                "Server version: Apache/2.2.15 (Unix)",
-                "Server built:   Aug 24 2015 17:52:49"
+                "Server version: Apache/2.2.22 (Ubuntu)",
+                "Server built:   Jul 24 2015 17:25:54"
             ],
             "stderr": []
         },
@@ -47,19 +47,19 @@
             "exit-status": "127",
             "stdout": [],
             "stderr": [
-                "sh: foobar: command not found"
+                "sh: 1: foobar: not found"
             ]
         }
     },
     "process": {
-        "httpd": {
+        "apache2": {
             "running": true
         }
     },
     "port": {
-        "tcp6:80": {
+        "tcp:80": {
             "listening": true,
-            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+            "ip": "0.0.0.0"
         }
     },
     "gossfile": {

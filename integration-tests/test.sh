@@ -3,7 +3,7 @@
 set -xe
 cp ../release/goss-linux-amd64 goss/goss
 
-for os in centos6 wheezy;do
+for os in centos6 wheezy precise;do
   if ! docker images | grep aelsabbahy/goss_$os;then
     docker build -t aelsabbahy/goss_$os - < Dockerfile_$os
   fi
@@ -20,7 +20,7 @@ for os in centos6 wheezy;do
   out=$(docker exec goss_int_test_$os bash -c "time /tmp/goss/goss -g /tmp/goss/$os/goss.json validate")
   echo "$out"
 
-  grep -q 'Count: 37, Failed: 0' <<<"$out"
+  grep -q 'Count: 39, Failed: 0' <<<"$out"
 
   docker exec goss_int_test_$os bash -c "time /tmp/goss/generate_goss.sh $os > /dev/null"
 

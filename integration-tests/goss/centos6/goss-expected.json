@@ -42,6 +42,9 @@
             "listening": true,
             "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
         },
+        "tcp:80": {
+            "listening": false
+        },
         "tcp:9999": {
             "listening": false
         }

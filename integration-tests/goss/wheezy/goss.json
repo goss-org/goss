@@ -11,6 +11,10 @@
         "apache2": {
             "enabled": true,
             "running": true
+        },
+        "autofs": {
+            "enabled": false,
+            "running": false
         }
     },
     "user": {
@@ -50,6 +54,12 @@
     "process": {
         "apache2": {
             "running": true
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
         }
     },
     "gossfile": {
