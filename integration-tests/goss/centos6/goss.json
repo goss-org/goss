@@ -11,6 +11,10 @@
         "httpd": {
             "enabled": true,
             "running": true
+        },
+        "autofs": {
+            "enabled": false,
+            "running": false
         }
     },
     "user": {

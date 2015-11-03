@@ -28,11 +28,11 @@ func (s *ServiceInit) Exists() (interface{}, error) {
 }
 
 func (s *ServiceInit) Enabled() (interface{}, error) {
-	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc3.d/S[0-9][0-9]%s", s.service))
-	if err != nil || matches == nil {
-		return false, err
+	en, err := initServiceEnabled(s.service, 3)
+	if en {
+		return true, nil
 	}
-	return true, nil
+	return false, err
 }
 
 func (s *ServiceInit) Running() (interface{}, error) {
@@ -42,4 +42,12 @@ func (s *ServiceInit) Running() (interface{}, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func initServiceEnabled(service string, level int) (bool, error) {
+	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc%d.d/S[0-9][0-9]%s", level, service))
+	if err == nil && matches != nil {
+		return true, nil
+	}
+	return false, err
 }

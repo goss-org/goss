@@ -1,7 +1,9 @@
 package system
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"sync"
@@ -51,7 +53,7 @@ func (s *System) ProcMap() map[string][]ps.Process {
 }
 
 func New(c *cli.Context) *System {
-	system := &System{
+	sys := &System{
 		NewFile:     NewDefFile,
 		NewAddr:     NewDefAddr,
 		NewPort:     NewDefPort,
@@ -62,29 +64,20 @@ func New(c *cli.Context) *System {
 		NewProcess:  NewDefProcess,
 		NewGossfile: NewDefGossfile,
 	}
-
-	if util.IsRunningSystemd() {
-		system.NewService = NewServiceDbus
-		dbus, err := dbus.New()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		system.Dbus = dbus
-	} else {
-		system.NewService = NewServiceInit
-	}
+	// FIXME: Detect-os needs to be refactored in a consistent way
+	// Also, cache should be its own object
+	sys.detectService()
 
 	switch {
 	case c.GlobalString("package") == "rpm":
-		system.NewPackage = NewRpmPackage
+		sys.NewPackage = NewRpmPackage
 	case c.GlobalString("package") == "deb":
-		system.NewPackage = NewDebPackage
+		sys.NewPackage = NewDebPackage
 	default:
-		system.NewPackage = detectPackage()
+		sys.NewPackage = detectPackage()
 	}
 
-	return system
+	return sys
 }
 
 func detectPackage() func(string, *System) Package {
@@ -98,6 +91,32 @@ func detectPackage() func(string, *System) Package {
 	}
 }
 
+func (s *System) detectService() {
+	switch {
+	case util.IsRunningSystemd():
+		s.NewService = NewServiceDbus
+		dbus, err := dbus.New()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		s.Dbus = dbus
+	case isUbuntu():
+		s.NewService = NewServiceUpstart
+	default:
+		s.NewService = NewServiceInit
+	}
+}
+
+func isUbuntu() bool {
+	if b, err := ioutil.ReadFile("/etc/lsb-release"); err == nil {
+		if bytes.Contains(b, []byte("Ubuntu")) {
+			return true
+		}
+	}
+	return false
+
+}
 func isDeb() bool {
 	if _, err := os.Stat("/etc/debian_version"); err == nil {
 		return true

@@ -11,6 +11,10 @@
         "apache2": {
             "enabled": true,
             "running": true
+        },
+        "autofs": {
+            "enabled": false,
+            "running": false
         }
     },
     "user": {
