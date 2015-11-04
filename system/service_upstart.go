@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/aelsabbahy/goss/util"
 )
@@ -58,7 +59,8 @@ func (s *ServiceUpstart) Enabled() (interface{}, error) {
 func (s *ServiceUpstart) Running() (interface{}, error) {
 	cmd := util.NewCommand("service", s.service, "status")
 	cmd.Run()
-	if cmd.Status == 0 {
+	out := cmd.Stdout.String()
+	if cmd.Status == 0 && (strings.Contains(out, "running") || strings.Contains(out, "online")) {
 		return true, nil
 	}
 	return false, nil
