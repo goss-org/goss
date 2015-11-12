@@ -348,7 +348,7 @@ Adding to './goss.json':
 ```
 ##### Attributes
 * path **(required)** - file/dir/symlink path
-* exits **(required)** - does it exists?
+* exists **(required)** - does it exists?
 * mode - file mode (ex 0644)
 * owner - name of owner
 * group - group that ownes the file
