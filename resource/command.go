@@ -2,11 +2,12 @@ package resource
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Command struct {
@@ -14,15 +15,18 @@ type Command struct {
 	ExitStatus string   `json:"exit-status"`
 	Stdout     []string `json:"stdout"`
 	Stderr     []string `json:"stderr"`
-	Timeout    int64    `json:"timeout"`
+	Timeout    int      `json:"timeout"`
 }
 
 func (c *Command) ID() string      { return c.Command }
 func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
-	sysCommand := sys.NewCommand(c.Command, sys)
-	sysCommand.SetTimeout(c.Timeout)
+	if c.Timeout == 0 {
+		fmt.Printf("DEPRICATION WARNING: timeout not set for command: `%s`. Using default of (%dms), this will break in the future if not added to goss.json\n", c.ID(), 10000)
+		c.Timeout = 10000
+	}
+	sysCommand := sys.NewCommand(c.Command, sys, util.Config{Timeout: c.Timeout})
 
 	var results []TestResult
 
@@ -38,27 +42,27 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewCommand(sysCommand system.Command, ignoreList []string) *Command {
+func NewCommand(sysCommand system.Command, config util.Config) (*Command, error) {
 	command := sysCommand.Command()
-	exitStatus, _ := sysCommand.ExitStatus()
+	exitStatus, err := sysCommand.ExitStatus()
 	c := &Command{
 		Command:    command,
 		ExitStatus: exitStatus.(string),
 		Stdout:     []string{},
 		Stderr:     []string{},
-		Timeout:    (10 * int64(time.Second) / int64(time.Millisecond)),
+		Timeout:    config.Timeout,
 	}
 
-	if !contains(ignoreList, "stdout") {
+	if !contains(config.IgnoreList, "stdout") {
 		stdout, _ := sysCommand.Stdout()
 		c.Stdout = readerToSlice(stdout)
 	}
-	if !contains(ignoreList, "stderr") {
+	if !contains(config.IgnoreList, "stderr") {
 		stderr, _ := sysCommand.Stderr()
 		c.Stderr = readerToSlice(stderr)
 	}
 
-	return c
+	return c, err
 }
 
 func escapePattern(s string) string {

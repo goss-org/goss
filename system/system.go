@@ -9,6 +9,8 @@ import (
 	"sync"
 
 	"github.com/aelsabbahy/GOnetstat"
+	// This needs a better name
+	util2 "github.com/aelsabbahy/goss/util"
 	"github.com/codegangsta/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
@@ -20,17 +22,17 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage  func(string, *System) Package
-	NewFile     func(string, *System) File
-	NewAddr     func(string, *System) Addr
-	NewPort     func(string, *System) Port
-	NewService  func(string, *System) Service
-	NewUser     func(string, *System) User
-	NewGroup    func(string, *System) Group
-	NewCommand  func(string, *System) Command
-	NewDNS      func(string, *System) DNS
-	NewProcess  func(string, *System) Process
-	NewGossfile func(string, *System) Gossfile
+	NewPackage  func(string, *System, util2.Config) Package
+	NewFile     func(string, *System, util2.Config) File
+	NewAddr     func(string, *System, util2.Config) Addr
+	NewPort     func(string, *System, util2.Config) Port
+	NewService  func(string, *System, util2.Config) Service
+	NewUser     func(string, *System, util2.Config) User
+	NewGroup    func(string, *System, util2.Config) Group
+	NewCommand  func(string, *System, util2.Config) Command
+	NewDNS      func(string, *System, util2.Config) DNS
+	NewProcess  func(string, *System, util2.Config) Process
+	NewGossfile func(string, *System, util2.Config) Gossfile
 	Dbus        *dbus.Conn
 	ports       map[string][]GOnetstat.Process
 	portsOnce   sync.Once
@@ -80,7 +82,7 @@ func New(c *cli.Context) *System {
 	return sys
 }
 
-func detectPackage() func(string, *System) Package {
+func detectPackage() func(string, *System, util2.Config) Package {
 	switch {
 	case isRpm():
 		return NewRpmPackage

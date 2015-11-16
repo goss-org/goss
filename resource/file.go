@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type File struct {
 	Path     string   `json:"-"`
@@ -17,7 +20,7 @@ func (f *File) ID() string      { return f.Path }
 func (f *File) SetID(id string) { f.Path = id }
 
 func (f *File) Validate(sys *system.System) []TestResult {
-	sysFile := sys.NewFile(f.Path, sys)
+	sysFile := sys.NewFile(f.Path, sys, util.Config{})
 
 	var results []TestResult
 
@@ -50,7 +53,7 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewFile(sysFile system.File, ignoreList []string) *File {
+func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	path := sysFile.Path()
 	exists, _ := sysFile.Exists()
 	f := &File{
@@ -58,25 +61,25 @@ func NewFile(sysFile system.File, ignoreList []string) *File {
 		Exists:   exists.(bool),
 		Contains: []string{},
 	}
-	if !contains(ignoreList, "mode") {
+	if !contains(config.IgnoreList, "mode") {
 		mode, _ := sysFile.Mode()
 		f.Mode = mode.(string)
 	}
-	if !contains(ignoreList, "owner") {
+	if !contains(config.IgnoreList, "owner") {
 		owner, _ := sysFile.Owner()
 		f.Owner = owner.(string)
 	}
-	if !contains(ignoreList, "group") {
+	if !contains(config.IgnoreList, "group") {
 		group, _ := sysFile.Group()
 		f.Group = group.(string)
 	}
-	if !contains(ignoreList, "linked-to") {
+	if !contains(config.IgnoreList, "linked-to") {
 		linkedTo, _ := sysFile.LinkedTo()
 		f.LinkedTo = linkedTo.(string)
 	}
-	if !contains(ignoreList, "filetype") {
+	if !contains(config.IgnoreList, "filetype") {
 		filetype, _ := sysFile.Filetype()
 		f.Filetype = filetype.(string)
 	}
-	return f
+	return f, nil
 }

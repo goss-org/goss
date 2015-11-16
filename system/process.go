@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/aelsabbahy/goss/util"
 	"github.com/mitchellh/go-ps"
 )
 
@@ -19,7 +20,7 @@ type DefProcess struct {
 	procMap    map[string][]ps.Process
 }
 
-func NewDefProcess(executable string, system *System) Process {
+func NewDefProcess(executable string, system *System, config util.Config) Process {
 	return &DefProcess{
 		executable: executable,
 		procMap:    system.ProcMap(),

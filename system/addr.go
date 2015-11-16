@@ -4,27 +4,27 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Addr interface {
 	Address() string
 	Exists() (interface{}, error)
 	Reachable() (interface{}, error)
-	SetTimeout(int64)
 }
 
 type DefAddr struct {
 	address string
-	Timeout int64
+	Timeout int
 }
 
-func NewDefAddr(address string, system *System) Addr {
+func NewDefAddr(address string, system *System, config util.Config) Addr {
 	addr := normalizeAddress(address)
-	return &DefAddr{address: addr}
-}
-
-func (h *DefAddr) SetTimeout(t int64) {
-	h.Timeout = t
+	return &DefAddr{
+		address: addr,
+		Timeout: config.Timeout,
+	}
 }
 
 func (h *DefAddr) ID() string {
@@ -37,11 +37,8 @@ func (h *DefAddr) Exists() (interface{}, error) { return h.Reachable() }
 
 func (h *DefAddr) Reachable() (interface{}, error) {
 	network, address := splitAddress(h.address)
-	timeout := h.Timeout
-	if timeout == 0 {
-		timeout = 500
-	}
-	conn, err := net.DialTimeout(network, address, time.Duration(timeout)*time.Millisecond)
+
+	conn, err := net.DialTimeout(network, address, time.Duration(h.Timeout)*time.Millisecond)
 	if err != nil {
 		return false, nil
 	}

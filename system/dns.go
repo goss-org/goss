@@ -5,6 +5,8 @@ import (
 	"net"
 	"sort"
 	"time"
+
+	"github.com/aelsabbahy/goss/util"
 )
 
 type DNS interface {
@@ -12,28 +14,26 @@ type DNS interface {
 	Addrs() ([]string, error)
 	Resolveable() (interface{}, error)
 	Exists() (interface{}, error)
-	SetTimeout(int64)
 }
 
 type DefDNS struct {
 	host        string
 	resolveable bool
 	addrs       []string
-	Timeout     int64
+	Timeout     int
 	loaded      bool
 	err         error
 }
 
-func NewDefDNS(host string, system *System) DNS {
-	return &DefDNS{host: host}
+func NewDefDNS(host string, system *System, config util.Config) DNS {
+	return &DefDNS{
+		host:    host,
+		Timeout: config.Timeout,
+	}
 }
 
 func (d *DefDNS) Host() string {
 	return d.host
-}
-
-func (d *DefDNS) SetTimeout(t int64) {
-	d.Timeout = t
 }
 
 func (d *DefDNS) setup() error {
@@ -42,17 +42,14 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	timeout := d.Timeout
-	if timeout == 0 {
-		timeout = 500
-	}
-
-	addrs, err := lookupHost(d.host, timeout)
+	addrs, err := lookupHost(d.host, d.Timeout)
 	if err != nil {
 		d.resolveable = false
 		d.addrs = []string{}
-		d.err = err
-		return d.err
+		return nil
+		// FIXME: if timeout error, then ignore.. otherwise it's an issue
+		//d.err = err
+		//return d.err
 	}
 	sort.Strings(addrs)
 	d.resolveable = true
@@ -77,7 +74,7 @@ func (d *DefDNS) Exists() (interface{}, error) {
 	return false, nil
 }
 
-func lookupHost(host string, timeout int64) ([]string, error) {
+func lookupHost(host string, timeout int) ([]string, error) {
 	c1 := make(chan []string, 1)
 	e1 := make(chan error, 1)
 	go func() {

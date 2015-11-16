@@ -98,6 +98,13 @@ func main() {
 				{
 					Name:  "addr",
 					Usage: "add new remote address:port - ex: google.com:80",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "timeout",
+							Value: 500,
+							Usage: "Timeout in ms",
+						},
+					},
 					Action: func(c *cli.Context) {
 						goss.AppendResource(c.GlobalString("gossfile"), "Addr", c.Args().First(), c)
 					},
@@ -133,6 +140,13 @@ func main() {
 				{
 					Name:  "command",
 					Usage: "add new command",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "timeout",
+							Value: 10000,
+							Usage: "Timeout in ms",
+						},
+					},
 					Action: func(c *cli.Context) {
 						goss.AppendResource(c.GlobalString("gossfile"), "Command", c.Args().First(), c)
 					},
@@ -140,6 +154,13 @@ func main() {
 				{
 					Name:  "dns",
 					Usage: "add new dns",
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "timeout",
+							Value: 500,
+							Usage: "Timeout in ms",
+						},
+					},
 					Action: func(c *cli.Context) {
 						goss.AppendResource(c.GlobalString("gossfile"), "DNS", c.Args().First(), c)
 					},

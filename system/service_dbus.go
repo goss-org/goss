@@ -3,6 +3,7 @@ package system
 import (
 	"strings"
 
+	"github.com/aelsabbahy/goss/util"
 	"github.com/coreos/go-systemd/dbus"
 )
 
@@ -11,7 +12,7 @@ type ServiceDbus struct {
 	dbus    *dbus.Conn
 }
 
-func NewServiceDbus(service string, system *System) Service {
+func NewServiceDbus(service string, system *System, config util.Config) Service {
 	return &ServiceDbus{
 		service: service,
 		dbus:    system.Dbus,

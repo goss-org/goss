@@ -17,7 +17,6 @@ type Command interface {
 	ExitStatus() (interface{}, error)
 	Stdout() (io.Reader, error)
 	Stderr() (io.Reader, error)
-	SetTimeout(int64)
 }
 
 type DefCommand struct {
@@ -26,12 +25,15 @@ type DefCommand struct {
 	stdout     io.Reader
 	stderr     io.Reader
 	loaded     bool
-	Timeout    int64
+	Timeout    int
 	err        error
 }
 
-func NewDefCommand(command string, system *System) Command {
-	return &DefCommand{command: command}
+func NewDefCommand(command string, system *System, config util.Config) Command {
+	return &DefCommand{
+		command: command,
+		Timeout: config.Timeout,
+	}
 }
 
 func (c *DefCommand) setup() error {
@@ -40,12 +42,8 @@ func (c *DefCommand) setup() error {
 	}
 	c.loaded = true
 
-	timeout := c.Timeout
-	if timeout == 0 {
-		timeout = (10 * int64(time.Second) / int64(time.Millisecond))
-	}
 	cmd := util.NewCommand("sh", "-c", c.command)
-	err := runCommand(cmd, timeout)
+	err := runCommand(cmd, c.Timeout)
 
 	// We don't care about ExitError since it's covered by status
 	if _, ok := err.(*exec.ExitError); !ok {
@@ -60,10 +58,6 @@ func (c *DefCommand) setup() error {
 
 func (c *DefCommand) Command() string {
 	return c.command
-}
-
-func (c *DefCommand) SetTimeout(t int64) {
-	c.Timeout = t
 }
 
 func (c *DefCommand) ExitStatus() (interface{}, error) {
@@ -89,7 +83,7 @@ func (c *DefCommand) Exists() (interface{}, error) {
 	return false, nil
 }
 
-func runCommand(cmd *util.Command, timeout int64) error {
+func runCommand(cmd *util.Command, timeout int) error {
 	c1 := make(chan bool, 1)
 	e1 := make(chan error, 1)
 	go func() {

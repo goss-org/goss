@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type Process struct {
 	Executable string `json:"-"`
@@ -11,7 +14,7 @@ func (p *Process) ID() string      { return p.Executable }
 func (p *Process) SetID(id string) { p.Executable = id }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
-	sysProcess := sys.NewProcess(p.Executable, sys)
+	sysProcess := sys.NewProcess(p.Executable, sys, util.Config{})
 
 	var results []TestResult
 
@@ -20,11 +23,11 @@ func (p *Process) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewProcess(sysProcess system.Process, ignoreList []string) *Process {
+func NewProcess(sysProcess system.Process, config util.Config) (*Process, error) {
 	executable := sysProcess.Executable()
 	running, _ := sysProcess.Running()
 	return &Process{
 		Executable: executable,
 		Running:    running.(bool),
-	}
+	}, nil
 }

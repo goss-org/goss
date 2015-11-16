@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type Service struct {
 	Service string `json:"-"`
@@ -12,7 +15,7 @@ func (s *Service) ID() string      { return s.Service }
 func (s *Service) SetID(id string) { s.Service = id }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
-	sysservice := sys.NewService(s.Service, sys)
+	sysservice := sys.NewService(s.Service, sys, util.Config{})
 
 	var results []TestResult
 
@@ -22,7 +25,7 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewService(sysService system.Service, ignoreList []string) *Service {
+func NewService(sysService system.Service, config util.Config) (*Service, error) {
 	service := sysService.Service()
 	enabled, _ := sysService.Enabled()
 	running, _ := sysService.Running()
@@ -30,5 +33,5 @@ func NewService(sysService system.Service, ignoreList []string) *Service {
 		Service: service,
 		Enabled: enabled.(bool),
 		Running: running.(bool),
-	}
+	}, nil
 }
