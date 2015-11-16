@@ -58,9 +58,10 @@ func (p *DefPort) IP() (interface{}, error) {
 	return p.sysPorts[p.port].Ip, nil
 }
 
+// FIXME: Is there a better way to do this rather than ignoring errors?
 func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 	ports := make(map[string]GOnetstat.Process)
-	netstat := GOnetstat.Tcp(lookupPids)
+	netstat, _ := GOnetstat.Tcp(lookupPids)
 	var net string
 	//netPorts := make(map[string]GOnetstat.Process)
 	//ports["tcp"] = netPorts
@@ -71,7 +72,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 			ports[net+":"+port] = entry
 		}
 	}
-	netstat = GOnetstat.Tcp6(lookupPids)
+	netstat, _ = GOnetstat.Tcp6(lookupPids)
 	//netPorts = make(map[string]GOnetstat.Process)
 	//ports["tcp6"] = netPorts
 	net = "tcp6"
@@ -81,7 +82,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 			ports[net+":"+port] = entry
 		}
 	}
-	netstat = GOnetstat.Udp(lookupPids)
+	netstat, _ = GOnetstat.Udp(lookupPids)
 	//netPorts = make(map[string]GOnetstat.Process)
 	//ports["udp"] = netPorts
 	net = "udp"
@@ -89,7 +90,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 		port := strconv.FormatInt(entry.Port, 10)
 		ports[net+":"+port] = entry
 	}
-	netstat = GOnetstat.Udp6(lookupPids)
+	netstat, _ = GOnetstat.Udp6(lookupPids)
 	//netPorts = make(map[string]GOnetstat.Process)
 	//ports["udp6"] = netPorts
 	net = "udp6"
