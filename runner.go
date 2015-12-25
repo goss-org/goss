@@ -23,7 +23,7 @@ func Run(c *cli.Context, startTime time.Time) {
 	var fh *os.File
 	var err error
 	var path string
-	if hasStdin() && !c.GlobalIsSet("gossfile") {
+	if !c.GlobalIsSet("gossfile") && hasStdin() {
 		fh = os.Stdin
 	} else {
 		specFile := c.GlobalString("gossfile")
