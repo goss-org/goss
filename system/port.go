@@ -11,12 +11,12 @@ type Port interface {
 	Port() string
 	Exists() (interface{}, error)
 	Listening() (interface{}, error)
-	IP() (interface{}, error)
+	IP() ([]string, error)
 }
 
 type DefPort struct {
 	port     string
-	sysPorts map[string]GOnetstat.Process
+	sysPorts map[string][]GOnetstat.Process
 }
 
 func NewDefPort(port string, system *System) Port {
@@ -54,13 +54,17 @@ func (p *DefPort) Listening() (interface{}, error) {
 	return false, nil
 }
 
-func (p *DefPort) IP() (interface{}, error) {
-	return p.sysPorts[p.port].Ip, nil
+func (p *DefPort) IP() ([]string, error) {
+	var ips []string
+	for _, entry := range p.sysPorts[p.port] {
+		ips = append(ips, entry.Ip)
+	}
+	return ips, nil
 }
 
 // FIXME: Is there a better way to do this rather than ignoring errors?
-func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
-	ports := make(map[string]GOnetstat.Process)
+func GetPorts(lookupPids bool) map[string][]GOnetstat.Process {
+	ports := make(map[string][]GOnetstat.Process)
 	netstat, _ := GOnetstat.Tcp(lookupPids)
 	var net string
 	//netPorts := make(map[string]GOnetstat.Process)
@@ -69,7 +73,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 	for _, entry := range netstat {
 		if entry.State == "LISTEN" {
 			port := strconv.FormatInt(entry.Port, 10)
-			ports[net+":"+port] = entry
+			ports[net+":"+port] = append(ports[net+":"+port], entry)
 		}
 	}
 	netstat, _ = GOnetstat.Tcp6(lookupPids)
@@ -79,7 +83,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 	for _, entry := range netstat {
 		if entry.State == "LISTEN" {
 			port := strconv.FormatInt(entry.Port, 10)
-			ports[net+":"+port] = entry
+			ports[net+":"+port] = append(ports[net+":"+port], entry)
 		}
 	}
 	netstat, _ = GOnetstat.Udp(lookupPids)
@@ -88,7 +92,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 	net = "udp"
 	for _, entry := range netstat {
 		port := strconv.FormatInt(entry.Port, 10)
-		ports[net+":"+port] = entry
+		ports[net+":"+port] = append(ports[net+":"+port], entry)
 	}
 	netstat, _ = GOnetstat.Udp6(lookupPids)
 	//netPorts = make(map[string]GOnetstat.Process)
@@ -96,7 +100,7 @@ func GetPorts(lookupPids bool) map[string]GOnetstat.Process {
 	net = "udp6"
 	for _, entry := range netstat {
 		port := strconv.FormatInt(entry.Port, 10)
-		ports[net+":"+port] = entry
+		ports[net+":"+port] = append(ports[net+":"+port], entry)
 	}
 	return ports
 }

@@ -32,13 +32,13 @@ type System struct {
 	NewProcess  func(string, *System) Process
 	NewGossfile func(string, *System) Gossfile
 	Dbus        *dbus.Conn
-	ports       map[string]GOnetstat.Process
+	ports       map[string][]GOnetstat.Process
 	portsOnce   sync.Once
 	procOnce    sync.Once
 	procMap     map[string][]ps.Process
 }
 
-func (s *System) Ports() map[string]GOnetstat.Process {
+func (s *System) Ports() map[string][]GOnetstat.Process {
 	s.portsOnce.Do(func() {
 		s.ports = GetPorts(false)
 	})

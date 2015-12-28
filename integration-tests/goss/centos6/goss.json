@@ -39,7 +39,7 @@
             "exit-status": "0",
             "stdout": [
                 "Server version: Apache/2.2.15 (Unix)",
-                "Server built:   Aug 24 2015 17:52:49"
+                "Server built:   Dec 15 2015 15:50:14"
             ],
             "stderr": []
         },
@@ -59,7 +59,7 @@
     "port": {
         "tcp6:80": {
             "listening": true,
-            "ip": "0000:0000:0000:0000:0000:0000:0000:0000"
+            "ip": ["0000:0000:0000:0000:0000:0000:0000:0000"]
         }
     },
     "gossfile": {

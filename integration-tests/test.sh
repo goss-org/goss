@@ -22,13 +22,13 @@ for os in centos6 wheezy precise;do
 
   grep -q 'Count: 39, Failed: 0' <<<"$out"
 
-  docker exec goss_int_test_$os bash -c "time /tmp/goss/generate_goss.sh $os > /dev/null"
+  docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os"
 
   docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected.json /tmp/goss/${os}/goss-generated.json"
 
   docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-aa-expected.json /tmp/goss/${os}/goss-aa-generated.json"
 
-  docker exec goss_int_test_$os bash -c "time /tmp/goss/generate_goss.sh $os -q > /dev/null"
+  docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os -q"
 
   docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
 

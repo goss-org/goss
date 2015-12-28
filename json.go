@@ -286,11 +286,13 @@ func AutoAppendResource(fileName, key string, c *cli.Context) error {
 		pids, _ := sysres.Pids()
 		for _, pid := range pids {
 			pidS := strconv.Itoa(pid)
-			for port, entry := range ports {
-				if entry.Pid == pidS {
-					// port
-					if res, _, ok := configJSON.Ports.AppendSysResourceIfExists(port, sys); ok == true {
-						resourcePrint(fileName, res)
+			for port, entries := range ports {
+				for _, entry := range entries {
+					if entry.Pid == pidS {
+						// port
+						if res, _, ok := configJSON.Ports.AppendSysResourceIfExists(port, sys); ok == true {
+							resourcePrint(fileName, res)
+						}
 					}
 				}
 			}

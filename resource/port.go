@@ -3,9 +3,9 @@ package resource
 import "github.com/aelsabbahy/goss/system"
 
 type Port struct {
-	Port      string `json:"-"`
-	Listening bool   `json:"listening"`
-	IP        string `json:"ip,omitempty"`
+	Port      string   `json:"-"`
+	Listening bool     `json:"listening"`
+	IP        []string `json:"ip,omitempty"`
 }
 
 func (p *Port) ID() string      { return p.Port }
@@ -18,8 +18,8 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening))
 
-	if p.IP != "" {
-		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP))
+	if len(p.IP) > 0 {
+		results = append(results, ValidateValues(p, "ip", p.IP, sysPort.IP))
 	}
 
 	return results
@@ -34,7 +34,7 @@ func NewPort(sysPort system.Port, ignoreList []string) *Port {
 	}
 	if !contains(ignoreList, "ip") {
 		ip, _ := sysPort.IP()
-		p.IP = ip.(string)
+		p.IP = ip
 	}
 	return p
 }
