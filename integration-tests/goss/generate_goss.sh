@@ -11,7 +11,7 @@ goss() {
   $SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
 }
 
-rm -f $SCRIPT_DIR/goss*generated*.json
+rm -f $SCRIPT_DIR/${OS}/goss*generated*.json
 
 for x in /etc/passwd /tmp/goss/foobar;do
   goss a "${args[@]}" file $x
