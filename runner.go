@@ -16,16 +16,17 @@ import (
 	"github.com/fatih/color"
 )
 
-func Run(specFile string, c *cli.Context, startTime time.Time) {
+func Run(c *cli.Context, startTime time.Time) {
 	sys := system.New(c)
 
 	// handle stdin
 	var fh *os.File
 	var err error
 	var path string
-	if hasStdin() {
+	if !c.GlobalIsSet("gossfile") && hasStdin() {
 		fh = os.Stdin
 	} else {
+		specFile := c.GlobalString("gossfile")
 		path = filepath.Dir(specFile)
 		fh, err = os.Open(specFile)
 		if err != nil {

@@ -51,7 +51,7 @@ func main() {
 				},
 			},
 			Action: func(c *cli.Context) {
-				goss.Run(c.GlobalString("gossfile"), c, startTime)
+				goss.Run(c, startTime)
 			},
 		},
 		{
