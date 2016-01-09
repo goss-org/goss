@@ -43,13 +43,15 @@ func (d *DefDNS) setup() error {
 	d.loaded = true
 
 	addrs, err := lookupHost(d.host, d.Timeout)
-	if err != nil {
+	if err != nil || len(addrs) == 0 {
 		d.resolveable = false
 		d.addrs = []string{}
-		return nil
-		// FIXME: if timeout error, then ignore.. otherwise it's an issue
-		//d.err = err
-		//return d.err
+		// DNSError is resolvable == false, ignore error
+		if _, ok := err.(*net.DNSError); ok {
+			return nil
+		}
+		d.err = err
+		return d.err
 	}
 	sort.Strings(addrs)
 	d.resolveable = true
