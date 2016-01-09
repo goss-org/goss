@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/aelsabbahy/GOnetstat"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Port interface {
@@ -19,7 +20,7 @@ type DefPort struct {
 	sysPorts map[string][]GOnetstat.Process
 }
 
-func NewDefPort(port string, system *System) Port {
+func NewDefPort(port string, system *System, config util.Config) Port {
 	p := normalizePort(port)
 	return &DefPort{
 		port:     p,

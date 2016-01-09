@@ -4,6 +4,7 @@ import (
 	"os/user"
 	"sort"
 
+	"github.com/aelsabbahy/goss/util"
 	"github.com/aelsabbahy/goss/util/group"
 )
 
@@ -20,7 +21,7 @@ type DefUser struct {
 	username string
 }
 
-func NewDefUser(username string, system *System) User {
+func NewDefUser(username string, system *System, config util.Config) User {
 	return &DefUser{username: username}
 }
 

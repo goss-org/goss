@@ -14,7 +14,7 @@ type DebPackage struct {
 	installed bool
 }
 
-func NewDebPackage(name string, system *System) Package {
+func NewDebPackage(name string, system *System, config util.Config) Package {
 	return &DebPackage{name: name}
 }
 

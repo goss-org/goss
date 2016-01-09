@@ -90,7 +90,8 @@
             "stdout": [],
             "stderr": [
                 "sh: foobar: command not found"
-            ]
+            ],
+            "timeout": 10000
         },
         "httpd -v": {
             "exit-status": "0",
@@ -98,7 +99,8 @@
                 "Server version: Apache/2.2.15 (Unix)",
                 "Server built:   Dec 15 2015 15:50:14"
             ],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         }
     },
     "dns": {

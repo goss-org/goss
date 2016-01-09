@@ -14,7 +14,7 @@ type RpmPackage struct {
 	installed bool
 }
 
-func NewRpmPackage(name string, system *System) Package {
+func NewRpmPackage(name string, system *System, config util.Config) Package {
 	return &RpmPackage{name: name}
 }
 

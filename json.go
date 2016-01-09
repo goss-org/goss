@@ -13,6 +13,7 @@ import (
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/codegangsta/cli"
 )
 
@@ -194,7 +195,10 @@ func WriteJSON(filePath string, configJSON ConfigJSON) error {
 }
 
 func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
-	ignoreList := c.GlobalStringSlice("exclude-attr")
+	config := util.Config{
+		IgnoreList: c.GlobalStringSlice("exclude-attr"),
+		Timeout:    c.Int("timeout"),
+	}
 
 	var configJSON ConfigJSON
 	if _, err := os.Stat(fileName); err == nil {
@@ -208,37 +212,81 @@ func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
-		res, _ := configJSON.Addrs.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Addrs.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Command":
-		res, _ := configJSON.Commands.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Commands.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "DNS":
-		res, _ := configJSON.DNS.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.DNS.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "File":
-		res, _ := configJSON.Files.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Files.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Group":
-		res, _ := configJSON.Groups.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Groups.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Package":
-		res, _ := configJSON.Packages.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Packages.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Port":
-		res, _ := configJSON.Ports.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Ports.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Process":
-		res, _ := configJSON.Processes.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Processes.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Service":
-		res, _ := configJSON.Services.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Services.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "User":
-		res, _ := configJSON.Users.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Users.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	case "Gossfile":
-		res, _ := configJSON.Gossfiles.AppendSysResource(key, sys, ignoreList)
+		res, err := configJSON.Gossfiles.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		resourcePrint(fileName, res)
 	}
 

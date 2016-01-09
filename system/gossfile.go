@@ -1,5 +1,7 @@
 package system
 
+import "github.com/aelsabbahy/goss/util"
+
 type Gossfile interface {
 	Path() string
 	Exists() (interface{}, error)
@@ -18,6 +20,6 @@ func (g *DefGossfile) Exists() (interface{}, error) {
 	return false, nil
 }
 
-func NewDefGossfile(path string, system *System) Gossfile {
+func NewDefGossfile(path string, system *System, config util.Config) Gossfile {
 	return &DefGossfile{path: path}
 }

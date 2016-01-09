@@ -91,14 +91,16 @@
                 "Server version: Apache/2.2.22 (Debian)",
                 "Server built:   Aug 18 2015 09:49:50"
             ],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         },
         "foobar": {
             "exit-status": "127",
             "stdout": [],
             "stderr": [
                 "sh: 1: foobar: not found"
-            ]
+            ],
+            "timeout": 10000
         }
     },
     "dns": {

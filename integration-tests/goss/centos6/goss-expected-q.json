@@ -71,12 +71,14 @@
         "foobar": {
             "exit-status": "127",
             "stdout": [],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         },
         "httpd -v": {
             "exit-status": "0",
             "stdout": [],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         }
     },
     "dns": {

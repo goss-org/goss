@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type User struct {
 	Username string   `json:"-"`
@@ -15,7 +18,7 @@ func (u *User) ID() string      { return u.Username }
 func (u *User) SetID(id string) { u.Username = id }
 
 func (u *User) Validate(sys *system.System) []TestResult {
-	sysuser := sys.NewUser(u.Username, sys)
+	sysuser := sys.NewUser(u.Username, sys, util.Config{})
 
 	var results []TestResult
 
@@ -37,29 +40,29 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewUser(sysUser system.User, ignoreList []string) *User {
+func NewUser(sysUser system.User, config util.Config) (*User, error) {
 	username := sysUser.Username()
 	exists, _ := sysUser.Exists()
 	u := &User{
 		Username: username,
 		Exists:   exists.(bool),
 	}
-	if !contains(ignoreList, "uid") {
+	if !contains(config.IgnoreList, "uid") {
 		uid, _ := sysUser.UID()
 		u.UID = uid.(string)
 
 	}
-	if !contains(ignoreList, "gid") {
+	if !contains(config.IgnoreList, "gid") {
 		gid, _ := sysUser.GID()
 		u.GID = gid.(string)
 	}
-	if !contains(ignoreList, "groups") {
+	if !contains(config.IgnoreList, "groups") {
 		groups, _ := sysUser.Groups()
 		u.Groups = groups
 	}
-	if !contains(ignoreList, "home") {
+	if !contains(config.IgnoreList, "home") {
 		home, _ := sysUser.Home()
 		u.Home = home.(string)
 	}
-	return u
+	return u, nil
 }

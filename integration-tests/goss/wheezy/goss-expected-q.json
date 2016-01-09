@@ -71,12 +71,14 @@
         "apache2 -v": {
             "exit-status": "0",
             "stdout": [],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         },
         "foobar": {
             "exit-status": "127",
             "stdout": [],
-            "stderr": []
+            "stderr": [],
+            "timeout": 10000
         }
     },
     "dns": {

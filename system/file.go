@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/aelsabbahy/goss/util"
 	"github.com/aelsabbahy/goss/util/group"
 )
 
@@ -26,7 +27,7 @@ type DefFile struct {
 	path string
 }
 
-func NewDefFile(path string, system *System) File {
+func NewDefFile(path string, system *System, config util.Config) File {
 	absPath, _ := filepath.Abs(path)
 	return &DefFile{path: absPath}
 }

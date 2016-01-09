@@ -1,6 +1,9 @@
 package system
 
-import "github.com/aelsabbahy/goss/util/group"
+import (
+	"github.com/aelsabbahy/goss/util"
+	"github.com/aelsabbahy/goss/util/group"
+)
 
 type Group interface {
 	Groupname() string
@@ -12,7 +15,7 @@ type DefGroup struct {
 	groupname string
 }
 
-func NewDefGroup(groupname string, system *System) Group {
+func NewDefGroup(groupname string, system *System, config util.Config) Group {
 	return &DefGroup{groupname: groupname}
 }
 

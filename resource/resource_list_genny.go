@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/cheekybits/genny/generic"
 )
 
@@ -17,16 +18,20 @@ type ResourceType generic.Type
 
 type ResourceTypeMap map[string]*ResourceType
 
-func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, ignoreList []string) (*ResourceType, system.ResourceType) {
-	sysres := sys.NewResourceType(sr, sys)
-	res := NewResourceType(sysres, ignoreList)
+func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*ResourceType, error) {
+	sysres := sys.NewResourceType(sr, sys, config)
+	res, err := NewResourceType(sysres, config)
+	if err != nil {
+		return nil, err
+	}
 	r[res.ID()] = res
-	return res, sysres
+	return res, nil
 }
 
 func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
-	sysres := sys.NewResourceType(sr, sys)
-	res := NewResourceType(sysres, []string{})
+	sysres := sys.NewResourceType(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewResourceType(sysres, util.Config{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false
 	}

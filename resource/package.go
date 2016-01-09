@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type Package struct {
 	Name      string   `json:"-"`
@@ -12,7 +15,7 @@ func (p *Package) ID() string      { return p.Name }
 func (p *Package) SetID(id string) { p.Name = id }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
-	sysPkg := sys.NewPackage(p.Name, sys)
+	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
 
 	var results []TestResult
 
@@ -25,16 +28,16 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewPackage(sysPackage system.Package, ignoreList []string) *Package {
+func NewPackage(sysPackage system.Package, config util.Config) (*Package, error) {
 	name := sysPackage.Name()
 	installed, _ := sysPackage.Installed()
 	p := &Package{
 		Name:      name,
 		Installed: installed.(bool),
 	}
-	if !contains(ignoreList, "versions") {
+	if !contains(config.IgnoreList, "versions") {
 		versions, _ := sysPackage.Versions()
 		p.Versions = versions
 	}
-	return p
+	return p, nil
 }

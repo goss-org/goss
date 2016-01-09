@@ -1,6 +1,9 @@
 package resource
 
-import "github.com/aelsabbahy/goss/system"
+import (
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+)
 
 type Group struct {
 	Groupname string `json:"-"`
@@ -12,7 +15,7 @@ func (g *Group) ID() string      { return g.Groupname }
 func (g *Group) SetID(id string) { g.Groupname = id }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
-	sysgroup := sys.NewGroup(g.Groupname, sys)
+	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})
 
 	var results []TestResult
 
@@ -25,16 +28,16 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 	return results
 }
 
-func NewGroup(sysGroup system.Group, ignoreList []string) *Group {
+func NewGroup(sysGroup system.Group, config util.Config) (*Group, error) {
 	groupname := sysGroup.Groupname()
 	exists, _ := sysGroup.Exists()
 	g := &Group{
 		Groupname: groupname,
 		Exists:    exists.(bool),
 	}
-	if !contains(ignoreList, "stderr") {
+	if !contains(config.IgnoreList, "stderr") {
 		gid, _ := sysGroup.Gid()
 		g.Gid = gid.(string)
 	}
-	return g
+	return g, nil
 }

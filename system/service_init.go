@@ -12,7 +12,7 @@ type ServiceInit struct {
 	service string
 }
 
-func NewServiceInit(service string, system *System) Service {
+func NewServiceInit(service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service}
 }
 
