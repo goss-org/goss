@@ -2,7 +2,6 @@ package resource
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"strings"
 
@@ -23,7 +22,6 @@ func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
 	if c.Timeout == 0 {
-		fmt.Printf("DEPRICATION WARNING: timeout not set for command: `%s`. Using default of (%dms), this will break in the future if not added to goss.json\n", c.ID(), 10000)
 		c.Timeout = 10000
 	}
 	sysCommand := sys.NewCommand(c.Command, sys, util.Config{Timeout: c.Timeout})

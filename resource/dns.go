@@ -16,6 +16,9 @@ func (d *DNS) ID() string      { return d.Host }
 func (d *DNS) SetID(id string) { d.Host = id }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
+	if d.Timeout == 0 {
+		d.Timeout = 500
+	}
 	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout})
 
 	var results []TestResult

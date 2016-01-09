@@ -11,15 +11,18 @@ type Addr struct {
 	Timeout   int    `json:"timeout"`
 }
 
-func (h *Addr) ID() string      { return h.Address }
-func (h *Addr) SetID(id string) { h.Address = id }
+func (a *Addr) ID() string      { return a.Address }
+func (a *Addr) SetID(id string) { a.Address = id }
 
-func (h *Addr) Validate(sys *system.System) []TestResult {
-	sysAddr := sys.NewAddr(h.Address, sys, util.Config{Timeout: h.Timeout})
+func (a *Addr) Validate(sys *system.System) []TestResult {
+	if a.Timeout == 0 {
+		a.Timeout = 500
+	}
+	sysAddr := sys.NewAddr(a.Address, sys, util.Config{Timeout: a.Timeout})
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(h, "reachable", h.Reachable, sysAddr.Reachable))
+	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable))
 
 	return results
 }

@@ -27,18 +27,18 @@ func NewDefAddr(address string, system *System, config util.Config) Addr {
 	}
 }
 
-func (h *DefAddr) ID() string {
-	return h.address
+func (a *DefAddr) ID() string {
+	return a.address
 }
-func (h *DefAddr) Address() string {
-	return h.address
+func (a *DefAddr) Address() string {
+	return a.address
 }
-func (h *DefAddr) Exists() (interface{}, error) { return h.Reachable() }
+func (a *DefAddr) Exists() (interface{}, error) { return a.Reachable() }
 
-func (h *DefAddr) Reachable() (interface{}, error) {
-	network, address := splitAddress(h.address)
+func (a *DefAddr) Reachable() (interface{}, error) {
+	network, address := splitAddress(a.address)
 
-	conn, err := net.DialTimeout(network, address, time.Duration(h.Timeout)*time.Millisecond)
+	conn, err := net.DialTimeout(network, address, time.Duration(a.Timeout)*time.Millisecond)
 	if err != nil {
 		return false, nil
 	}
