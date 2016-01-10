@@ -15,7 +15,7 @@ type ServiceDbus struct {
 func NewServiceDbus(service string, system *System, config util.Config) Service {
 	return &ServiceDbus{
 		service: service,
-		dbus:    system.Dbus,
+		dbus:    system.Dbus(),
 	}
 }
 
