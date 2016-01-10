@@ -86,6 +86,7 @@ func (c *DefCommand) Exists() (interface{}, error) {
 func runCommand(cmd *util.Command, timeout int) error {
 	c1 := make(chan bool, 1)
 	e1 := make(chan error, 1)
+	timeoutD := time.Duration(timeout) * time.Millisecond
 	go func() {
 		err := cmd.Run()
 		if err != nil {
@@ -98,7 +99,7 @@ func runCommand(cmd *util.Command, timeout int) error {
 		return nil
 	case err := <-e1:
 		return err
-	case <-time.After(time.Millisecond * time.Duration(timeout)):
-		return fmt.Errorf("Command execution timed out (%d milliseconds)", timeout)
+	case <-time.After(timeoutD):
+		return fmt.Errorf("Command execution timed out (%s)", timeoutD)
 	}
 }

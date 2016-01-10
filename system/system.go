@@ -70,10 +70,11 @@ func New(c *cli.Context) *System {
 	// Also, cache should be its own object
 	sys.detectService()
 
-	switch {
-	case c.GlobalString("package") == "rpm":
+	p := c.GlobalString("package")
+	switch p {
+	case "rpm":
 		sys.NewPackage = NewRpmPackage
-	case c.GlobalString("package") == "deb":
+	case "deb":
 		sys.NewPackage = NewDebPackage
 	default:
 		sys.NewPackage = detectPackage()
