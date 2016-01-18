@@ -99,10 +99,9 @@ func main() {
 					Name:  "addr",
 					Usage: "add new remote address:port - ex: google.com:80",
 					Flags: []cli.Flag{
-						cli.IntFlag{
+						cli.DurationFlag{
 							Name:  "timeout",
-							Value: 500,
-							Usage: "Timeout in ms",
+							Value: 500 * time.Millisecond,
 						},
 					},
 					Action: func(c *cli.Context) {
@@ -141,10 +140,9 @@ func main() {
 					Name:  "command",
 					Usage: "add new command",
 					Flags: []cli.Flag{
-						cli.IntFlag{
+						cli.DurationFlag{
 							Name:  "timeout",
-							Value: 10000,
-							Usage: "Timeout in ms",
+							Value: 10 * time.Second,
 						},
 					},
 					Action: func(c *cli.Context) {
@@ -155,10 +153,9 @@ func main() {
 					Name:  "dns",
 					Usage: "add new dns",
 					Flags: []cli.Flag{
-						cli.IntFlag{
+						cli.DurationFlag{
 							Name:  "timeout",
-							Value: 500,
-							Usage: "Timeout in ms",
+							Value: 500 * time.Millisecond,
 						},
 					},
 					Action: func(c *cli.Context) {
