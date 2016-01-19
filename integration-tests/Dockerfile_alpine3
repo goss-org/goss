@@ -1,0 +1,16 @@
+FROM gliderlabs/alpine:3.3 
+MAINTAINER Ahmed
+
+# install glibc since goss will need it
+RUN touch /etc/network/interfaces && \
+    apk add --update ca-certificates device-mapper && \
+    wget https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/8/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-2.21-r2.apk && \
+    wget https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/8/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-bin-2.21-r2.apk && \
+    apk add --allow-untrusted glibc-2.21-r2.apk glibc-bin-2.21-r2.apk && \
+    /usr/glibc/usr/bin/ldconfig /lib /usr/glibc/usr/lib && \
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
+    rm -rf /var/cache/apk/*
+
+# install apache2 and remove un-needed services
+RUN apk update && apk add openrc apache2 bash && rc-update add apache2 && rm /etc/init.d/networking /etc/init.d/hwdrivers
+

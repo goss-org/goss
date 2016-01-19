@@ -10,10 +10,15 @@ import (
 
 type ServiceInit struct {
 	service string
+	alpine  bool
 }
 
 func NewServiceInit(service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service}
+}
+
+func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
+	return &ServiceInit{service: service, alpine: true}
 }
 
 func (s *ServiceInit) Service() string {
@@ -28,11 +33,11 @@ func (s *ServiceInit) Exists() (interface{}, error) {
 }
 
 func (s *ServiceInit) Enabled() (interface{}, error) {
-	en, err := initServiceEnabled(s.service, 3)
-	if en {
-		return true, nil
+	if s.alpine {
+		return alpineInitServiceEnabled(s.service, "sysinit")
+	} else {
+		return initServiceEnabled(s.service, 3)
 	}
-	return false, err
 }
 
 func (s *ServiceInit) Running() (interface{}, error) {
@@ -46,6 +51,14 @@ func (s *ServiceInit) Running() (interface{}, error) {
 
 func initServiceEnabled(service string, level int) (bool, error) {
 	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc%d.d/S[0-9][0-9]%s", level, service))
+	if err == nil && matches != nil {
+		return true, nil
+	}
+	return false, err
+}
+
+func alpineInitServiceEnabled(service string, level string) (bool, error) {
+	matches, err := filepath.Glob(fmt.Sprintf("/etc/runlevels/%s/%s", level, service))
 	if err == nil && matches != nil {
 		return true, nil
 	}

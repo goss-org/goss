@@ -1,0 +1,16 @@
+{
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.4.17-r4"
+            ]
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        }
+    }
+}

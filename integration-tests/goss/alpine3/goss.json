@@ -1,0 +1,68 @@
+{
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.4.17-r4"
+            ]
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        },
+        "autofs": {
+            "enabled": false,
+            "running": false
+        }
+    },
+    "user": {
+        "apache": {
+            "exists": true,
+            "uid": "1000",
+            "gid": "1000",
+            "groups": [
+                "apache"
+            ],
+            "home": "/var/www"
+        }
+    },
+    "group": {
+        "apache": {
+            "exists": true,
+            "gid": "1000"
+        }
+    },
+    "command": {
+        "httpd -v": {
+            "exit-status": "0",
+            "stdout": [
+                "Server version: Apache/2.4.17 (Unix)",
+                "Server built:   Dec 15 2015 12:01:18"
+            ],
+            "stderr": []
+        },
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+               "foobar: not found"
+             ]
+        }
+    },
+    "process": {
+        "httpd": {
+            "running": true
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": ["0000:0000:0000:0000:0000:0000:0000:0000"]
+        }
+    },
+    "gossfile": {
+        "../goss-shared.json": {}
+    }
+}
