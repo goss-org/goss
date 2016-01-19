@@ -161,7 +161,7 @@ func isAlpine() bool {
 	}
 
 	// See if it has only one of the package managers
-	if hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
+	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
 		return true
 	}
 
