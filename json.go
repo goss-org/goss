@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
@@ -197,7 +198,7 @@ func WriteJSON(filePath string, configJSON ConfigJSON) error {
 func AppendResource(fileName, resourceName, key string, c *cli.Context) error {
 	config := util.Config{
 		IgnoreList: c.GlobalStringSlice("exclude-attr"),
-		Timeout:    c.Int("timeout"),
+		Timeout:    int(c.Duration("timeout") / time.Millisecond),
 	}
 
 	var configJSON ConfigJSON

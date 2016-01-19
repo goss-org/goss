@@ -79,6 +79,7 @@ func (d *DefDNS) Exists() (interface{}, error) {
 func lookupHost(host string, timeout int) ([]string, error) {
 	c1 := make(chan []string, 1)
 	e1 := make(chan error, 1)
+	timeoutD := time.Duration(timeout) * time.Millisecond
 	go func() {
 		addrs, err := net.LookupHost(host)
 		if err != nil {
@@ -91,7 +92,7 @@ func lookupHost(host string, timeout int) ([]string, error) {
 		return res, nil
 	case err := <-e1:
 		return nil, err
-	case <-time.After(time.Millisecond * time.Duration(timeout)):
-		return nil, fmt.Errorf("DNS lookup timed out (%d milliseconds)", timeout)
+	case <-time.After(timeoutD):
+		return nil, fmt.Errorf("DNS lookup timed out (%s)", timeoutD)
 	}
 }
