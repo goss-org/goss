@@ -76,7 +76,7 @@ func New(c *cli.Context) *System {
 		sys.NewPackage = NewRpmPackage
 	case "deb":
 		sys.NewPackage = NewDebPackage
-	case c.GlobalString("package") == "alpine":
+	case "alpine":
 		sys.NewPackage = NewAlpinePackage
 	default:
 		sys.NewPackage = detectPackage()
@@ -161,7 +161,7 @@ func isAlpine() bool {
 	}
 
 	// See if it has only one of the package managers
-	if hasCommand("dpkg") && !hasCommand("rpm") && !hasCommand("apk") {
+	if hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
 		return true
 	}
 
