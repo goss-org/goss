@@ -76,6 +76,8 @@ func New(c *cli.Context) *System {
 		sys.NewPackage = NewRpmPackage
 	case "deb":
 		sys.NewPackage = NewDebPackage
+	case "alpine":
+		sys.NewPackage = NewAlpinePackage
 	default:
 		sys.NewPackage = detectPackage()
 	}
@@ -89,6 +91,8 @@ func detectPackage() func(string, *System, util2.Config) Package {
 		return NewRpmPackage
 	case isDeb():
 		return NewDebPackage
+	case isAlpine():
+		return NewAlpinePackage
 	default:
 		return NewNullPackage
 	}
@@ -106,6 +110,8 @@ func (s *System) detectService() {
 		s.Dbus = dbus
 	case isUbuntu():
 		s.NewService = NewServiceUpstart
+	case isAlpine():
+		s.NewService = NewAlpineServiceInit
 	default:
 		s.NewService = NewServiceInit
 	}
@@ -126,7 +132,7 @@ func isDeb() bool {
 	}
 
 	// See if it has only one of the package managers
-	if hasCommand("dpkg") && !hasCommand("rpm") {
+	if hasCommand("dpkg") && !hasCommand("rpm") && !hasCommand("apk") {
 		return true
 	}
 
@@ -143,9 +149,22 @@ func isRpm() bool {
 	}
 
 	// See if it has only one of the package managers
-	if hasCommand("rpm") && !hasCommand("dpkg") {
+	if hasCommand("rpm") && !hasCommand("dpkg") && !hasCommand("apk") {
 		return true
 	}
+	return false
+}
+
+func isAlpine() bool {
+	if _, err := os.Stat("/etc/alpine-release"); err == nil {
+		return true
+	}
+
+	// See if it has only one of the package managers
+	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
+		return true
+	}
+
 	return false
 }
 

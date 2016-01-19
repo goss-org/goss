@@ -1,0 +1,117 @@
+{
+    "file": {
+        "/etc/passwd": {
+            "exists": true,
+            "mode": "0644",
+            "owner": "root",
+            "group": "root",
+            "filetype": "file",
+            "contains": []
+        },
+        "/tmp/goss/foobar": {
+            "exists": false,
+            "contains": []
+        }
+    },
+    "package": {
+        "apache2": {
+            "installed": true,
+            "versions": [
+                "2.4.17-r4"
+            ]
+        },
+        "foobar": {
+            "installed": false
+        },
+        "vim-tiny": {
+            "installed": false
+        }
+    },
+    "addr": {
+        "tcp://google.com:22": {
+            "reachable": false,
+            "timeout": 500
+        },
+        "tcp://google.com:443": {
+            "reachable": true,
+            "timeout": 500
+        }
+    },
+    "port": {
+        "tcp6:80": {
+            "listening": true,
+            "ip": [
+                "0000:0000:0000:0000:0000:0000:0000:0000"
+            ]
+        },
+        "tcp:80": {
+            "listening": false
+        },
+        "tcp:9999": {
+            "listening": false
+        }
+    },
+    "service": {
+        "apache2": {
+            "enabled": true,
+            "running": true
+        },
+        "foobar": {
+            "enabled": false,
+            "running": false
+        }
+    },
+    "user": {
+        "foobar": {
+            "exists": false
+        },
+        "www-data": {
+            "exists": false
+        }
+    },
+    "group": {
+        "foobar": {
+            "exists": false
+        },
+        "www-data": {
+            "exists": true,
+            "gid": "82"
+        }
+    },
+    "command": {
+        "apache2 -v": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: apache2: not found"
+            ],
+            "timeout": 10000
+        },
+        "foobar": {
+            "exit-status": "127",
+            "stdout": [],
+            "stderr": [
+                "sh: foobar: not found"
+            ],
+            "timeout": 10000
+        }
+    },
+    "dns": {
+        "localhost": {
+            "resolveable": true,
+            "addrs": [
+                "127.0.0.1",
+                "::1"
+            ],
+            "timeout": 500
+        }
+    },
+    "process": {
+        "apache2": {
+            "running": false
+        },
+        "foobar": {
+            "running": false
+        }
+    }
+}

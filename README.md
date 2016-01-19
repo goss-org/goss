@@ -68,10 +68,12 @@ The following tests have limitations.
 Package:
   * rpm
   * deb
+  * Alpine apk
 
 Service:
   * systemd
   * sysV init
+  * OpenRC init
   * Upstart
 
 ## Installation
@@ -100,7 +102,7 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --gossfile, -g "./goss.json" Goss file to read from / write to [$GOSS_FILE]
-   --package                    Package type to use [rpm, deb]
+   --package                    Package type to use [rpm, deb, alpine]
    --help, -h                   show help
    --generate-bash-completion
    --version, -v                print the version
