@@ -1,8 +1,10 @@
 package system
 
 import (
+	"strconv"
+
 	"github.com/aelsabbahy/goss/util"
-	"github.com/aelsabbahy/goss/util/group"
+	"github.com/opencontainers/runc/libcontainer/user"
 )
 
 type Group interface {
@@ -24,7 +26,7 @@ func (u *DefGroup) Groupname() string {
 }
 
 func (u *DefGroup) Exists() (interface{}, error) {
-	_, err := group.LookupGroup(u.groupname)
+	_, err := user.LookupGroup(u.groupname)
 	if err != nil {
 		return false, nil
 	}
@@ -32,10 +34,10 @@ func (u *DefGroup) Exists() (interface{}, error) {
 }
 
 func (u *DefGroup) Gid() (interface{}, error) {
-	group, err := group.LookupGroup(u.groupname)
+	group, err := user.LookupGroup(u.groupname)
 	if err != nil {
 		return "", nil
 	}
 
-	return group.Gid, nil
+	return strconv.Itoa(group.Gid), nil
 }

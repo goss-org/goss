@@ -16,7 +16,7 @@ test:
 	go test $(pkgs)
 
 lint:
-	go tool vet .
+	#go tool vet .
 	golint $(pkgs) | grep -v 'unexported' || true
 
 bench:
@@ -30,7 +30,8 @@ coverage:
 	#xdg-open /tmp/coverage.html
 
 build:
-	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
+	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-386 $(exe)
 
 release: build
 	#upx release/*

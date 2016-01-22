@@ -5,15 +5,18 @@ import:
   - package: github.com/mitchellh/go-ps
     ref:     e6c6068076470196af082b1ff896e24a51a87b2a
   - package: github.com/aelsabbahy/GOnetstat
-    ref:     ecc13c5416242c8183ecdba2d79136fbcf7e0268
+    ref:     2907f74398ebea717cab8187513bee184b1fdd26
   - package: github.com/codegangsta/cli
     ref:     70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13
   - package: github.com/godbus/dbus
     ref:     9bb9dbf0e53309fa81d26e7230cbb6cff9373cad
-  # color and it's dependencies
   - package: github.com/fatih/color
     ref:     76d423163af754ff6423d2d9be0057fbf03c57c2
   - package: github.com/mattn/go-isatty
     ref:     7fcbc72f853b92b5720db4a6b8482be612daef24
   - package: github.com/shiena/ansicolor
     ref:     d445752f6f66f9cd987722f109149f6799cdf1de
+  - package: github.com/opencontainers/runc
+    ref:     4e6893b05a6aa723daa5f9194361032c6beaca25
+    subpackages:
+      - /libcontainer/user
