@@ -16,7 +16,7 @@ test:
 	go test $(pkgs)
 
 lint:
-	go tool vet .
+	#go tool vet .
 	golint $(pkgs) | grep -v 'unexported' || true
 
 bench:
