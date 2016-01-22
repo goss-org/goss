@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/user"
 	"path/filepath"
+	"strconv"
 	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/aelsabbahy/goss/util/group"
+	"github.com/opencontainers/runc/libcontainer/user"
 )
 
 type File interface {
@@ -84,13 +84,17 @@ func (f *DefFile) Owner() (interface{}, error) {
 		return "", err
 	}
 
-	uid := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
-	user, err := user.LookupId(uid)
+	uidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
+	uid, err := strconv.Atoi(uidS)
+	if err != nil {
+		return "", err
+	}
+	user, err := user.LookupUid(uid)
 	if err != nil {
 		return "", err
 	}
 
-	return user.Username, nil
+	return user.Name, nil
 }
 
 func (f *DefFile) Group() (interface{}, error) {
@@ -99,8 +103,12 @@ func (f *DefFile) Group() (interface{}, error) {
 		return "", err
 	}
 
-	gid := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
-	group, err := group.LookupGroupID(gid)
+	gidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
+	gid, err := strconv.Atoi(gidS)
+	if err != nil {
+		return "", err
+	}
+	group, err := user.LookupGid(gid)
 	if err != nil {
 		return "", err
 	}
