@@ -12,8 +12,8 @@ import (
 type DNS interface {
 	Host() string
 	Addrs() ([]string, error)
-	Resolveable() (interface{}, error)
-	Exists() (interface{}, error)
+	Resolveable() (bool, error)
+	Exists() (bool, error)
 }
 
 type DefDNS struct {
@@ -65,14 +65,14 @@ func (d *DefDNS) Addrs() ([]string, error) {
 	return d.addrs, err
 }
 
-func (d *DefDNS) Resolveable() (interface{}, error) {
+func (d *DefDNS) Resolveable() (bool, error) {
 	err := d.setup()
 
 	return d.resolveable, err
 }
 
 // Stub out
-func (d *DefDNS) Exists() (interface{}, error) {
+func (d *DefDNS) Exists() (bool, error) {
 	return false, nil
 }
 

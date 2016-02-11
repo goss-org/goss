@@ -1,7 +1,9 @@
 package resource
 
 import (
+	"fmt"
 	"path/filepath"
+	"strconv"
 
 	"github.com/aelsabbahy/goss/system"
 )
@@ -22,4 +24,17 @@ func contains(a []string, s string) bool {
 		}
 	}
 	return false
+}
+
+func deprecateAtoI(depr interface{}, desc string) interface{} {
+	s, ok := depr.(string)
+	if !ok {
+		return depr
+	}
+	fmt.Printf("DEPRICATION WARNING: %s should be an integer not a string\n", desc)
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return float64(i)
 }

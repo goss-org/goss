@@ -10,8 +10,8 @@ import (
 
 type Addr interface {
 	Address() string
-	Exists() (interface{}, error)
-	Reachable() (interface{}, error)
+	Exists() (bool, error)
+	Reachable() (bool, error)
 }
 
 type DefAddr struct {
@@ -33,9 +33,9 @@ func (a *DefAddr) ID() string {
 func (a *DefAddr) Address() string {
 	return a.address
 }
-func (a *DefAddr) Exists() (interface{}, error) { return a.Reachable() }
+func (a *DefAddr) Exists() (bool, error) { return a.Reachable() }
 
-func (a *DefAddr) Reachable() (interface{}, error) {
+func (a *DefAddr) Reachable() (bool, error) {
 	network, address := splitAddress(a.address)
 
 	conn, err := net.DialTimeout(network, address, time.Duration(a.Timeout)*time.Millisecond)

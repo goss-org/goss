@@ -6,9 +6,9 @@ import (
 )
 
 type Package struct {
-	Name      string   `json:"-"`
-	Installed bool     `json:"installed"`
-	Versions  []string `json:"versions,omitempty"`
+	Name      string  `json:"-"`
+	Installed bool    `json:"installed"`
+	Versions  matcher `json:"versions,omitempty"`
 }
 
 func (p *Package) ID() string      { return p.Name }
@@ -21,8 +21,8 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed))
 
-	if len(p.Versions) > 0 {
-		results = append(results, ValidateValues(p, "version", p.Versions, sysPkg.Versions))
+	if p.Versions != nil {
+		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions))
 	}
 
 	return results
@@ -33,11 +33,12 @@ func NewPackage(sysPackage system.Package, config util.Config) (*Package, error)
 	installed, _ := sysPackage.Installed()
 	p := &Package{
 		Name:      name,
-		Installed: installed.(bool),
+		Installed: installed,
 	}
 	if !contains(config.IgnoreList, "versions") {
-		versions, _ := sysPackage.Versions()
-		p.Versions = versions
+		if versions, err := sysPackage.Versions(); err == nil {
+			p.Versions = versions
+		}
 	}
 	return p, nil
 }

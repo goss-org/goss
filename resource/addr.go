@@ -32,7 +32,7 @@ func NewAddr(sysAddr system.Addr, config util.Config) (*Addr, error) {
 	reachable, err := sysAddr.Reachable()
 	a := &Addr{
 		Address:   address,
-		Reachable: reachable.(bool),
+		Reachable: reachable,
 		Timeout:   config.Timeout,
 	}
 	return a, err

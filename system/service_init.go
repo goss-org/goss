@@ -25,14 +25,14 @@ func (s *ServiceInit) Service() string {
 	return s.service
 }
 
-func (s *ServiceInit) Exists() (interface{}, error) {
+func (s *ServiceInit) Exists() (bool, error) {
 	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", s.service)); err == nil {
 		return true, err
 	}
 	return false, nil
 }
 
-func (s *ServiceInit) Enabled() (interface{}, error) {
+func (s *ServiceInit) Enabled() (bool, error) {
 	if s.alpine {
 		return alpineInitServiceEnabled(s.service, "sysinit")
 	} else {
@@ -40,7 +40,7 @@ func (s *ServiceInit) Enabled() (interface{}, error) {
 	}
 }
 
-func (s *ServiceInit) Running() (interface{}, error) {
+func (s *ServiceInit) Running() (bool, error) {
 	cmd := util.NewCommand("service", s.service, "status")
 	cmd.Run()
 	if cmd.Status == 0 {

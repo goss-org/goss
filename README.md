@@ -44,6 +44,7 @@
         * [Attributes](#attributes-9)
     * [render, r - Render gossfile after importing all referenced gossfiles](#render-r---render-gossfile-after-importing-all-referenced-gossfiles)
     * [Patterns](#patterns)
+    * [Advanced Matchers](#advanced-matchers)
 
 
 ## Introduction
@@ -611,6 +612,8 @@ For the attributes that use patterns (ex. file, command output), each pattern is
 * "/regex/" - verifies that line contains regex
 * "!/regex/" - inverse of above, checks that no line contains regex
 
+**NOTE:** Pattern attrubutes do not support [Advanced Matchers](#advanced-matchers)
+
 ```bash
 $ cat /tmp/test.txt
 foo
@@ -644,3 +647,42 @@ $ goss validate
 
 Count: 2 failed: 1
 ```
+
+### Advanced Matchers
+Goss supports advanced matchers by converting json input to [gomega](https://onsi.github.io/gomega/) matchers. Here are some examples:
+
+Validate that user "nobody" has a uid that is less than 500 and that they are ONLY a member of the "nobody" group.
+```json
+{
+    "user": {
+        "nobody": {
+            "exists": true,
+            "uid": {"lt": 500},
+            "gid": 99,
+            "groups": {"consist-of": ["nobody"]},
+            "home": "/"
+        }
+    }
+}
+```
+
+Matchers can be nested for more complex logic, Ex:
+Ensure that we have 3 kernel versions installed and none of them are "4.1.0":
+```json
+{
+    "package": {
+        "kernel": {
+            "installed": true,
+            "versions": {"and": [
+                {"have-len": 3},
+                {"not": {"contain-element": "4.1.0"}}
+            ]}
+        }
+    }
+}
+
+```
+
+For more information see:
+* [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
+* [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference

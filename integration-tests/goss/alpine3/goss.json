@@ -20,8 +20,8 @@
     "user": {
         "apache": {
             "exists": true,
-            "uid": "1000",
-            "gid": "1000",
+            "uid": 1000,
+            "gid": 1000,
             "groups": [
                 "apache"
             ],
@@ -31,12 +31,12 @@
     "group": {
         "apache": {
             "exists": true,
-            "gid": "1000"
+            "gid": 1000
         }
     },
     "command": {
         "httpd -v": {
-            "exit-status": "0",
+            "exit-status": 0,
             "stdout": [
                 "Server version: Apache/2.4.17 (Unix)",
                 "Server built:   Dec 15 2015 12:01:18"
@@ -44,7 +44,7 @@
             "stderr": []
         },
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [
                "foobar: not found"

@@ -10,8 +10,8 @@ import (
 
 type Process interface {
 	Executable() string
-	Exists() (interface{}, error)
-	Running() (interface{}, error)
+	Exists() (bool, error)
+	Running() (bool, error)
 	Pids() ([]int, error)
 }
 
@@ -31,7 +31,7 @@ func (p *DefProcess) Executable() string {
 	return p.executable
 }
 
-func (p *DefProcess) Exists() (interface{}, error) { return p.Running() }
+func (p *DefProcess) Exists() (bool, error) { return p.Running() }
 
 func (p *DefProcess) Pids() ([]int, error) {
 	var pids []int
@@ -41,7 +41,7 @@ func (p *DefProcess) Pids() ([]int, error) {
 	return pids, nil
 }
 
-func (p *DefProcess) Running() (interface{}, error) {
+func (p *DefProcess) Running() (bool, error) {
 	if _, ok := p.procMap[p.executable]; ok {
 		return true, nil
 	}

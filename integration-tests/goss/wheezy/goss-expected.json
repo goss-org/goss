@@ -67,8 +67,8 @@
         },
         "www-data": {
             "exists": true,
-            "uid": "33",
-            "gid": "33",
+            "uid": 33,
+            "gid": 33,
             "groups": [
                 "www-data"
             ],
@@ -81,12 +81,12 @@
         },
         "www-data": {
             "exists": true,
-            "gid": "33"
+            "gid": 33
         }
     },
     "command": {
         "apache2 -v": {
-            "exit-status": "0",
+            "exit-status": 0,
             "stdout": [
                 "Server version: Apache/2.2.22 (Debian)",
                 "Server built:   Aug 18 2015 09:49:50"
@@ -95,7 +95,7 @@
             "timeout": 10000
         },
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [
                 "sh: 1: foobar: not found"

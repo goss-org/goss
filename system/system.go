@@ -18,7 +18,7 @@ import (
 )
 
 type Resource interface {
-	Exists() (interface{}, error)
+	Exists() (bool, error)
 }
 
 type System struct {

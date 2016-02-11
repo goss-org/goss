@@ -24,7 +24,7 @@ func (s *ServiceUpstart) Service() string {
 	return s.service
 }
 
-func (s *ServiceUpstart) Exists() (interface{}, error) {
+func (s *ServiceUpstart) Exists() (bool, error) {
 	// upstart
 	if _, err := os.Stat(fmt.Sprintf("/etc/init/%s.conf", s.service)); err == nil {
 		return true, err
@@ -37,7 +37,7 @@ func (s *ServiceUpstart) Exists() (interface{}, error) {
 	return false, nil
 }
 
-func (s *ServiceUpstart) Enabled() (interface{}, error) {
+func (s *ServiceUpstart) Enabled() (bool, error) {
 	if fh, err := os.Open(fmt.Sprintf("/etc/init/%s.conf", s.service)); err == nil {
 		scanner := bufio.NewScanner(fh)
 		for scanner.Scan() {
@@ -56,7 +56,7 @@ func (s *ServiceUpstart) Enabled() (interface{}, error) {
 	return false, nil
 }
 
-func (s *ServiceUpstart) Running() (interface{}, error) {
+func (s *ServiceUpstart) Running() (bool, error) {
 	cmd := util.NewCommand("service", s.service, "status")
 	cmd.Run()
 	out := cmd.Stdout.String()

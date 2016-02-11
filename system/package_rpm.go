@@ -35,9 +35,9 @@ func (p *RpmPackage) Name() string {
 	return p.name
 }
 
-func (p *RpmPackage) Exists() (interface{}, error) { return p.Installed() }
+func (p *RpmPackage) Exists() (bool, error) { return p.Installed() }
 
-func (p *RpmPackage) Installed() (interface{}, error) {
+func (p *RpmPackage) Installed() (bool, error) {
 	p.setup()
 
 	return p.installed, nil

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
-	"strconv"
 	"time"
 
 	"github.com/aelsabbahy/goss/util"
@@ -13,15 +12,15 @@ import (
 
 type Command interface {
 	Command() string
-	Exists() (interface{}, error)
-	ExitStatus() (interface{}, error)
+	Exists() (bool, error)
+	ExitStatus() (int, error)
 	Stdout() (io.Reader, error)
 	Stderr() (io.Reader, error)
 }
 
 type DefCommand struct {
 	command    string
-	exitStatus string
+	exitStatus int
 	stdout     io.Reader
 	stderr     io.Reader
 	loaded     bool
@@ -49,7 +48,7 @@ func (c *DefCommand) setup() error {
 	if _, ok := err.(*exec.ExitError); !ok {
 		c.err = err
 	}
-	c.exitStatus = strconv.Itoa(cmd.Status)
+	c.exitStatus = cmd.Status
 	c.stdout = bytes.NewReader(cmd.Stdout.Bytes())
 	c.stderr = bytes.NewReader(cmd.Stderr.Bytes())
 
@@ -60,7 +59,7 @@ func (c *DefCommand) Command() string {
 	return c.command
 }
 
-func (c *DefCommand) ExitStatus() (interface{}, error) {
+func (c *DefCommand) ExitStatus() (int, error) {
 	err := c.setup()
 
 	return c.exitStatus, err
@@ -79,7 +78,7 @@ func (c *DefCommand) Stderr() (io.Reader, error) {
 }
 
 // Stub out
-func (c *DefCommand) Exists() (interface{}, error) {
+func (c *DefCommand) Exists() (bool, error) {
 	return false, nil
 }
 

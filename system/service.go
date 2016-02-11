@@ -2,7 +2,7 @@ package system
 
 type Service interface {
 	Service() string
-	Exists() (interface{}, error)
-	Enabled() (interface{}, error)
-	Running() (interface{}, error)
+	Exists() (bool, error)
+	Enabled() (bool, error)
+	Running() (bool, error)
 }

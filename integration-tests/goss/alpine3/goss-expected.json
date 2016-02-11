@@ -75,12 +75,12 @@
         },
         "www-data": {
             "exists": true,
-            "gid": "82"
+            "gid": 82
         }
     },
     "command": {
         "apache2 -v": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [
                 "sh: apache2: not found"
@@ -88,7 +88,7 @@
             "timeout": 10000
         },
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [
                 "sh: foobar: not found"

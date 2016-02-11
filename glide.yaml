@@ -20,3 +20,5 @@ import:
     ref:     4e6893b05a6aa723daa5f9194361032c6beaca25
     subpackages:
       - /libcontainer/user
+  - package: github.com/onsi/gomega
+    ref:     c72df929b80ef4930aaa75d5e486887ff2f3e06a
