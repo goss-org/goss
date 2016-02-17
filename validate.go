@@ -16,7 +16,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func Run(c *cli.Context, startTime time.Time) {
+func Validate(c *cli.Context, startTime time.Time) {
 	sys := system.New(c)
 
 	// handle stdin
@@ -39,14 +39,14 @@ func Run(c *cli.Context, startTime time.Time) {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
-	configJSON := mergeJSONData(ReadJSONData(data), 0, path)
+	gossConfig := mergeJSONData(ReadJSONData(data), 0, path)
 
 	out := make(chan []resource.TestResult)
 
 	in := make(chan resource.Resource)
 
 	go func() {
-		for _, t := range configJSON.Resources() {
+		for _, t := range gossConfig.Resources() {
 			in <- t
 		}
 		close(in)

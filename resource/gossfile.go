@@ -6,7 +6,8 @@ import (
 )
 
 type Gossfile struct {
-	Path string `json:"-"`
+	Desc string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Path string `json:"-" yaml:"-"`
 }
 
 func (g *Gossfile) ID() string      { return g.Path }

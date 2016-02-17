@@ -6,14 +6,15 @@ import (
 )
 
 type File struct {
-	Path     string   `json:"-"`
-	Exists   bool     `json:"exists"`
-	Mode     matcher  `json:"mode,omitempty"`
-	Owner    matcher  `json:"owner,omitempty"`
-	Group    matcher  `json:"group,omitempty"`
-	LinkedTo matcher  `json:"linked-to,omitempty"`
-	Filetype matcher  `json:"filetype,omitempty"`
-	Contains []string `json:"contains"`
+	Desc     string   `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Path     string   `json:"-" yaml:"-"`
+	Exists   bool     `json:"exists" yaml:"exists"`
+	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
+	Group    matcher  `json:"group,omitempty" yaml:"group,omitempty"`
+	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
+	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
+	Contains []string `json:"contains" yaml:"contains"`
 }
 
 func (f *File) ID() string      { return f.Path }

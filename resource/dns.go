@@ -6,10 +6,11 @@ import (
 )
 
 type DNS struct {
-	Host        string  `json:"-"`
-	Resolveable bool    `json:"resolveable"`
-	Addrs       matcher `json:"addrs,omitempty"`
-	Timeout     int     `json:"timeout"`
+	Desc        string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Host        string  `json:"-" yaml:"-"`
+	Resolveable bool    `json:"resolveable" yaml:"resolveable"`
+	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
+	Timeout     int     `json:"timeout" yaml:"timeout"`
 }
 
 func (d *DNS) ID() string      { return d.Host }

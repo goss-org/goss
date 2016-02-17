@@ -6,8 +6,9 @@ import (
 )
 
 type Process struct {
-	Executable string `json:"-"`
-	Running    bool   `json:"running"`
+	Desc       string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Executable string `json:"-" yaml:"-"`
+	Running    bool   `json:"running" yaml:"running"`
 }
 
 func (p *Process) ID() string      { return p.Executable }

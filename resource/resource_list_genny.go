@@ -53,3 +53,19 @@ func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+//func (r *ResourceTypeMap) UnmarshalYAML(data []byte) error {
+func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	var tmp map[string]*ResourceType
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}

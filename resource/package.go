@@ -6,9 +6,10 @@ import (
 )
 
 type Package struct {
-	Name      string  `json:"-"`
-	Installed bool    `json:"installed"`
-	Versions  matcher `json:"versions,omitempty"`
+	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Name      string  `json:"-" yaml:"-"`
+	Installed bool    `json:"installed" yaml:"installed"`
+	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
 }
 
 func (p *Package) ID() string      { return p.Name }

@@ -5,7 +5,7 @@ pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 
-.PHONY: all build install test coverage deps release bench test-int lint gen
+.PHONY: all build install test coverage deps release bench test-int lint gen centos6 wheezy precise alpine3
 
 all: test-all
 
@@ -31,15 +31,28 @@ coverage:
 	#go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
 	#xdg-open /tmp/coverage.html
 
-build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
+release/goss-linux-386:
 	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-386 $(exe)
+	goupx $@
+release/goss-linux-amd64:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
+	goupx $@
+build: release/goss-linux-386 release/goss-linux-amd64
 
 release: build
-	#upx release/*
+	#goupx release/*
 
-test-int: build
-	cd integration-tests/ && ./test.sh
+test-int: centos6 wheezy precise alpine3
+
+centos6: build test
+	cd integration-tests/ && ./test.sh $@
+wheezy: build test
+	cd integration-tests/ && ./test.sh $@
+precise: build test
+	cd integration-tests/ && ./test.sh $@
+alpine3: build test
+	cd integration-tests/ && ./test.sh $@
+
 
 test-all: test lint test-int
 
