@@ -2,12 +2,15 @@ package resource
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/onsi/gomega/types"
 )
 
 const (
@@ -25,15 +28,45 @@ type TestResult struct {
 	Err          error         `json:"err"`
 	Expected     []string      `json:"expected"`
 	Found        []string      `json:"found"`
+	Human        string        `json:"human"`
 	Duration     time.Duration `json:"duration"`
 }
 
-func ValidateValues(res IDer, property string, expectedValues []string, method func() ([]string, error)) TestResult {
+type matcher interface{}
+
+func ValidateValue(res IDer, property string, expectedValue interface{}, actual interface{}) TestResult {
 	title := res.ID()
 	typ := reflect.TypeOf(res)
 	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
-	foundValues, err := method()
+
+	var foundValue interface{}
+	var err error
+	switch f := actual.(type) {
+	case func() (bool, error):
+		foundValue, err = f()
+	case func() (string, error):
+		foundValue, err = f()
+	case func() (int, error):
+		foundValue, err = f()
+		// JSON marshaling of interface sets this as float64
+		foundValue = float64(foundValue.(int))
+	case func() ([]string, error):
+		foundValue, err = f()
+	case func() (interface{}, error):
+		foundValue, err = f()
+	default:
+		err = fmt.Errorf("Unknown method signature: %t", f)
+	}
+
+	var gomegaMatcher types.GomegaMatcher
+	var success bool
+	if err == nil {
+		gomegaMatcher, err = matcherToGomegaMatcher(expectedValue)
+	}
+	if err == nil {
+		success, err = gomegaMatcher.Match(foundValue)
+	}
 	if err != nil {
 		return TestResult{
 			Successful:   false,
@@ -45,97 +78,26 @@ func ValidateValues(res IDer, property string, expectedValues []string, method f
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
-	set := make(map[string]bool)
-	for _, v := range foundValues {
-		set[v] = true
+
+	var failMessage string
+	if !success {
+		failMessage = gomegaMatcher.FailureMessage(foundValue)
 	}
 
-	var bad []string
-	for _, v := range expectedValues {
-		if _, found := set[v]; !found {
-			bad = append(bad, v)
-		}
-	}
-
-	if len(bad) > 0 {
-		return TestResult{
-			Successful:   false,
-			ResourceType: typs,
-			TestType:     Values,
-			Title:        title,
-			Property:     property,
-			Expected:     expectedValues,
-			Found:        foundValues,
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-	return TestResult{
-		Successful:   true,
-		ResourceType: typs,
-		TestType:     Values,
-		Title:        title,
-		Property:     property,
-		Expected:     expectedValues,
-		Found:        foundValues,
-		Duration:     time.Now().Sub(startTime),
-	}
-
-}
-
-func ValidateValue(res IDer, property string, expectedValue interface{}, method func() (interface{}, error)) TestResult {
-	title := res.ID()
-	typ := reflect.TypeOf(res)
-	typs := strings.Split(typ.String(), ".")[1]
-	startTime := time.Now()
-	foundValue, err := method()
-	if err != nil {
-		return TestResult{
-			Successful:   false,
-			ResourceType: typs,
-			TestType:     Value,
-			Title:        title,
-			Property:     property,
-			Err:          err,
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-
-	if expectedValue == foundValue {
-		return TestResult{
-			Successful:   true,
-			ResourceType: typs,
-			TestType:     Value,
-			Title:        title,
-			Property:     property,
-			Expected:     []string{interfaceToString(expectedValue)},
-			Found:        []string{interfaceToString(foundValue)},
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
+	expected, _ := json.Marshal(expectedValue)
+	found, _ := json.Marshal(foundValue)
 
 	return TestResult{
-		Successful:   false,
+		Successful:   success,
 		ResourceType: typs,
 		TestType:     Value,
 		Title:        title,
 		Property:     property,
-		Expected:     []string{interfaceToString(expectedValue)},
-		Found:        []string{interfaceToString(foundValue)},
+		Expected:     []string{string(expected)},
+		Found:        []string{string(found)},
+		Human:        failMessage,
+		Err:          err,
 		Duration:     time.Now().Sub(startTime),
-	}
-}
-
-// FIXME: Not sure I like this, perhaps move to more statically typed validations..
-func interfaceToString(i interface{}) string {
-	switch t := i.(type) {
-	case string:
-		return fmt.Sprintf("%s", t)
-	case bool:
-		return fmt.Sprintf("%t", t)
-	case int:
-		return fmt.Sprintf("%d", t)
-	default:
-		return fmt.Sprintf("Unexpected Type")
 	}
 }
 
@@ -303,5 +265,4 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		Found:        patternsToSlice(found),
 		Duration:     time.Now().Sub(startTime),
 	}
-
 }

@@ -31,7 +31,7 @@ func NewService(sysService system.Service, config util.Config) (*Service, error)
 	running, _ := sysService.Running()
 	return &Service{
 		Service: service,
-		Enabled: enabled.(bool),
-		Running: running.(bool),
+		Enabled: enabled,
+		Running: running,
 	}, nil
 }

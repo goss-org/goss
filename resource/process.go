@@ -28,6 +28,6 @@ func NewProcess(sysProcess system.Process, config util.Config) (*Process, error)
 	running, _ := sysProcess.Running()
 	return &Process{
 		Executable: executable,
-		Running:    running.(bool),
+		Running:    running,
 	}, nil
 }

@@ -23,7 +23,7 @@ func (s *ServiceDbus) Service() string {
 	return s.service
 }
 
-func (s *ServiceDbus) Exists() (interface{}, error) {
+func (s *ServiceDbus) Exists() (bool, error) {
 	units, err := s.dbus.ListUnits()
 	if err != nil {
 		return false, err
@@ -36,7 +36,7 @@ func (s *ServiceDbus) Exists() (interface{}, error) {
 	return false, err
 }
 
-func (s *ServiceDbus) Enabled() (interface{}, error) {
+func (s *ServiceDbus) Enabled() (bool, error) {
 	stateRaw, err := s.dbus.GetUnitProperty(s.service+".service", "UnitFileState")
 	if err != nil {
 		return false, err
@@ -56,7 +56,7 @@ func (s *ServiceDbus) Enabled() (interface{}, error) {
 	return false, nil
 }
 
-func (s *ServiceDbus) Running() (interface{}, error) {
+func (s *ServiceDbus) Running() (bool, error) {
 	stateRaw, err := s.dbus.GetUnitProperty(s.service+".service", "ActiveState")
 	if err != nil {
 		return false, err

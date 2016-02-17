@@ -69,13 +69,13 @@
     },
     "command": {
         "apache2 -v": {
-            "exit-status": "0",
+            "exit-status": 0,
             "stdout": [],
             "stderr": [],
             "timeout": 10000
         },
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [],
             "timeout": 10000

@@ -10,7 +10,9 @@ TRAVIS_TAG ?= "0.0.0"
 all: test-all
 
 install:
-	go install -v $(exe)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG)" -o release/$(cmd)-linux-amd64 $(exe)
+	cp release/$(cmd)-linux-amd64 $(GOPATH)/bin/goss
+	#CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -v $(exe)
 
 test:
 	go test $(pkgs)

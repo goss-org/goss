@@ -4,7 +4,7 @@ import "github.com/aelsabbahy/goss/util"
 
 type Gossfile interface {
 	Path() string
-	Exists() (interface{}, error)
+	Exists() (bool, error)
 }
 
 type DefGossfile struct {
@@ -16,7 +16,7 @@ func (g *DefGossfile) Path() string {
 }
 
 // Stub out
-func (g *DefGossfile) Exists() (interface{}, error) {
+func (g *DefGossfile) Exists() (bool, error) {
 	return false, nil
 }
 

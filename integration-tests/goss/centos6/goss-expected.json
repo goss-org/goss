@@ -64,8 +64,8 @@
     "user": {
         "apache": {
             "exists": true,
-            "uid": "48",
-            "gid": "48",
+            "uid": 48,
+            "gid": 48,
             "groups": [
                 "apache"
             ],
@@ -78,7 +78,7 @@
     "group": {
         "apache": {
             "exists": true,
-            "gid": "48"
+            "gid": 48
         },
         "foobar": {
             "exists": false
@@ -86,7 +86,7 @@
     },
     "command": {
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [
                 "sh: foobar: command not found"
@@ -94,10 +94,10 @@
             "timeout": 10000
         },
         "httpd -v": {
-            "exit-status": "0",
+            "exit-status": 0,
             "stdout": [
                 "Server version: Apache/2.2.15 (Unix)",
-                "Server built:   Dec 15 2015 15:50:14"
+                "Server built:   Jul 24 2015 11:52:28"
             ],
             "stderr": [],
             "timeout": 10000

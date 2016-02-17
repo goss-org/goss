@@ -6,9 +6,9 @@ import (
 )
 
 type Port struct {
-	Port      string   `json:"-"`
-	Listening bool     `json:"listening"`
-	IP        []string `json:"ip,omitempty"`
+	Port      string  `json:"-"`
+	Listening bool    `json:"listening"`
+	IP        matcher `json:"ip,omitempty"`
 }
 
 func (p *Port) ID() string      { return p.Port }
@@ -21,8 +21,8 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening))
 
-	if len(p.IP) > 0 {
-		results = append(results, ValidateValues(p, "ip", p.IP, sysPort.IP))
+	if p.IP != nil {
+		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP))
 	}
 
 	return results
@@ -33,11 +33,12 @@ func NewPort(sysPort system.Port, config util.Config) (*Port, error) {
 	listening, _ := sysPort.Listening()
 	p := &Port{
 		Port:      port,
-		Listening: listening.(bool),
+		Listening: listening,
 	}
 	if !contains(config.IgnoreList, "ip") {
-		ip, _ := sysPort.IP()
-		p.IP = ip
+		if ip, err := sysPort.IP(); err == nil {
+			p.IP = ip
+		}
 	}
 	return p, nil
 }

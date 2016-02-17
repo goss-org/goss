@@ -59,40 +59,6 @@ func BenchmarkValidateValue(b *testing.B) {
 	}
 }
 
-var valuesTests = []struct {
-	in, in2 []string
-	want    bool
-}{
-	{[]string{""}, []string{""}, true},
-	{[]string{"foo"}, []string{"foo"}, true},
-	{[]string{"foo"}, []string{"bar"}, false},
-	{[]string{"foo"}, []string{""}, false},
-}
-
-func TestValidateValues(t *testing.T) {
-	for _, c := range valuesTests {
-		inFunc := func() ([]string, error) {
-			return c.in2, nil
-		}
-		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Successful != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
-		}
-	}
-}
-
-func TestValidateValuesErr(t *testing.T) {
-	for _, c := range valuesTests {
-		inFunc := func() ([]string, error) {
-			return c.in2, fmt.Errorf("some err")
-		}
-		got := ValidateValues(&FakeIDer{""}, "", c.in, inFunc)
-		if got.Successful != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
-		}
-	}
-}
-
 var containsTests = []struct {
 	in   []string
 	in2  string

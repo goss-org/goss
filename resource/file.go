@@ -8,11 +8,11 @@ import (
 type File struct {
 	Path     string   `json:"-"`
 	Exists   bool     `json:"exists"`
-	Mode     string   `json:"mode,omitempty"`
-	Owner    string   `json:"owner,omitempty"`
-	Group    string   `json:"group,omitempty"`
-	LinkedTo string   `json:"linked-to,omitempty"`
-	Filetype string   `json:"filetype,omitempty"`
+	Mode     matcher  `json:"mode,omitempty"`
+	Owner    matcher  `json:"owner,omitempty"`
+	Group    matcher  `json:"group,omitempty"`
+	LinkedTo matcher  `json:"linked-to,omitempty"`
+	Filetype matcher  `json:"filetype,omitempty"`
 	Contains []string `json:"contains"`
 }
 
@@ -26,27 +26,27 @@ func (f *File) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists))
 
-	if f.Mode != "" {
+	if f.Mode != nil {
 		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode))
 	}
 
-	if f.Owner != "" {
+	if f.Owner != nil {
 		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner))
 	}
 
-	if f.Group != "" {
+	if f.Group != nil {
 		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group))
 	}
 
-	if f.LinkedTo != "" {
+	if f.LinkedTo != nil {
 		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo))
 	}
 
-	if f.Filetype != "" {
+	if f.Filetype != nil {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype))
 	}
 
-	if len(f.Contains) != 0 {
+	if len(f.Contains) > 0 {
 		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains))
 	}
 
@@ -58,28 +58,33 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	exists, _ := sysFile.Exists()
 	f := &File{
 		Path:     path,
-		Exists:   exists.(bool),
+		Exists:   exists,
 		Contains: []string{},
 	}
 	if !contains(config.IgnoreList, "mode") {
-		mode, _ := sysFile.Mode()
-		f.Mode = mode.(string)
+		if mode, err := sysFile.Mode(); err == nil {
+			f.Mode = mode
+		}
 	}
 	if !contains(config.IgnoreList, "owner") {
-		owner, _ := sysFile.Owner()
-		f.Owner = owner.(string)
+		if owner, err := sysFile.Owner(); err == nil {
+			f.Owner = owner
+		}
 	}
 	if !contains(config.IgnoreList, "group") {
-		group, _ := sysFile.Group()
-		f.Group = group.(string)
+		if group, err := sysFile.Group(); err == nil {
+			f.Group = group
+		}
 	}
 	if !contains(config.IgnoreList, "linked-to") {
-		linkedTo, _ := sysFile.LinkedTo()
-		f.LinkedTo = linkedTo.(string)
+		if linkedTo, err := sysFile.LinkedTo(); err == nil {
+			f.LinkedTo = linkedTo
+		}
 	}
 	if !contains(config.IgnoreList, "filetype") {
-		filetype, _ := sysFile.Filetype()
-		f.Filetype = filetype.(string)
+		if filetype, err := sysFile.Filetype(); err == nil {
+			f.Filetype = filetype
+		}
 	}
 	return f, nil
 }

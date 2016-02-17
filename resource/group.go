@@ -1,14 +1,16 @@
 package resource
 
 import (
+	"fmt"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
 
 type Group struct {
-	Groupname string `json:"-"`
-	Exists    bool   `json:"exists"`
-	Gid       string `json:"gid,omitempty"`
+	Groupname string  `json:"-"`
+	Exists    bool    `json:"exists"`
+	GID       matcher `json:"gid,omitempty"`
 }
 
 func (g *Group) ID() string      { return g.Groupname }
@@ -21,8 +23,9 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists))
 
-	if g.Gid != "" {
-		results = append(results, ValidateValue(g, "gid", g.Gid, sysgroup.Gid))
+	if g.GID != nil {
+		gGID := deprecateAtoI(g.GID, fmt.Sprintf("%s: group.gid", g.Groupname))
+		results = append(results, ValidateValue(g, "gid", gGID, sysgroup.GID))
 	}
 
 	return results
@@ -33,11 +36,12 @@ func NewGroup(sysGroup system.Group, config util.Config) (*Group, error) {
 	exists, _ := sysGroup.Exists()
 	g := &Group{
 		Groupname: groupname,
-		Exists:    exists.(bool),
+		Exists:    exists,
 	}
 	if !contains(config.IgnoreList, "stderr") {
-		gid, _ := sysGroup.Gid()
-		g.Gid = gid.(string)
+		if gid, err := sysGroup.GID(); err == nil {
+			g.GID = gid
+		}
 	}
 	return g, nil
 }

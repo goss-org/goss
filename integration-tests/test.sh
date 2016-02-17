@@ -13,7 +13,7 @@ for arch in amd64 386;do
       if docker ps -a | grep goss_int_test_$os;then
 	docker rm -vf goss_int_test_$os
       fi
-      docker run --privileged -v $PWD/goss:/tmp/goss  -d --name goss_int_test_$os aelsabbahy/goss_$os /sbin/init
+      docker run -v $PWD/goss:/tmp/goss  -d --name goss_int_test_$os aelsabbahy/goss_$os /sbin/init
       # Give httpd time to start up
       sleep 10
     fi
@@ -33,6 +33,6 @@ for arch in amd64 386;do
 
     docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
 
-    #docker rm -vf goss_int_test_$os
+    docker rm -vf goss_int_test_$os
   done
 done

@@ -8,8 +8,8 @@ import (
 
 type Package interface {
 	Name() string
-	Exists() (interface{}, error)
-	Installed() (interface{}, error)
+	Exists() (bool, error)
+	Installed() (bool, error)
 	Versions() ([]string, error)
 }
 
@@ -25,9 +25,9 @@ func NewNullPackage(name string, system *System, config util.Config) Package {
 
 func (p *NullPackage) Name() string { return p.name }
 
-func (p *NullPackage) Exists() (interface{}, error) { return p.Installed() }
+func (p *NullPackage) Exists() (bool, error) { return p.Installed() }
 
-func (p *NullPackage) Installed() (interface{}, error) {
+func (p *NullPackage) Installed() (bool, error) {
 	return false, ErrNullPackage
 }
 

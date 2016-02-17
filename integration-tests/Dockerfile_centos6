@@ -1,6 +1,6 @@
-FROM centos:centos6
+FROM centos:6.6
 MAINTAINER Ahmed
 
-RUN yum install -y httpd-2.2.15 && yum clean all
+RUN yum -y --disablerepo='*' --enablerepo=base install httpd && yum clean all
 
 RUN chkconfig httpd on

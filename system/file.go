@@ -14,13 +14,13 @@ import (
 
 type File interface {
 	Path() string
-	Exists() (interface{}, error)
+	Exists() (bool, error)
 	Contains() (io.Reader, error)
-	Mode() (interface{}, error)
-	Filetype() (interface{}, error)
-	Owner() (interface{}, error)
-	Group() (interface{}, error)
-	LinkedTo() (interface{}, error)
+	Mode() (string, error)
+	Filetype() (string, error)
+	Owner() (string, error)
+	Group() (string, error)
+	LinkedTo() (string, error)
 }
 
 type DefFile struct {
@@ -36,7 +36,7 @@ func (f *DefFile) Path() string {
 	return f.path
 }
 
-func (f *DefFile) Exists() (interface{}, error) {
+func (f *DefFile) Exists() (bool, error) {
 	if _, err := os.Stat(f.path); os.IsNotExist(err) {
 		return false, nil
 	}
@@ -51,7 +51,7 @@ func (f *DefFile) Contains() (io.Reader, error) {
 	return fh, nil
 }
 
-func (f *DefFile) Mode() (interface{}, error) {
+func (f *DefFile) Mode() (string, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -60,7 +60,7 @@ func (f *DefFile) Mode() (interface{}, error) {
 	return fmt.Sprintf("%#o", fi.Mode().Perm()), nil
 }
 
-func (f *DefFile) Filetype() (interface{}, error) {
+func (f *DefFile) Filetype() (string, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -78,7 +78,7 @@ func (f *DefFile) Filetype() (interface{}, error) {
 	return "file", nil
 }
 
-func (f *DefFile) Owner() (interface{}, error) {
+func (f *DefFile) Owner() (string, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -97,7 +97,7 @@ func (f *DefFile) Owner() (interface{}, error) {
 	return user.Name, nil
 }
 
-func (f *DefFile) Group() (interface{}, error) {
+func (f *DefFile) Group() (string, error) {
 	fi, err := os.Lstat(f.path)
 	if err != nil {
 		return "", err
@@ -116,7 +116,7 @@ func (f *DefFile) Group() (interface{}, error) {
 	return group.Name, nil
 }
 
-func (f *DefFile) LinkedTo() (interface{}, error) {
+func (f *DefFile) LinkedTo() (string, error) {
 	dst, err := os.Readlink(f.path)
 	if err != nil {
 		return "", err

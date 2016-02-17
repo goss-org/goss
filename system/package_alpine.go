@@ -44,9 +44,9 @@ func (p *AlpinePackage) Name() string {
 	return p.name
 }
 
-func (p *AlpinePackage) Exists() (interface{}, error) { return p.Installed() }
+func (p *AlpinePackage) Exists() (bool, error) { return p.Installed() }
 
-func (p *AlpinePackage) Installed() (interface{}, error) {
+func (p *AlpinePackage) Installed() (bool, error) {
 	p.setup()
 
 	return p.installed, nil

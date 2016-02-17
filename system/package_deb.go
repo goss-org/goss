@@ -44,9 +44,9 @@ func (p *DebPackage) Name() string {
 	return p.name
 }
 
-func (p *DebPackage) Exists() (interface{}, error) { return p.Installed() }
+func (p *DebPackage) Exists() (bool, error) { return p.Installed() }
 
-func (p *DebPackage) Installed() (interface{}, error) {
+func (p *DebPackage) Installed() (bool, error) {
 	p.setup()
 
 	return p.installed, nil

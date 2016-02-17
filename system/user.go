@@ -3,7 +3,6 @@ package system
 import (
 	"fmt"
 	"sort"
-	"strconv"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/opencontainers/runc/libcontainer/user"
@@ -11,11 +10,11 @@ import (
 
 type User interface {
 	Username() string
-	Exists() (interface{}, error)
-	UID() (interface{}, error)
-	GID() (interface{}, error)
+	Exists() (bool, error)
+	UID() (int, error)
+	GID() (int, error)
 	Groups() ([]string, error)
-	Home() (interface{}, error)
+	Home() (string, error)
 }
 
 type DefUser struct {
@@ -30,7 +29,7 @@ func (u *DefUser) Username() string {
 	return u.username
 }
 
-func (u *DefUser) Exists() (interface{}, error) {
+func (u *DefUser) Exists() (bool, error) {
 	_, err := user.LookupUser(u.username)
 	if err != nil {
 		return false, nil
@@ -38,28 +37,28 @@ func (u *DefUser) Exists() (interface{}, error) {
 	return true, nil
 }
 
-func (u *DefUser) UID() (interface{}, error) {
+func (u *DefUser) UID() (int, error) {
 	user, err := user.LookupUser(u.username)
 	if err != nil {
-		return "", nil
+		return 0, err
 	}
 
-	return strconv.Itoa(user.Uid), nil
+	return user.Uid, nil
 }
 
-func (u *DefUser) GID() (interface{}, error) {
+func (u *DefUser) GID() (int, error) {
 	user, err := user.LookupUser(u.username)
 	if err != nil {
-		return "", nil
+		return 0, err
 	}
 
-	return strconv.Itoa(user.Gid), nil
+	return user.Gid, nil
 }
 
-func (u *DefUser) Home() (interface{}, error) {
+func (u *DefUser) Home() (string, error) {
 	user, err := user.LookupUser(u.username)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	return user.Home, nil

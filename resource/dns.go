@@ -6,10 +6,10 @@ import (
 )
 
 type DNS struct {
-	Host        string   `json:"-"`
-	Resolveable bool     `json:"resolveable"`
-	Addrs       []string `json:"addrs,omitempty"`
-	Timeout     int      `json:"timeout"`
+	Host        string  `json:"-"`
+	Resolveable bool    `json:"resolveable"`
+	Addrs       matcher `json:"addrs,omitempty"`
+	Timeout     int     `json:"timeout"`
 }
 
 func (d *DNS) ID() string      { return d.Host }
@@ -25,8 +25,8 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 
 	results = append(results, ValidateValue(d, "resolveable", d.Resolveable, sysDNS.Resolveable))
 
-	if len(d.Addrs) > 0 {
-		results = append(results, ValidateValues(d, "addrs", d.Addrs, sysDNS.Addrs))
+	if d.Addrs != nil {
+		results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs))
 	}
 
 	return results
@@ -37,7 +37,7 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 	resolveable, err := sysDNS.Resolveable()
 	d := &DNS{
 		Host:        host,
-		Resolveable: resolveable.(bool),
+		Resolveable: resolveable,
 		Timeout:     config.Timeout,
 	}
 	if !contains(config.IgnoreList, "addrs") {

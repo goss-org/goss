@@ -2,6 +2,7 @@ package resource
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 
 type Command struct {
 	Command    string   `json:"-"`
-	ExitStatus string   `json:"exit-status"`
+	ExitStatus matcher  `json:"exit-status"`
 	Stdout     []string `json:"stdout"`
 	Stderr     []string `json:"stderr"`
 	Timeout    int      `json:"timeout"`
@@ -28,7 +29,8 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 
 	var results []TestResult
 
-	results = append(results, ValidateValue(c, "exit-status", c.ExitStatus, sysCommand.ExitStatus))
+	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
+	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus))
 
 	if len(c.Stdout) > 0 {
 		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout))
@@ -45,7 +47,7 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 	exitStatus, err := sysCommand.ExitStatus()
 	c := &Command{
 		Command:    command,
-		ExitStatus: exitStatus.(string),
+		ExitStatus: exitStatus,
 		Stdout:     []string{},
 		Stderr:     []string{},
 		Timeout:    config.Timeout,

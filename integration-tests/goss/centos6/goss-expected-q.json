@@ -69,13 +69,13 @@
     },
     "command": {
         "foobar": {
-            "exit-status": "127",
+            "exit-status": 127,
             "stdout": [],
             "stderr": [],
             "timeout": 10000
         },
         "httpd -v": {
-            "exit-status": "0",
+            "exit-status": 0,
             "stdout": [],
             "stderr": [],
             "timeout": 10000

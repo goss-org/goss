@@ -21,6 +21,21 @@ var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
+		return red("%s: %s:\nError: %s", r.Title, r.Property, r.Err)
+	}
+
+	if r.Successful {
+		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
+	} else {
+		if r.Human != "" {
+			return red("%s: %s: %s:\n%s\n", r.ResourceType, r.Title, r.Property, r.Human)
+		}
+		return humanizeResult2(r)
+	}
+}
+
+func humanizeResult2(r resource.TestResult) string {
+	if r.Err != nil {
 		return red("%s: %s: Error: %s", r.Title, r.Property, r.Err)
 	}
 

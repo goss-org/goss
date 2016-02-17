@@ -1,0 +1,104 @@
+package resource
+
+import (
+	"fmt"
+
+	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
+)
+
+func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+	switch x := matcher.(type) {
+	case string, int, bool, float64:
+		return gomega.Equal(x), nil
+	case []interface{}:
+		var matchers []types.GomegaMatcher
+		for _, valueI := range x {
+			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
+				matchers = append(matchers, subMatcher)
+			} else {
+				matchers = append(matchers, gomega.ContainElement(valueI))
+			}
+		}
+		return gomega.And(matchers...), nil
+	}
+	x, ok := matcher.(map[string]interface{})
+	if !ok {
+		fmt.Printf("\n\n====wtf-type: %T\n\n", matcher)
+		panic("wtf")
+	}
+	var matchType string
+	var value interface{}
+	for matchType, value = range x {
+		break
+	}
+	switch matchType {
+	case "have-prefix":
+		return gomega.HavePrefix(value.(string)), nil
+	case "have-suffix":
+		return gomega.HaveSuffix(value.(string)), nil
+	case "match-regexp":
+		return gomega.MatchRegexp(value.(string)), nil
+	case "have-len":
+		return gomega.HaveLen(int(value.(float64))), nil
+	case "contain-element":
+		return gomega.ContainElement(value), nil
+	case "not":
+		subMatcher, err := matcherToGomegaMatcher(value)
+		if err != nil {
+			return nil, err
+		}
+		return gomega.Not(subMatcher), nil
+	case "consist-of":
+		subMatchers, err := sliceToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		var interfaceSlice []interface{}
+		for _, d := range subMatchers {
+			interfaceSlice = append(interfaceSlice, d)
+		}
+		return gomega.ConsistOf(interfaceSlice...), nil
+	case "and":
+		subMatchers, err := sliceToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		return gomega.And(subMatchers...), nil
+	case "or":
+		subMatchers, err := sliceToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		return gomega.Or(subMatchers...), nil
+	case "gt", "ge", "lt", "le":
+		// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
+		comparator := map[string]string{
+			"gt": ">",
+			"ge": ">=",
+			"lt": "<",
+			"le": "<=",
+		}[matchType]
+		return gomega.BeNumerically(comparator, value), nil
+
+	default:
+		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
+
+	}
+}
+
+func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
+	valueI, ok := value.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Matcher consists-of expects an array")
+	}
+	var subMatchers []types.GomegaMatcher
+	for _, v := range valueI {
+		subMatcher, err := matcherToGomegaMatcher(v)
+		if err != nil {
+			return nil, err
+		}
+		subMatchers = append(subMatchers, subMatcher)
+	}
+	return subMatchers, nil
+}

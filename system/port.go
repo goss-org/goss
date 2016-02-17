@@ -10,8 +10,8 @@ import (
 
 type Port interface {
 	Port() string
-	Exists() (interface{}, error)
-	Listening() (interface{}, error)
+	Exists() (bool, error)
+	Listening() (bool, error)
 	IP() ([]string, error)
 }
 
@@ -46,9 +46,9 @@ func (p *DefPort) Port() string {
 	return p.port
 }
 
-func (p *DefPort) Exists() (interface{}, error) { return p.Listening() }
+func (p *DefPort) Exists() (bool, error) { return p.Listening() }
 
-func (p *DefPort) Listening() (interface{}, error) {
+func (p *DefPort) Listening() (bool, error) {
 	if _, ok := p.sysPorts[p.port]; ok {
 		return true, nil
 	}
