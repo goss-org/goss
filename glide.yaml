@@ -22,3 +22,5 @@ import:
       - /libcontainer/user
   - package: github.com/onsi/gomega
     ref:     c72df929b80ef4930aaa75d5e486887ff2f3e06a
+  - package: gopkg.in/yaml.v2
+    ref:     f7716cbe52baa25d2e9b0d0da546fcf909fc16b4

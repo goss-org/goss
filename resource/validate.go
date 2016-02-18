@@ -20,16 +20,16 @@ const (
 )
 
 type TestResult struct {
-	Successful   bool          `json:"successful"`
-	Title        string        `json:"title"`
-	ResourceType string        `json:"resource-type"`
-	TestType     int           `json:"test-type"`
-	Property     string        `json:"property"`
-	Err          error         `json:"err"`
-	Expected     []string      `json:"expected"`
-	Found        []string      `json:"found"`
-	Human        string        `json:"human"`
-	Duration     time.Duration `json:"duration"`
+	Successful   bool          `json:"successful" yaml:"successful"`
+	Title        string        `json:"title" yaml:"title"`
+	ResourceType string        `json:"resource-type" yaml:"resource-type"`
+	TestType     int           `json:"test-type" yaml:"test-type"`
+	Property     string        `json:"property" yaml:"property"`
+	Err          error         `json:"err" yaml:"err"`
+	Expected     []string      `json:"expected" yaml:"expected"`
+	Found        []string      `json:"found" yaml:"found"`
+	Human        string        `json:"human" yaml:"human"`
+	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
 type matcher interface{}
@@ -49,8 +49,6 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, actual 
 		foundValue, err = f()
 	case func() (int, error):
 		foundValue, err = f()
-		// JSON marshaling of interface sets this as float64
-		foundValue = float64(foundValue.(int))
 	case func() ([]string, error):
 		foundValue, err = f()
 	case func() (interface{}, error):
@@ -59,6 +57,7 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, actual 
 		err = fmt.Errorf("Unknown method signature: %t", f)
 	}
 
+	expectedValue = sanitizeExpectedValue(expectedValue)
 	var gomegaMatcher types.GomegaMatcher
 	var success bool
 	if err == nil {

@@ -8,9 +8,10 @@ import (
 )
 
 type Group struct {
-	Groupname string  `json:"-"`
-	Exists    bool    `json:"exists"`
-	GID       matcher `json:"gid,omitempty"`
+	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Groupname string  `json:"-" yaml:"-"`
+	Exists    bool    `json:"exists" yaml:"exists"`
+	GID       matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
 }
 
 func (g *Group) ID() string      { return g.Groupname }

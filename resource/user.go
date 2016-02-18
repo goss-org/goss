@@ -8,12 +8,13 @@ import (
 )
 
 type User struct {
-	Username string  `json:"-"`
-	Exists   bool    `json:"exists"`
-	UID      matcher `json:"uid,omitempty"`
-	GID      matcher `json:"gid,omitempty"`
-	Groups   matcher `json:"groups,omitempty"`
-	Home     matcher `json:"home,omitempty"`
+	Desc     string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Username string  `json:"-" yaml:"-"`
+	Exists   bool    `json:"exists" yaml:"exists"`
+	UID      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
+	GID      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
+	Groups   matcher `json:"groups,omitempty" yaml:"groups,omitempty"`
+	Home     matcher `json:"home,omitempty" yaml:"home,omitempty"`
 }
 
 func (u *User) ID() string      { return u.Username }

@@ -22,14 +22,14 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		}
 		return gomega.And(matchers...), nil
 	}
-	x, ok := matcher.(map[string]interface{})
+	matcher = sanitizeExpectedValue(matcher)
+	matcherMap, ok := matcher.(map[string]interface{})
 	if !ok {
-		fmt.Printf("\n\n====wtf-type: %T\n\n", matcher)
-		panic("wtf")
+		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))
 	}
 	var matchType string
 	var value interface{}
-	for matchType, value = range x {
+	for matchType, value = range matcherMap {
 		break
 	}
 	switch matchType {
@@ -40,7 +40,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "match-regexp":
 		return gomega.MatchRegexp(value.(string)), nil
 	case "have-len":
-		return gomega.HaveLen(int(value.(float64))), nil
+		value = sanitizeExpectedValue(value)
+		return gomega.HaveLen(value.(int)), nil
 	case "contain-element":
 		return gomega.ContainElement(value), nil
 	case "not":
@@ -90,7 +91,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
 	valueI, ok := value.([]interface{})
 	if !ok {
-		return nil, fmt.Errorf("Matcher consists-of expects an array")
+		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
 	}
 	var subMatchers []types.GomegaMatcher
 	for _, v := range valueI {
@@ -101,4 +102,23 @@ func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
 		subMatchers = append(subMatchers, subMatcher)
 	}
 	return subMatchers, nil
+}
+
+// Normalize expectedValue so json and yaml are the same
+func sanitizeExpectedValue(i interface{}) interface{} {
+	if e, ok := i.(float64); ok {
+		return int(e)
+	}
+	if e, ok := i.(map[interface{}]interface{}); ok {
+		out := make(map[string]interface{})
+		for k, v := range e {
+			ks, ok := k.(string)
+			if !ok {
+				panic(fmt.Sprintf("Matcher key type not string: %T\n\n", k))
+			}
+			out[ks] = sanitizeExpectedValue(v)
+		}
+		return out
+	}
+	return i
 }

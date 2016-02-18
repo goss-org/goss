@@ -3,12 +3,13 @@
 SCRIPT_DIR=$(readlink -f $(dirname $0))
 
 OS=$1
-[[ $2 == "-q" ]] && args=("--exclude-attr" "*")
+ARCH=$2
+[[ $3 == "-q" ]] && args=("--exclude-attr" "*")
 
 goss() {
-  $SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
   # Validate that duplicates are ignored
-  $SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
 }
 
 rm -f $SCRIPT_DIR/${OS}/goss*generated*.json
@@ -57,6 +58,6 @@ done
 
 
 # Auto-add
-$SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package
 # Validate that duplicates are ignored
-$SCRIPT_DIR/goss -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package

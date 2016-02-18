@@ -6,9 +6,10 @@ import (
 )
 
 type Addr struct {
-	Address   string `json:"-"`
-	Reachable bool   `json:"reachable"`
-	Timeout   int    `json:"timeout"`
+	Desc      string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Address   string `json:"-" yaml:"-"`
+	Reachable bool   `json:"reachable" yaml:"reachable"`
+	Timeout   int    `json:"timeout" yaml:"timeout"`
 }
 
 func (a *Addr) ID() string      { return a.Address }

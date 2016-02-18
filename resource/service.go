@@ -6,9 +6,10 @@ import (
 )
 
 type Service struct {
-	Service string `json:"-"`
-	Enabled bool   `json:"enabled"`
-	Running bool   `json:"running"`
+	Desc    string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Service string `json:"-" yaml:"-"`
+	Enabled bool   `json:"enabled" yaml:"enabled"`
+	Running bool   `json:"running" yaml:"running"`
 }
 
 func (s *Service) ID() string      { return s.Service }

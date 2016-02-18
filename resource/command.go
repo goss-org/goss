@@ -11,11 +11,12 @@ import (
 )
 
 type Command struct {
-	Command    string   `json:"-"`
-	ExitStatus matcher  `json:"exit-status"`
-	Stdout     []string `json:"stdout"`
-	Stderr     []string `json:"stderr"`
-	Timeout    int      `json:"timeout"`
+	Desc       string   `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Command    string   `json:"-" yaml:"-"`
+	ExitStatus matcher  `json:"exit-status" yaml:"exit-status"`
+	Stdout     []string `json:"stdout" yaml:"stdout"`
+	Stderr     []string `json:"stderr" yaml:"stderr"`
+	Timeout    int      `json:"timeout" yaml:"timeout"`
 }
 
 func (c *Command) ID() string      { return c.Command }

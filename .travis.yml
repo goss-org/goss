@@ -17,10 +17,12 @@ before_install:
 - unzip glide.zip
 - export PATH="$PATH:$PWD/linux-amd64"
 - go get -u github.com/golang/lint/golint
+- go get -u github.com/pwaller/goupx
+- sudo apt-get install -y upx-ucl
 
 script:
 - make deps
-- make
+- make -j10
 
 deploy:
   provider: releases

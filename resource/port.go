@@ -6,9 +6,10 @@ import (
 )
 
 type Port struct {
-	Port      string  `json:"-"`
-	Listening bool    `json:"listening"`
-	IP        matcher `json:"ip,omitempty"`
+	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Port      string  `json:"-" yaml:"-"`
+	Listening bool    `json:"listening" yaml:"listening"`
+	IP        matcher `json:"ip,omitempty" yaml:"ip,omitempty"`
 }
 
 func (p *Port) ID() string      { return p.Port }
