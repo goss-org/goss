@@ -94,7 +94,7 @@ Some examples:
 ```yaml
 user:
   sshd:
-    desc: UID must be between 50-100, GID doesn't matter. home is now more flexible.
+    desc: UID must be between 50-100, GID doesn't matter. home is flexible
     exists: true
     uid:
       # Validate that UID is between 50 and 100

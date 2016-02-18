@@ -565,6 +565,7 @@ For the attributes that use patterns (ex. file, command output), each pattern is
 * "!/regex/" - inverse of above, checks that no line contains regex
 
 **NOTE:** Pattern attrubutes do not support [Advanced Matchers](#advanced-matchers)
+**NOTE:** Regex support is based on golangs regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
 
 ```bash
 $ cat /tmp/test.txt
