@@ -63,6 +63,7 @@ var gomegaTests = []struct {
 		in:   `{"have-suffix": "foo"}`,
 		want: gomega.HaveSuffix("foo"),
 	},
+	// Regex support is based on golangs regex engine https://golang.org/pkg/regexp/syntax/
 	{
 		in:   `{"match-regexp": "foo"}`,
 		want: gomega.MatchRegexp("foo"),
