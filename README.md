@@ -88,13 +88,13 @@ As you can see goss tests are extremely fast, we were able to validate our syste
 Goss files can be manually edited to match:
 * [Patterns](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers).
-* Descriptions are human readable comments that are persisted when adding other resources with `goss add`
+* `desc` is a comment that is persisted when adding other resources with `goss add`
 
 Some examples:
 ```yaml
 user:
   sshd:
-    description: UID must be between 50-100, GID doesn't matter. home is now more flexible.
+    desc: UID must be between 50-100, GID doesn't matter. home is now more flexible.
     exists: true
     uid:
       # Validate that UID is between 50 and 100
