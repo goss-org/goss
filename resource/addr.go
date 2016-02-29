@@ -6,7 +6,8 @@ import (
 )
 
 type Addr struct {
-	Desc      string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title     string `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Address   string `json:"-" yaml:"-"`
 	Reachable bool   `json:"reachable" yaml:"reachable"`
 	Timeout   int    `json:"timeout" yaml:"timeout"`
@@ -14,6 +15,10 @@ type Addr struct {
 
 func (a *Addr) ID() string      { return a.Address }
 func (a *Addr) SetID(id string) { a.Address = id }
+
+// FIXME: Can this be refactored?
+func (r *Addr) GetTitle() string { return r.Title }
+func (r *Addr) GetMeta() meta    { return r.Meta }
 
 func (a *Addr) Validate(sys *system.System) []TestResult {
 	if a.Timeout == 0 {

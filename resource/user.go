@@ -8,7 +8,8 @@ import (
 )
 
 type User struct {
-	Desc     string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Username string  `json:"-" yaml:"-"`
 	Exists   bool    `json:"exists" yaml:"exists"`
 	UID      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
@@ -19,6 +20,9 @@ type User struct {
 
 func (u *User) ID() string      { return u.Username }
 func (u *User) SetID(id string) { u.Username = id }
+
+func (u *User) GetTitle() string { return u.Title }
+func (u *User) GetMeta() meta    { return u.Meta }
 
 func (u *User) Validate(sys *system.System) []TestResult {
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})

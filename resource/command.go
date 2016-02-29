@@ -11,7 +11,8 @@ import (
 )
 
 type Command struct {
-	Desc       string   `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title      string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta       meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Command    string   `json:"-" yaml:"-"`
 	ExitStatus matcher  `json:"exit-status" yaml:"exit-status"`
 	Stdout     []string `json:"stdout" yaml:"stdout"`
@@ -21,6 +22,9 @@ type Command struct {
 
 func (c *Command) ID() string      { return c.Command }
 func (c *Command) SetID(id string) { c.Command = id }
+
+func (c *Command) GetTitle() string { return c.Title }
+func (c *Command) GetMeta() meta    { return c.Meta }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
 	if c.Timeout == 0 {

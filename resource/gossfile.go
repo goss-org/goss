@@ -6,12 +6,16 @@ import (
 )
 
 type Gossfile struct {
-	Desc string `json:"desc,omitempty" yaml:"desc,omitempty"`
-	Path string `json:"-" yaml:"-"`
+	Title string `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta  meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Path  string `json:"-" yaml:"-"`
 }
 
 func (g *Gossfile) ID() string      { return g.Path }
 func (g *Gossfile) SetID(id string) { g.Path = id }
+
+func (g *Gossfile) GetTitle() string { return g.Title }
+func (g *Gossfile) GetMeta() meta    { return g.Meta }
 
 func NewGossfile(sysGossfile system.Gossfile, config util.Config) (*Gossfile, error) {
 	path := sysGossfile.Path()

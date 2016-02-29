@@ -6,7 +6,8 @@ import (
 )
 
 type File struct {
-	Desc     string   `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Path     string   `json:"-" yaml:"-"`
 	Exists   bool     `json:"exists" yaml:"exists"`
 	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
@@ -19,6 +20,9 @@ type File struct {
 
 func (f *File) ID() string      { return f.Path }
 func (f *File) SetID(id string) { f.Path = id }
+
+func (f *File) GetTitle() string { return f.Title }
+func (f *File) GetMeta() meta    { return f.Meta }
 
 func (f *File) Validate(sys *system.System) []TestResult {
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})

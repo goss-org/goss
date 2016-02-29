@@ -6,7 +6,8 @@ import (
 )
 
 type Package struct {
-	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Name      string  `json:"-" yaml:"-"`
 	Installed bool    `json:"installed" yaml:"installed"`
 	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
@@ -14,6 +15,9 @@ type Package struct {
 
 func (p *Package) ID() string      { return p.Name }
 func (p *Package) SetID(id string) { p.Name = id }
+
+func (p *Package) GetTitle() string { return p.Title }
+func (p *Package) GetMeta() meta    { return p.Meta }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})

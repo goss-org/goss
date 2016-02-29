@@ -6,7 +6,8 @@ import (
 )
 
 type Port struct {
-	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Port      string  `json:"-" yaml:"-"`
 	Listening bool    `json:"listening" yaml:"listening"`
 	IP        matcher `json:"ip,omitempty" yaml:"ip,omitempty"`
@@ -14,6 +15,9 @@ type Port struct {
 
 func (p *Port) ID() string      { return p.Port }
 func (p *Port) SetID(id string) { p.Port = id }
+
+func (p *Port) GetTitle() string { return p.Title }
+func (p *Port) GetMeta() meta    { return p.Meta }
 
 func (p *Port) Validate(sys *system.System) []TestResult {
 	sysPort := sys.NewPort(p.Port, sys, util.Config{})

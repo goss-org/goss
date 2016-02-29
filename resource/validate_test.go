@@ -7,13 +7,17 @@ import (
 	"testing"
 )
 
-type FakeIDer struct {
+type FakeResource struct {
 	id string
 }
 
-func (f *FakeIDer) ID() string {
+func (f *FakeResource) ID() string {
 	return f.id
 }
+func (f *FakeResource) GetTitle() string { return "title" }
+
+//func (f *FakeResource) GetMeta() meta    { return map[string]interface{}{"foo": "bar"} }
+func (f *FakeResource) GetMeta() meta { return meta{"foo": "bar"} }
 
 var stringTests = []struct {
 	in, in2 interface{}
@@ -31,7 +35,7 @@ func TestValidateValue(t *testing.T) {
 		inFunc := func() (interface{}, error) {
 			return c.in2, nil
 		}
-		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
+		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc)
 		if got.Successful != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
 		}
@@ -43,7 +47,7 @@ func TestValidateValueErr(t *testing.T) {
 		inFunc := func() (interface{}, error) {
 			return c.in2, fmt.Errorf("some err")
 		}
-		got := ValidateValue(&FakeIDer{""}, "", c.in, inFunc)
+		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc)
 		if got.Successful != false {
 			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
 		}
@@ -55,7 +59,7 @@ func BenchmarkValidateValue(b *testing.B) {
 		return "foo", nil
 	}
 	for n := 0; n < b.N; n++ {
-		ValidateValue(&FakeIDer{""}, "", "foo", inFunc)
+		ValidateValue(&FakeResource{""}, "", "foo", inFunc)
 	}
 }
 
@@ -80,7 +84,7 @@ func TestValidateContains(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
+		got := ValidateContains(&FakeResource{""}, "", c.in, inFunc)
 		if got.Successful != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
 		}
@@ -93,7 +97,7 @@ func TestValidateContainsErr(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, fmt.Errorf("some err")
 		}
-		got := ValidateContains(&FakeIDer{""}, "", c.in, inFunc)
+		got := ValidateContains(&FakeResource{""}, "", c.in, inFunc)
 		if got.Successful != false {
 			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
 		}

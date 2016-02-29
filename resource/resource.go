@@ -13,9 +13,14 @@ type Resource interface {
 	SetID(string)
 }
 
-type IDer interface {
+type ResourceRead interface {
 	ID() string
+	GetTitle() string
+	GetMeta() meta
 }
+
+type matcher interface{}
+type meta map[string]interface{}
 
 func contains(a []string, s string) bool {
 	for _, e := range a {
