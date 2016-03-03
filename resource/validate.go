@@ -146,13 +146,28 @@ type regexPattern struct {
 
 func newRegexPattern(str string) *regexPattern {
 	var inverse bool
+	cleanStr := str
 	if strings.HasPrefix(str, "!") {
 		inverse = true
+		cleanStr = cleanStr[1:]
+	}
+	trimLeft := []rune{'\\', '/'}
+	for _, r := range trimLeft {
+		if rune(cleanStr[0]) == r {
+			cleanStr = cleanStr[1:]
+			break
+		}
+	}
+	trimRight := []rune{'/'}
+	for _, r := range trimRight {
+		if rune(cleanStr[len(cleanStr)-1]) == r {
+			cleanStr = cleanStr[:len(cleanStr)-1]
+			break
+		}
 	}
 	// fixme, don't use MustCompile
-	cleanStr := strings.TrimLeft(str, "\\/!")
-	cleanStr = strings.TrimRight(cleanStr, "/")
 	re := regexp.MustCompile(cleanStr)
+
 	return &regexPattern{
 		pattern: str,
 		re:      re,

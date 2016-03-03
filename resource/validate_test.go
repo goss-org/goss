@@ -76,6 +76,7 @@ var containsTests = []struct {
 	{[]string{"!/fo.*/"}, "foo\nbar", false},
 	{[]string{"!/mo.*/"}, "foo\nbar", true},
 	{[]string{"foo"}, "", false},
+	{[]string{`/\s/tmp\b/`}, "test /tmp bar", true},
 }
 
 func TestValidateContains(t *testing.T) {
