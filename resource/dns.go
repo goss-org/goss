@@ -6,7 +6,8 @@ import (
 )
 
 type DNS struct {
-	Desc        string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title       string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta        meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Host        string  `json:"-" yaml:"-"`
 	Resolveable bool    `json:"resolveable" yaml:"resolveable"`
 	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
@@ -15,6 +16,9 @@ type DNS struct {
 
 func (d *DNS) ID() string      { return d.Host }
 func (d *DNS) SetID(id string) { d.Host = id }
+
+func (d *DNS) GetTitle() string { return d.Title }
+func (d *DNS) GetMeta() meta    { return d.Meta }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
 	if d.Timeout == 0 {

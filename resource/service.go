@@ -6,7 +6,8 @@ import (
 )
 
 type Service struct {
-	Desc    string `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title   string `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta    meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Service string `json:"-" yaml:"-"`
 	Enabled bool   `json:"enabled" yaml:"enabled"`
 	Running bool   `json:"running" yaml:"running"`
@@ -14,6 +15,9 @@ type Service struct {
 
 func (s *Service) ID() string      { return s.Service }
 func (s *Service) SetID(id string) { s.Service = id }
+
+func (s *Service) GetTitle() string { return s.Title }
+func (s *Service) GetMeta() meta    { return s.Meta }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
 	sysservice := sys.NewService(s.Service, sys, util.Config{})

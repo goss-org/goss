@@ -8,7 +8,8 @@ import (
 )
 
 type Group struct {
-	Desc      string  `json:"desc,omitempty" yaml:"desc,omitempty"`
+	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Groupname string  `json:"-" yaml:"-"`
 	Exists    bool    `json:"exists" yaml:"exists"`
 	GID       matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
@@ -16,6 +17,9 @@ type Group struct {
 
 func (g *Group) ID() string      { return g.Groupname }
 func (g *Group) SetID(id string) { g.Groupname = id }
+
+func (g *Group) GetTitle() string { return g.Title }
+func (g *Group) GetMeta() meta    { return g.Meta }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
 	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})

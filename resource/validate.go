@@ -21,8 +21,10 @@ const (
 
 type TestResult struct {
 	Successful   bool          `json:"successful" yaml:"successful"`
-	Title        string        `json:"title" yaml:"title"`
+	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
 	ResourceType string        `json:"resource-type" yaml:"resource-type"`
+	Title        string        `json:"title" yaml:"title"`
+	Meta         meta          `json:"meta" yaml:"meta"`
 	TestType     int           `json:"test-type" yaml:"test-type"`
 	Property     string        `json:"property" yaml:"property"`
 	Err          error         `json:"err" yaml:"err"`
@@ -32,10 +34,10 @@ type TestResult struct {
 	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
-type matcher interface{}
-
-func ValidateValue(res IDer, property string, expectedValue interface{}, actual interface{}) TestResult {
-	title := res.ID()
+func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}) TestResult {
+	id := res.ID()
+	title := res.GetTitle()
+	meta := res.GetMeta()
 	typ := reflect.TypeOf(res)
 	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
@@ -71,7 +73,9 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, actual 
 			Successful:   false,
 			ResourceType: typs,
 			TestType:     Values,
+			ResourceId:   id,
 			Title:        title,
+			Meta:         meta,
 			Property:     property,
 			Err:          err,
 			Duration:     time.Now().Sub(startTime),
@@ -90,7 +94,9 @@ func ValidateValue(res IDer, property string, expectedValue interface{}, actual 
 		Successful:   success,
 		ResourceType: typs,
 		TestType:     Value,
+		ResourceId:   id,
 		Title:        title,
+		Meta:         meta,
 		Property:     property,
 		Expected:     []string{string(expected)},
 		Found:        []string{string(found)},
@@ -197,8 +203,10 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	return slice
 }
 
-func ValidateContains(res IDer, property string, expectedValues []string, method func() (io.Reader, error)) TestResult {
-	title := res.ID()
+func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error)) TestResult {
+	id := res.ID()
+	title := res.GetTitle()
+	meta := res.GetMeta()
 	typ := reflect.TypeOf(res)
 	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
@@ -208,7 +216,9 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
+			ResourceId:   id,
 			Title:        title,
+			Meta:         meta,
 			Property:     property,
 			Err:          err,
 			Duration:     time.Now().Sub(startTime),
@@ -242,7 +252,9 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
+			ResourceId:   id,
 			Title:        title,
+			Meta:         meta,
 			Property:     property,
 			Err:          err,
 			Duration:     time.Now().Sub(startTime),
@@ -262,7 +274,9 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 			Successful:   false,
 			ResourceType: typs,
 			TestType:     Contains,
+			ResourceId:   id,
 			Title:        title,
+			Meta:         meta,
 			Property:     property,
 			Expected:     expectedValues,
 			Found:        patternsToSlice(found),
@@ -273,7 +287,9 @@ func ValidateContains(res IDer, property string, expectedValues []string, method
 		Successful:   true,
 		ResourceType: typs,
 		TestType:     Contains,
+		ResourceId:   id,
 		Title:        title,
+		Meta:         meta,
 		Property:     property,
 		Expected:     expectedValues,
 		Found:        patternsToSlice(found),

@@ -21,14 +21,14 @@ var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
-		return red("%s: %s:\nError: %s", r.Title, r.Property, r.Err)
+		return red("%s: %s:\nError: %s", r.ResourceId, r.Property, r.Err)
 	}
 
 	if r.Successful {
-		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
+		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
 	} else {
 		if r.Human != "" {
-			return red("%s: %s: %s:\n%s\n", r.ResourceType, r.Title, r.Property, r.Human)
+			return red("%s: %s: %s:\n%s\n", r.ResourceType, r.ResourceId, r.Property, r.Human)
 		}
 		return humanizeResult2(r)
 	}
@@ -36,27 +36,27 @@ func humanizeResult(r resource.TestResult) string {
 
 func humanizeResult2(r resource.TestResult) string {
 	if r.Err != nil {
-		return red("%s: %s: Error: %s", r.Title, r.Property, r.Err)
+		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
 	}
 
 	switch r.TestType {
 	case resource.Value:
 		if r.Successful {
-			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.Title, r.Property, r.Expected)
+			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
 		} else {
-			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.Title, r.Property, r.Expected, r.Found)
+			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
 		}
 	case resource.Values:
 		if r.Successful {
-			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
+			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	case resource.Contains:
 		if r.Successful {
-			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(r.Expected, ", "))
+			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
 		} else {
-			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.Title, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
+			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
 		}
 	default:
 		return red("Unexpected type %d", r.TestType)

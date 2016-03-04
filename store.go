@@ -115,8 +115,8 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	return nil
 }
 
-func resourcePrint(fileName string, res resource.IDer) {
-	resMap := map[string]resource.IDer{res.ID(): res}
+func resourcePrint(fileName string, res resource.ResourceRead) {
+	resMap := map[string]resource.ResourceRead{res.ID(): res}
 
 	oj, _ := marshal(resMap)
 	typ := reflect.TypeOf(res)
