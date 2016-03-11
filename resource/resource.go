@@ -36,7 +36,7 @@ func deprecateAtoI(depr interface{}, desc string) interface{} {
 	if !ok {
 		return depr
 	}
-	fmt.Printf("DEPRICATION WARNING: %s should be an integer not a string\n", desc)
+	fmt.Printf("DEPRECATION WARNING: %s should be an integer not a string\n", desc)
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		panic(err)
