@@ -23,7 +23,7 @@ Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.0/goss-linux-amd64 > /usr/local/bin/goss && chmod +x /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.2/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
@@ -128,6 +128,14 @@ package:
 * port - port is listening, listening ip
 * process - process is running
 * user - uid, home, etc..
+
+## Supported output formats
+* rspecish **(default)** - Similar to rspec output
+* documentation - Verbose test results
+* JSON - Detailed test result
+* TAP
+* JUnit
+* nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
 
 ## Limitations
 
