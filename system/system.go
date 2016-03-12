@@ -33,8 +33,9 @@ type System struct {
 	NewDNS      func(string, *System, util2.Config) DNS
 	NewProcess  func(string, *System, util2.Config) Process
 	NewGossfile func(string, *System, util2.Config) Gossfile
-	Dbus        *dbus.Conn
+	dbus        *dbus.Conn
 	ports       map[string][]GOnetstat.Process
+	dbusOnce    sync.Once
 	portsOnce   sync.Once
 	procOnce    sync.Once
 	procMap     map[string][]ps.Process
@@ -45,6 +46,19 @@ func (s *System) Ports() map[string][]GOnetstat.Process {
 		s.ports = GetPorts(false)
 	})
 	return s.ports
+}
+
+func (s *System) Dbus() *dbus.Conn {
+	s.dbusOnce.Do(func() {
+		dbus, err := dbus.New()
+		if err != nil {
+			fmt.Println(err)
+			// FIXME: Do we really want to exit here?
+			os.Exit(1)
+		}
+		s.dbus = dbus
+	})
+	return s.dbus
 }
 
 func (s *System) ProcMap() map[string][]ps.Process {
@@ -102,12 +116,6 @@ func (s *System) detectService() {
 	switch {
 	case util.IsRunningSystemd():
 		s.NewService = NewServiceDbus
-		dbus, err := dbus.New()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		s.Dbus = dbus
 	case isUbuntu():
 		s.NewService = NewServiceUpstart
 	case isAlpine():
