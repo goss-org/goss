@@ -30,7 +30,7 @@ curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.2/goss-linux-a
 
 Documentation is available here: https://github.com/aelsabbahy/goss/blob/master/docs/manual.md
 
-## Qick start
+## Quick start
 
 ### Writing a simple sshd test
 
