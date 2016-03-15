@@ -21,14 +21,14 @@ var red = color.New(color.FgRed).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
-		return red("%s: %s:\nError: %s", r.ResourceId, r.Property, r.Err)
+		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
 	}
 
 	if r.Successful {
 		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
 	} else {
 		if r.Human != "" {
-			return red("%s: %s: %s:\n%s\n", r.ResourceType, r.ResourceId, r.Property, r.Human)
+			return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
 		}
 		return humanizeResult2(r)
 	}
@@ -118,4 +118,24 @@ func subtractSlice(x, y []string) []string {
 	}
 
 	return ret
+}
+
+func header(t resource.TestResult) string {
+	var out string
+	if t.Title != "" {
+		out += fmt.Sprintf("Title: %s\n", t.Title)
+	}
+	if t.Meta != nil {
+		var keys []string
+		for k := range t.Meta {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		out += "Meta:\n"
+		for _, k := range keys {
+			out += fmt.Sprintf("    %v: %v\n", k, t.Meta[k])
+		}
+	}
+	return out
 }
