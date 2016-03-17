@@ -120,9 +120,9 @@ package:
 
 ## Supported resources
 * addr - addr is reachable
-* command - command, exist status and outputs
+* command - command, exit status and outputs
 * dns - dns is resolvable
-* file - file exists, owner/perm, conent
+* file - file exists, owner/perm, content
 * group - group, uid
 * package - package is installed, versions
 * port - port is listening, listening ip
