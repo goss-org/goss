@@ -55,7 +55,7 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --gossfile, -g "./goss.json" Goss file to read from / write to [$GOSS_FILE]
-   --package                    Package type to use [rpm, deb, alpine]
+   --package                    Package type to use [rpm, deb, alpine, pacman]
    --help, -h                   show help
    --generate-bash-completion
    --version, -v                print the version

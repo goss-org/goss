@@ -147,6 +147,7 @@ Package:
   * rpm
   * deb
   * Alpine apk
+  * pacman
 
 Service:
   * systemd
