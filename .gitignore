@@ -6,3 +6,5 @@
 /integration-tests/goss/goss
 /integration-tests/**/*-generated.json
 /vendor/
+/integration-tests/**/goss-linux-386
+/integration-tests/**/goss-linux-amd64
