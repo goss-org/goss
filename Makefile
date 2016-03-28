@@ -43,13 +43,13 @@ release: build
 test-int: centos6 wheezy precise alpine3
 
 centos6: build test
-	cd integration-tests/ && ./test.sh $@
+	cd integration-tests/ && sudo ./test.sh $@
 wheezy: build test
-	cd integration-tests/ && ./test.sh $@
+	cd integration-tests/ && sudo ./test.sh $@
 precise: build test
-	cd integration-tests/ && ./test.sh $@
+	cd integration-tests/ && sudo ./test.sh $@
 alpine3: build test
-	cd integration-tests/ && ./test.sh $@
+	cd integration-tests/ && sudo ./test.sh $@
 
 
 test-all: test lint test-int
