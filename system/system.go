@@ -92,6 +92,8 @@ func New(c *cli.Context) *System {
 		sys.NewPackage = NewDebPackage
 	case "alpine":
 		sys.NewPackage = NewAlpinePackage
+	case "pacman":
+		sys.NewPackage = NewPacmanPackage
 	default:
 		sys.NewPackage = detectPackage()
 	}
@@ -107,6 +109,8 @@ func detectPackage() func(string, *System, util2.Config) Package {
 		return NewDebPackage
 	case isAlpine():
 		return NewAlpinePackage
+	case isPacman():
+		return NewPacmanPackage
 	default:
 		return NewNullPackage
 	}
@@ -170,6 +174,19 @@ func isAlpine() bool {
 
 	// See if it has only one of the package managers
 	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
+		return true
+	}
+
+	return false
+}
+
+func isPacman() bool {
+	if _, err := os.Stat("/etc/arch-release"); err == nil {
+		return true
+	}
+
+	// See if it has only one of the package managers
+	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("pacman") {
 		return true
 	}
 
