@@ -1,0 +1,29 @@
+{
+    "package": {
+        "curl": {
+            "installed": true
+        },
+        "pacman": {
+            "installed": true
+        },
+        "foobar": {
+            "installed": false
+        }
+    },
+    "user": {
+        "root": {
+            "exists": true,
+            "uid": 0,
+            "gid": 0,
+            "home": "/root"
+        }
+    },
+    "process": {
+        "bash": {
+            "running": true
+        }
+    },
+    "gossfile": {
+        "../goss-shared.json": {}
+    }
+}

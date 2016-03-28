@@ -14,7 +14,11 @@ for arch in amd64 386;do
     if docker ps -a | grep goss_int_test_$os;then
       docker rm -vf goss_int_test_$os
     fi
-    id=$(docker run -v "$PWD/goss:/tmp/goss"  -d --name "goss_int_test_$os" "aelsabbahy/goss_$os" /sbin/init)
+    if [[ $os == "arch" ]]; then
+      id=$(docker run -v /run:/run:ro -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v "$PWD/goss:/tmp/goss"  -d --name "goss_int_test_$os" "aelsabbahy/goss_$os" /sbin/init)
+    else
+      id=$(docker run -v "$PWD/goss:/tmp/goss"  -d --name "goss_int_test_$os" "aelsabbahy/goss_$os" /sbin/init)
+    fi
     ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
     trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
     # Give httpd time to start up
@@ -25,7 +29,7 @@ for arch in amd64 386;do
   out=$(docker exec goss_int_test_$os bash -c "time /tmp/goss/$os/goss-linux-$arch -g /tmp/goss/$os/goss.json validate")
   echo "$out"
 
-  grep -q 'Count: 39, Failed: 0' <<<"$out"
+  egrep -q 'Count: [0-9]{2}, Failed: 0' <<<"$out"
 
   docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch"
 
