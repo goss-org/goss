@@ -44,7 +44,7 @@ func (s *ServiceInit) Running() (bool, error) {
 	cmd := util.NewCommand("service", s.service, "status")
 	cmd.Run()
 	if cmd.Status == 0 {
-		return true, nil
+		return true, cmd.Err
 	}
 	return false, nil
 }

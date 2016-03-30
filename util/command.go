@@ -8,6 +8,7 @@ import (
 )
 
 type Command struct {
+	name           string
 	Cmd            *exec.Cmd
 	Stdout, Stderr bytes.Buffer
 	Err            error
@@ -17,6 +18,7 @@ type Command struct {
 func NewCommand(name string, arg ...string) *Command {
 	//fmt.Println(arg)
 	command := new(Command)
+	command.name = name
 	command.Cmd = exec.Command(name, arg...)
 	return command
 }
@@ -24,6 +26,11 @@ func NewCommand(name string, arg ...string) *Command {
 func (c *Command) Run() error {
 	c.Cmd.Stdout = &c.Stdout
 	c.Cmd.Stderr = &c.Stderr
+
+	if _, err := exec.LookPath(c.name); err != nil {
+		c.Err = err
+		return c.Err
+	}
 
 	if err := c.Cmd.Start(); err != nil {
 		c.Err = err
