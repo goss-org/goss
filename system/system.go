@@ -124,6 +124,8 @@ func (s *System) detectService() {
 		s.NewService = NewServiceUpstart
 	case isAlpine():
 		s.NewService = NewAlpineServiceInit
+	case isArch():
+		s.NewService = NewServiceDbus
 	default:
 		s.NewService = NewServiceInit
 	}
@@ -180,8 +182,13 @@ func isAlpine() bool {
 	return false
 }
 
+func isArch() bool {
+	_, err := os.Stat("/etc/arch-release")
+	return err == nil
+}
+
 func isPacman() bool {
-	if _, err := os.Stat("/etc/arch-release"); err == nil {
+	if isArch() {
 		return true
 	}
 
