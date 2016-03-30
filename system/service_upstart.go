@@ -61,7 +61,7 @@ func (s *ServiceUpstart) Running() (bool, error) {
 	cmd.Run()
 	out := cmd.Stdout.String()
 	if cmd.Status == 0 && (strings.Contains(out, "running") || strings.Contains(out, "online")) {
-		return true, nil
+		return true, cmd.Err
 	}
 	return false, nil
 }
