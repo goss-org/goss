@@ -63,6 +63,7 @@
         }
     },
     "gossfile": {
-        "../goss-shared.json": {}
+        "../goss-shared.json": {},
+        "../goss-service.json": {}
     }
 }

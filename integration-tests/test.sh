@@ -31,15 +31,17 @@ for arch in amd64 386;do
 
   egrep -q 'Count: [0-9]{2}, Failed: 0' <<<"$out"
 
-  docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch"
+  if [[ ! $os == "arch" ]]; then
+    docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch"
 
-  docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected.json /tmp/goss/${os}/goss-generated.json"
+    docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected.json /tmp/goss/${os}/goss-generated.json"
 
-  docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-aa-expected.json /tmp/goss/${os}/goss-aa-generated.json"
+    docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-aa-expected.json /tmp/goss/${os}/goss-aa-generated.json"
 
-  docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch -q"
+    docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch -q"
 
-  docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
+    docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
+  fi
 
   #docker rm -vf goss_int_test_$os
 done
