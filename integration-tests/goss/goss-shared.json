@@ -13,6 +13,10 @@
         "/tmp/goss/foobar": {
             "exists": false,
             "contains": []
+        },
+        "/tmp": {
+            "exists": true,
+            "mode": "1777"
         }
     },
     "package": {

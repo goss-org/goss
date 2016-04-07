@@ -57,7 +57,10 @@ func (f *DefFile) Mode() (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%#o", fi.Mode().Perm()), nil
+	sys := fi.Sys()
+	stat := sys.(*syscall.Stat_t)
+	mode := fmt.Sprintf("%04o", (stat.Mode & 07777))
+	return mode, nil
 }
 
 func (f *DefFile) Filetype() (string, error) {
