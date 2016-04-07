@@ -5,7 +5,7 @@ pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 
-.PHONY: all build install test coverage deps release bench test-int lint gen centos6 wheezy precise alpine3
+.PHONY: all build install test coverage deps release bench test-int lint gen centos6 wheezy precise alpine3 arch
 
 all: test-all
 
@@ -40,7 +40,7 @@ build: release/goss-linux-386 release/goss-linux-amd64
 release: build
 	#goupx release/*
 
-test-int: centos6 wheezy precise alpine3
+test-int: centos6 wheezy precise alpine3 arch
 
 centos6: build test
 	cd integration-tests/ && ./test.sh $@
@@ -49,6 +49,8 @@ wheezy: build test
 precise: build test
 	cd integration-tests/ && ./test.sh $@
 alpine3: build test
+	cd integration-tests/ && ./test.sh $@
+arch: build test
 	cd integration-tests/ && ./test.sh $@
 
 

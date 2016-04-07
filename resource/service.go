@@ -32,8 +32,14 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 
 func NewService(sysService system.Service, config util.Config) (*Service, error) {
 	service := sysService.Service()
-	enabled, _ := sysService.Enabled()
-	running, _ := sysService.Running()
+	enabled, err := sysService.Enabled()
+	if err != nil {
+		return nil, err
+	}
+	running, err := sysService.Running()
+	if err != nil {
+		return nil, err
+	}
 	return &Service{
 		Service: service,
 		Enabled: enabled,

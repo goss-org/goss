@@ -35,12 +35,6 @@
             "listening": false
         }
     },
-    "service": {
-        "foobar": {
-            "enabled": false,
-            "running": false
-        }
-    },
     "user": {
         "root": {
             "exists": true
