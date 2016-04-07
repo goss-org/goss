@@ -84,17 +84,20 @@ Count: 10, Failed: 0
 
 As you can see goss tests are extremely fast, we were able to validate our system state in **16ms!**
 
-### Patterns, matchers and descriptions
+### Patterns, matchers and metadata
 Goss files can be manually edited to match:
 * [Patterns](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers).
-* `desc` is a comment that is persisted when adding other resources with `goss add`
+* `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
 ```yaml
 user:
   sshd:
-    desc: UID must be between 50-100, GID doesn't matter. home is flexible
+    title: UID must be between 50-100, GID doesn't matter. home is flexible
+    meta:
+      desc: Ensure sshd is enabled and running since it's needed for system management
+      sev: 5
     exists: true
     uid:
       # Validate that UID is between 50 and 100
