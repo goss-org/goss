@@ -29,7 +29,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "package",
-			Usage: "Package type to use [rpm, deb, alpine, pacman]",
+			Usage: "Package type to use [rpm, deb, apk, pacman]",
 		},
 	}
 	app.Commands = []cli.Command{
