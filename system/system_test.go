@@ -26,19 +26,27 @@ func testOutputs(f noInputs, validOutputs []string, t *testing.T) {
 
 func TestPackageManager(t *testing.T) {
 	t.Parallel()
-	testOutputs(DetectPackageManager, []string{"deb", "rpm", "apk", "pacman"}, t)
+	testOutputs(
+		DetectPackageManager,
+		[]string{"deb", "rpm", "apk", "pacman", ""},
+		t,
+	)
 }
 
 func TestDetectService(t *testing.T) {
 	t.Parallel()
-	testOutputs(DetectService, []string{"systemd", "init", "alpineinit", "upstart"}, t)
+	testOutputs(
+		DetectService,
+		[]string{"systemd", "init", "alpineinit", "upstart", ""},
+		t,
+	)
 }
 
 func TestDetectDistro(t *testing.T) {
 	t.Parallel()
 	testOutputs(
 		DetectDistro,
-		[]string{"ubuntu", "redhat", "alpine", "arch", "debian"},
+		[]string{"ubuntu", "redhat", "alpine", "arch", "debian", ""},
 		t,
 	)
 }
