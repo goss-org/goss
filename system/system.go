@@ -80,128 +80,118 @@ func New(c *cli.Context) *System {
 		NewProcess:  NewDefProcess,
 		NewGossfile: NewDefGossfile,
 	}
-	// FIXME: Detect-os needs to be refactored in a consistent way
-	// Also, cache should be its own object
 	sys.detectService()
+	sys.detectPackage(c)
+	return sys
+}
 
+// detectPackage adds the correct package creation function to a System struct
+func (sys *System) detectPackage(c *cli.Context) {
 	p := c.GlobalString("package")
+	if p != "deb" && p != "apk" && p != "pacman" && p != "rpm" {
+		p = DetectPackageManager()
+	}
 	switch p {
-	case "rpm":
-		sys.NewPackage = NewRpmPackage
 	case "deb":
 		sys.NewPackage = NewDebPackage
-	case "alpine":
+	case "apk":
 		sys.NewPackage = NewAlpinePackage
 	case "pacman":
 		sys.NewPackage = NewPacmanPackage
 	default:
-		sys.NewPackage = detectPackage()
+		sys.NewPackage = NewRpmPackage
 	}
-
-	return sys
 }
 
-func detectPackage() func(string, *System, util2.Config) Package {
-	switch {
-	case isRpm():
-		return NewRpmPackage
-	case isDeb():
-		return NewDebPackage
-	case isAlpine():
-		return NewAlpinePackage
-	case isPacman():
-		return NewPacmanPackage
+// detectService adds the correct service creation function to a System struct
+func (sys *System) detectService() {
+	switch DetectService() {
+	case "upstart":
+		sys.NewService = NewServiceUpstart
+	case "systemd":
+		sys.NewService = NewServiceDbus
+	case "alpineinit":
+		sys.NewService = NewAlpineServiceInit
 	default:
-		return NewNullPackage
+		sys.NewService = NewServiceInit
 	}
 }
 
-func (s *System) detectService() {
-	switch {
-	case util.IsRunningSystemd():
-		s.NewService = NewServiceDbus
-	case isUbuntu():
-		s.NewService = NewServiceUpstart
-	case isAlpine():
-		s.NewService = NewAlpineServiceInit
-	case isArch():
-		s.NewService = NewServiceDbus
-	default:
-		s.NewService = NewServiceInit
+// DetectPackageManager attempts to detect whether or not the system is using
+// "deb", "rpm", "apk", or "pacman" package managers. It first attempts to
+// detect the distro. If that fails, it falls back to finding package manager
+// executables. If that fails, it returns the empty string.
+func DetectPackageManager() string {
+	switch DetectDistro() {
+	case "ubuntu":
+		return "deb"
+	case "redhat":
+		return "rpm"
+	case "alpine":
+		return "apk"
+	case "arch":
+		return "pacman"
+	case "debian":
+		return "deb"
 	}
-}
-
-func isUbuntu() bool {
-	if b, err := ioutil.ReadFile("/etc/lsb-release"); err == nil {
-		if bytes.Contains(b, []byte("Ubuntu")) {
-			return true
+	for _, manager := range []string{"deb", "rpm", "apk", "pacman"} {
+		if HasCommand(manager) {
+			return manager
 		}
 	}
-	return false
-
-}
-func isDeb() bool {
-	if _, err := os.Stat("/etc/debian_version"); err == nil {
-		return true
-	}
-
-	// See if it has only one of the package managers
-	if hasCommand("dpkg") && !hasCommand("rpm") && !hasCommand("apk") {
-		return true
-	}
-
-	return false
+	return ""
 }
 
-func isRpm() bool {
+// DetectService attempts to detect what kind of service management the system
+// is using, "systemd", "upstart", "alpineinit", or "init". It uses the dbus
+// API to detect systemd, and falls back on DetectDistro otherwise. If it can't
+// decide, it returns "init".
+func DetectService() string {
+	if util.IsRunningSystemd() {
+		return "systemd"
+	}
+	// Centos Docker container doesn't run systemd, so we detect it or use init.
+	switch DetectDistro() {
+	case "ubuntu":
+		return "upstart"
+	case "alpine":
+		return "alpineinit"
+	case "arch":
+		return "systemd"
+	}
+	return "init"
+}
+
+// DetectDistro attempts to detect which Linux distribution this computer is
+// using. One of "ubuntu", "redhat" (including Centos), "alpine", "arch", or
+// "debian". If it can't decide, it returns an empty string.
+func DetectDistro() string {
+	if b, e := ioutil.ReadFile("/etc/lsb-release"); e == nil && bytes.Contains(b, []byte("Ubuntu")) {
+		return "ubuntu"
+	} else if isRedhat() {
+		return "redhat"
+	} else if _, err := os.Stat("/etc/alpine-release"); err == nil {
+		return "alpine"
+	} else if _, err := os.Stat("/etc/arch-release"); err == nil {
+		return "arch"
+	} else if _, err := os.Stat("/etc/debian_version"); err == nil {
+		return "debian"
+	}
+	return ""
+}
+
+// HasCommand returns whether or not an executable by this name is on the PATH.
+func HasCommand(cmd string) bool {
+	if _, err := exec.LookPath(cmd); err == nil {
+		return true
+	}
+	return false
+}
+
+func isRedhat() bool {
 	if _, err := os.Stat("/etc/redhat-release"); err == nil {
 		return true
-	}
-
-	if _, err := os.Stat("/etc/system-release"); err == nil {
-		return true
-	}
-
-	// See if it has only one of the package managers
-	if hasCommand("rpm") && !hasCommand("dpkg") && !hasCommand("apk") {
-		return true
-	}
-	return false
-}
-
-func isAlpine() bool {
-	if _, err := os.Stat("/etc/alpine-release"); err == nil {
-		return true
-	}
-
-	// See if it has only one of the package managers
-	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("apk") {
-		return true
-	}
-
-	return false
-}
-
-func isArch() bool {
-	_, err := os.Stat("/etc/arch-release")
-	return err == nil
-}
-
-func isPacman() bool {
-	if isArch() {
-		return true
-	}
-
-	// See if it has only one of the package managers
-	if !hasCommand("dpkg") && !hasCommand("rpm") && hasCommand("pacman") {
-		return true
-	}
-
-	return false
-}
-
-func hasCommand(cmd string) bool {
-	if _, err := exec.LookPath(cmd); err == nil {
+	} else if _, err := os.Stat("/etc/system-release"); err == nil {
 		return true
 	}
 	return false
