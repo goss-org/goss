@@ -23,7 +23,7 @@ Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.3/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.4/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
