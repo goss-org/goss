@@ -4,6 +4,9 @@ package resource
 
 import (
 	"encoding/json"
+	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
@@ -48,6 +51,26 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 }
 
 func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
+	resEmpty := ResourceType{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*ResourceType
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -64,6 +87,26 @@ func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 
 //func (r *ResourceTypeMap) UnmarshalYAML(data []byte) error {
 func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := ResourceType{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*ResourceType
 	if err := unmarshal(&tmp); err != nil {
 		return err
