@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
@@ -24,12 +25,31 @@ type File interface {
 }
 
 type DefFile struct {
-	path string
+	path     string
+	realPath string
+	fi       os.FileInfo
+	loaded   bool
+	err      error
 }
 
 func NewDefFile(path string, system *System, config util.Config) File {
-	absPath, _ := filepath.Abs(path)
-	return &DefFile{path: absPath}
+	if !strings.HasPrefix(path, "~") {
+		// FIXME: we probably shouldn't ignore errors here
+		path, _ = filepath.Abs(path)
+	}
+	return &DefFile{path: path}
+}
+
+func (f *DefFile) setup() error {
+	if f.loaded {
+		return f.err
+	}
+	f.loaded = true
+	if f.realPath, f.err = realPath(f.path); f.err != nil {
+		return f.err
+	}
+
+	return f.err
 }
 
 func (f *DefFile) Path() string {
@@ -37,14 +57,22 @@ func (f *DefFile) Path() string {
 }
 
 func (f *DefFile) Exists() (bool, error) {
-	if _, err := os.Stat(f.path); os.IsNotExist(err) {
+	if err := f.setup(); err != nil {
+		return false, err
+	}
+
+	if _, err := os.Stat(f.realPath); os.IsNotExist(err) {
 		return false, nil
 	}
 	return true, nil
 }
 
 func (f *DefFile) Contains() (io.Reader, error) {
-	fh, err := os.Open(f.path)
+	if err := f.setup(); err != nil {
+		return nil, err
+	}
+
+	fh, err := os.Open(f.realPath)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +80,11 @@ func (f *DefFile) Contains() (io.Reader, error) {
 }
 
 func (f *DefFile) Mode() (string, error) {
-	fi, err := os.Lstat(f.path)
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fi, err := os.Lstat(f.realPath)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +96,11 @@ func (f *DefFile) Mode() (string, error) {
 }
 
 func (f *DefFile) Filetype() (string, error) {
-	fi, err := os.Lstat(f.path)
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fi, err := os.Lstat(f.realPath)
 	if err != nil {
 		return "", err
 	}
@@ -82,7 +118,11 @@ func (f *DefFile) Filetype() (string, error) {
 }
 
 func (f *DefFile) Owner() (string, error) {
-	fi, err := os.Lstat(f.path)
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fi, err := os.Lstat(f.realPath)
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +141,11 @@ func (f *DefFile) Owner() (string, error) {
 }
 
 func (f *DefFile) Group() (string, error) {
-	fi, err := os.Lstat(f.path)
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fi, err := os.Lstat(f.realPath)
 	if err != nil {
 		return "", err
 	}
@@ -120,9 +164,38 @@ func (f *DefFile) Group() (string, error) {
 }
 
 func (f *DefFile) LinkedTo() (string, error) {
-	dst, err := os.Readlink(f.path)
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	dst, err := os.Readlink(f.realPath)
 	if err != nil {
 		return "", err
 	}
 	return dst, nil
+}
+
+func realPath(path string) (string, error) {
+	if !strings.HasPrefix(path, "~") {
+		return path, nil
+	}
+	pathS := strings.Split(path, "/")
+	f := pathS[0]
+
+	var usr user.User
+	var err error
+	if f == "~" {
+		usr, err = user.CurrentUser()
+	} else {
+		usr, err = user.LookupUser(f[1:len(f)])
+	}
+	if err != nil {
+		return "", err
+	}
+	pathS[0] = usr.Home
+
+	realPath := strings.Join(pathS, "/")
+	realPath, err = filepath.Abs(realPath)
+
+	return realPath, err
 }
