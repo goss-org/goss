@@ -14,6 +14,10 @@
             "exists": false,
             "contains": []
         },
+        "~root": {
+            "exists": true,
+            "mode": "0700"
+        },
         "/tmp": {
             "exists": true,
             "mode": "1777"

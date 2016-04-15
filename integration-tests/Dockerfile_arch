@@ -1,17 +1,4 @@
 FROM base/archlinux
 MAINTAINER @siddharthist
 
-# Run this container with the following options:
-# -v /run:/run:ro -v /sys/fs/cgroup:/sys/fs/cgroup:ro
-
-# Get systemd running first
-VOLUME ["/sys/fs/cgroup"]
-VOLUME ["/run"]
-RUN systemctl mask dev-mqueue.mount dev-hugepages.mount \
-    systemd-remount-fs.service sys-kernel-config.mount \
-    sys-kernel-debug.mount sys-fs-fuse-connections.mount \
-    display-manager.service graphical.target systemd-logind.service
-
-RUN curl -sLo /usr/lib/systemd/system/dbus.service \
-    'https://raw.githubusercontent.com/maci0/docker-systemd-unpriv/master/dbus.service'
-RUN systemctl enable dbus.service
+RUN chmod 700 ~root
