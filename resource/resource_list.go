@@ -6,6 +6,9 @@ package resource
 
 import (
 	"encoding/json"
+	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
@@ -46,6 +49,26 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 }
 
 func (r *AddrMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Addr{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Addr
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -62,6 +85,26 @@ func (r *AddrMap) UnmarshalJSON(data []byte) error {
 
 //func (r *AddrMap) UnmarshalYAML(data []byte) error {
 func (r *AddrMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Addr{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Addr
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -111,6 +154,26 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 }
 
 func (r *CommandMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Command{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Command
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -127,6 +190,26 @@ func (r *CommandMap) UnmarshalJSON(data []byte) error {
 
 //func (r *CommandMap) UnmarshalYAML(data []byte) error {
 func (r *CommandMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Command{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Command
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -176,6 +259,26 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 }
 
 func (r *DNSMap) UnmarshalJSON(data []byte) error {
+	resEmpty := DNS{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*DNS
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -192,6 +295,26 @@ func (r *DNSMap) UnmarshalJSON(data []byte) error {
 
 //func (r *DNSMap) UnmarshalYAML(data []byte) error {
 func (r *DNSMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := DNS{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*DNS
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -241,6 +364,26 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 }
 
 func (r *FileMap) UnmarshalJSON(data []byte) error {
+	resEmpty := File{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*File
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -257,6 +400,26 @@ func (r *FileMap) UnmarshalJSON(data []byte) error {
 
 //func (r *FileMap) UnmarshalYAML(data []byte) error {
 func (r *FileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := File{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*File
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -306,6 +469,26 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 }
 
 func (r *GossfileMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Gossfile{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Gossfile
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -322,6 +505,26 @@ func (r *GossfileMap) UnmarshalJSON(data []byte) error {
 
 //func (r *GossfileMap) UnmarshalYAML(data []byte) error {
 func (r *GossfileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Gossfile{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Gossfile
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -371,6 +574,26 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 }
 
 func (r *GroupMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Group{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Group
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -387,6 +610,26 @@ func (r *GroupMap) UnmarshalJSON(data []byte) error {
 
 //func (r *GroupMap) UnmarshalYAML(data []byte) error {
 func (r *GroupMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Group{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Group
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -436,6 +679,26 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 }
 
 func (r *PackageMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Package{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Package
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -452,6 +715,26 @@ func (r *PackageMap) UnmarshalJSON(data []byte) error {
 
 //func (r *PackageMap) UnmarshalYAML(data []byte) error {
 func (r *PackageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Package{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Package
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -501,6 +784,26 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 }
 
 func (r *PortMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Port{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Port
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -517,6 +820,26 @@ func (r *PortMap) UnmarshalJSON(data []byte) error {
 
 //func (r *PortMap) UnmarshalYAML(data []byte) error {
 func (r *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Port{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Port
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -566,6 +889,26 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 }
 
 func (r *ProcessMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Process{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Process
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -582,6 +925,26 @@ func (r *ProcessMap) UnmarshalJSON(data []byte) error {
 
 //func (r *ProcessMap) UnmarshalYAML(data []byte) error {
 func (r *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Process{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Process
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -631,6 +994,26 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 }
 
 func (r *ServiceMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Service{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Service
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -647,6 +1030,26 @@ func (r *ServiceMap) UnmarshalJSON(data []byte) error {
 
 //func (r *ServiceMap) UnmarshalYAML(data []byte) error {
 func (r *ServiceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Service{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*Service
 	if err := unmarshal(&tmp); err != nil {
 		return err
@@ -696,6 +1099,26 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 }
 
 func (r *UserMap) UnmarshalJSON(data []byte) error {
+	resEmpty := User{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*User
 	if err := json.Unmarshal(data, &tmp); err != nil {
 		return err
@@ -712,6 +1135,26 @@ func (r *UserMap) UnmarshalJSON(data []byte) error {
 
 //func (r *UserMap) UnmarshalYAML(data []byte) error {
 func (r *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := User{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
 	var tmp map[string]*User
 	if err := unmarshal(&tmp); err != nil {
 		return err
