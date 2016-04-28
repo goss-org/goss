@@ -145,7 +145,7 @@ package:
 ## Community Contribuations
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for GOSS
-* [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes/tree/master/recipes/goss) - Might be useful for building goss system packages
+* [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages
 
 ## Limitations
 
