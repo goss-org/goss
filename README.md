@@ -131,6 +131,7 @@ package:
 * package - package is installed, versions
 * port - port is listening, listening ip
 * process - process is running
+* service - running, enabled
 * user - uid, home, etc..
 
 ## Supported output formats
@@ -140,6 +141,11 @@ package:
 * TAP
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+
+## Community Contribuations
+* [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss
+* [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for GOSS
+* [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes/tree/master/recipes/goss) - Might be useful for building goss system packages
 
 ## Limitations
 
