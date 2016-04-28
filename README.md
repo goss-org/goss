@@ -1,5 +1,6 @@
 # Goss - Quick and Easy server validation
 [![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
+[![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=2592000)]()
 
 ## Goss in 45 seconds
 
