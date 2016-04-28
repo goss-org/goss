@@ -5,7 +5,7 @@ import:
   - package: github.com/mitchellh/go-ps
     ref:     e6c6068076470196af082b1ff896e24a51a87b2a
   - package: github.com/aelsabbahy/GOnetstat
-    ref:     2907f74398ebea717cab8187513bee184b1fdd26
+    ref:     edf89f784e0876818dc19f7744a16742a0a66f16
   - package: github.com/codegangsta/cli
     ref:     70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13
   - package: github.com/godbus/dbus
