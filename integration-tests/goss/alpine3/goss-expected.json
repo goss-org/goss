@@ -3,6 +3,7 @@
         "/etc/passwd": {
             "exists": true,
             "mode": "0644",
+            "size": 1325,
             "owner": "root",
             "group": "root",
             "filetype": "file",

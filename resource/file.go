@@ -11,6 +11,7 @@ type File struct {
 	Path     string   `json:"-" yaml:"-"`
 	Exists   bool     `json:"exists" yaml:"exists"`
 	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Size     matcher  `json:"size,omitempty" yaml:"size,omitempty"`
 	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
 	Group    matcher  `json:"group,omitempty" yaml:"group,omitempty"`
 	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
@@ -55,6 +56,10 @@ func (f *File) Validate(sys *system.System) []TestResult {
 		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains))
 	}
 
+	if f.Size != nil {
+		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size))
+	}
+
 	return results
 }
 
@@ -89,6 +94,11 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	if !contains(config.IgnoreList, "filetype") {
 		if filetype, err := sysFile.Filetype(); err == nil {
 			f.Filetype = filetype
+		}
+	}
+	if !contains(config.IgnoreList, "size") {
+		if size, err := sysFile.Size(); err == nil {
+			f.Size = size
 		}
 	}
 	return f, nil

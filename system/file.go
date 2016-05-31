@@ -18,6 +18,7 @@ type File interface {
 	Exists() (bool, error)
 	Contains() (io.Reader, error)
 	Mode() (string, error)
+	Size() (int, error)
 	Filetype() (string, error)
 	Owner() (string, error)
 	Group() (string, error)
@@ -93,6 +94,20 @@ func (f *DefFile) Mode() (string, error) {
 	stat := sys.(*syscall.Stat_t)
 	mode := fmt.Sprintf("%04o", (stat.Mode & 07777))
 	return mode, nil
+}
+
+func (f *DefFile) Size() (int, error) {
+	if err := f.setup(); err != nil {
+		return 0, err
+	}
+
+	fi, err := os.Lstat(f.realPath)
+	if err != nil {
+		return 0, err
+	}
+
+	size := fi.Size()
+	return int(size), nil
 }
 
 func (f *DefFile) Filetype() (string, error) {
