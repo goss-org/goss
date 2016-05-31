@@ -35,7 +35,7 @@
         },
         "tcp://google.com:443": {
             "reachable": true,
-            "timeout": 500
+            "timeout": 2000
         }
     },
     "port": {

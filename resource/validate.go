@@ -144,7 +144,7 @@ type regexPattern struct {
 	inverse bool
 }
 
-func newRegexPattern(str string) *regexPattern {
+func newRegexPattern(str string) (*regexPattern, error) {
 	var inverse bool
 	cleanStr := str
 	if strings.HasPrefix(str, "!") {
@@ -165,14 +165,14 @@ func newRegexPattern(str string) *regexPattern {
 			break
 		}
 	}
-	// fixme, don't use MustCompile
-	re := regexp.MustCompile(cleanStr)
+
+	re, err := regexp.Compile(cleanStr)
 
 	return &regexPattern{
 		pattern: str,
 		re:      re,
 		inverse: inverse,
-	}
+	}, err
 
 }
 
@@ -183,16 +183,20 @@ func (re *regexPattern) Match(str string) bool {
 func (re *regexPattern) Pattern() string { return re.pattern }
 func (re *regexPattern) Inverse() bool   { return re.inverse }
 
-func sliceToPatterns(slice []string) []patternMatcher {
+func sliceToPatterns(slice []string) ([]patternMatcher, error) {
 	var patterns []patternMatcher
 	for _, s := range slice {
 		if (strings.HasPrefix(s, "/") || strings.HasPrefix(s, "!/")) && strings.HasSuffix(s, "/") {
-			patterns = append(patterns, newRegexPattern(s))
+			pat, err := newRegexPattern(s)
+			if err != nil {
+				return nil, err
+			}
+			patterns = append(patterns, pat)
 		} else {
 			patterns = append(patterns, newStringPattern(s))
 		}
 	}
-	return patterns
+	return patterns, nil
 }
 
 func patternsToSlice(patterns []patternMatcher) []string {
@@ -210,7 +214,13 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	typ := reflect.TypeOf(res)
 	typs := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
-	fh, err := method()
+	var err error
+	var fh io.Reader
+	var notfound []patternMatcher
+	fh, err = method()
+	if err == nil {
+		notfound, err = sliceToPatterns(expectedValues)
+	}
 	if err != nil {
 		return TestResult{
 			Successful:   false,
@@ -225,7 +235,6 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 		}
 	}
 	scanner := bufio.NewScanner(fh)
-	notfound := sliceToPatterns(expectedValues)
 	var found []patternMatcher
 	for scanner.Scan() {
 		line := scanner.Text()
