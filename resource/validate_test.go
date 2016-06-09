@@ -104,3 +104,14 @@ func TestValidateContainsErr(t *testing.T) {
 		}
 	}
 }
+
+func TestValidateContainsBadRegexErr(t *testing.T) {
+	inFunc := func() (io.Reader, error) {
+		reader := strings.NewReader("dummy")
+		return reader, nil
+	}
+	got := ValidateContains(&FakeResource{""}, "", []string{"/*\\.* @@.*/"}, inFunc)
+	if got.Err == nil {
+		t.Errorf("Expected bad regex to raise error, got nil")
+	}
+}
