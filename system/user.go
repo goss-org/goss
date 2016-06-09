@@ -15,6 +15,7 @@ type User interface {
 	GID() (int, error)
 	Groups() ([]string, error)
 	Home() (string, error)
+	Shell() (string, error)
 }
 
 type DefUser struct {
@@ -62,6 +63,15 @@ func (u *DefUser) Home() (string, error) {
 	}
 
 	return user.Home, nil
+}
+
+func (u *DefUser) Shell() (string, error) {
+	user, err := user.LookupUser(u.username)
+	if err != nil {
+		return "", err
+	}
+
+	return user.Shell, nil
 }
 
 func (u *DefUser) Groups() ([]string, error) {

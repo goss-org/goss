@@ -16,6 +16,7 @@ type User struct {
 	GID      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
 	Groups   matcher `json:"groups,omitempty" yaml:"groups,omitempty"`
 	Home     matcher `json:"home,omitempty" yaml:"home,omitempty"`
+	Shell    matcher `json:"shell,omitempty" yaml:"shell,omitempty"`
 }
 
 func (u *User) ID() string      { return u.Username }
@@ -44,6 +45,9 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	}
 	if u.Groups != nil {
 		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups))
+	}
+	if u.Shell != nil {
+		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell))
 	}
 
 	return results
@@ -74,6 +78,11 @@ func NewUser(sysUser system.User, config util.Config) (*User, error) {
 	if !contains(config.IgnoreList, "home") {
 		if home, err := sysUser.Home(); err == nil {
 			u.Home = home
+		}
+	}
+	if !contains(config.IgnoreList, "shell") {
+		if shell, err := sysUser.Shell(); err == nil {
+			u.Shell = shell
 		}
 	}
 	return u, nil
