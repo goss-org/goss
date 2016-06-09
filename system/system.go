@@ -34,11 +34,11 @@ type System struct {
 	NewProcess  func(string, *System, util2.Config) Process
 	NewGossfile func(string, *System, util2.Config) Gossfile
 	dbus        *dbus.Conn
-	ports       map[string][]GOnetstat.Process
 	dbusOnce    sync.Once
+	ports       map[string][]GOnetstat.Process
 	portsOnce   sync.Once
-	procOnce    sync.Once
 	procMap     map[string][]ps.Process
+	procOnce    sync.Once
 }
 
 func (s *System) Ports() map[string][]GOnetstat.Process {

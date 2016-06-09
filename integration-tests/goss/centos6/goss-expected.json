@@ -70,7 +70,8 @@
             "groups": [
                 "apache"
             ],
-            "home": "/var/www"
+            "home": "/var/www",
+            "shell": "/sbin/nologin"
         },
         "foobar": {
             "exists": false

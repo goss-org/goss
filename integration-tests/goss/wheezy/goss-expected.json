@@ -73,7 +73,8 @@
             "groups": [
                 "www-data"
             ],
-            "home": "/var/www"
+            "home": "/var/www",
+            "shell": "/bin/sh"
         }
     },
     "group": {
