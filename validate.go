@@ -12,7 +12,7 @@ import (
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/fatih/color"
 )
 

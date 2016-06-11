@@ -1,28 +1,21 @@
 package: github.com/aelsabbahy/goss
 import:
-  - package: github.com/coreos/go-systemd
-    ref:     3b83605751ed4d1e27268ad86e6a618a84578002
-  - package: github.com/mitchellh/go-ps
-    ref:     e6c6068076470196af082b1ff896e24a51a87b2a
-  - package: github.com/aelsabbahy/GOnetstat
-    ref:     edf89f784e0876818dc19f7744a16742a0a66f16
-  - package: github.com/codegangsta/cli
-    ref:     70e3fa51ebed95df8c0fbe1519c1c1f9bc16bb13
-  - package: github.com/godbus/dbus
-    ref:     9bb9dbf0e53309fa81d26e7230cbb6cff9373cad
-  - package: github.com/fatih/color
-    ref:     76d423163af754ff6423d2d9be0057fbf03c57c2
-  - package: github.com/mattn/go-isatty
-    ref:     7fcbc72f853b92b5720db4a6b8482be612daef24
-  - package: github.com/shiena/ansicolor
-    ref:     d445752f6f66f9cd987722f109149f6799cdf1de
-  - package: github.com/opencontainers/runc
-    ref:     4e6893b05a6aa723daa5f9194361032c6beaca25
-    subpackages:
-      - /libcontainer/user
-  - package: github.com/onsi/gomega
-    ref:     c72df929b80ef4930aaa75d5e486887ff2f3e06a
-  - package: gopkg.in/yaml.v2
-    ref:     f7716cbe52baa25d2e9b0d0da546fcf909fc16b4
-  - package: github.com/oleiade/reflections
-    ref:     632977f98cd34d217c4b57d0840ec188b3d3dcaf
+- package: github.com/aelsabbahy/GOnetstat
+- package: github.com/cheekybits/genny
+  subpackages:
+  - generic
+- package: github.com/urfave/cli
+- package: github.com/coreos/go-systemd
+  subpackages:
+  - dbus
+  - util
+- package: github.com/fatih/color
+- package: github.com/mitchellh/go-ps
+- package: github.com/oleiade/reflections
+- package: github.com/onsi/gomega
+  subpackages:
+  - types
+- package: github.com/opencontainers/runc
+  subpackages:
+  - libcontainer/user
+- package: gopkg.in/yaml.v2

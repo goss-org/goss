@@ -7,7 +7,7 @@ import (
 
 	"github.com/aelsabbahy/goss"
 	"github.com/aelsabbahy/goss/outputs"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	//"time"
 )
 
@@ -50,24 +50,27 @@ func main() {
 					EnvVar: "GOSS_NOCOLOR",
 				},
 			},
-			Action: func(c *cli.Context) {
+			Action: func(c *cli.Context) error {
 				goss.Validate(c, startTime)
+				return nil
 			},
 		},
 		{
 			Name:    "render",
 			Aliases: []string{"r"},
 			Usage:   "render gossfile after imports",
-			Action: func(c *cli.Context) {
+			Action: func(c *cli.Context) error {
 				fmt.Print(goss.RenderJSON(c.GlobalString("gossfile")))
+				return nil
 			},
 		},
 		{
 			Name:    "autoadd",
 			Aliases: []string{"aa"},
 			Usage:   "automatically add all matching resource to the test suite",
-			Action: func(c *cli.Context) {
+			Action: func(c *cli.Context) error {
 				goss.AutoAddResource(c.GlobalString("gossfile"), c.Args().First(), c)
+				return nil
 			},
 		},
 		{
@@ -84,15 +87,17 @@ func main() {
 				{
 					Name:  "package",
 					Usage: "add new package",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Package", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "file",
 					Usage: "add new file",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "File", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
@@ -104,36 +109,41 @@ func main() {
 							Value: 500 * time.Millisecond,
 						},
 					},
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Addr", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "port",
 					Usage: "add new listening [protocol]:port - ex: 80 or udp:123",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Port", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "service",
 					Usage: "add new service",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Service", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "user",
 					Usage: "add new user",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "User", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "group",
 					Usage: "add new group",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Group", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
@@ -145,8 +155,9 @@ func main() {
 							Value: 10 * time.Second,
 						},
 					},
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Command", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
@@ -158,22 +169,25 @@ func main() {
 							Value: 500 * time.Millisecond,
 						},
 					},
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "DNS", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "process",
 					Usage: "add new process name",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Process", c.Args().First(), c)
+						return nil
 					},
 				},
 				{
 					Name:  "goss",
 					Usage: "add new goss file, it will be imported from this one",
-					Action: func(c *cli.Context) {
+					Action: func(c *cli.Context) error {
 						goss.AddResource(c.GlobalString("gossfile"), "Gossfile", c.Args().First(), c)
+						return nil
 					},
 				},
 			},

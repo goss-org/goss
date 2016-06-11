@@ -57,7 +57,7 @@ arch: build test
 test-all: test lint test-int
 
 deps:
-	glide up
+	glide install
 
 gen:
 	go generate -tags genny $(pkgs)

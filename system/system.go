@@ -11,7 +11,7 @@ import (
 	"github.com/aelsabbahy/GOnetstat"
 	// This needs a better name
 	util2 "github.com/aelsabbahy/goss/util"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
 	"github.com/mitchellh/go-ps"
