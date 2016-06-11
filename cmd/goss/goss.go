@@ -171,7 +171,7 @@ func main() {
 				},
 				{
 					Name:  "goss",
-					Usage: "add new goss file",
+					Usage: "add new goss file, it will be imported from this one",
 					Action: func(c *cli.Context) {
 						goss.AddResource(c.GlobalString("gossfile"), "Gossfile", c.Args().First(), c)
 					},
