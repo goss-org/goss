@@ -26,8 +26,7 @@
       * [command](#command)
       * [dns](#dns)
       * [process](#process)
-      * [goss](#goss)
-      * [goss](#goss-1)
+      * [gossfile](#gossfile)
     * [Patterns](#patterns)
     * [Advanced Matchers](#advanced-matchers)
 
@@ -335,18 +334,8 @@ process:
     running: true
 ```
 
-### goss
+### gossfile
 Import another goss file from this one.
-
-```yaml
-process:
-  chrome:
-    # required attributes
-    running: true
-```
-
-### goss
-Allows you to import another goss file from this one.
 ```yaml
 gossfile:
   goss_httpd.yaml: {}
