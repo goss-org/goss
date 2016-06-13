@@ -9,7 +9,7 @@ import (
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 func AddResource(fileName, resourceName, key string, c *cli.Context) error {
