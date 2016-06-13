@@ -190,6 +190,14 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:  "kernel-param",
+					Usage: "add new goss kernel param",
+					Action: func(c *cli.Context) error {
+						goss.AddResource(c.GlobalString("gossfile"), "KernelParam", c.Args().First(), c)
+						return nil
+					},
+				},
 			},
 		},
 	}

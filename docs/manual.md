@@ -26,6 +26,7 @@
       * [command](#command)
       * [dns](#dns)
       * [process](#process)
+      * [kernel-param](#kernel-param)
       * [gossfile](#gossfile)
     * [Patterns](#patterns)
     * [Advanced Matchers](#advanced-matchers)
@@ -332,6 +333,16 @@ process:
   chrome:
     # required attributes
     running: true
+```
+
+### kernel-param
+Validates kernel param value
+
+```yaml
+kernel-param:
+  kernel.ostype:
+    # required attributes
+    value: Linux
 ```
 
 ### gossfile

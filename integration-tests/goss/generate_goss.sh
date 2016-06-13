@@ -56,6 +56,8 @@ for x in $package foobar;do
   goss a "${args[@]}" process $x
 done
 
+goss a "${args[@]}" kernel-param kernel.ostype
+
 
 # Auto-add
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package

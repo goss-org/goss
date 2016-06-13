@@ -26,20 +26,22 @@ for arch in amd64 386;do
   echo "$out"
 
   if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 24, Failed: 0' <<<"$out"
+    egrep -q 'Count: 25, Failed: 0' <<<"$out"
   else
-    egrep -q 'Count: 43, Failed: 0' <<<"$out"
+    egrep -q 'Count: 44, Failed: 0' <<<"$out"
   fi
 
   if [[ ! $os == "arch" ]]; then
     docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch"
 
+    #docker exec goss_int_test_$os bash -c "cp /tmp/goss/${os}/goss-generated.json /tmp/goss/${os}/goss-expected.json"
     docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected.json /tmp/goss/${os}/goss-generated.json"
 
     docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-aa-expected.json /tmp/goss/${os}/goss-aa-generated.json"
 
     docker exec goss_int_test_$os bash -c "bash -x /tmp/goss/generate_goss.sh $os $arch -q"
 
+    #docker exec goss_int_test_$os bash -c "cp /tmp/goss/${os}/goss-generated.json /tmp/goss/${os}/goss-expected-q.json"
     docker exec goss_int_test_$os bash -c "diff -wu /tmp/goss/${os}/goss-expected-q.json /tmp/goss/${os}/goss-generated.json"
   fi
 

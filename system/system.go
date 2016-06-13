@@ -11,10 +11,10 @@ import (
 	"github.com/aelsabbahy/GOnetstat"
 	// This needs a better name
 	util2 "github.com/aelsabbahy/goss/util"
-	"github.com/urfave/cli"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/coreos/go-systemd/util"
 	"github.com/mitchellh/go-ps"
+	"github.com/urfave/cli"
 )
 
 type Resource interface {
@@ -22,23 +22,24 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage  func(string, *System, util2.Config) Package
-	NewFile     func(string, *System, util2.Config) File
-	NewAddr     func(string, *System, util2.Config) Addr
-	NewPort     func(string, *System, util2.Config) Port
-	NewService  func(string, *System, util2.Config) Service
-	NewUser     func(string, *System, util2.Config) User
-	NewGroup    func(string, *System, util2.Config) Group
-	NewCommand  func(string, *System, util2.Config) Command
-	NewDNS      func(string, *System, util2.Config) DNS
-	NewProcess  func(string, *System, util2.Config) Process
-	NewGossfile func(string, *System, util2.Config) Gossfile
-	dbus        *dbus.Conn
-	dbusOnce    sync.Once
-	ports       map[string][]GOnetstat.Process
-	portsOnce   sync.Once
-	procMap     map[string][]ps.Process
-	procOnce    sync.Once
+	NewPackage     func(string, *System, util2.Config) Package
+	NewFile        func(string, *System, util2.Config) File
+	NewAddr        func(string, *System, util2.Config) Addr
+	NewPort        func(string, *System, util2.Config) Port
+	NewService     func(string, *System, util2.Config) Service
+	NewUser        func(string, *System, util2.Config) User
+	NewGroup       func(string, *System, util2.Config) Group
+	NewCommand     func(string, *System, util2.Config) Command
+	NewDNS         func(string, *System, util2.Config) DNS
+	NewProcess     func(string, *System, util2.Config) Process
+	NewGossfile    func(string, *System, util2.Config) Gossfile
+	NewKernelParam func(string, *System, util2.Config) KernelParam
+	dbus           *dbus.Conn
+	dbusOnce       sync.Once
+	ports          map[string][]GOnetstat.Process
+	portsOnce      sync.Once
+	procMap        map[string][]ps.Process
+	procOnce       sync.Once
 }
 
 func (s *System) Ports() map[string][]GOnetstat.Process {
@@ -70,15 +71,16 @@ func (s *System) ProcMap() map[string][]ps.Process {
 
 func New(c *cli.Context) *System {
 	sys := &System{
-		NewFile:     NewDefFile,
-		NewAddr:     NewDefAddr,
-		NewPort:     NewDefPort,
-		NewUser:     NewDefUser,
-		NewGroup:    NewDefGroup,
-		NewCommand:  NewDefCommand,
-		NewDNS:      NewDefDNS,
-		NewProcess:  NewDefProcess,
-		NewGossfile: NewDefGossfile,
+		NewFile:        NewDefFile,
+		NewAddr:        NewDefAddr,
+		NewPort:        NewDefPort,
+		NewUser:        NewDefUser,
+		NewGroup:       NewDefGroup,
+		NewCommand:     NewDefCommand,
+		NewDNS:         NewDefDNS,
+		NewProcess:     NewDefProcess,
+		NewGossfile:    NewDefGossfile,
+		NewKernelParam: NewDefKernelParam,
 	}
 	sys.detectService()
 	sys.detectPackage(c)

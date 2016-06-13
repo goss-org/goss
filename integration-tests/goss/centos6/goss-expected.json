@@ -122,5 +122,10 @@
         "httpd": {
             "running": true
         }
+    },
+    "kernel-param": {
+        "kernel.ostype": {
+            "value": "Linux"
+        }
     }
 }
