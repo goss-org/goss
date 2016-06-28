@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -11,8 +10,6 @@ import (
 	"github.com/aelsabbahy/GOnetstat"
 	// This needs a better name
 	util2 "github.com/aelsabbahy/goss/util"
-	"github.com/coreos/go-systemd/dbus"
-	"github.com/coreos/go-systemd/util"
 	"github.com/mitchellh/go-ps"
 	"github.com/urfave/cli"
 )
@@ -34,8 +31,6 @@ type System struct {
 	NewProcess     func(string, *System, util2.Config) Process
 	NewGossfile    func(string, *System, util2.Config) Gossfile
 	NewKernelParam func(string, *System, util2.Config) KernelParam
-	dbus           *dbus.Conn
-	dbusOnce       sync.Once
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -47,19 +42,6 @@ func (s *System) Ports() map[string][]GOnetstat.Process {
 		s.ports = GetPorts(false)
 	})
 	return s.ports
-}
-
-func (s *System) Dbus() *dbus.Conn {
-	s.dbusOnce.Do(func() {
-		dbus, err := dbus.New()
-		if err != nil {
-			fmt.Println(err)
-			// FIXME: Do we really want to exit here?
-			os.Exit(1)
-		}
-		s.dbus = dbus
-	})
-	return s.dbus
 }
 
 func (s *System) ProcMap() map[string][]ps.Process {
@@ -111,7 +93,7 @@ func (sys *System) detectService() {
 	case "upstart":
 		sys.NewService = NewServiceUpstart
 	case "systemd":
-		sys.NewService = NewServiceDbus
+		sys.NewService = NewServiceSystemd
 	case "alpineinit":
 		sys.NewService = NewAlpineServiceInit
 	default:
@@ -145,11 +127,11 @@ func DetectPackageManager() string {
 }
 
 // DetectService attempts to detect what kind of service management the system
-// is using, "systemd", "upstart", "alpineinit", or "init". It uses the dbus
-// API to detect systemd, and falls back on DetectDistro otherwise. If it can't
+// is using, "systemd", "upstart", "alpineinit", or "init". It looks for systemctl
+// command to detect systemd, and falls back on DetectDistro otherwise. If it can't
 // decide, it returns "init".
 func DetectService() string {
-	if util.IsRunningSystemd() {
+	if HasCommand("systemctl") {
 		return "systemd"
 	}
 	// Centos Docker container doesn't run systemd, so we detect it or use init.
