@@ -7,39 +7,41 @@ import (
 )
 
 type GossConfig struct {
-	Files     resource.FileMap     `json:"file,omitempty" yaml:"file,omitempty"`
-	Packages  resource.PackageMap  `json:"package,omitempty" yaml:"package,omitempty"`
-	Addrs     resource.AddrMap     `json:"addr,omitempty" yaml:"addr,omitempty"`
-	Ports     resource.PortMap     `json:"port,omitempty" yaml:"port,omitempty"`
-	Services  resource.ServiceMap  `json:"service,omitempty" yaml:"service,omitempty"`
-	Users     resource.UserMap     `json:"user,omitempty" yaml:"user,omitempty"`
-	Groups    resource.GroupMap    `json:"group,omitempty" yaml:"group,omitempty"`
-	Commands  resource.CommandMap  `json:"command,omitempty" yaml:"command,omitempty"`
-	DNS       resource.DNSMap      `json:"dns,omitempty" yaml:"dns,omitempty"`
-	Processes resource.ProcessMap  `json:"process,omitempty" yaml:"process,omitempty"`
-	Gossfiles resource.GossfileMap `json:"gossfile,omitempty" yaml:"gossfile,omitempty"`
+	Files        resource.FileMap        `json:"file,omitempty" yaml:"file,omitempty"`
+	Packages     resource.PackageMap     `json:"package,omitempty" yaml:"package,omitempty"`
+	Addrs        resource.AddrMap        `json:"addr,omitempty" yaml:"addr,omitempty"`
+	Ports        resource.PortMap        `json:"port,omitempty" yaml:"port,omitempty"`
+	Services     resource.ServiceMap     `json:"service,omitempty" yaml:"service,omitempty"`
+	Users        resource.UserMap        `json:"user,omitempty" yaml:"user,omitempty"`
+	Groups       resource.GroupMap       `json:"group,omitempty" yaml:"group,omitempty"`
+	Commands     resource.CommandMap     `json:"command,omitempty" yaml:"command,omitempty"`
+	DNS          resource.DNSMap         `json:"dns,omitempty" yaml:"dns,omitempty"`
+	Processes    resource.ProcessMap     `json:"process,omitempty" yaml:"process,omitempty"`
+	Gossfiles    resource.GossfileMap    `json:"gossfile,omitempty" yaml:"gossfile,omitempty"`
+	KernelParams resource.KernelParamMap `json:"kernel-param,omitempty" yaml:"kernel-param,omitempty"`
 }
 
 func NewGossConfig() *GossConfig {
 	return &GossConfig{
-		Files:     make(resource.FileMap),
-		Packages:  make(resource.PackageMap),
-		Addrs:     make(resource.AddrMap),
-		Ports:     make(resource.PortMap),
-		Services:  make(resource.ServiceMap),
-		Users:     make(resource.UserMap),
-		Groups:    make(resource.GroupMap),
-		Commands:  make(resource.CommandMap),
-		DNS:       make(resource.DNSMap),
-		Processes: make(resource.ProcessMap),
-		Gossfiles: make(resource.GossfileMap),
+		Files:        make(resource.FileMap),
+		Packages:     make(resource.PackageMap),
+		Addrs:        make(resource.AddrMap),
+		Ports:        make(resource.PortMap),
+		Services:     make(resource.ServiceMap),
+		Users:        make(resource.UserMap),
+		Groups:       make(resource.GroupMap),
+		Commands:     make(resource.CommandMap),
+		DNS:          make(resource.DNSMap),
+		Processes:    make(resource.ProcessMap),
+		Gossfiles:    make(resource.GossfileMap),
+		KernelParams: make(resource.KernelParamMap),
 	}
 }
 
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports)
+	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams)
 	for _, m := range gm {
 		for _, t := range m {
 			// FIXME: Can this be moved to a safer compile-time check?
@@ -114,6 +116,10 @@ func mergeGoss(g1, g2 GossConfig) GossConfig {
 
 	for k, v := range g2.Processes {
 		g1.Processes[k] = v
+	}
+
+	for k, v := range g2.KernelParams {
+		g1.KernelParams[k] = v
 	}
 
 	return g1

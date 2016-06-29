@@ -1168,3 +1168,108 @@ func (r *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 
 	return nil
 }
+
+//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
+
+type KernelParamMap map[string]*KernelParam
+
+func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*KernelParam, error) {
+	sysres := sys.NewKernelParam(sr, sys, config)
+	res, err := NewKernelParam(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System) (*KernelParam, system.KernelParam, bool) {
+	sysres := sys.NewKernelParam(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewKernelParam(sysres, util.Config{})
+	if e, _ := sysres.Exists(); e != true {
+		return res, sysres, false
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (r *KernelParamMap) UnmarshalJSON(data []byte) error {
+	resEmpty := KernelParam{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
+	var tmp map[string]*KernelParam
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+//func (r *KernelParamMap) UnmarshalYAML(data []byte) error {
+func (r *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := KernelParam{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
+	var tmp map[string]*KernelParam
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
