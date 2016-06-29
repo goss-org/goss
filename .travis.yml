@@ -4,6 +4,7 @@ go:
 - 1.6.1
 
 sudo: required
+dist: trusty
 
 services:
 - docker

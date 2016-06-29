@@ -3,7 +3,7 @@
         "httpd": {
             "installed": true,
             "versions": [
-                "2.2.15"
+                "2.4.6"
             ]
         }
     },
@@ -25,7 +25,7 @@
             "groups": [
                 "apache"
             ],
-            "home": "/var/www"
+            "home": "/usr/share/httpd"
         }
     },
     "group": {
@@ -38,8 +38,8 @@
         "httpd -v": {
             "exit-status": 0,
             "stdout": [
-                "Server version: Apache/2.2.15 (Unix)",
-                "Server built:   May 11 2016 19:28:33"
+                "Server version: Apache/2.4.6 (CentOS)",
+                "Server built:   Nov 19 2015 21:43:13"
             ],
             "stderr": []
         },
