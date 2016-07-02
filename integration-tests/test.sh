@@ -4,6 +4,13 @@ set -xeu
 
 os=$1
 
+seccomp_opts() {
+  local docker_ver minor_ver
+  docker_ver=$(docker version -f '{{.Client.Version}}')
+  minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
+  ((minor_ver>=10)) && echo '--security-opt seccomp:unconfined'
+}
+
 for arch in amd64 386;do
   cp ../release/goss-linux-$arch goss/$os/
   if ! docker images | grep aelsabbahy/goss_$os;then
@@ -14,8 +21,8 @@ for arch in amd64 386;do
     if docker ps -a | grep goss_int_test_$os;then
       docker rm -vf goss_int_test_$os
     fi
-    #id=$(docker run --cap-add SYS_ADMIN --security-opt seccomp:unconfined -v "$PWD/goss:/goss"  -d --name "goss_int_test_$os" "aelsabbahy/goss_$os" /sbin/init)
-    id=$(docker run --cap-add SYS_ADMIN -v "$PWD/goss:/goss"  -d --name "goss_int_test_$os" "aelsabbahy/goss_$os" /sbin/init)
+    opts=(--cap-add SYS_ADMIN -v "$PWD/goss:/goss"  -d --name "goss_int_test_$os" $(seccomp_opts))
+    id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
     ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
     trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
     # Give httpd time to start up
