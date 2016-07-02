@@ -5,14 +5,6 @@ import:
   subpackages:
   - generic
 - package: github.com/urfave/cli
-  version: ^v1.17.0
-  vcs: git
-- package: github.com/coreos/go-systemd
-  version: 3b83605751ed4d1e27268ad86e6a618a84578002
-  vcs: git
-  subpackages:
-  - dbus
-  - util
 - package: github.com/fatih/color
 - package: github.com/mitchellh/go-ps
 - package: github.com/oleiade/reflections

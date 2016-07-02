@@ -1,8 +1,0 @@
-FROM centos:6.6
-MAINTAINER Ahmed
-
-RUN yum -y --disablerepo='*' --enablerepo=base install httpd && yum clean all
-
-RUN chkconfig httpd on
-
-RUN chmod 700 ~root
