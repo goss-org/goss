@@ -22,13 +22,12 @@ func (s *ServiceSystemd) Service() string {
 }
 
 func (s *ServiceSystemd) Exists() (bool, error) {
-	cmd := util.NewCommand("systemctl", "-q", "list-unit-files",
-		"--type=service", fmt.Sprintf("%s.service", s.service))
+	cmd := util.NewCommand("systemctl", "-q", "list-unit-files", "--type=service")
 	cmd.Run()
-	if strings.Contains(cmd.Stdout.String(), "0 unit file") {
-		return false, nil
+	if strings.Contains(cmd.Stdout.String(), fmt.Sprintf("%s.service", s.service)) {
+		return true, cmd.Err
 	}
-	return true, cmd.Err
+	return false, nil
 }
 
 func (s *ServiceSystemd) Enabled() (bool, error) {
