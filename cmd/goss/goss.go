@@ -198,6 +198,14 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:  "mount",
+					Usage: "add new mount",
+					Action: func(c *cli.Context) error {
+						goss.AddResource(c.GlobalString("gossfile"), "Mount", c.Args().First(), c)
+						return nil
+					},
+				},
 			},
 		},
 	}

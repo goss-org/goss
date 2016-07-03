@@ -19,6 +19,7 @@ type GossConfig struct {
 	Processes    resource.ProcessMap     `json:"process,omitempty" yaml:"process,omitempty"`
 	Gossfiles    resource.GossfileMap    `json:"gossfile,omitempty" yaml:"gossfile,omitempty"`
 	KernelParams resource.KernelParamMap `json:"kernel-param,omitempty" yaml:"kernel-param,omitempty"`
+	Mounts       resource.MountMap       `json:"mount,omitempty" yaml:"mount,omitempty"`
 }
 
 func NewGossConfig() *GossConfig {
@@ -35,13 +36,14 @@ func NewGossConfig() *GossConfig {
 		Processes:    make(resource.ProcessMap),
 		Gossfiles:    make(resource.GossfileMap),
 		KernelParams: make(resource.KernelParamMap),
+		Mounts:       make(resource.MountMap),
 	}
 }
 
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams)
+	gm := genericConcatMaps(c.Commands, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams, c.Mounts)
 	for _, m := range gm {
 		for _, t := range m {
 			// FIXME: Can this be moved to a safer compile-time check?
@@ -120,6 +122,10 @@ func mergeGoss(g1, g2 GossConfig) GossConfig {
 
 	for k, v := range g2.KernelParams {
 		g1.KernelParams[k] = v
+	}
+
+	for k, v := range g2.Mounts {
+		g1.Mounts[k] = v
 	}
 
 	return g1

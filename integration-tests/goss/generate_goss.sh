@@ -58,6 +58,8 @@ done
 
 goss a "${args[@]}" kernel-param kernel.ostype
 
+goss a "${args[@]}" mount /dev
+
 
 # Auto-add
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package

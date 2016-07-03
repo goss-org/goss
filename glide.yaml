@@ -16,3 +16,6 @@ import:
   - libcontainer/user
 - package: gopkg.in/yaml.v2
 - package: github.com/achanda/go-sysctl
+- package: github.com/docker/docker
+  subpackages:
+  - pkg/mount

@@ -1,5 +1,5 @@
-hash: b0bf3d86c4cfe7237a591189b6674893450e55c315b8b4a801149f14129418aa
-updated: 2016-06-28T19:46:39.539325803-04:00
+hash: 2fd7eab01fb36877d8921e53d838b16a37e519da665c956e97248d9d156ec170
+updated: 2016-07-02T18:55:56.167760585-04:00
 imports:
 - name: github.com/achanda/go-sysctl
   version: 6be7678c45d2052640e72060e4f5db6165b1ecab
@@ -9,6 +9,10 @@ imports:
   version: 670ed678f7799e3ead194eaf9a0848920a494889
   subpackages:
   - generic
+- name: github.com/docker/docker
+  version: 0f5c9d301b9b1cca66b3ea0f9dec3b5317d3686d
+  subpackages:
+  - pkg/mount
 - name: github.com/fatih/color
   version: 76d423163af754ff6423d2d9be0057fbf03c57c2
 - name: github.com/mattn/go-isatty

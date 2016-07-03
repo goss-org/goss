@@ -99,5 +99,10 @@
         "kernel.ostype": {
             "value": "Linux"
         }
+    },
+    "mount": {
+        "/dev": {
+            "exists": true
+        }
     }
 }
