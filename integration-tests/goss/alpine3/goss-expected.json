@@ -119,5 +119,16 @@
         "kernel.ostype": {
             "value": "Linux"
         }
+    },
+    "mount": {
+        "/dev": {
+            "exists": true,
+            "opts": [
+                "rw",
+                "nosuid"
+            ],
+            "source": "tmpfs",
+            "filesystem": "tmpfs"
+        }
     }
 }
