@@ -32,6 +32,7 @@ type System struct {
 	NewGossfile    func(string, *System, util2.Config) Gossfile
 	NewKernelParam func(string, *System, util2.Config) KernelParam
 	NewMount       func(string, *System, util2.Config) Mount
+	NewInterface   func(string, *System, util2.Config) Interface
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -65,6 +66,7 @@ func New(c *cli.Context) *System {
 		NewGossfile:    NewDefGossfile,
 		NewKernelParam: NewDefKernelParam,
 		NewMount:       NewDefMount,
+		NewInterface:   NewDefInterface,
 	}
 	sys.detectService()
 	sys.detectPackage(c)

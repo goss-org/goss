@@ -43,7 +43,12 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		value = sanitizeExpectedValue(value)
 		return gomega.HaveLen(value.(int)), nil
 	case "contain-element":
-		return gomega.ContainElement(value), nil
+		subMatcher, err := matcherToGomegaMatcher(value)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Print(subMatcher)
+		return gomega.ContainElement(subMatcher), nil
 	case "not":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
