@@ -27,6 +27,7 @@
       * [dns](#dns)
       * [process](#process)
       * [kernel-param](#kernel-param)
+      * [mount](#mount)
       * [gossfile](#gossfile)
     * [Patterns](#patterns)
     * [Advanced Matchers](#advanced-matchers)
@@ -112,6 +113,8 @@ Will **NOT** automatically add:
 * commands - for safety
 * dns
 * addr
+* kernel-param
+* mount
 
 
 ### Example:
@@ -168,6 +171,8 @@ This will add a test for a resource. Non existent resources will add a test to e
 * command - add new command
 * dns - add new dns
 * process - add new process name
+* kernel-param - add new kernel-param
+* mount - add new mount
 * goss - add new goss file, it will be imported from this one
 
 
@@ -343,6 +348,22 @@ kernel-param:
   kernel.ostype:
     # required attributes
     value: Linux
+```
+
+### mount
+Validates mount param value
+
+```yaml
+mount:
+  /home:
+    # required attributes
+    exists: true
+    # optional attributes
+    opts:
+    - rw
+    - relatime
+    source: /dev/mapper/fedora-home
+    filesystem: xfs
 ```
 
 ### gossfile

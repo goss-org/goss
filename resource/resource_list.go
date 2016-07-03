@@ -1273,3 +1273,108 @@ func (r *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) erro
 
 	return nil
 }
+
+//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
+
+type MountMap map[string]*Mount
+
+func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Mount, error) {
+	sysres := sys.NewMount(sr, sys, config)
+	res, err := NewMount(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mount, system.Mount, bool) {
+	sysres := sys.NewMount(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewMount(sysres, util.Config{})
+	if e, _ := sysres.Exists(); e != true {
+		return res, sysres, false
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (r *MountMap) UnmarshalJSON(data []byte) error {
+	resEmpty := Mount{}
+	validAttrs, err := validAttrs(resEmpty, "json")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := json.Unmarshal(data, &validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
+	var tmp map[string]*Mount
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
+
+//func (r *MountMap) UnmarshalYAML(data []byte) error {
+func (r *MountMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	resEmpty := Mount{}
+	validAttrs, err := validAttrs(resEmpty, "yaml")
+	if err != nil {
+		return err
+	}
+	var validate map[string]map[string]interface{}
+	if err := unmarshal(&validate); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(resEmpty)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, v := range validate {
+		for k, _ := range v {
+			if !validAttrs[k] {
+				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
+			}
+		}
+	}
+
+	var tmp map[string]*Mount
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	for id, res := range tmp {
+		res.SetID(id)
+	}
+
+	*r = tmp
+
+	return nil
+}
