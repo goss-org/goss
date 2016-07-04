@@ -133,6 +133,9 @@ package:
 * process - process is running
 * service - running, enabled
 * user - uid, home, etc..
+* kernel-param - value
+* mount - mountpoint, mount opts, fstype, etc..
+* interface - network interface name and addrs
 
 ## Supported output formats
 * rspecish **(default)** - Similar to rspec output
