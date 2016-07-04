@@ -373,7 +373,7 @@ mount:
 Validates network interface values
 
 ```yaml
-network:
+interface:
   eth0:
     exists: true
     addrs:
