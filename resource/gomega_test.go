@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"regexp"
 	"testing"
 
 	"github.com/onsi/gomega"
@@ -76,7 +77,7 @@ var gomegaTests = []struct {
 	},
 	{
 		in:   `{"contain-element": "foo"}`,
-		want: gomega.ContainElement("foo"),
+		want: gomega.ContainElement(gomega.Equal("foo")),
 	},
 	{
 		in:   `{"have-len": 3}`,
@@ -146,9 +147,16 @@ func gomegaEqual(g, w interface{}, negateTester bool) bool {
 		gotMessage = got.FailureMessage("foo")
 		wantMessage = want.FailureMessage("foo")
 	}
+	gotMessage = sanitizeMatcherText(gotMessage)
+	wantMessage = sanitizeMatcherText(wantMessage)
 	fmt.Println("got:", gotMessage)
 	fmt.Println("want:", wantMessage)
 
 	return gotT == wantT &&
 		gotMessage == wantMessage
+}
+
+func sanitizeMatcherText(s string) string {
+	r := regexp.MustCompile("[0-9]x[a-z0-9]{10}")
+	return r.ReplaceAllString(s, "")
 }

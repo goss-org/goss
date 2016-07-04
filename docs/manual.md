@@ -28,6 +28,7 @@
       * [process](#process)
       * [kernel-param](#kernel-param)
       * [mount](#mount)
+      * [interface](#interface)
       * [gossfile](#gossfile)
     * [Patterns](#patterns)
     * [Advanced Matchers](#advanced-matchers)
@@ -115,6 +116,7 @@ Will **NOT** automatically add:
 * addr
 * kernel-param
 * mount
+* interface
 
 
 ### Example:
@@ -173,6 +175,7 @@ This will add a test for a resource. Non existent resources will add a test to e
 * process - add new process name
 * kernel-param - add new kernel-param
 * mount - add new mount
+* interface - add new network interface
 * goss - add new goss file, it will be imported from this one
 
 
@@ -351,7 +354,7 @@ kernel-param:
 ```
 
 ### mount
-Validates mount param value
+Validates mount point attributes
 
 ```yaml
 mount:
@@ -364,6 +367,18 @@ mount:
     - relatime
     source: /dev/mapper/fedora-home
     filesystem: xfs
+```
+
+### interface
+Validates network interface values
+
+```yaml
+network:
+  eth0:
+    exists: true
+    addrs:
+    - 172.17.0.2/16
+    - fe80::42:acff:fe11:2/64
 ```
 
 ### gossfile

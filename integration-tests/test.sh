@@ -36,9 +36,9 @@ for arch in amd64 386;do
   echo "$out"
 
   if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 29, Failed: 0' <<<"$out"
+    egrep -q 'Count: 31, Failed: 0' <<<"$out"
   else
-    egrep -q 'Count: 48, Failed: 0' <<<"$out"
+    egrep -q 'Count: 50, Failed: 0' <<<"$out"
   fi
 
   if [[ ! $os == "arch" ]]; then

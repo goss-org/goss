@@ -86,5 +86,15 @@
             "source": "tmpfs",
             "filesystem": "tmpfs"
         }
+    },
+    "interface": {
+        "eth0": {
+            "exists": true,
+            "addrs": {
+                "contain-element": {
+                    "have-prefix": "172.17"
+                }
+            }
+        }
     }
 }

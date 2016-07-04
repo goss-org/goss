@@ -121,6 +121,13 @@ func AddResource(fileName, resourceName, key string, c *cli.Context) error {
 			os.Exit(1)
 		}
 		resourcePrint(fileName, res)
+	case "Interface":
+		res, err := gossConfig.Interfaces.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		resourcePrint(fileName, res)
 	}
 
 	WriteJSON(fileName, gossConfig)

@@ -206,6 +206,14 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:  "interface",
+					Usage: "add new interface",
+					Action: func(c *cli.Context) error {
+						goss.AddResource(c.GlobalString("gossfile"), "Interface", c.Args().First(), c)
+						return nil
+					},
+				},
 			},
 		},
 	}
