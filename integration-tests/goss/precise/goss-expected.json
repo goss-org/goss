@@ -18,7 +18,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.2.22-1ubuntu1.10"
+                "2.2.22-1ubuntu1.11"
             ]
         },
         "foobar": {
@@ -91,7 +91,7 @@
             "exit-status": 0,
             "stdout": [
                 "Server version: Apache/2.2.22 (Ubuntu)",
-                "Server built:   Jul 24 2015 17:25:54"
+                "Server built:   Jul 15 2016 15:32:45"
             ],
             "stderr": [],
             "timeout": 10000

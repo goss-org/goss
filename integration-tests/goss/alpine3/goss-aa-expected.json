@@ -3,7 +3,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.4.17-r4"
+                "2.4.23-r0"
             ]
         }
     },
