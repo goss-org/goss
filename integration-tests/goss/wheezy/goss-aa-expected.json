@@ -3,7 +3,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.2.22-13+deb7u6"
+                "2.2.22-13+deb7u7"
             ]
         }
     },

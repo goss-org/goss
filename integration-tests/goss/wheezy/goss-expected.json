@@ -18,7 +18,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.2.22-13+deb7u6"
+                "2.2.22-13+deb7u7"
             ]
         },
         "foobar": {
@@ -91,7 +91,7 @@
             "exit-status": 0,
             "stdout": [
                 "Server version: Apache/2.2.22 (Debian)",
-                "Server built:   Aug 18 2015 09:49:50"
+                "Server built:   Jul 20 2016 05:06:20"
             ],
             "stderr": [],
             "timeout": 10000

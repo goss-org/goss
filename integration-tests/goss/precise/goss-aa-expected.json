@@ -3,7 +3,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.2.22-1ubuntu1.10"
+                "2.2.22-1ubuntu1.11"
             ]
         }
     },
