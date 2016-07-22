@@ -19,13 +19,13 @@ Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server
 
 * Goss is EASY!  - [Goss in 45 seconds](#goss-in-45-seconds)
 * Goss is FAST!  - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
-* Goss is SMALL! - <2MB single self-contained binary
+* Goss is SMALL! - <4MB single self-contained binary
 * Goss is UNIXY! - does one thing and does it well, chainable through pipes
 
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.8/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.9/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
