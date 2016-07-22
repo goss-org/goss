@@ -27,12 +27,12 @@ func (s *ServiceUpstart) Service() string {
 func (s *ServiceUpstart) Exists() (bool, error) {
 	// upstart
 	if _, err := os.Stat(fmt.Sprintf("/etc/init/%s.conf", s.service)); err == nil {
-		return true, err
+		return true, nil
 	}
-
-	// initv
-	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", s.service)); err == nil {
-		return true, err
+	// Fallback on sysv
+	sysv := &ServiceInit{service: s.service}
+	if e, err := sysv.Exists(); e && err == nil {
+		return true, nil
 	}
 	return false, nil
 }
@@ -47,12 +47,11 @@ func (s *ServiceUpstart) Enabled() (bool, error) {
 			}
 		}
 	}
-
-	// Fall back on initv
-	if en, _ := initServiceEnabled(s.service, 3); en {
+	// Fallback on sysv
+	sysv := &ServiceInit{service: s.service}
+	if en, err := sysv.Enabled(); en && err == nil {
 		return true, nil
 	}
-
 	return false, nil
 }
 

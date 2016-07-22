@@ -47,7 +47,6 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Print(subMatcher)
 		return gomega.ContainElement(subMatcher), nil
 	case "not":
 		subMatcher, err := matcherToGomegaMatcher(value)
