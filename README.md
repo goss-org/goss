@@ -41,28 +41,45 @@ An initial set of tests can be derived from the system state by using the [add](
 Let's write a simple sshd test using autoadd.
 
 ```
-$ goss autoadd sshd
-Adding Group to 'goss.yaml':
+# Running it as root will allow it to also detect ports
+$ sudo goss autoadd sshd
+Adding Group to './goss.yaml':
 
 sshd:
   exists: true
   gid: 74
 
 
-Adding Process to 'goss.yaml':
+Adding Process to './goss.yaml':
 
 sshd:
   running: true
 
 
-Adding Service to 'goss.yaml':
+Adding Port to './goss.yaml':
+
+tcp6:22:
+  listening: true
+  ip:
+  - '::'
+
+
+Adding Port to './goss.yaml':
+
+tcp:22:
+  listening: true
+  ip:
+  - 0.0.0.0
+
+
+Adding Service to './goss.yaml':
 
 sshd:
   enabled: true
   running: true
 
 
-Adding User to 'goss.yaml':
+Adding User to './goss.yaml':
 
 sshd:
   exists: true
@@ -71,20 +88,20 @@ sshd:
   groups:
   - sshd
   home: /var/empty/sshd
+  shell: /sbin/nologin
 
 ```
 
 We can now run our test by using `goss validate`:
 ```
-$ goss validate
-..........
+...............
 
-Total Duration: 0.016s
-Count: 10, Failed: 0
+Total Duration: 0.021s
+Count: 15, Failed: 0
 
 ```
 
-As you can see goss tests are extremely fast, we were able to validate our system state in **16ms!**
+As you can see goss tests are extremely fast, we were able to validate our system state in **21ms!**
 
 ### Patterns, matchers and metadata
 Goss files can be manually edited to match:
