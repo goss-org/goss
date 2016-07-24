@@ -57,3 +57,10 @@ func validAttrs(i interface{}, t string) (map[string]bool, error) {
 	}
 	return validAttrs, nil
 }
+
+func shouldSkip(results []TestResult) bool {
+	if results[0].Err != nil || results[0].Found[0] == "false" {
+		return true
+	}
+	return false
+}

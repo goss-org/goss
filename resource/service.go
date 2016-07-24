@@ -6,11 +6,11 @@ import (
 )
 
 type Service struct {
-	Title   string `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Service string `json:"-" yaml:"-"`
-	Enabled bool   `json:"enabled" yaml:"enabled"`
-	Running bool   `json:"running" yaml:"running"`
+	Title   string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta    meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Service string  `json:"-" yaml:"-"`
+	Enabled matcher `json:"enabled" yaml:"enabled"`
+	Running matcher `json:"running" yaml:"running"`
 }
 
 func (s *Service) ID() string      { return s.Service }
@@ -20,13 +20,12 @@ func (s *Service) GetTitle() string { return s.Title }
 func (s *Service) GetMeta() meta    { return s.Meta }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysservice := sys.NewService(s.Service, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled))
-	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running))
-
+	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
+	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
 	return results
 }
 

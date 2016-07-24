@@ -18,19 +18,25 @@ type Outputer interface {
 
 var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
+var yellow = color.New(color.FgYellow).SprintfFunc()
 
 func humanizeResult(r resource.TestResult) string {
 	if r.Err != nil {
 		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
 	}
 
-	if r.Successful {
+	switch r.Result {
+	case resource.SUCCESS:
 		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
-	} else {
+	case resource.SKIP:
+		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
+	case resource.FAIL:
 		if r.Human != "" {
 			return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
 		}
 		return humanizeResult2(r)
+	default:
+		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}
 }
 
@@ -39,27 +45,33 @@ func humanizeResult2(r resource.TestResult) string {
 		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
 	}
 
-	switch r.TestType {
-	case resource.Value:
-		if r.Successful {
+	switch r.Result {
+	case resource.SUCCESS:
+		switch r.TestType {
+		case resource.Value:
 			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
-		} else {
-			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
-		}
-	case resource.Values:
-		if r.Successful {
+		case resource.Values:
 			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		} else {
+		case resource.Contains:
+			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
+		default:
+			return red("Unexpected type %d", r.TestType)
+		}
+	case resource.FAIL:
+		switch r.TestType {
+		case resource.Value:
+			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
+		case resource.Values:
 			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-		}
-	case resource.Contains:
-		if r.Successful {
-			return green("%s: %s: %s: all patterns found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		} else {
+		case resource.Contains:
 			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
+		default:
+			return red("Unexpected type %d", r.TestType)
 		}
+	case resource.SKIP:
+		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
 	default:
-		return red("Unexpected type %d", r.TestType)
+		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}
 }
 
@@ -138,4 +150,33 @@ func header(t resource.TestResult) string {
 		}
 	}
 	return out
+}
+
+func summary(startTime time.Time, count, failed, skipped int) string {
+	var s string
+	s += fmt.Sprintf("Total Duration: %.3fs\n", time.Since(startTime).Seconds())
+	f := green
+	if failed > 0 {
+		f = red
+	}
+	s += f("Count: %d, Failed: %d, Skipped: %d\n", count, failed, skipped)
+	return s
+}
+func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
+	var s string
+	if len(failedOrSkipped) > 0 {
+		s += fmt.Sprint("Failures/Skipped:\n\n")
+		for _, failedGroup := range failedOrSkipped {
+			first := failedGroup[0]
+			header := header(first)
+			if header != "" {
+				s += fmt.Sprint(header)
+			}
+			for _, testResult := range failedGroup {
+				s += fmt.Sprintln(humanizeResult(testResult))
+			}
+			s += fmt.Sprint("\n")
+		}
+	}
+	return s
 }

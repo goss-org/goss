@@ -11,8 +11,7 @@ import (
 type JUnit struct{}
 
 func (r JUnit) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
-	testCount := 0
-	failed := 0
+	var testCount, failed, skipped int
 
 	// ISO8601 timeformat
 	location, _ := time.LoadLocation("Etc/UTC")
@@ -30,22 +29,23 @@ func (r JUnit) Output(results <-chan []resource.TestResult, startTime time.Time)
 				testResult.ResourceId + " " +
 				testResult.Property + "\" " +
 				"time=\"" + duration + "\">\n"
-			if testResult.Successful {
-				summary[testCount] = summary[testCount] +
-					"<system-out>" +
-					humanizeResult2(testResult) +
-					"</system-out>\n</testcase>\n"
-			} else {
-				summary[testCount] = summary[testCount] +
-					"<system-err>" +
+			if testResult.Result == resource.FAIL {
+				summary[testCount] += "<system-err>" +
 					humanizeResult2(testResult) +
 					"</system-err>\n"
-				summary[testCount] = summary[testCount] +
-					"<failure>" +
+				summary[testCount] += "<failure>" +
 					humanizeResult2(testResult) +
 					"</failure>\n</testcase>\n"
 
 				failed++
+			} else {
+				if testResult.Result == resource.SKIP {
+					summary[testCount] += "<skipped/>"
+					skipped++
+				}
+				summary[testCount] += "<system-out>" +
+					humanizeResult2(testResult) +
+					"</system-out>\n</testcase>\n"
 			}
 			testCount++
 		}
@@ -54,8 +54,8 @@ func (r JUnit) Output(results <-chan []resource.TestResult, startTime time.Time)
 	duration := time.Since(startTime)
 	fmt.Println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 	fmt.Printf("<testsuite name=\"goss\" errors=\"0\" tests=\"%d\" "+
-		"failures=\"%d\" time=\"%.3f\" timestamp=\"%s\">\n",
-		testCount, failed, duration.Seconds(), timestamp)
+		"failures=\"%d\" skipped=\"%d\" time=\"%.3f\" timestamp=\"%s\">\n",
+		testCount, failed, skipped, duration.Seconds(), timestamp)
 
 	for i := 0; i < testCount; i++ {
 		fmt.Printf("%s", summary[i])

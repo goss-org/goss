@@ -23,6 +23,9 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		return gomega.And(matchers...), nil
 	}
 	matcher = sanitizeExpectedValue(matcher)
+	if matcher == nil {
+		return nil, fmt.Errorf("Missing Required Attribute")
+	}
 	matcherMap, ok := matcher.(map[string]interface{})
 	if !ok {
 		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))

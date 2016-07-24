@@ -27,23 +27,21 @@ func (c *Command) GetTitle() string { return c.Title }
 func (c *Command) GetMeta() meta    { return c.Meta }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
+	skip := false
 	if c.Timeout == 0 {
 		c.Timeout = 10000
 	}
 	sysCommand := sys.NewCommand(c.Command, sys, util.Config{Timeout: c.Timeout})
 
 	var results []TestResult
-
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
-	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus))
-
+	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
 	if len(c.Stdout) > 0 {
-		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout))
+		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
 	}
 	if len(c.Stderr) > 0 {
-		results = append(results, ValidateContains(c, "stderr", c.Stderr, sysCommand.Stderr))
+		results = append(results, ValidateContains(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
 	}
-
 	return results
 }
 

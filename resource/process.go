@@ -6,10 +6,10 @@ import (
 )
 
 type Process struct {
-	Title      string `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta       meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Executable string `json:"-" yaml:"-"`
-	Running    bool   `json:"running" yaml:"running"`
+	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Executable string  `json:"-" yaml:"-"`
+	Running    matcher `json:"running" yaml:"running"`
 }
 
 func (p *Process) ID() string      { return p.Executable }
@@ -19,12 +19,11 @@ func (p *Process) GetTitle() string { return p.Title }
 func (p *Process) GetMeta() meta    { return p.Meta }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysProcess := sys.NewProcess(p.Executable, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running))
-
+	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))
 	return results
 }
 

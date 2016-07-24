@@ -9,7 +9,7 @@ type File struct {
 	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Path     string   `json:"-" yaml:"-"`
-	Exists   bool     `json:"exists" yaml:"exists"`
+	Exists   matcher  `json:"exists" yaml:"exists"`
 	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
 	Size     matcher  `json:"size,omitempty" yaml:"size,omitempty"`
 	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
@@ -26,40 +26,35 @@ func (f *File) GetTitle() string { return f.Title }
 func (f *File) GetMeta() meta    { return f.Meta }
 
 func (f *File) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists))
-
+	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))
+	if shouldSkip(results) {
+		skip = true
+	}
 	if f.Mode != nil {
-		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode))
+		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode, skip))
 	}
-
 	if f.Owner != nil {
-		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner))
+		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner, skip))
 	}
-
 	if f.Group != nil {
-		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group))
+		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group, skip))
 	}
-
 	if f.LinkedTo != nil {
-		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo))
+		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo, skip))
 	}
-
 	if f.Filetype != nil {
-		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype))
+		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
-
 	if len(f.Contains) > 0 {
-		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains))
+		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains, skip))
 	}
-
 	if f.Size != nil {
-		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size))
+		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
 	}
-
 	return results
 }
 

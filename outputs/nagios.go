@@ -10,12 +10,14 @@ import (
 type Nagios struct{}
 
 func (r Nagios) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
-	testCount := 0
-	failed := 0
+	var testCount, failed, skipped int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
-			if !testResult.Successful {
+			switch testResult.Result {
+			case resource.FAIL:
 				failed++
+			case resource.SKIP:
+				skipped++
 			}
 			testCount++
 		}
@@ -23,10 +25,10 @@ func (r Nagios) Output(results <-chan []resource.TestResult, startTime time.Time
 
 	duration := time.Since(startTime)
 	if failed > 0 {
-		fmt.Printf("GOSS CRITICAL - Count: %d, Failed: %d, Duration: %.3fs\n", testCount, failed, duration.Seconds())
+		fmt.Printf("GOSS CRITICAL - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
 		return 2
 	}
-	fmt.Printf("GOSS OK - Count: %d, Failed: %d, Duration: %.3fs\n", testCount, failed, duration.Seconds())
+	fmt.Printf("GOSS OK - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
 	return 0
 }
 

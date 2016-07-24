@@ -9,7 +9,7 @@ type Package struct {
 	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Name      string  `json:"-" yaml:"-"`
-	Installed bool    `json:"installed" yaml:"installed"`
+	Installed matcher `json:"installed" yaml:"installed"`
 	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
 }
 
@@ -20,16 +20,17 @@ func (p *Package) GetTitle() string { return p.Title }
 func (p *Package) GetMeta() meta    { return p.Meta }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed))
-
-	if p.Versions != nil {
-		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions))
+	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))
+	if shouldSkip(results) {
+		skip = true
 	}
-
+	if p.Versions != nil {
+		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions, skip))
+	}
 	return results
 }
 
