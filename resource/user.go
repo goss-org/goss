@@ -11,7 +11,7 @@ type User struct {
 	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Username string  `json:"-" yaml:"-"`
-	Exists   bool    `json:"exists" yaml:"exists"`
+	Exists   matcher `json:"exists" yaml:"exists"`
 	UID      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
 	GID      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
 	Groups   matcher `json:"groups,omitempty" yaml:"groups,omitempty"`
@@ -26,30 +26,31 @@ func (u *User) GetTitle() string { return u.Title }
 func (u *User) GetMeta() meta    { return u.Meta }
 
 func (u *User) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists))
-
+	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))
+	if shouldSkip(results) {
+		skip = true
+	}
 	if u.UID != nil {
 		uUID := deprecateAtoI(u.UID, fmt.Sprintf("%s: user.uid", u.Username))
-		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID))
+		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID, skip))
 	}
 	if u.GID != nil {
 		uGID := deprecateAtoI(u.GID, fmt.Sprintf("%s: user.gid", u.Username))
-		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID))
+		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID, skip))
 	}
 	if u.Home != nil {
-		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home))
+		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip))
 	}
 	if u.Groups != nil {
-		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups))
+		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip))
 	}
 	if u.Shell != nil {
-		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell))
+		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell, skip))
 	}
-
 	return results
 }
 

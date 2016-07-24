@@ -9,7 +9,7 @@ type Mount struct {
 	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	MountPoint string  `json:"-" yaml:"-"`
-	Exists     bool    `json:"exists" yaml:"exists"`
+	Exists     matcher `json:"exists" yaml:"exists"`
 	Opts       matcher `json:"opts,omitempty" yaml:"opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
 	Filesystem matcher `json:"filesystem,omitempty" yaml:"filesystem,omitempty"`
@@ -23,21 +23,23 @@ func (m *Mount) GetTitle() string { return m.Title }
 func (m *Mount) GetMeta() meta    { return m.Meta }
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
+	skip := false
 	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
 
 	var results []TestResult
-
-	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists))
+	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))
+	if shouldSkip(results) {
+		skip = true
+	}
 	if m.Opts != nil {
-		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts))
+		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
 	}
 	if m.Source != nil {
-		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source))
+		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip))
 	}
 	if m.Filesystem != nil {
-		results = append(results, ValidateValue(m, "filesystem", m.Filesystem, sysMount.Filesystem))
+		results = append(results, ValidateValue(m, "filesystem", m.Filesystem, sysMount.Filesystem, skip))
 	}
-
 	return results
 }
 

@@ -19,6 +19,12 @@ const (
 	Contains
 )
 
+const (
+	SUCCESS = iota
+	FAIL
+	SKIP
+)
+
 type TestResult struct {
 	Successful   bool          `json:"successful" yaml:"successful"`
 	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
@@ -26,6 +32,7 @@ type TestResult struct {
 	Title        string        `json:"title" yaml:"title"`
 	Meta         meta          `json:"meta" yaml:"meta"`
 	TestType     int           `json:"test-type" yaml:"test-type"`
+	Result       int           `json:"result" yaml:"result"`
 	Property     string        `json:"property" yaml:"property"`
 	Err          error         `json:"err" yaml:"err"`
 	Expected     []string      `json:"expected" yaml:"expected"`
@@ -34,13 +41,38 @@ type TestResult struct {
 	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}) TestResult {
+func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+	return TestResult{
+		Successful:   true,
+		Result:       SKIP,
+		ResourceType: typeS,
+		TestType:     testType,
+		ResourceId:   id,
+		Title:        title,
+		Meta:         meta,
+		Property:     property,
+		Duration:     startTime.Sub(startTime),
+	}
+}
+
+func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
 	typ := reflect.TypeOf(res)
-	typs := strings.Split(typ.String(), ".")[1]
+	typeS := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
+	if skip {
+		return skipResult(
+			typeS,
+			Values,
+			id,
+			title,
+			meta,
+			property,
+			startTime,
+		)
+	}
 
 	var foundValue interface{}
 	var err error
@@ -71,7 +103,8 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 	if err != nil {
 		return TestResult{
 			Successful:   false,
-			ResourceType: typs,
+			Result:       FAIL,
+			ResourceType: typeS,
 			TestType:     Values,
 			ResourceId:   id,
 			Title:        title,
@@ -83,8 +116,10 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 	}
 
 	var failMessage string
+	var result int
 	if !success {
 		failMessage = gomegaMatcher.FailureMessage(foundValue)
+		result = FAIL
 	}
 
 	expected, _ := json.Marshal(expectedValue)
@@ -92,7 +127,8 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 
 	return TestResult{
 		Successful:   success,
-		ResourceType: typs,
+		Result:       result,
+		ResourceType: typeS,
 		TestType:     Value,
 		ResourceId:   id,
 		Title:        title,
@@ -207,13 +243,24 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	return slice
 }
 
-func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error)) TestResult {
+func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error), skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
 	typ := reflect.TypeOf(res)
-	typs := strings.Split(typ.String(), ".")[1]
+	typeS := strings.Split(typ.String(), ".")[1]
 	startTime := time.Now()
+	if skip {
+		return skipResult(
+			typeS,
+			Values,
+			id,
+			title,
+			meta,
+			property,
+			startTime,
+		)
+	}
 	var err error
 	var fh io.Reader
 	var notfound []patternMatcher
@@ -224,7 +271,8 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	if err != nil {
 		return TestResult{
 			Successful:   false,
-			ResourceType: typs,
+			Result:       FAIL,
+			ResourceType: typeS,
 			TestType:     Contains,
 			ResourceId:   id,
 			Title:        title,
@@ -259,7 +307,8 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	if err := scanner.Err(); err != nil {
 		return TestResult{
 			Successful:   false,
-			ResourceType: typs,
+			Result:       FAIL,
+			ResourceType: typeS,
 			TestType:     Contains,
 			ResourceId:   id,
 			Title:        title,
@@ -281,7 +330,8 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	if len(expectedValues) != len(found) {
 		return TestResult{
 			Successful:   false,
-			ResourceType: typs,
+			Result:       FAIL,
+			ResourceType: typeS,
 			TestType:     Contains,
 			ResourceId:   id,
 			Title:        title,
@@ -294,7 +344,8 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	}
 	return TestResult{
 		Successful:   true,
-		ResourceType: typs,
+		Result:       SUCCESS,
+		ResourceType: typeS,
 		TestType:     Contains,
 		ResourceId:   id,
 		Title:        title,

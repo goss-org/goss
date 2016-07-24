@@ -19,11 +19,16 @@ func (r Tap) Output(results <-chan []resource.TestResult, startTime time.Time) (
 
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
-			if testResult.Successful {
+			switch testResult.Result {
+			case resource.SUCCESS:
 				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult2(testResult) + "\n"
-			} else {
+			case resource.FAIL:
 				summary[testCount] = "not ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult2(testResult) + "\n"
 				failed++
+			case resource.SKIP:
+				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - # SKIP " + humanizeResult2(testResult) + "\n"
+			default:
+				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}
 			testCount++
 		}

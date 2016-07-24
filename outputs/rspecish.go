@@ -5,52 +5,43 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
-	"github.com/fatih/color"
 )
 
 type Rspecish struct{}
 
 func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
-	var failed [][]resource.TestResult
+	var failedOrSkipped [][]resource.TestResult
+	var skipped, failed int
 	for resultGroup := range results {
-		failedGroup := []resource.TestResult{}
+		failedOrSkippedGroup := []resource.TestResult{}
 		for _, testResult := range resultGroup {
-			if testResult.Successful {
+			switch testResult.Result {
+			case resource.SUCCESS:
 				fmt.Printf(green("."))
-			} else {
+			case resource.SKIP:
+				fmt.Printf(yellow("S"))
+				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
+				skipped++
+			case resource.FAIL:
 				fmt.Printf(red("F"))
-				failedGroup = append(failedGroup, testResult)
+				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
+				failed++
 			}
 			testCount++
 		}
-		if len(failedGroup) > 0 {
-			failed = append(failed, failedGroup)
+		if len(failedOrSkippedGroup) > 0 {
+			failedOrSkipped = append(failedOrSkipped, failedOrSkippedGroup)
 		}
 	}
 
 	fmt.Print("\n\n")
-	if len(failed) > 0 {
-		fmt.Println("Failures:\n")
-		for _, failedGroup := range failed {
-			first := failedGroup[0]
-			header := header(first)
-			if header != "" {
-				fmt.Print(header)
-			}
-			for _, testResult := range failedGroup {
-				fmt.Println(humanizeResult(testResult))
-			}
-			fmt.Print("\n")
-		}
-	}
+	fmt.Print(failedOrSkippedSummary(failedOrSkipped))
 
-	fmt.Printf("Total Duration: %.3fs\n", time.Since(startTime).Seconds())
-	if len(failed) > 0 {
-		color.Red("Count: %d, Failed: %d\n", testCount, len(failed))
+	fmt.Print(summary(startTime, testCount, failed, skipped))
+	if failed > 0 {
 		return 1
 	}
-	color.Green("Count: %d, Failed: %d\n", testCount, len(failed))
 	return 0
 }
 
