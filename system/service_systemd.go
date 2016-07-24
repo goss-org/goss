@@ -22,6 +22,9 @@ func (s *ServiceSystemd) Service() string {
 }
 
 func (s *ServiceSystemd) Exists() (bool, error) {
+	if invalidService(s.service) {
+		return false, nil
+	}
 	cmd := util.NewCommand("systemctl", "-q", "list-unit-files", "--type=service")
 	cmd.Run()
 	if strings.Contains(cmd.Stdout.String(), fmt.Sprintf("%s.service", s.service)) {
@@ -36,6 +39,9 @@ func (s *ServiceSystemd) Exists() (bool, error) {
 }
 
 func (s *ServiceSystemd) Enabled() (bool, error) {
+	if invalidService(s.service) {
+		return false, nil
+	}
 	cmd := util.NewCommand("systemctl", "-q", "is-enabled", s.service)
 	cmd.Run()
 	if cmd.Status == 0 {
@@ -50,6 +56,9 @@ func (s *ServiceSystemd) Enabled() (bool, error) {
 }
 
 func (s *ServiceSystemd) Running() (bool, error) {
+	if invalidService(s.service) {
+		return false, nil
+	}
 	cmd := util.NewCommand("systemctl", "-q", "is-active", s.service)
 	cmd.Run()
 	if cmd.Status == 0 {
