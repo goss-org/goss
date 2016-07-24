@@ -3,7 +3,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.4.23-r0"
+                "2.4.23-r1"
             ]
         }
     },
@@ -32,23 +32,6 @@
         "apache": {
             "exists": true,
             "gid": 1000
-        }
-    },
-    "command": {
-        "httpd -v": {
-            "exit-status": 0,
-            "stdout": [
-                "Server version: Apache/2.4.23",
-                "Server built:   Jul 13 2016 10:23:24"
-            ],
-            "stderr": []
-        },
-        "foobar": {
-            "exit-status": 127,
-            "stdout": [],
-            "stderr": [
-               "foobar: not found"
-             ]
         }
     },
     "process": {

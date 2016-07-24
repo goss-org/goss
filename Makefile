@@ -81,3 +81,11 @@ gen:
 clean:
 	$(info INFO: Starting build $@)
 	rm -rf ./release
+
+build-images:
+	$(info INFO: Starting build $@)
+	development/build_images.sh
+
+push-images:
+	$(info INFO: Starting build $@)
+	development/push_images.sh

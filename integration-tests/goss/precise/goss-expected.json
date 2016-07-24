@@ -87,11 +87,10 @@
         }
     },
     "command": {
-        "apache2 -v": {
+        "echo 'hi'": {
             "exit-status": 0,
             "stdout": [
-                "Server version: Apache/2.2.22 (Ubuntu)",
-                "Server built:   Jul 15 2016 15:32:45"
+                "hi"
             ],
             "stderr": [],
             "timeout": 10000

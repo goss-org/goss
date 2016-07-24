@@ -44,7 +44,7 @@ for x in $user foobar;do
   goss a "${args[@]}" group $x
 done
 
-for x in "$package -v" foobar;do
+for x in "echo 'hi'" foobar;do
   goss a "${args[@]}" command "$x"
 done
 

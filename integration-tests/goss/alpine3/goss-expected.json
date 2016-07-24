@@ -18,7 +18,7 @@
         "apache2": {
             "installed": true,
             "versions": [
-                "2.4.23-r0"
+                "2.4.23-r1"
             ]
         },
         "foobar": {
@@ -80,12 +80,12 @@
         }
     },
     "command": {
-        "apache2 -v": {
-            "exit-status": 127,
-            "stdout": [],
-            "stderr": [
-                "sh: apache2: not found"
+        "echo 'hi'": {
+            "exit-status": 0,
+            "stdout": [
+                "hi"
             ],
+            "stderr": [],
             "timeout": 10000
         },
         "foobar": {

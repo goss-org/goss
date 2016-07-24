@@ -68,7 +68,7 @@
         }
     },
     "command": {
-        "apache2 -v": {
+        "echo 'hi'": {
             "exit-status": 0,
             "stdout": [],
             "stderr": [],
