@@ -25,7 +25,7 @@ for x in $package foobar vim-tiny;do
 done
 
 for x in google.com:443 google.com:22;do
-  goss a "${args[@]}" addr $x
+  goss a "${args[@]}" addr --timeout 1s $x
 done
 
 for x in tcp:80 tcp6:80 9999;do
@@ -49,7 +49,7 @@ for x in "$package -v" foobar;do
 done
 
 for x in localhost;do
-  goss a "${args[@]}" dns $x
+  goss a "${args[@]}" dns --timeout 1s $x
 done
 
 for x in $package foobar;do
