@@ -21,7 +21,7 @@ before_install:
 
 script:
 - make deps
-- make -j10
+- make -j10 --output-sync=target
 
 deploy:
   provider: releases
