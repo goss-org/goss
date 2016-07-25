@@ -5,7 +5,6 @@ pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
-MAKEFLAGS = -O
 
 .PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch
 
