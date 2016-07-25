@@ -12,7 +12,8 @@ import (
 	"github.com/urfave/cli"
 )
 
-func AddResource(fileName, resourceName, key string, c *cli.Context) error {
+// Simple wrapper to add multiple resources
+func AddResources(fileName, resourceName string, keys []string, c *cli.Context) error {
 	setStoreFormatFromFileName(fileName)
 	config := util.Config{
 		IgnoreList: c.GlobalStringSlice("exclude-attr"),
@@ -28,6 +29,17 @@ func AddResource(fileName, resourceName, key string, c *cli.Context) error {
 
 	sys := system.New(c)
 
+	for _, key := range keys {
+		if err := AddResource(fileName, gossConfig, resourceName, key, c, config, sys); err != nil {
+			return err
+		}
+	}
+	WriteJSON(fileName, gossConfig)
+
+	return nil
+}
+
+func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, c *cli.Context, config util.Config, sys *system.System) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
@@ -130,13 +142,17 @@ func AddResource(fileName, resourceName, key string, c *cli.Context) error {
 		resourcePrint(fileName, res)
 	}
 
-	WriteJSON(fileName, gossConfig)
-
 	return nil
 }
 
-func AutoAddResource(fileName, key string, c *cli.Context) error {
+// Simple wrapper to add multiple resources
+func AutoAddResources(fileName string, keys []string, c *cli.Context) error {
 	setStoreFormatFromFileName(fileName)
+	config := util.Config{
+		IgnoreList: c.GlobalStringSlice("exclude-attr"),
+		Timeout:    int(c.Duration("timeout") / time.Millisecond),
+	}
+
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
 		gossConfig = ReadJSON(fileName)
@@ -146,6 +162,17 @@ func AutoAddResource(fileName, key string, c *cli.Context) error {
 
 	sys := system.New(c)
 
+	for _, key := range keys {
+		if err := AutoAddResource(fileName, gossConfig, key, c, config, sys); err != nil {
+			return err
+		}
+	}
+	WriteJSON(fileName, gossConfig)
+
+	return nil
+}
+
+func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *cli.Context, config util.Config, sys *system.System) error {
 	// file
 	if strings.Contains(key, "/") {
 		if res, _, ok := gossConfig.Files.AppendSysResourceIfExists(key, sys); ok == true {
@@ -197,8 +224,6 @@ func AutoAddResource(fileName, key string, c *cli.Context) error {
 	if res, _, ok := gossConfig.Users.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)
 	}
-
-	WriteJSON(fileName, gossConfig)
 
 	return nil
 }
