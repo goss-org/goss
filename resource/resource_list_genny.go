@@ -77,6 +77,9 @@ func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 	}
 
 	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
 		res.SetID(id)
 	}
 
@@ -113,6 +116,9 @@ func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) err
 	}
 
 	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
 		res.SetID(id)
 	}
 
