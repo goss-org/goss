@@ -190,13 +190,6 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *cli.
 		}
 	}
 
-	// HTTPs
-	if strings.HasPrefix(key, "http://") || strings.HasPrefix(key, "https://") {
-		if res, _, ok := gossConfig.HTTPs.AppendSysResourceIfExists(key, sys); ok == true {
-			resourcePrint(fileName, res)
-		}
-	}
-
 	// group
 	if res, _, ok := gossConfig.Groups.AppendSysResourceIfExists(key, sys); ok == true {
 		resourcePrint(fileName, res)

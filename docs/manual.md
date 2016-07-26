@@ -29,6 +29,7 @@
       * [kernel-param](#kernel-param)
       * [mount](#mount)
       * [interface](#interface)
+      * [http](#http)
       * [gossfile](#gossfile)
     * [Patterns](#patterns)
     * [Advanced Matchers](#advanced-matchers)
@@ -117,6 +118,7 @@ Will **NOT** automatically add:
 * kernel-param
 * mount
 * interface
+* http
 
 
 ### Example:
@@ -176,8 +178,8 @@ This will add a test for a resource. Non existent resources will add a test to e
 * kernel-param - add new kernel-param
 * mount - add new mount
 * interface - add new network interface
+* http - add new network http url
 * goss - add new goss file, it will be imported from this one
-
 
 ### Flags
 #### --exclude-attr
@@ -375,10 +377,27 @@ Validates network interface values
 ```yaml
 interface:
   eth0:
+    # required attributes
     exists: true
+    # optional attributes
     addrs:
     - 172.17.0.2/16
     - fe80::42:acff:fe11:2/64
+```
+
+### http
+Validates http code and content
+*Note:* Goss will automatically follow redirects
+
+```yaml
+http:
+  https://www.google.com:
+    # required attributes
+    status: 200
+    # optional attributes
+    allow-insecure: false
+    timeout: 1000
+    body: []
 ```
 
 ### gossfile

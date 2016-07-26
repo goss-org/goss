@@ -141,19 +141,21 @@ package:
 ```
 
 ## Supported resources
-* addr - addr is reachable
-* command - command, exit status and outputs
-* dns - dns is resolvable
-* file - file exists, owner/perm, content
-* group - group, uid
-* package - package is installed, versions
-* port - port is listening, listening ip
-* process - process is running
-* service - running, enabled
-* user - uid, home, etc..
-* kernel-param - value
-* mount - mountpoint, mount opts, fstype, etc..
-* interface - network interface name and addrs
+* package - add new package
+* file - add new file
+* addr - add new remote address:port - ex: google.com:80
+* port - add new listening [protocol]:port - ex: 80 or udp:123
+* service - add new service
+* user - add new user
+* group - add new group
+* command - add new command
+* dns - add new dns
+* process - add new process name
+* kernel-param - add new kernel-param
+* mount - add new mount
+* interface - add new network interface
+* http - add new network http url
+* goss - add new goss file, it will be imported from this one
 
 ## Supported output formats
 * rspecish **(default)** - Similar to rspec output
