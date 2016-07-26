@@ -7,12 +7,12 @@ ARCH=$2
 [[ $3 == "-q" ]] && args=("--exclude-attr" "*")
 
 goss() {
-  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.json "$@"
   # Validate that duplicates are ignored
-  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.json "$@"
 }
 
-rm -f $SCRIPT_DIR/${OS}/goss*generated*.json
+rm -f $SCRIPT_DIR/${OS}/goss*generated*-$ARCH.json
 
 for x in /etc/passwd /tmp/goss/foobar;do
   goss a "${args[@]}" file $x
@@ -42,8 +42,7 @@ goss a "${args[@]}" kernel-param kernel.ostype
 
 goss a "${args[@]}" mount /dev
 
-
 # Auto-add
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
 # Validate that duplicates are ignored
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
