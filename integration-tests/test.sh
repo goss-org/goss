@@ -14,9 +14,9 @@ seccomp_opts() {
   fi
 }
 
-cp ../release/goss-linux-$arch "goss/$os/"
-# Run build if it's been changed since master
-if [[ $(git log master... -- "Dockerfile_$os") ]] || [[ $(git diff -- "Dockerfile_$os") ]]; then
+cp "../release/goss-linux-$arch" "goss/$os/"
+# Run build if Dockerfile has changed but hasn't been pushed to dockerhub
+if ! md5sum -c "Dockerfile_${os}.md5"; then
   docker build -t "aelsabbahy/goss_${os}:latest" - < "Dockerfile_$os"
 # Pull if image doesn't exist locally
 elif ! docker images | grep "aelsabbahy/goss_$os";then
@@ -40,9 +40,9 @@ out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g 
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-  egrep -q 'Count: 35, Failed: 0' <<<"$out"
+  egrep -q 'Count: 36, Failed: 0' <<<"$out"
 else
-  egrep -q 'Count: 50, Failed: 0' <<<"$out"
+  egrep -q 'Count: 51, Failed: 0' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

@@ -183,6 +183,23 @@ func main() {
 					},
 				},
 				{
+					Name:  "http",
+					Usage: "add new http",
+					Flags: []cli.Flag{
+						cli.BoolFlag{
+							Name: "insecure, k",
+						},
+						cli.DurationFlag{
+							Name:  "timeout",
+							Value: 5 * time.Second,
+						},
+					},
+					Action: func(c *cli.Context) error {
+						goss.AddResources(c.GlobalString("gossfile"), "HTTP", c.Args(), c)
+						return nil
+					},
+				},
+				{
 					Name:  "goss",
 					Usage: "add new goss file, it will be imported from this one",
 					Action: func(c *cli.Context) error {

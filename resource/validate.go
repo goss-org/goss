@@ -264,9 +264,24 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	var err error
 	var fh io.Reader
 	var notfound []patternMatcher
-	fh, err = method()
+	notfound, err = sliceToPatterns(expectedValues)
+	// short circuit
+	if len(notfound) == 0 && err == nil {
+		return TestResult{
+			Successful:   true,
+			Result:       SUCCESS,
+			ResourceType: typeS,
+			TestType:     Contains,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Expected:     expectedValues,
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
 	if err == nil {
-		notfound, err = sliceToPatterns(expectedValues)
+		fh, err = method()
 	}
 	if err != nil {
 		return TestResult{
