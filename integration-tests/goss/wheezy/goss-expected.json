@@ -87,11 +87,10 @@
         }
     },
     "command": {
-        "apache2 -v": {
+        "echo 'hi'": {
             "exit-status": 0,
             "stdout": [
-                "Server version: Apache/2.2.22 (Debian)",
-                "Server built:   Jul 20 2016 05:06:20"
+                "hi"
             ],
             "stderr": [],
             "timeout": 10000

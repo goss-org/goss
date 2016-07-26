@@ -1,4 +1,20 @@
 {
+    "command": {
+        "echo 'hi'": {
+            "exit-status": 0,
+            "stdout": [
+                "hi"
+            ],
+            "stderr": []
+        },
+        "foobar": {
+            "exit-status": 127,
+            "stdout": [],
+            "stderr": [
+                "not found"
+            ]
+        }
+    },
     "file": {
         "/etc/passwd": {
             "exists": true,

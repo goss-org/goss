@@ -34,23 +34,6 @@
             "gid": 33
         }
     },
-    "command": {
-        "apache2 -v": {
-            "exit-status": 0,
-            "stdout": [
-                "Server version: Apache/2.2.22 (Debian)",
-                "Server built:   Jul 20 2016 05:06:20"
-            ],
-            "stderr": []
-        },
-        "foobar": {
-            "exit-status": 127,
-            "stdout": [],
-            "stderr": [
-                "sh: 1: foobar: not found"
-            ]
-        }
-    },
     "process": {
         "apache2": {
             "running": true

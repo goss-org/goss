@@ -68,8 +68,8 @@
         }
     },
     "command": {
-        "apache2 -v": {
-            "exit-status": 127,
+        "echo 'hi'": {
+            "exit-status": 0,
             "stdout": [],
             "stderr": [],
             "timeout": 10000

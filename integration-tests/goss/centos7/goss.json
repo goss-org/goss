@@ -34,23 +34,6 @@
             "gid": 48
         }
     },
-    "command": {
-        "httpd -v": {
-            "exit-status": 0,
-            "stdout": [
-                "Server version: Apache/2.4.6 (CentOS)",
-                "Server built:   Nov 19 2015 21:43:13"
-            ],
-            "stderr": []
-        },
-        "foobar": {
-            "exit-status": 127,
-            "stdout": [],
-            "stderr": [
-                "sh: foobar: command not found"
-            ]
-        }
-    },
     "process": {
         "httpd": {
             "running": true
