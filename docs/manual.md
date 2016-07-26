@@ -397,7 +397,7 @@ http:
     # optional attributes
     allow-insecure: false
     timeout: 1000
-    body: []
+    body: [] # Check http response content for these patterns
 ```
 
 ### gossfile
