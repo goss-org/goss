@@ -9,9 +9,6 @@ dist: trusty
 services:
 - docker
 
-env:
-- GO15VENDOREXPERIMENT=1
-
 before_install:
 - curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip
   > glide.zip
@@ -21,7 +18,7 @@ before_install:
 
 script:
 - make deps
-- make -j10
+- make
 
 deploy:
   provider: releases
