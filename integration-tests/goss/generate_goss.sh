@@ -20,41 +20,23 @@ done
 
 [[ $OS == "centos7" ]] && package="httpd" || package="apache2"
 [[ $OS == "centos7" ]] && user="apache" || user="www-data"
-for x in $package foobar vim-tiny;do
-  goss a "${args[@]}" package $x
-done
+goss a "${args[@]}" package $package foobar vim-tiny
 
-for x in google.com:443 google.com:22;do
-  goss a "${args[@]}" addr --timeout 1s $x
-done
+goss a "${args[@]}" addr --timeout 1s google.com:443 google.com:22
 
-for x in tcp:80 tcp6:80 9999;do
-  goss a "${args[@]}" port $x
-done
+goss a "${args[@]}" port tcp:80 tcp6:80 9999
 
-for x in $package foobar;do
-  goss a "${args[@]}" service $x
-done
+goss a "${args[@]}" service $package foobar
 
-for x in $user foobar;do
-  goss a "${args[@]}" user $x
-done
+goss a "${args[@]}" user $user foobar
 
-for x in $user foobar;do
-  goss a "${args[@]}" group $x
-done
+goss a "${args[@]}" group $user foobar
 
-for x in "echo 'hi'" foobar;do
-  goss a "${args[@]}" command "$x"
-done
+goss a "${args[@]}" command "echo 'hi'" foobar
 
-for x in localhost;do
-  goss a "${args[@]}" dns --timeout 1s $x
-done
+goss a "${args[@]}" dns --timeout 1s localhost
 
-for x in $package foobar;do
-  goss a "${args[@]}" process $x
-done
+goss a "${args[@]}" process $package foobar
 
 goss a "${args[@]}" kernel-param kernel.ostype
 
