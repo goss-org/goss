@@ -55,11 +55,12 @@ func Validate(c *cli.Context, startTime time.Time) {
 	sys := system.New(c)
 	outputer := getOutputer(c)
 
-	exitCode := validate(context.TODO(), sys, gossConfig, startTime, outputer)
+	out := validate(context.TODO(), sys, gossConfig)
+	exitCode := outputer.Output(out, startTime)
 	os.Exit(exitCode)
 }
 
-func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, startTime time.Time, outputer outputs.Outputer) int {
+func validate(ctx context.Context, sys *system.System, gossConfig GossConfig) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
@@ -94,8 +95,7 @@ func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, st
 		close(out)
 	}()
 
-	exitCode := outputer.Output(out, startTime)
-	return exitCode
+	return out
 }
 
 func hasStdin() bool {
