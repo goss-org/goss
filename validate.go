@@ -9,16 +9,16 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/net/context"
+
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
-	"github.com/urfave/cli"
 	"github.com/fatih/color"
+	"github.com/urfave/cli"
 )
 
-func Validate(c *cli.Context, startTime time.Time) {
-	sys := system.New(c)
-
+func getGossConfig(c *cli.Context) GossConfig {
 	// handle stdin
 	var fh *os.File
 	var err error
@@ -40,9 +40,27 @@ func Validate(c *cli.Context, startTime time.Time) {
 		os.Exit(1)
 	}
 	gossConfig := mergeJSONData(ReadJSONData(data), 0, path)
+	return gossConfig
+}
 
+func getOutputer(c *cli.Context) outputs.Outputer {
+	if c.Bool("no-color") {
+		color.NoColor = true
+	}
+	return outputs.GetOutputer(c.String("format"))
+}
+
+func Validate(c *cli.Context, startTime time.Time) {
+	gossConfig := getGossConfig(c)
+	sys := system.New(c)
+	outputer := getOutputer(c)
+
+	exitCode := validate(context.TODO(), sys, gossConfig, startTime, outputer)
+	os.Exit(exitCode)
+}
+
+func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, startTime time.Time, outputer outputs.Outputer) int {
 	out := make(chan []resource.TestResult)
-
 	in := make(chan resource.Resource)
 
 	go func() {
@@ -55,8 +73,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	if os.Getenv("GOMAXPROCS") == "" {
 		runtime.GOMAXPROCS(runtime.NumCPU())
 	}
-	gomaxprocs := runtime.GOMAXPROCS(-1)
-	workerCount := gomaxprocs * 5
+	workerCount := runtime.NumCPU() * 5
 	if workerCount > 50 {
 		workerCount = 50
 	}
@@ -77,16 +94,8 @@ func Validate(c *cli.Context, startTime time.Time) {
 		close(out)
 	}()
 
-	//var outputer outputs.Outputer
-	if c.Bool("no-color") {
-		color.NoColor = true
-	}
-
-	outputer := outputs.GetOutputer(c.String("format"))
-
 	exitCode := outputer.Output(out, startTime)
-	os.Exit(exitCode)
-
+	return exitCode
 }
 
 func hasStdin() bool {

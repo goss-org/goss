@@ -56,6 +56,40 @@ func main() {
 			},
 		},
 		{
+			Name:    "wait",
+			Aliases: []string{"w"},
+			Usage:   "Wait until tests are passing",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "format, f",
+					Value:  "rspecish",
+					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
+					EnvVar: "GOSS_FMT",
+				},
+				cli.BoolFlag{
+					Name:   "no-color",
+					Usage:  "Force color off",
+					EnvVar: "GOSS_NOCOLOR",
+				},
+				cli.DurationFlag{
+					Name:   "sleep,s",
+					Usage:  "Time to sleep between retries",
+					Value:  1 * time.Second,
+					EnvVar: "GOSS_SLEEP",
+				},
+				cli.DurationFlag{
+					Name:   "timeout,t",
+					Usage:  "When to give up on the wait",
+					Value:  30 * time.Second,
+					EnvVar: "GOSS_TIMEOUT",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				goss.Wait(c)
+				return nil
+			},
+		},
+		{
 			Name:    "render",
 			Aliases: []string{"r"},
 			Usage:   "render gossfile after imports",
