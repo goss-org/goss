@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 
 type JUnit struct{}
 
-func (r JUnit) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var testCount, failed, skipped int
 
 	// ISO8601 timeformat
@@ -52,16 +53,16 @@ func (r JUnit) Output(results <-chan []resource.TestResult, startTime time.Time)
 	}
 
 	duration := time.Since(startTime)
-	fmt.Println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-	fmt.Printf("<testsuite name=\"goss\" errors=\"0\" tests=\"%d\" "+
+	fmt.Fprintln(w, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+	fmt.Fprintf(w, "<testsuite name=\"goss\" errors=\"0\" tests=\"%d\" "+
 		"failures=\"%d\" skipped=\"%d\" time=\"%.3f\" timestamp=\"%s\">\n",
 		testCount, failed, skipped, duration.Seconds(), timestamp)
 
 	for i := 0; i < testCount; i++ {
-		fmt.Printf("%s", summary[i])
+		fmt.Fprintf(w, "%s", summary[i])
 	}
 
-	fmt.Println("</testsuite>")
+	fmt.Fprintln(w, "</testsuite>")
 
 	if failed > 0 {
 		return 1

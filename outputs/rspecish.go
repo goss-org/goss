@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -9,7 +10,7 @@ import (
 
 type Rspecish struct{}
 
-func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
@@ -18,13 +19,13 @@ func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Ti
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				fmt.Printf(green("."))
+				fmt.Fprintf(w, green("."))
 			case resource.SKIP:
-				fmt.Printf(yellow("S"))
+				fmt.Fprintf(w, yellow("S"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				fmt.Printf(red("F"))
+				fmt.Fprintf(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
 			}
@@ -35,10 +36,10 @@ func (r Rspecish) Output(results <-chan []resource.TestResult, startTime time.Ti
 		}
 	}
 
-	fmt.Print("\n\n")
-	fmt.Print(failedOrSkippedSummary(failedOrSkipped))
+	fmt.Fprint(w, "\n\n")
+	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped))
 
-	fmt.Print(summary(startTime, testCount, failed, skipped))
+	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
 	if failed > 0 {
 		return 1
 	}

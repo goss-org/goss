@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strings"
@@ -13,7 +14,7 @@ import (
 )
 
 type Outputer interface {
-	Output(<-chan []resource.TestResult, time.Time) int
+	Output(io.Writer, <-chan []resource.TestResult, time.Time) int
 }
 
 var green = color.New(color.FgGreen).SprintfFunc()

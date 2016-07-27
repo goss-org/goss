@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -9,7 +10,7 @@ import (
 
 type Documentation struct{}
 
-func (r Documentation) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
@@ -18,19 +19,19 @@ func (r Documentation) Output(results <-chan []resource.TestResult, startTime ti
 		first := resultGroup[0]
 		header := header(first)
 		if header != "" {
-			fmt.Print(header)
+			fmt.Fprint(w, header)
 		}
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				fmt.Println(humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult))
 				testCount++
 			case resource.SKIP:
-				fmt.Println(humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				fmt.Println(humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
 			}
@@ -41,10 +42,10 @@ func (r Documentation) Output(results <-chan []resource.TestResult, startTime ti
 		}
 	}
 
-	fmt.Print("\n\n")
-	fmt.Print(failedOrSkippedSummary(failedOrSkipped))
+	fmt.Fprint(w, "\n\n")
+	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped))
 
-	fmt.Print(summary(startTime, testCount, failed, skipped))
+	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
 	if failed > 0 {
 		return 1
 	}

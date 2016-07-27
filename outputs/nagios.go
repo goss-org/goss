@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -9,7 +10,7 @@ import (
 
 type Nagios struct{}
 
-func (r Nagios) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var testCount, failed, skipped int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -25,10 +26,10 @@ func (r Nagios) Output(results <-chan []resource.TestResult, startTime time.Time
 
 	duration := time.Since(startTime)
 	if failed > 0 {
-		fmt.Printf("GOSS CRITICAL - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
+		fmt.Fprintf(w, "GOSS CRITICAL - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
 		return 2
 	}
-	fmt.Printf("GOSS OK - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
+	fmt.Fprintf(w, "GOSS OK - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs\n", testCount, failed, skipped, duration.Seconds())
 	return 0
 }
 
