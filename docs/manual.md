@@ -81,7 +81,9 @@ Valid formats:
 * ./goss.yaml (default value of -g)
 
 ### Flags
-* --format (output format)
+* --sleep, -s - Time to sleep between retries (default: 1s)
+* --retry-timeout, -r - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
+* --format, -f (output format)
   * rspecish **(default)** - Similar to rspec output
   * documentation - Verbose test results
   * JSON - Detailed test result

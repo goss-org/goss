@@ -9,8 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"golang.org/x/net/context"
-
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
@@ -55,12 +53,29 @@ func Validate(c *cli.Context, startTime time.Time) {
 	sys := system.New(c)
 	outputer := getOutputer(c)
 
-	out := validate(context.TODO(), sys, gossConfig)
-	exitCode := outputer.Output(out, startTime)
-	os.Exit(exitCode)
+	sleep := c.Duration("sleep")
+	retryTimeout := c.Duration("retry-timeout")
+	i := 1
+	for {
+		iStartTime := time.Now()
+		out := validate(sys, gossConfig)
+		exitCode := outputer.Output(out, iStartTime)
+		if retryTimeout == 0 || exitCode == 0 {
+			os.Exit(exitCode)
+		}
+		elapsed := time.Since(startTime)
+		if elapsed+sleep > retryTimeout {
+			color.Red("\nERROR: Timeout of %s reached before tests entered a passing state", retryTimeout)
+			os.Exit(3)
+		}
+		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
+		time.Sleep(sleep)
+		i++
+		fmt.Printf("Attempt #%d:\n", i)
+	}
 }
 
-func validate(ctx context.Context, sys *system.System, gossConfig GossConfig) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
