@@ -12,13 +12,11 @@ import (
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
-	"github.com/urfave/cli"
 	"github.com/fatih/color"
+	"github.com/urfave/cli"
 )
 
-func Validate(c *cli.Context, startTime time.Time) {
-	sys := system.New(c)
-
+func getGossConfig(c *cli.Context) GossConfig {
 	// handle stdin
 	var fh *os.File
 	var err error
@@ -40,9 +38,45 @@ func Validate(c *cli.Context, startTime time.Time) {
 		os.Exit(1)
 	}
 	gossConfig := mergeJSONData(ReadJSONData(data), 0, path)
+	return gossConfig
+}
 
+func getOutputer(c *cli.Context) outputs.Outputer {
+	if c.Bool("no-color") {
+		color.NoColor = true
+	}
+	return outputs.GetOutputer(c.String("format"))
+}
+
+func Validate(c *cli.Context, startTime time.Time) {
+	gossConfig := getGossConfig(c)
+	sys := system.New(c)
+	outputer := getOutputer(c)
+
+	sleep := c.Duration("sleep")
+	retryTimeout := c.Duration("retry-timeout")
+	i := 1
+	for {
+		iStartTime := time.Now()
+		out := validate(sys, gossConfig)
+		exitCode := outputer.Output(out, iStartTime)
+		if retryTimeout == 0 || exitCode == 0 {
+			os.Exit(exitCode)
+		}
+		elapsed := time.Since(startTime)
+		if elapsed+sleep > retryTimeout {
+			color.Red("\nERROR: Timeout of %s reached before tests entered a passing state", retryTimeout)
+			os.Exit(3)
+		}
+		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
+		time.Sleep(sleep)
+		i++
+		fmt.Printf("Attempt #%d:\n", i)
+	}
+}
+
+func validate(sys *system.System, gossConfig GossConfig) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
-
 	in := make(chan resource.Resource)
 
 	go func() {
@@ -55,8 +89,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	if os.Getenv("GOMAXPROCS") == "" {
 		runtime.GOMAXPROCS(runtime.NumCPU())
 	}
-	gomaxprocs := runtime.GOMAXPROCS(-1)
-	workerCount := gomaxprocs * 5
+	workerCount := runtime.NumCPU() * 5
 	if workerCount > 50 {
 		workerCount = 50
 	}
@@ -77,16 +110,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 		close(out)
 	}()
 
-	//var outputer outputs.Outputer
-	if c.Bool("no-color") {
-		color.NoColor = true
-	}
-
-	outputer := outputs.GetOutputer(c.String("format"))
-
-	exitCode := outputer.Output(out, startTime)
-	os.Exit(exitCode)
-
+	return out
 }
 
 func hasStdin() bool {

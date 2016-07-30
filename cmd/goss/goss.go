@@ -49,6 +49,18 @@ func main() {
 					Usage:  "Force color off",
 					EnvVar: "GOSS_NOCOLOR",
 				},
+				cli.DurationFlag{
+					Name:   "sleep,s",
+					Usage:  "Time to sleep between retries, only active when -r is set",
+					Value:  1 * time.Second,
+					EnvVar: "GOSS_SLEEP",
+				},
+				cli.DurationFlag{
+					Name:   "retry-timeout,r",
+					Usage:  "Retry on failure so long as elapsed + sleep time is less than this",
+					Value:  0,
+					EnvVar: "GOSS_TIMEOUT",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				goss.Validate(c, startTime)
