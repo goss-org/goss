@@ -1,9 +1,11 @@
 # Goss - Quick and Easy server validation
 [![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
 [![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=604800)](https://github.com/aelsabbahy/goss/releases)
-* [![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)]()
-Stay updated on new releases
-* [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&maxAge=2592000)](https://twitter.com/intent/tweet?text=Goss:%20Quick%20and%20Easy%20server%20testing/validation%20%23devops:%20https://github.com/aelsabbahy/goss) If you like Goss, spread the word!
+
+Social Media:
+* [![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)]() - Stay updated on new releases
+* [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&maxAge=2592000)](https://twitter.com/intent/tweet?text=Goss:%20Quick%20and%20Easy%20server%20testing/validation%20%23devops:%20https://github.com/aelsabbahy/goss) - If you like Goss, spread the word!
+* [Blog](https://medium.com/@aelsabbahy) - See what I'm ranting about
 
 ## Goss in 45 seconds
 
@@ -21,12 +23,12 @@ Goss is a YAML based [serverspec](http://serverspec.org/)-like tool for validati
 
 * Goss is EASY!  - [Goss in 45 seconds](#goss-in-45-seconds)
 * Goss is FAST!  - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
-* Goss is SMALL! - <4MB single self-contained binary
+* Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.1.10/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.0/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
