@@ -69,6 +69,8 @@ func Validate(c *cli.Context, startTime time.Time) {
 			os.Exit(3)
 		}
 		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
+		// Reset cache
+		sys = system.New(c)
 		time.Sleep(sleep)
 		i++
 		fmt.Printf("Attempt #%d:\n", i)
