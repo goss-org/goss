@@ -1,5 +1,5 @@
-hash: 2fd7eab01fb36877d8921e53d838b16a37e519da665c956e97248d9d156ec170
-updated: 2016-07-02T18:55:56.167760585-04:00
+hash: 6bbda86455edefb24ebb6fe039ffc6a5f21076c615f69f9cb17c06d3ae0ae404
+updated: 2016-07-28T02:14:47.93162924-04:00
 imports:
 - name: github.com/achanda/go-sysctl
   version: 6be7678c45d2052640e72060e4f5db6165b1ecab
@@ -39,6 +39,8 @@ imports:
   version: 4e6893b05a6aa723daa5f9194361032c6beaca25
   subpackages:
   - libcontainer/user
+- name: github.com/patrickmn/go-cache
+  version: 1881a9bccb818787f68c52bfba648c6cf34c34fa
 - name: github.com/shiena/ansicolor
   version: d445752f6f66f9cd987722f109149f6799cdf1de
 - name: github.com/urfave/cli

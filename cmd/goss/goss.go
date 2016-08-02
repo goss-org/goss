@@ -59,11 +59,46 @@ func main() {
 					Name:   "retry-timeout,r",
 					Usage:  "Retry on failure so long as elapsed + sleep time is less than this",
 					Value:  0,
-					EnvVar: "GOSS_TIMEOUT",
+					EnvVar: "GOSS_RETRY_TIMEOUT",
 				},
 			},
 			Action: func(c *cli.Context) error {
 				goss.Validate(c, startTime)
+				return nil
+			},
+		},
+		{
+			Name:    "serve",
+			Aliases: []string{"s"},
+			Usage:   "Serve a health enpoint",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "format, f",
+					Value:  "rspecish",
+					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
+					EnvVar: "GOSS_FMT",
+				},
+				cli.DurationFlag{
+					Name:   "cache,c",
+					Usage:  "Time to cache the results",
+					Value:  5 * time.Second,
+					EnvVar: "GOSS_CACHE",
+				},
+				cli.StringFlag{
+					Name:   "listen-addr,l",
+					Value:  ":8080",
+					Usage:  "Address to listen on [ip]:port",
+					EnvVar: "GOSS_LISTEN",
+				},
+				cli.StringFlag{
+					Name:   "endpoint,e",
+					Value:  "/healthz",
+					Usage:  "Endpoint to expose",
+					EnvVar: "GOSS_ENDPOINT",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				goss.Serve(c)
 				return nil
 			},
 		},

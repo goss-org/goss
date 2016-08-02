@@ -59,7 +59,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	for {
 		iStartTime := time.Now()
 		out := validate(sys, gossConfig)
-		exitCode := outputer.Output(out, iStartTime)
+		exitCode := outputer.Output(os.Stdout, out, iStartTime)
 		if retryTimeout == 0 || exitCode == 0 {
 			os.Exit(exitCode)
 		}

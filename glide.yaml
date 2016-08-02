@@ -19,3 +19,4 @@ import:
 - package: github.com/docker/docker
   subpackages:
   - pkg/mount
+- package: github.com/patrickmn/go-cache

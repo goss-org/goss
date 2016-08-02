@@ -7,6 +7,9 @@
     * [validate, v \- Validate the system](#validate-v---validate-the-system)
       * [Flags](#flags)
       * [Example:](#example)
+    * [serve, s \- Serve a healt endpoint](#serve-s---serve-a-health-endpoint)
+      * [Flags](#flags)
+      * [Example:](#example)
     * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
       * [Example:](#example-1)
     * [add, a \- Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
@@ -49,6 +52,7 @@ VERSION:
 
 COMMANDS:
    validate, v	Validate system
+   serve, s	Serve a health enpoint
    render, r	render gossfile after imports
    autoadd, aa	automatically add all matching resource to the test suite
    add, a	add a resource to the test suite
@@ -62,6 +66,7 @@ GLOBAL OPTIONS:
    --version, -v		print the version
 
 ```
+**Note:** *Most flags can be set by using environment variables, see `--help` for more info.*
 
 ## global options
 ### -g gossfile
@@ -100,6 +105,24 @@ $ curl -s https://static/or/dynamic/goss.json | goss validate
 $ goss render | ssh remote-host 'goss validate'
 ```
 
+## serve, s - Serve a health endpoint
+
+`serve` exposes the goss test suite as a health endpoint on your server. The end-point will return the stest results in the format requested and an http status of 200 or 503.
+
+`serve` will look for a test suite in the same order as [validate](#validate-v---validate-the-system)
+
+### Flags
+* --cache value, -c value - Time to cache the results (default: 5s)
+* --listen-addr value, -l value - Address to listen on [ip]:port (default: ":8080")
+* --endpoint value, -e value - Endpoint to expose (default: "/healthz")
+* --format, -f (output format) - same as [validate](#validate-v---validate-the-system)
+
+### Example:
+
+```bash
+$ goss serve &
+$ curl http://localhost:8080/healthz
+```
 
 ## autoadd, aa - Auto add all matching resources to test suite
 Automatically adds all **existing** resources matching the provided argument.

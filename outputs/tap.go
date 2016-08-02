@@ -2,6 +2,7 @@ package outputs
 
 import (
 	"fmt"
+	"io"
 	"strconv"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 
 type Tap struct{}
 
-func (r Tap) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	failed := 0
 
@@ -34,10 +35,10 @@ func (r Tap) Output(results <-chan []resource.TestResult, startTime time.Time) (
 		}
 	}
 
-	fmt.Printf("1..%d\n", testCount)
+	fmt.Fprintf(w, "1..%d\n", testCount)
 
 	for i := 0; i < testCount; i++ {
-		fmt.Printf("%s", summary[i])
+		fmt.Fprintf(w, "%s", summary[i])
 	}
 
 	if failed > 0 {

@@ -1,7 +1,9 @@
 # Goss - Quick and Easy server validation
 [![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
 [![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=604800)](https://github.com/aelsabbahy/goss/releases)
-[![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&maxAge=2592000)](https://twitter.com/intent/tweet?text=Goss:%20Quick%20and%20Easy%20server%20testing/validation%20%23devops:%20https://github.com/aelsabbahy/goss)
+* [![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)]()
+Stay updated on new releases
+* [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&maxAge=2592000)](https://twitter.com/intent/tweet?text=Goss:%20Quick%20and%20Easy%20server%20testing/validation%20%23devops:%20https://github.com/aelsabbahy/goss) If you like Goss, spread the word!
 
 ## Goss in 45 seconds
 
@@ -11,16 +13,15 @@
 
 ## Introduction
 
-### What is goss?
+### What is Goss?
 
-Goss is a [serverspec](http://serverspec.org/)-like tool for validating a server's configuration. It eases the process of generating tests by assuming the user already has a properly configured machine from which they can derive system state. Once the test suite is generated they can be executed on any other host for the full TDD experience.
+Goss is a YAML based [serverspec](http://serverspec.org/)-like tool for validating a server’s configuration. It eases the process of writing tests by allowing the user to generate tests from the current system state. Once the test suite is written they can be executed, waited-on, or served as a health endpoint.
 
-### Why use goss?
+### Why use Goss?
 
 * Goss is EASY!  - [Goss in 45 seconds](#goss-in-45-seconds)
 * Goss is FAST!  - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - <4MB single self-contained binary
-* Goss is UNIXY! - does one thing and does it well, chainable through pipes
 
 ## Installation
 
@@ -43,65 +44,64 @@ Let's write a simple sshd test using autoadd.
 ```
 # Running it as root will allow it to also detect ports
 $ sudo goss autoadd sshd
-Adding Group to './goss.yaml':
-
-sshd:
-  exists: true
-  gid: 74
-
-
-Adding Process to './goss.yaml':
-
-sshd:
-  running: true
-
-
-Adding Port to './goss.yaml':
-
-tcp6:22:
-  listening: true
-  ip:
-  - '::'
-
-
-Adding Port to './goss.yaml':
-
-tcp:22:
-  listening: true
-  ip:
-  - 0.0.0.0
-
-
-Adding Service to './goss.yaml':
-
-sshd:
-  enabled: true
-  running: true
-
-
-Adding User to './goss.yaml':
-
-sshd:
-  exists: true
-  uid: 74
-  gid: 74
-  groups:
-  - sshd
-  home: /var/empty/sshd
-  shell: /sbin/nologin
-
 ```
-
-We can now run our test by using `goss validate`:
+Generated `goss.yaml`:
+```yaml
+$ cat goss.yaml
+port:
+  tcp:22:
+    listening: true
+    ip:
+    - 0.0.0.0
+  tcp6:22:
+    listening: true
+    ip:
+    - '::'
+service:
+  sshd:
+    enabled: true
+    running: true
+user:
+  sshd:
+    exists: true
+    uid: 74
+    gid: 74
+    groups:
+    - sshd
+    home: /var/empty/sshd
+    shell: /sbin/nologin
+group:
+  sshd:
+    exists: true
+    gid: 74
+process:
+  sshd:
+    running: true
 ```
+Now that we have a test suite, we can:
+
+* Run it once
+```
+goss validate
 ...............
 
-Total Duration: 0.021s
+Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 
 ```
+* keep running it until the system enters a valid state or we timeout
+```
+goss validate --retry-timeout 30s --sleep 1s
+```
+* serve the tests as a health endpoint
+```
+goss serve &
+curl localhost:8080/healthz
 
-As you can see goss tests are extremely fast, we were able to validate our system state in **21ms!**
+# JSON endpoint
+goss serve --format json &
+curl localhost:8080/healthz
+```
 
 ### Patterns, matchers and metadata
 Goss files can be manually edited to match:

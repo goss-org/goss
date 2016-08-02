@@ -3,6 +3,7 @@ package outputs
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -11,7 +12,7 @@ import (
 
 type Json struct{}
 
-func (r Json) Output(results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	color.NoColor = true
 	testCount := 0
 	failed := 0
@@ -41,7 +42,7 @@ func (r Json) Output(results <-chan []resource.TestResult, startTime time.Time) 
 	out["summary"] = summary
 
 	j, _ := json.MarshalIndent(out, "", "    ")
-	fmt.Println(string(j))
+	fmt.Fprintln(w, string(j))
 
 	if failed > 0 {
 		return 1
