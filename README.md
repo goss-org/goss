@@ -12,7 +12,7 @@ Social Media:
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 **Note:** For some Docker usecases, see my blog post: [here](url_to_blog)
 
-<a href="https://asciinema.org/a/bxcuduzs3n2zo62rpe1t0s6w8?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/10236274/b708ff8e-6871-11e5-9d39-70876f5ef8f8.gif" alt="asciicast"></a>
+<a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 
 ## Introduction
 
@@ -29,7 +29,7 @@ Goss is a YAML based [serverspec](http://serverspec.org/)-like tool for validati
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.0/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.1/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
