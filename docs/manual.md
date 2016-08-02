@@ -122,6 +122,10 @@ $ goss render | ssh remote-host 'goss validate'
 ```bash
 $ goss serve &
 $ curl http://localhost:8080/healthz
+
+# JSON endpoint
+goss serve --format json &
+curl localhost:8080/healthz
 ```
 
 ## autoadd, aa - Auto add all matching resources to test suite
