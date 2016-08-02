@@ -7,7 +7,7 @@
     * [validate, v \- Validate the system](#validate-v---validate-the-system)
       * [Flags](#flags)
       * [Example:](#example)
-    * [serve, s \- Serve a healt endpoint](#serve-s---serve-a-health-endpoint)
+    * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
       * [Flags](#flags)
       * [Example:](#example)
     * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
