@@ -15,9 +15,12 @@ before_install:
 - unzip glide.zip
 - export PATH="$PATH:$PWD/linux-amd64"
 - go get -u github.com/golang/lint/golint
+- go get github.com/mattn/goveralls
+- go get golang.org/x/tools/cmd/cover
 
 script:
 - make deps
+- $HOME/gopath/bin/goveralls -service=travis-ci
 - make
 
 deploy:
