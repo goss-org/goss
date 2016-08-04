@@ -21,7 +21,7 @@ url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$
 echo "Downloading $url"
 curl -L "https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$arch" -o "$INSTALL_LOC"
 chmod +rx "$INSTALL_LOC"
-echo "Goss $GOSS_VER has been installed at $INSTALL_LOC"
+echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
 /usr/local/bin/goss --version
 }
