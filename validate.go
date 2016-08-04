@@ -20,11 +20,13 @@ func getGossConfig(c *cli.Context) GossConfig {
 	// handle stdin
 	var fh *os.File
 	var err error
-	var path string
-	if !c.GlobalIsSet("gossfile") && hasStdin() {
+	var path, source string
+	specFile := c.GlobalString("gossfile")
+	if specFile == "-" {
+		source = "STDIN"
 		fh = os.Stdin
 	} else {
-		specFile := c.GlobalString("gossfile")
+		source = specFile
 		path = filepath.Dir(specFile)
 		fh, err = os.Open(specFile)
 		if err != nil {
@@ -38,6 +40,10 @@ func getGossConfig(c *cli.Context) GossConfig {
 		os.Exit(1)
 	}
 	gossConfig := mergeJSONData(ReadJSONData(data), 0, path)
+	if len(gossConfig.Resources()) == 0 {
+		fmt.Printf("Error: found 0 tests, source: %v\n", source)
+		os.Exit(1)
+	}
 	return gossConfig
 }
 
@@ -113,14 +119,4 @@ func validate(sys *system.System, gossConfig GossConfig) <-chan []resource.TestR
 	}()
 
 	return out
-}
-
-func hasStdin() bool {
-	if fi, err := os.Stdin.Stat(); err == nil {
-		mode := fi.Mode()
-		if (mode&os.ModeNamedPipe != 0) || mode.IsRegular() {
-			return true
-		}
-	}
-	return false
 }
