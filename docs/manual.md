@@ -70,7 +70,7 @@ GLOBAL OPTIONS:
 
 ## global options
 ### -g gossfile
-The gossfile file to use when reading/writing tests.
+The gossfile file to use when reading/writing tests. Use `-g -` to read from STDIN.
 
 Valid formats:
 * YAML (default)
@@ -79,11 +79,6 @@ Valid formats:
 ## validate, v - Validate the system
 
 `validate` runs the goss test suite on your server. Prints an rspec-like (by dfeault) output of test results. Exists with status 0 on success, non-0 otherwise.
-
-`validate` will look for a test suite in the following order:
-* stdin
-* -g flag (if provided)
-* ./goss.yaml (default value of -g)
 
 ### Flags
 * --sleep, -s - Time to sleep between retries (default: 1s)
