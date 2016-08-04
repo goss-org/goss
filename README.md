@@ -30,7 +30,18 @@ Goss is a YAML based [serverspec](http://serverspec.org/)-like tool for validati
 ## Installation
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.2.2/goss-linux-amd64 > /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
+# Install latest version to /usr/local/bin
+curl -fsSL https://goss.rocks/install | sh
+
+# Install v0.2.2 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.2.2 GOSS_DST=~/bin sh
+```
+
+### Manual installation
+```bash
+# See https://github.com/aelsabbahy/goss/releases for release versions
+curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o /usr/local/bin/goss
+chmod +rx /usr/local/bin/goss
 ```
 
 ## Full Documentation
