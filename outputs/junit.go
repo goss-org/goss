@@ -15,8 +15,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 	var testCount, failed, skipped int
 
 	// ISO8601 timeformat
-	location, _ := time.LoadLocation("Etc/UTC")
-	timestamp := time.Now().In(location).Format(time.RFC3339)
+	timestamp := time.Now().Format(time.RFC3339)
 
 	var summary map[int]string
 	summary = make(map[int]string)
