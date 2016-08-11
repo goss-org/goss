@@ -3,7 +3,7 @@
 {
 set -e
 
-LATEST="v0.2.2"
+LATEST="v0.2.3"
 GOSS_VER=${GOSS_VER:-$LATEST}
 GOSS_DST=${GOSS_DST:-/usr/local/bin}
 INSTALL_LOC="${GOSS_DST%/}/goss"
