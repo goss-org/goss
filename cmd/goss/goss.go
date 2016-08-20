@@ -70,7 +70,7 @@ func main() {
 		{
 			Name:    "serve",
 			Aliases: []string{"s"},
-			Usage:   "Serve a health enpoint",
+			Usage:   "Serve a health endpoint",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:   "format, f",
