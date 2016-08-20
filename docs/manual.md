@@ -52,7 +52,7 @@ VERSION:
 
 COMMANDS:
    validate, v	Validate system
-   serve, s	Serve a health enpoint
+   serve, s	Serve a health endpoint
    render, r	render gossfile after imports
    autoadd, aa	automatically add all matching resource to the test suite
    add, a	add a resource to the test suite
