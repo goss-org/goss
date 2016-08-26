@@ -18,7 +18,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult, startT
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.FAIL:
-				summary[failed] = "not ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult2(testResult) + "\n"
+				summary[failed] = "not ok " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult) + "\n"
 				failed++
 			case resource.SKIP:
 				skipped++
