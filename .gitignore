@@ -12,3 +12,5 @@
 # Random stuff for my local testing/development that I don't want checked in
 tmp/
 /goss.yaml
+
+/.idea

@@ -3,6 +3,7 @@ package outputs
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
