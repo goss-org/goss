@@ -28,6 +28,7 @@
       * [group](#group)
       * [command](#command)
       * [dns](#dns)
+      * [reverse-dns](#reverse-dns)
       * [process](#process)
       * [kernel-param](#kernel-param)
       * [mount](#mount)
@@ -138,6 +139,7 @@ Will automatically add the following matching resources:
 Will **NOT** automatically add:
 * commands - for safety
 * dns
+* reverse-dns
 * addr
 * kernel-param
 * mount
@@ -198,6 +200,7 @@ This will add a test for a resource. Non existent resources will add a test to e
 * group - add new group
 * command - add new command
 * dns - add new dns
+* reverse-dns - add a new reverse-dns
 * process - add new process name
 * kernel-param - add new kernel-param
 * mount - add new mount
@@ -357,6 +360,19 @@ dns:
     addrs:
     - 127.0.0.1
     - ::1
+    timeout: 500 # in milliseconds
+```
+### reverse-dns
+Validates that the provided IP has a resolveable PTR record and the hosts it resolves to.
+
+```yaml
+reverse-dns:
+  64.233.184.26:
+    # required attributes
+    resolveable: true
+    # optional attributes
+    hosts:
+    - wa-in-f26.1e100.net.
     timeout: 500 # in milliseconds
 ```
 ### process
