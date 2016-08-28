@@ -222,6 +222,20 @@ func main() {
 					},
 				},
 				{
+					Name:  "reverse-dns",
+					Usage: "add new reverse dns",
+					Flags: []cli.Flag{
+						cli.DurationFlag{
+							Name:  "timeout",
+							Value: 500 * time.Millisecond,
+						},
+					},
+					Action: func(c *cli.Context) error {
+						goss.AddResources(c.GlobalString("gossfile"), "ReverseDNS", c.Args(), c)
+						return nil
+					},
+				},
+				{
 					Name:  "process",
 					Usage: "add new process name",
 					Action: func(c *cli.Context) error {
