@@ -28,6 +28,7 @@ type System struct {
 	NewGroup       func(string, *System, util2.Config) Group
 	NewCommand     func(string, *System, util2.Config) Command
 	NewDNS         func(string, *System, util2.Config) DNS
+	NewReverseDNS  func(string, *System, util2.Config) ReverseDNS
 	NewProcess     func(string, *System, util2.Config) Process
 	NewGossfile    func(string, *System, util2.Config) Gossfile
 	NewKernelParam func(string, *System, util2.Config) KernelParam
@@ -63,6 +64,7 @@ func New(c *cli.Context) *System {
 		NewGroup:       NewDefGroup,
 		NewCommand:     NewDefCommand,
 		NewDNS:         NewDefDNS,
+		NewReverseDNS:  NewDefReverseDNS,
 		NewProcess:     NewDefProcess,
 		NewGossfile:    NewDefGossfile,
 		NewKernelParam: NewDefKernelParam,

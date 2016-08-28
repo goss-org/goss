@@ -87,6 +87,12 @@
             "timeout": 1000
         }
     },
+    "reverse-dns": {
+        "64.233.184.26": {
+            "resolveable": true,
+            "timeout": 1000
+        }
+    },
     "process": {
         "apache2": {
             "running": false

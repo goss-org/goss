@@ -82,6 +82,15 @@
             "timeout": 1000
         }
     },
+    "reverse-dns": {
+        "64.233.184.26" : {
+            "resolveable": true,
+            "hosts": [
+                "wa-in-f26.1e100.net."
+            ],
+            "timeout": 1000
+        }
+    },
     "process": {
         "foobar": {
             "running": false
