@@ -13,12 +13,15 @@ type Nagios struct{}
 
 func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var testCount, failed, skipped int
+
 	var summary map[int]string
+	summary = make(map[int]string)
+
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.FAIL:
-				summary[failed] = "not ok " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult) + "\n"
+				summary[failed] = "Failure " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult) + "\n"
 				failed++
 			case resource.SKIP:
 				skipped++
