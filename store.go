@@ -94,7 +94,12 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 	}
 
 	for _, g := range gossConfig.Gossfiles {
-		fpath := filepath.Join(path, g.ID())
+		var fpath string
+		if strings.HasPrefix(g.ID(), "/") {
+			fpath = g.ID()
+		} else {
+			fpath = filepath.Join(path, g.ID())
+		}
 		fdir := filepath.Dir(fpath)
 		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
 		gossConfig = mergeGoss(gossConfig, j)
