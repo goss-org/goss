@@ -177,6 +177,7 @@ package:
 * TAP
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+* nagios_verbose - nagios output with verbose failure output.
 
 ## Community Contribuations
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss

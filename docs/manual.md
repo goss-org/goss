@@ -90,6 +90,7 @@ Valid formats:
   * TAP
   * JUnit
   * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+  * nagios_verbose - nagios output with verbose failure output.
 * --no-color (disable color)
 
 ### Example:
