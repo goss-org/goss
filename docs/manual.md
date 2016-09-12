@@ -78,7 +78,7 @@ Valid formats:
 
 ## validate, v - Validate the system
 
-`validate` runs the goss test suite on your server. Prints an rspec-like (by dfeault) output of test results. Exists with status 0 on success, non-0 otherwise.
+`validate` runs the goss test suite on your server. Prints an rspec-like (by default) output of test results. Exits with status 0 on success, non-0 otherwise.
 
 ### Flags
 * --sleep, -s - Time to sleep between retries (default: 1s)
