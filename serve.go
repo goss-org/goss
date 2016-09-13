@@ -20,11 +20,12 @@ func Serve(c *cli.Context) {
 	cache := cache.New(c.Duration("cache"), 30*time.Second)
 
 	health := healthHandler{
-		gossConfig: getGossConfig(c),
-		sys:        system.New(c),
-		outputer:   getOutputer(c),
-		cache:      cache,
-		gossMu:     &sync.Mutex{},
+		gossConfig:    getGossConfig(c),
+		sys:           system.New(c),
+		outputer:      getOutputer(c),
+		cache:         cache,
+		gossMu:        &sync.Mutex{},
+		maxConcurrent: c.Int("max-concurrent"),
 	}
 	if c.String("format") == "json" {
 		health.contentType = "application/json"
@@ -40,13 +41,14 @@ type res struct {
 	b        bytes.Buffer
 }
 type healthHandler struct {
-	c           *cli.Context
-	gossConfig  GossConfig
-	sys         *system.System
-	outputer    outputs.Outputer
-	cache       *cache.Cache
-	gossMu      *sync.Mutex
-	contentType string
+	c             *cli.Context
+	gossConfig    GossConfig
+	sys           *system.System
+	outputer      outputs.Outputer
+	cache         *cache.Cache
+	gossMu        *sync.Mutex
+	contentType   string
+	maxConcurrent int
 }
 
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +66,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			log.Printf("%v: Stale cache, running tests", r.RemoteAddr)
 			iStartTime := time.Now()
-			out := validate(h.sys, h.gossConfig)
+			out := validate(h.sys, h.gossConfig, h.maxConcurrent)
 			var b bytes.Buffer
 			exitCode := h.outputer.Output(&b, out, iStartTime)
 			resp = res{exitCode: exitCode, b: b}
