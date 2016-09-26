@@ -23,5 +23,5 @@ curl -L "https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-lin
 chmod +rx "$INSTALL_LOC"
 echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
-"$GOSS_DST"/goss --version
+"$INSTALL_LOC" --version
 }
