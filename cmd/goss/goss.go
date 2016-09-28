@@ -61,6 +61,12 @@ func main() {
 					Value:  0,
 					EnvVar: "GOSS_RETRY_TIMEOUT",
 				},
+				cli.IntFlag{
+					Name:   "max-concurrent",
+					Usage:  "Max number of tests to run concurrently",
+					Value:  50,
+					EnvVar: "GOSS_MAX_CONCURRENT",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				goss.Validate(c, startTime)
@@ -95,6 +101,12 @@ func main() {
 					Value:  "/healthz",
 					Usage:  "Endpoint to expose",
 					EnvVar: "GOSS_ENDPOINT",
+				},
+				cli.IntFlag{
+					Name:   "max-concurrent",
+					Usage:  "Max number of tests to run concurrently",
+					Value:  50,
+					EnvVar: "GOSS_MAX_CONCURRENT",
 				},
 			},
 			Action: func(c *cli.Context) error {

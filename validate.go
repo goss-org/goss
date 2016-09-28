@@ -64,7 +64,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	i := 1
 	for {
 		iStartTime := time.Now()
-		out := validate(sys, gossConfig)
+		out := validate(sys, gossConfig, c.Int("max-concurrent"))
 		exitCode := outputer.Output(os.Stdout, out, iStartTime)
 		if retryTimeout == 0 || exitCode == 0 {
 			os.Exit(exitCode)
@@ -83,7 +83,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig, maxConcurrent int) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
@@ -94,12 +94,9 @@ func validate(sys *system.System, gossConfig GossConfig) <-chan []resource.TestR
 		close(in)
 	}()
 
-	if os.Getenv("GOMAXPROCS") == "" {
-		runtime.GOMAXPROCS(runtime.NumCPU())
-	}
 	workerCount := runtime.NumCPU() * 5
-	if workerCount > 50 {
-		workerCount = 50
+	if workerCount > maxConcurrent {
+		workerCount = maxConcurrent
 	}
 	var wg sync.WaitGroup
 	for i := 0; i < workerCount; i++ {

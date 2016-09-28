@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -92,8 +93,20 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 		fmt.Println("Error: Max depth of 50 reached, possibly due to dependency loop in goss file")
 		os.Exit(1)
 	}
+	// Our return gossConfig
+	ret := *NewGossConfig()
+	ret = mergeGoss(ret, gossConfig)
 
-	for _, g := range gossConfig.Gossfiles {
+	// Sort the gossfiles to ensure consistent ordering
+	var keys []string
+	for k, _ := range gossConfig.Gossfiles {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	// Merge gossfiles in sorted order
+	for _, k := range keys {
+		g := gossConfig.Gossfiles[k]
 		var fpath string
 		if strings.HasPrefix(g.ID(), "/") {
 			fpath = g.ID()
@@ -102,9 +115,9 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 		}
 		fdir := filepath.Dir(fpath)
 		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
-		gossConfig = mergeGoss(gossConfig, j)
+		ret = mergeGoss(ret, j)
 	}
-	return gossConfig
+	return ret
 }
 
 func WriteJSON(filePath string, gossConfig GossConfig) error {
