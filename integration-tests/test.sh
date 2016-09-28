@@ -36,8 +36,8 @@ opts=(--cap-add SYS_ADMIN -v "$PWD/goss:/goss"  -d --name "$container_name" $(se
 id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
-# Give httpd time to start up
-[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.json" validate -r 10s -s 100ms
+# Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
+[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.json" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.json validate")
 out=$(docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/$os/goss.json" validate)
