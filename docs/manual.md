@@ -92,6 +92,7 @@ Valid formats:
   * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
   * nagios_verbose - nagios output with verbose failure output.
 * --no-color (disable color)
+* --max-concurrent - Max number of tests to run concurrently
 
 ### Example:
 
@@ -112,6 +113,7 @@ $ goss render | ssh remote-host 'goss validate'
 * --listen-addr value, -l value - Address to listen on [ip]:port (default: ":8080")
 * --endpoint value, -e value - Endpoint to expose (default: "/healthz")
 * --format, -f (output format) - same as [validate](#validate-v---validate-the-system)
+* --max-concurrent - Max number of tests to run concurrently
 
 ### Example:
 
