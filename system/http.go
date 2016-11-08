@@ -15,22 +15,25 @@ type HTTP interface {
 	Body() (io.Reader, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
+	SetNoFollowRedirects(bool)
 }
 
 type DefHTTP struct {
-	http          string
-	allowInsecure bool
-	resp          *http.Response
-	Timeout       int
-	loaded        bool
-	err           error
+	http              string
+	allowInsecure     bool
+	noFollowRedirects bool
+	resp              *http.Response
+	Timeout           int
+	loaded            bool
+	err               error
 }
 
 func NewDefHTTP(http string, system *System, config util.Config) HTTP {
 	return &DefHTTP{
-		http:          http,
-		allowInsecure: config.AllowInsecure,
-		Timeout:       config.Timeout,
+		http:              http,
+		allowInsecure:     config.AllowInsecure,
+		noFollowRedirects: config.NoFollowRedirects,
+		Timeout:           config.Timeout,
 	}
 }
 
@@ -47,6 +50,12 @@ func (u *DefHTTP) setup() error {
 		Transport: tr,
 		Timeout:   time.Duration(u.Timeout) * time.Millisecond,
 	}
+
+	if u.noFollowRedirects {
+		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}
+	}
 	u.resp, u.err = client.Get(u.http)
 
 	return u.err
@@ -57,6 +66,10 @@ func (u *DefHTTP) Exists() (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (u *DefHTTP) SetNoFollowRedirects(t bool) {
+	u.noFollowRedirects = t
 }
 
 func (u *DefHTTP) SetAllowInsecure(t bool) {
