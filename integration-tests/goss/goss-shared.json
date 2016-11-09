@@ -80,6 +80,11 @@
                 "::1"
             ],
             "timeout": 1000
+        },
+        "example.com": {
+            "resolveable": true,
+            "server": "8.8.8.8",
+            "timeout": 1000
         }
     },
     "process": {

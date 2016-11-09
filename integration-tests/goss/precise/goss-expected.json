@@ -105,6 +105,14 @@
         }
     },
     "dns": {
+        "example.com": {
+            "resolveable": true,
+            "addrs": [
+                "93.184.216.34"
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
         "localhost": {
             "resolveable": true,
             "addrs": [

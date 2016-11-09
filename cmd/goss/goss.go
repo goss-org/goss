@@ -227,6 +227,10 @@ func main() {
 							Name:  "timeout",
 							Value: 500 * time.Millisecond,
 						},
+						cli.StringFlag{
+							Name:  "server",
+							Usage: "The IP address of a DNS server to query",
+						},
 					},
 					Action: func(c *cli.Context) error {
 						goss.AddResources(c.GlobalString("gossfile"), "DNS", c.Args(), c)

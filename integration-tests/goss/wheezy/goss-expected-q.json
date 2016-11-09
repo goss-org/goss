@@ -82,6 +82,11 @@
         }
     },
     "dns": {
+        "example.com": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
         "localhost": {
             "resolveable": true,
             "timeout": 1000

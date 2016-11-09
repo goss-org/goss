@@ -19,6 +19,7 @@ func AddResources(fileName, resourceName string, keys []string, c *cli.Context) 
 		IgnoreList:    c.GlobalStringSlice("exclude-attr"),
 		Timeout:       int(c.Duration("timeout") / time.Millisecond),
 		AllowInsecure: c.Bool("insecure"),
+		Server:        c.String("server"),
 	}
 
 	var gossConfig GossConfig
