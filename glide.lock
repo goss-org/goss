@@ -1,28 +1,32 @@
-hash: 6bbda86455edefb24ebb6fe039ffc6a5f21076c615f69f9cb17c06d3ae0ae404
-updated: 2016-07-28T02:14:47.93162924-04:00
+hash: ee9c9147007d86588eb760fe7985f4017b3798255d99b23d3240c6a0d8b33291
+updated: 2016-11-09T02:23:29.857676716Z
 imports:
 - name: github.com/achanda/go-sysctl
   version: 6be7678c45d2052640e72060e4f5db6165b1ecab
 - name: github.com/aelsabbahy/GOnetstat
   version: edf89f784e0876818dc19f7744a16742a0a66f16
 - name: github.com/cheekybits/genny
-  version: 670ed678f7799e3ead194eaf9a0848920a494889
+  version: e8e29e67948b15c64e60d6617182c18cf7eead7f
   subpackages:
   - generic
 - name: github.com/docker/docker
-  version: 0f5c9d301b9b1cca66b3ea0f9dec3b5317d3686d
+  version: 383a2f046b16c9f79d2fb800844e6550cc784871
   subpackages:
   - pkg/mount
 - name: github.com/fatih/color
-  version: 76d423163af754ff6423d2d9be0057fbf03c57c2
+  version: bf82308e8c8546dc2b945157173eb8a959ae9505
+- name: github.com/mattn/go-colorable
+  version: d228849504861217f796da67fae4f6e347643f15
 - name: github.com/mattn/go-isatty
-  version: 7fcbc72f853b92b5720db4a6b8482be612daef24
+  version: 66b8e73f3f5cda9f96b69efd03dd3d7fc4a5cdb8
+- name: github.com/miekg/dns
+  version: 58f52c57ce9df13460ac68200cef30a008b9c468
 - name: github.com/mitchellh/go-ps
-  version: e6c6068076470196af082b1ff896e24a51a87b2a
+  version: e2d21980687ce16e58469d98dcee92d27fbbd7fb
 - name: github.com/oleiade/reflections
-  version: 632977f98cd34d217c4b57d0840ec188b3d3dcaf
+  version: 0e86b3c98b2ff33e30c85cfe97d9a63d439fe7eb
 - name: github.com/onsi/gomega
-  version: c72df929b80ef4930aaa75d5e486887ff2f3e06a
+  version: ff4bc6b6f9f5affa66635cd04d31d2a7ee21ffd6
   subpackages:
   - types
   - internal/assertion
@@ -36,15 +40,17 @@ imports:
   - matchers/support/goraph/node
   - matchers/support/goraph/util
 - name: github.com/opencontainers/runc
-  version: 4e6893b05a6aa723daa5f9194361032c6beaca25
+  version: 8779fa57eb4a810a7360187dfa5e168a76cf5d21
   subpackages:
   - libcontainer/user
 - name: github.com/patrickmn/go-cache
   version: 1881a9bccb818787f68c52bfba648c6cf34c34fa
-- name: github.com/shiena/ansicolor
-  version: d445752f6f66f9cd987722f109149f6799cdf1de
 - name: github.com/urfave/cli
-  version: 01857ac33766ce0c93856370626f9799281c14f4
+  version: d86a009f5e13f83df65d0d6cee9a2e3f1445f0da
+- name: golang.org/x/sys
+  version: 9a2e24c3733eddc63871eda99f253e2db29bd3b9
+  subpackages:
+  - unix
 - name: gopkg.in/yaml.v2
-  version: f7716cbe52baa25d2e9b0d0da546fcf909fc16b4
-devImports: []
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+testImports: []

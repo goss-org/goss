@@ -36,6 +36,8 @@ goss a "${args[@]}" command "echo 'hi'" foobar
 
 goss a "${args[@]}" dns --timeout 1s localhost
 
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 example.com
+
 goss a "${args[@]}" process $package foobar
 
 goss a "${args[@]}" kernel-param kernel.ostype

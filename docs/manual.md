@@ -424,12 +424,16 @@ command:
 ### dns
 Validates that the provided address is resolveable and the addrs it resolves to.
 
+Note: Without the server option set, a lookup from /etc/hosts and DNS will be
+done.
+
 ```yaml
 dns:
   localhost:
     # required attributes
     resolveable: true
     # optional attributes
+    server: 8.8.8.8
     addrs:
     - 127.0.0.1
     - ::1

@@ -20,6 +20,7 @@ func AddResources(fileName, resourceName string, keys []string, c *cli.Context) 
 		Timeout:           int(c.Duration("timeout") / time.Millisecond),
 		AllowInsecure:     c.Bool("insecure"),
 		NoFollowRedirects: c.Bool("no-follow-redirects"),
+		Server:        c.String("server"),
 	}
 
 	var gossConfig GossConfig
