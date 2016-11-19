@@ -5,8 +5,9 @@ import (
 	"net"
 	"sort"
 	"time"
+	"strings"
+	"strconv"
   "github.com/miekg/dns"
-
 	"github.com/aelsabbahy/goss/util"
 )
 
@@ -16,6 +17,7 @@ type DNS interface {
 	Resolveable() (bool, error)
 	Exists() (bool, error)
 	Server() string
+	Qtype() string
 }
 
 type DefDNS struct {
@@ -26,13 +28,23 @@ type DefDNS struct {
 	loaded      bool
 	err         error
 	server      string
+	qtype       string
 }
 
 func NewDefDNS(host string, system *System, config util.Config) DNS {
+	var h string
+	var t string
+	if len(strings.Split(host, ":")) > 1 {
+		h = strings.Split(host, ":")[1]
+		t = strings.Split(host, ":")[0]
+	} else {
+		h = host
+	}
 	return &DefDNS{
-		host:    host,
+		host:    h,
 		Timeout: config.Timeout,
 		server:  config.Server,
+		qtype:   t,
 	}
 }
 
@@ -44,13 +56,17 @@ func (d *DefDNS) Server() string {
 	return d.server
 }
 
+func (d *DefDNS) Qtype() string {
+	return d.qtype
+}
+
 func (d *DefDNS) setup() error {
 	if d.loaded {
 		return d.err
 	}
 	d.loaded = true
 
-	addrs, err := lookupHost(d.host, d.server, d.Timeout)
+	addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 	if err != nil || len(addrs) == 0 {
 		d.resolveable = false
 		d.addrs = []string{}
@@ -84,8 +100,7 @@ func (d *DefDNS) Exists() (bool, error) {
 	return false, nil
 }
 
-func lookupHost(host string, server string, timeout int) ([]string, error) {
-
+func DNSlookup(host string, server string, qtype string, timeout int) ([]string, error) {
 	c1 := make(chan []string, 1)
 	e1 := make(chan error, 1)
 	timeoutD := time.Duration(timeout) * time.Millisecond
@@ -94,7 +109,26 @@ func lookupHost(host string, server string, timeout int) ([]string, error) {
 	var err error
 	go func() {
     if server != "" {
-			addrs, err = serverLookup(host, server)
+			switch qtype {
+			case "A":
+				addrs, err = LookupA(host, server)
+			case "AAAA":
+				addrs, err = LookupAAAA(host, server)
+			case "PTR":
+				addrs, err = LookupPTR(host, server)
+			case "CNAME":
+				addrs, err = LookupCNAME(host, server)
+			case "MX":
+				addrs, err = LookupMX(host, server)
+			case "NS":
+				addrs, err = LookupNS(host, server)
+			case "SRV":
+				addrs, err = LookupSRV(host, server)
+			case "TXT":
+				addrs, err = LookupTXT(host, server)
+			default:
+				addrs, err = LookupHost(host, server)
+			}
 		} else {
 		  addrs, err = net.LookupHost(host)
 		}
@@ -113,22 +147,178 @@ func lookupHost(host string, server string, timeout int) ([]string, error) {
 	}
 }
 
-func serverLookup(host string, server string) ([]string, error) {
+// These are function are a re-implementation of the net.Lookup* ones
+// They are adapted to the package miekg/dns.
+
+// LookupAddr performs a reverse lookup for the given address, returning a
+// list of names mapping to that address.
+func LookupPTR(addr string, server string) (name []string, err error) {
+
+	reverse, err := dns.ReverseAddr(addr)
+	if err != nil {
+		return nil, err
+	}
+
 	c := new(dns.Client)
 	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
+
+	m.SetQuestion(reverse, dns.TypePTR)
 
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-    return nil, fmt.Errorf("%s", err)
-  }
+		return nil, err
+	}
+	for _, ans := range r.Answer {
+		name = append(name, ans.(*dns.PTR).Ptr)
+	}
+	return
+}
+
+// LookupHost looks up the given host. It returns
+// an array of that host's addresses IPv4 and IPv6.
+func LookupHost(host string, server string) (addrs []string, err error) {
+	a, _ := LookupA(host, server)
+	aaaa, _ := LookupAAAA(host, server)
+  addrs = append(a, aaaa...)
+
+	return
+}
+
+// A record lookup
+func LookupA(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
 	if len(r.Answer) == 0 {
     return nil, fmt.Errorf("No DNS record found")
-  }
-	var answer []string
-  for _, ans := range r.Answer {
-    Arecord := ans.(*dns.A)
-    answer = append(answer, Arecord.A.String())
-  }
-	return answer, nil
+	}
+	for _, ans := range r.Answer {
+		addrs = append(addrs, ans.(*dns.A).A.String())
+	}
+
+	return
+}
+
+// AAAA (IPv6) record lookup
+func LookupAAAA(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		addrs = append(addrs, ans.(*dns.AAAA).AAAA.String())
+	}
+
+	return
+}
+
+// CNAME record lookup
+func LookupCNAME(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		addrs = append(addrs, ans.(*dns.CNAME).Target)
+	}
+
+	return
+}
+
+// MX record lookup
+func LookupMX(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		mxstring := strconv.Itoa(int(ans.(*dns.MX).Preference)) + " " + ans.(*dns.MX).Mx
+		addrs = append(addrs, mxstring)
+	}
+
+	return
+}
+
+// NS record lookup
+func LookupNS(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		addrs = append(addrs, ans.(*dns.NS).Ns)
+	}
+
+	return
+}
+
+// SRV record lookup
+func LookupSRV(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		sr := ans.(*dns.SRV)
+		prio := strconv.Itoa(int(sr.Priority))
+		weight := strconv.Itoa(int(sr.Weight))
+		port := strconv.Itoa(int(sr.Port))
+		srvrec := strings.Join([]string{prio, weight, port, sr.Target}, " ")
+		addrs = append(addrs, srvrec)
+	}
+
+	return
+}
+
+// TXT record lookup
+func LookupTXT(host string, server string) (addrs []string, err error) {
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, fmt.Errorf("%s", err)
+	}
+	if len(r.Answer) == 0 {
+    return nil, fmt.Errorf("No DNS record found")
+	}
+	for _, ans := range r.Answer {
+		addrs = append(addrs, ans.(*dns.TXT).Txt...)
+	}
+
+	return
 }

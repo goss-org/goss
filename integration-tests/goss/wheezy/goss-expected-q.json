@@ -82,6 +82,36 @@
         }
     },
     "dns": {
+        "CNAME:pysysops.github.io": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "MX:devopsmakers.com": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "NS:devopsmakers.com": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "PTR:8.8.8.8": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "SRV:_test._tcp.dnstest.devopsmakers.com": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "TXT:dnstest.devopsmakers.com": {
+            "resolveable": true,
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
         "example.com": {
             "resolveable": true,
             "timeout": 1000,

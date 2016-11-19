@@ -424,9 +424,6 @@ command:
 ### dns
 Validates that the provided address is resolveable and the addrs it resolves to.
 
-Note: Without the server option set, a lookup from /etc/hosts and DNS will be
-done.
-
 ```yaml
 dns:
   localhost:
@@ -451,6 +448,43 @@ dns:
     timeout: 500 # in milliseconds
 ```
 
+With the server attribute is set, it is possible to validate the following types of DNS record:
+
+- A
+- AAAA
+- CNAME
+- MX
+- NS
+- PTR
+- SRV
+- TXT
+
+To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:
+
+```yaml
+dns:
+  # Validate a CNAME record
+  CNAME:pysysops.github.io:
+    resolvable: true
+    server: 8.8.8.8
+    addrs:
+    - "github.map.fastly.net."
+
+  # Validate a PTR record
+  PTR:8.8.8.8:
+    resolvable: true
+    server: 8.8.8.8
+    addrs:
+    - "google-public-dns-a.google.com."
+
+  # Validate and SRV record
+  SRV:_test._tcp.dnstest.devopsmakers.com:
+    resolvable: true
+    server: 8.8.8.8
+    addrs:
+    - "0 5 20000 a.devopsmakers.com."
+    - "10 5 20000 b.devopsmakers.com."
+```
 
 ### file
 Validates the state of a file
