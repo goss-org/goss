@@ -465,21 +465,21 @@ To validate specific DNS address types, prepend the hostname with the type and a
 dns:
   # Validate a CNAME record
   CNAME:pysysops.github.io:
-    resolvable: true
+    resolveable: true
     server: 8.8.8.8
     addrs:
     - "github.map.fastly.net."
 
   # Validate a PTR record
   PTR:8.8.8.8:
-    resolvable: true
+    resolveable: true
     server: 8.8.8.8
     addrs:
     - "google-public-dns-a.google.com."
 
   # Validate and SRV record
   SRV:_test._tcp.dnstest.devopsmakers.com:
-    resolvable: true
+    resolveable: true
     server: 8.8.8.8
     addrs:
     - "0 5 20000 a.devopsmakers.com."
