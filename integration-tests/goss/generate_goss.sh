@@ -34,9 +34,21 @@ goss a "${args[@]}" group $user foobar
 
 goss a "${args[@]}" command "echo 'hi'" foobar
 
-goss a "${args[@]}" dns --timeout 1s localhost
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CNAME:pysysops.github.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 MX:devopsmakers.com
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 NS:devopsmakers.com
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 PTR:8.8.8.8
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 SRV:_test._tcp.dnstest.devopsmakers.com
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 TXT:dnstest.devopsmakers.com
 
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 example.com
+
+goss a "${args[@]}" dns --timeout 1s localhost
 
 goss a "${args[@]}" process $package foobar
 

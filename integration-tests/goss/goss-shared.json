@@ -73,17 +73,76 @@
         }
     },
     "dns": {
+        "CNAME:pysysops.github.io": {
+            "resolveable": true,
+            "addrs": [
+                "github.map.fastly.net."
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "MX:devopsmakers.com": {
+            "resolveable": true,
+            "addrs": [
+                "1 aspmx.l.google.com.",
+                "10 alt4.aspmx.l.google.com.",
+                "5 alt2.aspmx.l.google.com.",
+                "5 alt3.aspmx.l.google.com."
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "NS:devopsmakers.com": {
+            "resolveable": true,
+            "addrs": [
+                "ns-uk.1and1-dns.biz.",
+                "ns-uk.1and1-dns.co.uk.",
+                "ns-uk.1and1-dns.com.",
+                "ns-uk.1and1-dns.org."
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "PTR:8.8.8.8": {
+            "resolveable": true,
+            "addrs": [
+                "google-public-dns-a.google.com."
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "SRV:_test._tcp.dnstest.devopsmakers.com": {
+            "resolveable": true,
+            "addrs": [
+                "0 5 20000 a.devopsmakers.com.",
+                "10 5 20000 b.devopsmakers.com."
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "TXT:dnstest.devopsmakers.com": {
+            "resolveable": true,
+            "addrs": [
+                "TXT Test Record"
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
+        "example.com": {
+            "resolveable": true,
+            "addrs": [
+                "2606:2800:220:1:248:1893:25c8:1946",
+                "93.184.216.34"
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
         "localhost": {
             "resolveable": true,
             "addrs": [
                 "127.0.0.1",
                 "::1"
             ],
-            "timeout": 1000
-        },
-        "example.com": {
-            "resolveable": true,
-            "server": "8.8.8.8",
             "timeout": 1000
         }
     },
