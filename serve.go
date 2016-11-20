@@ -30,6 +30,9 @@ func Serve(c *cli.Context) {
 	if c.String("format") == "json" {
 		health.contentType = "application/json"
 	}
+	if c.String("format") == "prometheus" {
+		health.contentType = "text/plain; version=0.0.4"
+	}
 	http.Handle(endpoint, health)
 	listenAddr := c.String("listen-addr")
 	log.Printf("Starting to listen on: %s", listenAddr)
