@@ -12,6 +12,7 @@
     * [render, r \- Render gossfile after importing all referenced gossfiles](#render-r---render-gossfile-after-importing-all-referenced-gossfiles)
     * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
     * [validate, v \- Validate the system](#validate-v---validate-the-system)
+* [Important note about goss file format](#important-note-about-goss-file-format)
 * [Available tests](#available-tests)
   * [command](#command)
   * [dns](#dns)
@@ -296,6 +297,80 @@ $ goss render | ssh remote-host 'goss validate'
 Total Duration: 0.002s
 Count: 6, Failed: 0, Skipped: 0
 ```
+
+
+
+## Important note about goss file format
+It is important to note that both YAML and JSON are formats that describe a nested data structure.
+
+**WRONG way to write a goss file**
+
+```yaml
+file:
+  /etc/httpd/conf/httpd.conf:
+    exists: true
+
+service:
+  httpd:
+    enabled: true
+    running: true
+
+file:
+  /var/www/html:
+    filetype: directory
+    exists: true  
+```
+
+If you try to validate this file, it will **only** run the second `file` test:
+
+```bash
+# goss validate --format documentation
+File: /var/www/html: exists: matches expectation: [true]
+File: /var/www/html: filetype: matches expectation: ["directory"]
+Service: httpd: enabled: matches expectation: [true]
+Service: httpd: running: matches expectation: [true]
+
+Total Duration: 0.014s
+Count: 8, Failed: 0, Skipped: 0
+```
+
+As you can see, the first `file` check has not been run because the second `file` entry *overwrites* the previous one.
+
+You need to make sure all the entries of the same type are under the same declaration.
+
+**This is the CORRECT way to write a goss file**
+
+```yaml
+file:
+  /etc/httpd/conf/httpd.conf:
+    exists: true
+  /var/www/html:
+    filetype: directory
+    exists: true  
+
+service:
+  httpd:
+    enabled: true
+    running: true
+```
+
+Running validate with this configuration will correctly check both files:
+
+```bash
+# goss validate --format documentation
+File: /var/www/html: exists: matches expectation: [true]
+File: /var/www/html: filetype: matches expectation: ["directory"]
+File: /etc/httpd/conf/httpd.conf: exists: matches expectation: [true]
+Service: httpd: enabled: matches expectation: [true]
+Service: httpd: running: matches expectation: [true]
+
+Total Duration: 0.014s
+Count: 10, Failed: 0, Skipped: 0
+```
+
+Please note that using the `goss add` and `goss autoadd` command will create a valid file, but if you're writing your files by hand you'll save a lot of time by taking this in consideration.
+
+If you want to keep your tests in separate files, the best way to obtain a single, valid, file is to create a main goss file that includes the others with the [gossfile](#gossfile) directive and then [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) it.
 
 
 
