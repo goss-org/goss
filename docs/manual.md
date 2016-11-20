@@ -1,44 +1,37 @@
-# Table of Contents
+# goss manual
 
-  * [Table of Contents](#table-of-contents)
-  * [Usage](#usage)
-    * [global options](#global-options)
-      * [\-g gossfile](#-g-gossfile)
-    * [validate, v \- Validate the system](#validate-v---validate-the-system)
-      * [Flags](#flags)
-      * [Example:](#example)
-    * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
-      * [Flags](#flags)
-      * [Example:](#example)
-    * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
-      * [Example:](#example-1)
+## Table of Contents
+
+* [Table of Contents](#table-of-contents)
+* [Usage](#usage)
+  * [global options](#global-options)
+    * [\-g gossfile](#-g-gossfile)
+  * [commands](#commands)
     * [add, a \- Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
-      * [Resource types](#resource-types)
-      * [Flags](#flags-1)
-        * [\-\-exclude\-attr](#--exclude-attr)
-      * [Example:](#example-2)
+    * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
     * [render, r \- Render gossfile after importing all referenced gossfiles](#render-r---render-gossfile-after-importing-all-referenced-gossfiles)
-      * [Example:](#example-3)
-    * [Available tests](#available-tests)
-      * [package](#package)
-      * [file](#file)
-      * [port](#port)
-      * [service](#service)
-      * [user](#user)
-      * [group](#group)
-      * [command](#command)
-      * [dns](#dns)
-      * [process](#process)
-      * [kernel-param](#kernel-param)
-      * [mount](#mount)
-      * [interface](#interface)
-      * [http](#http)
-      * [gossfile](#gossfile)
-    * [Patterns](#patterns)
-    * [Advanced Matchers](#advanced-matchers)
+    * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
+    * [validate, v \- Validate the system](#validate-v---validate-the-system)
+* [Available tests](#available-tests)
+  * [command](#command)
+  * [dns](#dns)
+  * [file](#file)
+  * [gossfile](#gossfile)
+  * [group](#group)
+  * [http](#http)
+  * [interface](#interface)
+  * [kernel-param](#kernel-param)
+  * [mount](#mount)
+  * [package](#package)
+  * [port](#port)
+  * [process](#process)
+  * [service](#service)
+  * [user](#user)
+* [Patterns](#patterns)
+* [Advanced Matchers](#advanced-matchers)
 
 
-# Usage
+## Usage
 
 ```
 NAME:
@@ -68,87 +61,91 @@ GLOBAL OPTIONS:
 ```
 **Note:** *Most flags can be set by using environment variables, see `--help` for more info.*
 
+
 ## global options
 ### -g gossfile
-The gossfile file to use when reading/writing tests. Use `-g -` to read from STDIN.
+The file to use when reading/writing tests. Use `-g -` to read from `STDIN`.
 
 Valid formats:
-* YAML (default)
-* JSON
+* **YAML** (default)
+* **JSON**
 
-## validate, v - Validate the system
+### --package <type>
+The package type to check for.
 
-`validate` runs the goss test suite on your server. Prints an rspec-like (by default) output of test results. Exits with status 0 on success, non-0 otherwise.
+Valid options are:
+* `apk`
+* `deb`
+* `pacman`
+* `rpm`
 
-### Flags
-* --sleep, -s - Time to sleep between retries (default: 1s)
-* --retry-timeout, -r - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
-* --format, -f (output format)
-  * rspecish **(default)** - Similar to rspec output
-  * documentation - Verbose test results
-  * JSON - Detailed test result
-  * TAP
-  * JUnit
-  * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
-  * nagios_verbose - nagios output with verbose failure output.
-* --no-color (disable color)
-* --max-concurrent - Max number of tests to run concurrently
 
-### Example:
+## commands
+Commands are the actions goss can run.
 
+* [add](#add-a---add-system-resource-to-test-suite): add a single test for a resource
+* [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite): automatically add multiple tests for a resource
+* [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles): renders and outputs the gossfile, importing all included gossfiles
+* [serve](#serve-s---serve-a-health-endpoint): serves the gossfile validation as an HTTP endpoint on a specified address and port, so you can use your gossfile as a health repor for the host
+* [validate](#validate-v---validate-the-system): runs the goss test suite on your server
+
+
+### add, a - Add system resource to test suite
+
+This will add a test for a resource. Non existent resources will add a test to ensure they do not exist on the system. A sub-command *resource type* has to be provided when running `add`.
+
+#### Resource types
+* `addr` - can verify if a remote `address:port` is reachable, see [addr](#addr)
+* `command` - can run a [command](#command) and validate the exit status and/or output
+* `dns` - resolves a [dns](#dns) name and validates the addresses
+* `file` - can validate a [file](#file) existence, permissions, stats (size, etc) and contents
+* `goss` - allows you to include the contents of another [gossfile](#gossfile)
+* `group` - can validate the existence and values of a [group](#group) on the system
+* `http` - can validate the HTTP response code and content of a URI, see [http](#http)
+* `interface` - can validate the existence and values (es. the addresses) of a network interface, see [interface](#interface)
+* `kernel-param` - can validate kernel parameters (sysctl values), see [kernel-param](#kernel-param)
+* `mount` - can validate the existence and options relative to a [mount](#mount) point
+* `package` - can validate the status of a [package](#package) using the package manager specified on the commandline with `--package`
+* `port` - can validate the status of a local [port](#port), for example `80` or `udp:123`
+* `process` - can validate the status of a [process](#process)
+* `service` - can validate if a [service](#service) is running and/or enabled at boot
+* `user` - can validate the existence and values of a [user](#user) on the system
+
+#### Flags
+##### --exclude-attr
+Ignore **non-required** attribute(s) matching the provided glob when adding a new resource, may be specified multiple times.
+
+#### Example:
 ```bash
-$ goss validate --format documentation
-$ curl -s https://static/or/dynamic/goss.json | goss validate
-$ goss render | ssh remote-host 'goss validate'
+$ goss a file /etc/passwd
+$ goss a user nobody
+$ goss a --exclude-attr home --exclude-attr shell user nobody
+$ goss a --exclude-attr '*' user nobody
 ```
 
-## serve, s - Serve a health endpoint
 
-`serve` exposes the goss test suite as a health endpoint on your server. The end-point will return the stest results in the format requested and an http status of 200 or 503.
-
-`serve` will look for a test suite in the same order as [validate](#validate-v---validate-the-system)
-
-### Flags
-* --cache value, -c value - Time to cache the results (default: 5s)
-* --listen-addr value, -l value - Address to listen on [ip]:port (default: ":8080")
-* --endpoint value, -e value - Endpoint to expose (default: "/healthz")
-* --format, -f (output format) - same as [validate](#validate-v---validate-the-system)
-* --max-concurrent - Max number of tests to run concurrently
-
-### Example:
-
-```bash
-$ goss serve &
-$ curl http://localhost:8080/healthz
-
-# JSON endpoint
-goss serve --format json &
-curl localhost:8080/healthz
-```
-
-## autoadd, aa - Auto add all matching resources to test suite
-Automatically adds all **existing** resources matching the provided argument.
+### autoadd, aa - Auto add all matching resources to test suite
+Automatically [adds](#add-a---add-system-resource-to-test-suite) all **existing** resources matching the provided argument.
 
 Will automatically add the following matching resources:
-* file - only if argument contains "/"
-* user
-* group
-* package
-* port
-* process - Also adding any ports it's listening to (if run as root)
-* service
+* `file` - only if argument contains `/`
+* `group`
+* `package`
+* `port`
+* `process` - Also adding any ports it's listening to (if run as root)
+* `service`
+* `user`
 
 Will **NOT** automatically add:
-* commands - for safety
-* dns
-* addr
-* kernel-param
-* mount
-* interface
-* http
+* `addr`
+* `command` - for safety
+* `dns`
+* `http`
+* `interface`
+* `kernel-param`
+* `mount`
 
-
-### Example:
+#### Example:
 ```bash
 $ goss autoadd sshd
 ```
@@ -187,53 +184,36 @@ process:
 ```
 
 
-## add, a - Add system resource to test suite
+### render, r - Render gossfile after importing all referenced gossfiles
+This command allows you to keep your tests separated and render a single, valid, gossfile, by including them with the `gossfile` directive.
 
-This will add a test for a resource. Non existent resources will add a test to ensure they do not exist on the system. A sub-command "resource type" has to be provided when running `add`.
-
-### Resource types
-* package - add new package
-* file - add new file
-* addr - add new remote address:port - ex: google.com:80
-* port - add new listening [protocol]:port - ex: 80 or udp:123
-* service - add new service
-* user - add new user
-* group - add new group
-* command - add new command
-* dns - add new dns
-* process - add new process name
-* kernel-param - add new kernel-param
-* mount - add new mount
-* interface - add new network interface
-* http - add new network http url
-* goss - add new goss file, it will be imported from this one
-
-### Flags
-#### --exclude-attr
-Ignore **non-required** attribute(s) matching the provided glob when adding a new resource, may be specified multiple times.
-
-### Example:
-```bash
-$ goss a file /etc/passwd
-$ goss a user nobody
-$ goss a --exclude-attr home --exclude-attr shell user nobody
-$ goss a --exclude-attr '*' user nobody
-```
-
-## render, r - Render gossfile after importing all referenced gossfiles
-### Example:
+#### Example:
 ```bash
 
-$ cat goss_httpd.yaml
+$ cat goss_httpd_package.yaml
 package:
   httpd:
     installed: true
     versions:
     - 2.2.15
 
+$ cat goss_httpd_service.yaml
+service:
+  httpd:
+    enabled: true
+    running: true
+
+$ cat goss_nginx_service-NO.yaml
+service:
+  nginx:
+    enabled: false
+    running: false
+
 $ cat goss.yaml
 gossfile:
-  goss_httpd.yaml: {}
+  goss_httpd_package.yaml: {}
+  goss_httpd_service.yaml: {}
+  goss_nginx_service-NO.yaml: {}
 
 $ goss -g goss.yaml render
 package:
@@ -241,21 +221,157 @@ package:
     installed: true
     versions:
     - 2.2.15
+service:
+  httpd:
+    enabled: true
+    running: true
+  nginx:
+    enabled: false
+    running: false
 ```
+
+
+### serve, s - Serve a health endpoint
+
+`serve` exposes the goss test suite as a health endpoint on your server. The end-point will return the stest results in the format requested and an http status of 200 or 503.
+
+`serve` will look for a test suite in the same order as [validate](#validate-v---validate-the-system)
+
+#### Flags
+* `--cache <value>`, `-c <value>` - Time to cache the results (default: 5s)
+* `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
+* `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
+* `--listen-addr [ip]:port`, `-l [ip]:port` - Address to listen on (default: `:8080`)
+* `--max-concurrent` - Max number of tests to run concurrently
+
+#### Example:
+
+```bash
+$ goss serve &
+$ curl http://localhost:8080/healthz
+
+# JSON endpoint
+$ goss serve --format json &
+$ curl localhost:8080/healthz
+```
+
+
+### validate, v - Validate the system
+
+`validate` runs the goss test suite on your server. Prints an rspec-like (by default) output of test results. Exits with status 0 on success, non-0 otherwise.
+
+#### Flags
+* `--format`, `-f` (output format)
+  * `documentation` - Verbose test results
+  * `JSON` - Detailed test result
+  * `JUnit`
+  * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
+  * `nagios_verbose` - Nagios output with verbose failure output.
+  * `rspecish` **(default)** - Similar to rspec output
+  * `TAP`
+* `--max-concurrent` - Max number of tests to run concurrently
+* `--no-color` - Disable color
+* `--retry-timeout`, `-r` - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
+* `--sleep`, `-s` - Time to sleep between retries (default: 1s)
+
+#### Example:
+
+```bash
+$ goss validate --format documentation
+File: /etc/hosts: exists: matches expectation: [true]
+DNS: localhost: resolveable: matches expectation: [true]
+[...]
+Total Duration: 0.002s
+Count: 10, Failed: 2, Skipped: 0
+
+$ curl -s https://static/or/dynamic/goss.json | goss validate
+...F.F
+[...]
+Total Duration: 0.002s
+Count: 6, Failed: 2, Skipped: 0
+
+$ goss render | ssh remote-host 'goss validate'
+......
+
+Total Duration: 0.002s
+Count: 6, Failed: 0, Skipped: 0
+```
+
+
 
 ## Available tests
-### package
-Validates the state of a package
+
+* [addr](#addr)
+* [command](#command)
+* [dns](#dns)
+* [file](#file)
+* [gossfile](#gossfile)
+* [group](#group)
+* [http](#http)
+* [interface](#interface)
+* [kernel-param](#kernel-param)
+* [mount](#mount)
+* [package](#package)
+* [port](#port)
+* [process](#process)
+* [service](#service)
+* [user](#user)
+
+
+### addr
+Validates if a remote `address:port` are accessible.
 
 ```yaml
-package:
-  httpd:
-    # required attributes
-    installed: true
-    # optional attributes
-    versions:
-    - 2.2.15
+tcp://ip-address-or-domain-name:80:
+  reachable: true
+  timeout: 500
 ```
+
+
+### command
+Validates the exit-status and output of a command
+
+```yaml
+command:
+  go version:
+    # required attributes
+    exit-status: 0
+    # optional attributes
+    stdout:
+    - go version go1.6 linux/amd64
+    stderr: []
+    timeout: 10000 # in milliseconds
+```
+
+`stdout` and `stderr` can be a string or [pattern](#patterns)
+
+
+### dns
+Validates that the provided address is resolveable and the addrs it resolves to.
+
+```yaml
+dns:
+  localhost:
+    # required attributes
+    resolveable: true
+    # optional attributes
+    addrs:
+    - 127.0.0.1
+    - ::1
+    timeout: 500 # in milliseconds
+```
+
+Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
+
+```yaml
+dns:
+  localhost:
+    resolveable: true
+    addrs:
+      consist-of: [127.0.0.1]
+    timeout: 500 # in milliseconds
+```
+
 
 ### file
 Validates the state of a file
@@ -274,11 +390,111 @@ file:
     contains: [] # Check file content for these patterns
 ```
 
-`contains` can be string or [pattern](#patterns)
+`contains` can be a string or a [pattern](#patterns)
+
+
+### gossfile
+Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples.
+
+```yaml
+gossfile:
+  goss_httpd.yaml: {}
+```
+
+
+### group
+Validates the state of a group
+
+```yaml
+group:
+  nfsnobody:
+    # required attributes
+    exists: true
+    # optional attributes
+    gid: 65534
+```
+
+
+### http
+Validates HTTP response status code and content.
+
+**NOTE:** Goss will automatically follow redirects
+
+```yaml
+http:
+  https://www.google.com:
+    # required attributes
+    status: 200
+    # optional attributes
+    allow-insecure: false
+    timeout: 1000
+    body: [] # Check http response content for these patterns
+```
+
+
+### interface
+Validates network interface values
+
+```yaml
+interface:
+  eth0:
+    # required attributes
+    exists: true
+    # optional attributes
+    addrs:
+    - 172.17.0.2/16
+    - fe80::42:acff:fe11:2/64
+```
+
+
+### kernel-param
+Validates kernel param (sysctl) value.
+
+```yaml
+kernel-param:
+  kernel.ostype:
+    # required attributes
+    value: Linux
+```
+
+To see the full list of current values, run `sysctl -a`.
+
+
+### mount
+Validates mount point attributes.
+
+```yaml
+mount:
+  /home:
+    # required attributes
+    exists: true
+    # optional attributes
+    opts:
+    - rw
+    - relatime
+    source: /dev/mapper/fedora-home
+    filesystem: xfs
+```
+
+
+### package
+Validates the state of a package
+
+```yaml
+package:
+  httpd:
+    # required attributes
+    installed: true
+    # optional attributes
+    versions:
+    - 2.2.15
+```
+
+**NOTE:** this check uses the `--package <format>` parameter passed on the command line.
 
 
 ### port
-Validates the state of a port
+Validates the state of a local port.
 
 ```yaml
 port:
@@ -291,8 +507,20 @@ port:
     - 0.0.0.0
 ```
 
+
+### process
+Validates if a process is running.
+
+```yaml
+process:
+  chrome:
+    # required attributes
+    running: true
+```
+
+
 ### service
-Validates the state of a service
+Validates the state of a service.
 
 ```yaml
 service:
@@ -301,6 +529,9 @@ service:
     enabled: true
     running: true
 ```
+
+**NOTE:** this will **not** automatically check if the process is alive, it will check the status from `systemd`/`upstart`/`init`.
+
 
 ### user
 Validates the state of a user
@@ -319,133 +550,24 @@ user:
     shell: /sbin/nologin
 ```
 
-### group
-Validates the state of a group
 
-```yaml
-group:
-  nfsnobody:
-    # required attributes
-    exists: true
-    # optional attributes
-    gid: 65534
-```
-
-### command
-Validates the exit-status and output of a command
-
-```yaml
-command:
-  go version:
-    # required attributes
-    exit-status: 0
-    # optional attributes
-    stdout:
-    - go version go1.6 linux/amd64
-    stderr: []
-    timeout: 10000 # in milliseconds
-```
-
-`stdout` and `stderr` can be string or [pattern](#patterns)
-
-### dns
-Validates that the provided address is resolveable and the addrs it resolves to.
-
-```yaml
-dns:
-  localhost:
-    # required attributes
-    resolveable: true
-    # optional attributes
-    addrs:
-    - 127.0.0.1
-    - ::1
-    timeout: 500 # in milliseconds
-```
-### process
-Validates if a process is running
-
-```yaml
-process:
-  chrome:
-    # required attributes
-    running: true
-```
-
-### kernel-param
-Validates kernel param value
-
-```yaml
-kernel-param:
-  kernel.ostype:
-    # required attributes
-    value: Linux
-```
-
-### mount
-Validates mount point attributes
-
-```yaml
-mount:
-  /home:
-    # required attributes
-    exists: true
-    # optional attributes
-    opts:
-    - rw
-    - relatime
-    source: /dev/mapper/fedora-home
-    filesystem: xfs
-```
-
-### interface
-Validates network interface values
-
-```yaml
-interface:
-  eth0:
-    # required attributes
-    exists: true
-    # optional attributes
-    addrs:
-    - 172.17.0.2/16
-    - fe80::42:acff:fe11:2/64
-```
-
-### http
-Validates http code and content
-*Note:* Goss will automatically follow redirects
-
-```yaml
-http:
-  https://www.google.com:
-    # required attributes
-    status: 200
-    # optional attributes
-    allow-insecure: false
-    timeout: 1000
-    body: [] # Check http response content for these patterns
-```
-
-### gossfile
-Import another goss file from this one.
-```yaml
-gossfile:
-  goss_httpd.yaml: {}
-```
 
 ## Patterns
-For the attributes that use patterns (ex. file, command output), each pattern is checked against the attribute string, the type of patterns are:
-* "string" - checks if any line contain string.
-* "!string" - inverse of above, checks that no line contains string
-* "\\!string" - escape sequence, check if any line contains "!string"
-* "/regex/" - verifies that line contains regex
-* "!/regex/" - inverse of above, checks that no line contains regex
+For the attributes that use patterns (ex. `file`, `command` `output`), each pattern is checked against the attribute string, the type of patterns are:
 
-**NOTE:** Pattern attrubutes do not support [Advanced Matchers](#advanced-matchers)
+* `"string"` - checks if any line contain string.
+* `"!string"` - inverse of above, checks that no line contains string
+* `"\\!string"` - escape sequence, check if any line contains `"!string"`
+* `"/regex/"` - verifies that line contains regex
+* `"!/regex/"` - inverse of above, checks that no line contains regex
+
+**NOTE:** Pattern attributes do not support [Advanced Matchers](#advanced-matchers)
 
 **NOTE:** Regex support is based on golangs regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
 
+**NOTE:** You will **need** the double backslash (`\\`) escape for Regex special entities, for example `\\s` for blank spaces.
+
+### Example
 ```bash
 $ cat /tmp/test.txt
 found
@@ -471,9 +593,11 @@ Count: 2, Failed: 0
 ```
 
 ## Advanced Matchers
-Goss supports advanced matchers by converting json input to [gomega](https://onsi.github.io/gomega/) matchers. Here are some examples:
+Goss supports advanced matchers by converting json input to [gomega](https://onsi.github.io/gomega/) matchers.
 
-Validate that user "nobody" has a uid that is less than 500 and that they are ONLY a member of the "nobody" group.
+### Examples
+
+Validate that user `nobody` has a `uid` that is less than `500` and that they are **only** a member of the `nobody` group.
 ```yaml
 user:
   nobody:
@@ -484,8 +608,7 @@ user:
       consist-of: [nobody]
 ```
 
-Matchers can be nested for more complex logic, Ex:
-Ensure that we have 3 kernel versions installed and none of them are "4.1.0":
+Matchers can be nested for more complex logic, for example you can ensure that you have 3 kernel versions installed and none of them are `4.1.0`:
 ```yaml
 package:
   kernel:
