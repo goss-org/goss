@@ -26,12 +26,14 @@ func Serve(c *cli.Context) {
 		cache:         cache,
 		gossMu:        &sync.Mutex{},
 		maxConcurrent: c.Int("max-concurrent"),
+		status:        1,
 	}
 	if c.String("format") == "json" {
 		health.contentType = "application/json"
 	}
 	if c.String("format") == "prometheus" {
 		health.contentType = "text/plain; version=0.0.4"
+		health.status = 0
 	}
 	http.Handle(endpoint, health)
 	listenAddr := c.String("listen-addr")
@@ -51,6 +53,7 @@ type healthHandler struct {
 	cache         *cache.Cache
 	gossMu        *sync.Mutex
 	contentType   string
+	status        int
 	maxConcurrent int
 }
 
@@ -79,7 +82,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.contentType != "" {
 		w.Header().Set("Content-Type", h.contentType)
 	}
-	if resp.exitCode == 0 {
+	if (resp.exitCode == 0) || (h.status == 0) {
 		resp.b.WriteTo(w)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
