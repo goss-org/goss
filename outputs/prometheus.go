@@ -13,6 +13,7 @@ import (
 type Prometheus struct{}
 
 func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+	time_now_ms := int64(time.Now().UnixNano()) / 1000000
 	testCount := 0
 	failed := 0
 	success := 0
@@ -25,17 +26,15 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult, st
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				summary[testCount] = mechanizeResult(testResult) + "\n"
 				success++
 			case resource.FAIL:
-				summary[testCount] = mechanizeResult(testResult) + "\n"
 				failed++
 			case resource.SKIP:
-				summary[testCount] = mechanizeResult(testResult) + "\n"
 				skipped++
 			default:
 				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}
+			summary[testCount] = fmt.Sprintf("%s %d\n", mechanizeResult(testResult), time_now_ms)
 			testCount++
 		}
 	}
@@ -65,23 +64,7 @@ func init() {
 }
 
 func mechanizeResult(r resource.TestResult) string {
-	var res string
-  var err string
-
-	if r.Err != nil {
-		err = fmt.Sprintf(",error=\"%v\"", r.Err)
-		res = "error"
-	} else {
-	  switch r.Result {
-	  case resource.SUCCESS:
-      res = "success"
- 	  case resource.SKIP:
-      res = "skipped"
-	  case resource.FAIL:
-	  	res = "failed"
-	  default:
-	  	panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
-	  }
-	}
-	return fmt.Sprintf("goss_%s{resource_id=\"%s\",property=\"%s\",result=\"%s\"%s} %d", strings.ToLower(r.ResourceType), r.ResourceId, r.Property, res, err, int64(r.Duration))
+	resource_name := fmt.Sprintf("goss_%s_duration_ms", strings.ToLower(r.ResourceType))
+	return fmt.Sprintf("%s{resource_id=\"%s\",property=\"%s\"} %d",
+		resource_name, r.ResourceId, r.Property, int64(r.Duration) / 1000000)
 }
