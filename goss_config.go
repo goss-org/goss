@@ -16,6 +16,7 @@ type GossConfig struct {
 	Groups       resource.GroupMap       `json:"group,omitempty" yaml:"group,omitempty"`
 	Commands     resource.CommandMap     `json:"command,omitempty" yaml:"command,omitempty"`
 	DNS          resource.DNSMap         `json:"dns,omitempty" yaml:"dns,omitempty"`
+	ReverseDNS   resource.ReverseDNSMap  `json:"reverse-dns,omitempty" yaml:"reverse-dns,omitempty"`
 	Processes    resource.ProcessMap     `json:"process,omitempty" yaml:"process,omitempty"`
 	Gossfiles    resource.GossfileMap    `json:"gossfile,omitempty" yaml:"gossfile,omitempty"`
 	KernelParams resource.KernelParamMap `json:"kernel-param,omitempty" yaml:"kernel-param,omitempty"`
@@ -35,6 +36,7 @@ func NewGossConfig() *GossConfig {
 		Groups:       make(resource.GroupMap),
 		Commands:     make(resource.CommandMap),
 		DNS:          make(resource.DNSMap),
+		ReverseDNS:   make(resource.ReverseDNSMap),
 		Processes:    make(resource.ProcessMap),
 		Gossfiles:    make(resource.GossfileMap),
 		KernelParams: make(resource.KernelParamMap),
@@ -47,7 +49,7 @@ func NewGossConfig() *GossConfig {
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands, c.HTTPs, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams, c.Mounts, c.Interfaces)
+	gm := genericConcatMaps(c.Commands, c.HTTPs, c.Addrs, c.DNS, c.ReverseDNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams, c.Mounts, c.Interfaces)
 	for _, m := range gm {
 		for _, t := range m {
 			// FIXME: Can this be moved to a safer compile-time check?
@@ -118,6 +120,10 @@ func mergeGoss(g1, g2 GossConfig) GossConfig {
 
 	for k, v := range g2.DNS {
 		g1.DNS[k] = v
+	}
+
+	for k, v := range g2.ReverseDNS {
+		g1.ReverseDNS[k] = v
 	}
 
 	for k, v := range g2.Processes {

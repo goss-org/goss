@@ -64,6 +64,13 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 			os.Exit(1)
 		}
 		resourcePrint(fileName, res)
+	case "ReverseDNS":
+		res, err := gossConfig.ReverseDNS.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		resourcePrint(fileName, res)
 	case "File":
 		res, err := gossConfig.Files.AppendSysResource(key, sys, config)
 		if err != nil {

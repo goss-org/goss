@@ -163,6 +163,7 @@ package:
 * group - add new group
 * command - add new command
 * dns - add new dns
+* reverse-dns - add new reverse dns
 * process - add new process name
 * kernel-param - add new kernel-param
 * mount - add new mount
