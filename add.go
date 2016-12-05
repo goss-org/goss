@@ -16,9 +16,10 @@ import (
 func AddResources(fileName, resourceName string, keys []string, c *cli.Context) error {
 	setStoreFormatFromFileName(fileName)
 	config := util.Config{
-		IgnoreList:    c.GlobalStringSlice("exclude-attr"),
-		Timeout:       int(c.Duration("timeout") / time.Millisecond),
-		AllowInsecure: c.Bool("insecure"),
+		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
+		Timeout:           int(c.Duration("timeout") / time.Millisecond),
+		AllowInsecure:     c.Bool("insecure"),
+		NoFollowRedirects: c.Bool("no-follow-redirects"),
 	}
 
 	var gossConfig GossConfig
