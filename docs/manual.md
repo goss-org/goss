@@ -493,8 +493,6 @@ group:
 ### http
 Validates HTTP response status code and content.
 
-**NOTE:** Goss will automatically follow redirects
-
 ```yaml
 http:
   https://www.google.com:
@@ -502,6 +500,7 @@ http:
     status: 200
     # optional attributes
     allow-insecure: false
+    no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
     body: [] # Check http response content for these patterns
 ```
