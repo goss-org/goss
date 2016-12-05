@@ -20,6 +20,7 @@ func Serve(c *cli.Context) {
 	cache := cache.New(c.Duration("cache"), 30*time.Second)
 
 	health := healthHandler{
+		c:             c,
 		gossConfig:    getGossConfig(c),
 		sys:           system.New(c),
 		outputer:      getOutputer(c),
@@ -64,6 +65,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if found {
 			resp = tmp.(res)
 		} else {
+			h.sys = system.New(h.c)
 			log.Printf("%v: Stale cache, running tests", r.RemoteAddr)
 			iStartTime := time.Now()
 			out := validate(h.sys, h.gossConfig, h.maxConcurrent)
