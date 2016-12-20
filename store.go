@@ -46,7 +46,7 @@ func setStoreFormatFromData(data []byte) {
 		StoreFormat = YAML
 		return
 	}
-	log.Printf("Unable to determine format from content")
+	log.Fatalf("Unable to determine format from content")
 }
 
 // Reads json file returning GossConfig
@@ -64,7 +64,9 @@ func ReadJSON(filePath string) GossConfig {
 
 // Reads json byte array returning GossConfig
 func ReadJSONData(data []byte) GossConfig {
-	setStoreFormatFromData(data)
+	if StoreFormat == UNSET {
+	  setStoreFormatFromData(data)
+	}
 	gossConfig := NewGossConfig()
 	// Horrible, but will do for now
 	if err := unmarshal(data, gossConfig); err != nil {
