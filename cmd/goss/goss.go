@@ -248,6 +248,9 @@ func main() {
 						cli.BoolFlag{
 							Name: "insecure, k",
 						},
+						cli.BoolFlag{
+							Name: "no-follow-redirects, r",
+						},
 						cli.DurationFlag{
 							Name:  "timeout",
 							Value: 5 * time.Second,

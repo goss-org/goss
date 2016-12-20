@@ -1,7 +1,8 @@
 package util
 
 type Config struct {
-	IgnoreList    []string
-	Timeout       int
-	AllowInsecure bool
+	IgnoreList        []string
+	Timeout           int
+	AllowInsecure     bool
+	NoFollowRedirects bool
 }

@@ -44,6 +44,8 @@ goss a "${args[@]}" mount /dev
 
 goss a "${args[@]}" http https://www.google.com
 
+goss a "${args[@]}" http http://google.com -r
+
 # Auto-add
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
 # Validate that duplicates are ignored
