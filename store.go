@@ -128,6 +128,18 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 		log.Fatalf("Error writing: %v\n", err)
 	}
 
+  // check if the auto added json data is empty before writing to file.
+	emptyConfig := *NewGossConfig()
+	emptyData, err := marshal(emptyConfig)
+	if err != nil {
+		log.Fatalf("Error writing: %v\n", err)
+	}
+
+  if string(emptyData) == string(jsonData) {
+	  log.Printf("Configuration empty! Please check resource name(s). Not writing.")
+		return nil
+  }
+
 	if err := ioutil.WriteFile(filePath, jsonData, 0644); err != nil {
 		log.Fatalf("Error writing: %v\n", err)
 	}
