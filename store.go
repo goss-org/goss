@@ -136,7 +136,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	}
 
   if string(emptyData) == string(jsonData) {
-	  log.Printf("Configuration empty! Please check resource name(s). Not writing.")
+	  log.Printf("Can't write empty configuration file. Please check resource name(s).")
 		return nil
   }
 
