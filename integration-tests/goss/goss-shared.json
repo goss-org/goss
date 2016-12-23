@@ -81,6 +81,17 @@
             "timeout": 1000,
             "server": "8.8.8.8"
         },
+        "pysysops.github.io": {
+            "resolveable": true,
+            "addrs": [
+                "151.101.0.133",
+                "151.101.128.133",
+                "151.101.192.133",
+                "151.101.64.133"
+            ],
+            "timeout": 1000,
+            "server": "8.8.8.8"
+        },
         "MX:devopsmakers.com": {
             "resolveable": true,
             "addrs": [

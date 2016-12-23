@@ -197,7 +197,9 @@ func LookupA(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		addrs = append(addrs, ans.(*dns.A).A.String())
+		if t, ok := ans.(*dns.A); ok {
+			addrs = append(addrs, t.A.String())
+		}
 	}
 
 	return
@@ -216,7 +218,9 @@ func LookupAAAA(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		addrs = append(addrs, ans.(*dns.AAAA).AAAA.String())
+		if t, ok := ans.(*dns.AAAA); ok {
+			addrs = append(addrs, t.AAAA.String())
+		}
 	}
 
 	return
@@ -235,7 +239,9 @@ func LookupCNAME(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		addrs = append(addrs, ans.(*dns.CNAME).Target)
+		if t, ok := ans.(*dns.CNAME); ok {
+			addrs = append(addrs, t.Target)
+		}
 	}
 
 	return
@@ -254,8 +260,10 @@ func LookupMX(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		mxstring := strconv.Itoa(int(ans.(*dns.MX).Preference)) + " " + ans.(*dns.MX).Mx
-		addrs = append(addrs, mxstring)
+		if t, ok := ans.(*dns.MX); ok {
+			mxstring := strconv.Itoa(int(t.Preference)) + " " + t.Mx
+			addrs = append(addrs, mxstring)
+		}
 	}
 
 	return
@@ -274,7 +282,9 @@ func LookupNS(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		addrs = append(addrs, ans.(*dns.NS).Ns)
+		if t, ok := ans.(*dns.NS); ok {
+			addrs = append(addrs, t.Ns)
+		}
 	}
 
 	return
@@ -293,12 +303,13 @@ func LookupSRV(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		sr := ans.(*dns.SRV)
-		prio := strconv.Itoa(int(sr.Priority))
-		weight := strconv.Itoa(int(sr.Weight))
-		port := strconv.Itoa(int(sr.Port))
-		srvrec := strings.Join([]string{prio, weight, port, sr.Target}, " ")
-		addrs = append(addrs, srvrec)
+		if t, ok := ans.(*dns.SRV); ok {
+			prio := strconv.Itoa(int(t.Priority))
+			weight := strconv.Itoa(int(t.Weight))
+			port := strconv.Itoa(int(t.Port))
+			srvrec := strings.Join([]string{prio, weight, port, t.Target}, " ")
+			addrs = append(addrs, srvrec)
+		}
 	}
 
 	return
@@ -317,7 +328,9 @@ func LookupTXT(host string, server string) (addrs []string, err error) {
     return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
-		addrs = append(addrs, ans.(*dns.TXT).Txt...)
+		if t, ok := ans.(*dns.TXT); ok {
+			addrs = append(addrs, t.Txt...)
+		}
 	}
 
 	return
