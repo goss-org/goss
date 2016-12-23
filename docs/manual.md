@@ -437,18 +437,7 @@ dns:
     timeout: 500 # in milliseconds
 ```
 
-Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
-
-```yaml
-dns:
-  localhost:
-    resolveable: true
-    addrs:
-      consist-of: [127.0.0.1]
-    timeout: 500 # in milliseconds
-```
-
-With the server attribute is set, it is possible to validate the following types of DNS record:
+With the server attribute set, it is possible to validate the following types of DNS record:
 
 - A
 - AAAA
@@ -484,6 +473,17 @@ dns:
     addrs:
     - "0 5 20000 a.devopsmakers.com."
     - "10 5 20000 b.devopsmakers.com."
+```
+
+Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
+
+```yaml
+dns:
+  localhost:
+    resolveable: true
+    addrs:
+      consist-of: [127.0.0.1]
+    timeout: 500 # in milliseconds
 ```
 
 ### file
@@ -710,6 +710,7 @@ Goss supports advanced matchers by converting json input to [gomega](https://ons
 ### Examples
 
 Validate that user `nobody` has a `uid` that is less than `500` and that they are **only** a member of the `nobody` group.
+
 ```yaml
 user:
   nobody:
@@ -721,6 +722,7 @@ user:
 ```
 
 Matchers can be nested for more complex logic, for example you can ensure that you have 3 kernel versions installed and none of them are `4.1.0`:
+
 ```yaml
 package:
   kernel:
