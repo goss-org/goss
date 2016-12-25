@@ -82,17 +82,17 @@
         }
     },
     "dns": {
-        "CNAME:pysysops.github.io": {
+        "CNAME:c.dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"
         },
-        "MX:devopsmakers.com": {
+        "MX:dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"
         },
-        "NS:devopsmakers.com": {
+        "NS:dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"
@@ -102,17 +102,17 @@
             "timeout": 1000,
             "server": "8.8.8.8"
         },
-        "SRV:_test._tcp.dnstest.devopsmakers.com": {
+        "SRV:_https._tcp.dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"
         },
-        "TXT:dnstest.devopsmakers.com": {
+        "TXT:txt._test.dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"
         },
-        "example.com": {
+        "ip6.dnstest.io": {
             "resolveable": true,
             "timeout": 1000,
             "server": "8.8.8.8"

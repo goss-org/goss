@@ -73,37 +73,32 @@
         }
     },
     "dns": {
-        "CNAME:pysysops.github.io": {
+        "CNAME:c.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "github.map.fastly.net."
+                "a.dnstest.io."
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "pysysops.github.io": {
+        "c.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "151.101.0.133",
-                "151.101.128.133",
-                "151.101.192.133",
-                "151.101.64.133"
+                "192.30.252.153"
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "MX:devopsmakers.com": {
+        "MX:dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "1 aspmx.l.google.com.",
-                "10 alt4.aspmx.l.google.com.",
-                "5 alt2.aspmx.l.google.com.",
-                "5 alt3.aspmx.l.google.com."
+                "10 b.dnstest.io.",
+                "5 a.dnstest.io."
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "NS:devopsmakers.com": {
+        "NS:dnstest.io": {
             "resolveable": true,
             "addrs": [
                 "ns-uk.1and1-dns.biz.",
@@ -111,7 +106,7 @@
                 "ns-uk.1and1-dns.com.",
                 "ns-uk.1and1-dns.org."
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
         "PTR:8.8.8.8": {
@@ -119,33 +114,33 @@
             "addrs": [
                 "google-public-dns-a.google.com."
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "SRV:_test._tcp.dnstest.devopsmakers.com": {
+        "SRV:_https._tcp.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "0 5 20000 a.devopsmakers.com.",
-                "10 5 20000 b.devopsmakers.com."
+                "0 5 443 a.dnstest.io.",
+                "10 10 443 b.dnstest.io."
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "TXT:dnstest.devopsmakers.com": {
+        "TXT:txt._test.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "TXT Test Record"
+                "Hello DNS"
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
-        "example.com": {
+        "ip6.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "2606:2800:220:1:248:1893:25c8:1946",
-                "93.184.216.34"
+                "2404:6800:4001:807::200e",
+                "192.30.252.153"
             ],
-            "timeout": 1000,
+            "timeout": 2000,
             "server": "8.8.8.8"
         },
         "localhost": {
@@ -154,12 +149,12 @@
                 "127.0.0.1",
                 "::1"
             ],
-            "timeout": 1000
+            "timeout": 2000
         },
-        "example.com": {
+        "dnstest.io": {
             "resolveable": true,
             "server": "8.8.8.8",
-            "timeout": 1000
+            "timeout": 2000
         }
     },
     "process": {

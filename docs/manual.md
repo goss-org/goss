@@ -453,7 +453,7 @@ To validate specific DNS address types, prepend the hostname with the type and a
 ```yaml
 dns:
   # Validate a CNAME record
-  CNAME:pysysops.github.io:
+  CNAME:dnstest.github.io:
     resolveable: true
     server: 8.8.8.8
     addrs:
@@ -467,12 +467,12 @@ dns:
     - "google-public-dns-a.google.com."
 
   # Validate and SRV record
-  SRV:_test._tcp.dnstest.devopsmakers.com:
+  SRV:_https._tcp.dnstest.io:
     resolveable: true
     server: 8.8.8.8
     addrs:
-    - "0 5 20000 a.devopsmakers.com."
-    - "10 5 20000 b.devopsmakers.com."
+    - "0 5 443 a.dnstest.io."
+    - "10 10 443 b.dnstest.io."
 ```
 
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
