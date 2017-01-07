@@ -125,10 +125,8 @@
         "NS:dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "ns-uk.1and1-dns.biz.",
-                "ns-uk.1and1-dns.co.uk.",
-                "ns-uk.1and1-dns.com.",
-                "ns-uk.1and1-dns.org."
+              "ns1.dnstest.io.",
+              "ns2.dnstest.io."
             ],
             "timeout": 1000,
             "server": "8.8.8.8"
@@ -161,7 +159,6 @@
         "ip6.dnstest.io": {
             "resolveable": true,
             "addrs": [
-                "192.30.252.153",
                 "2404:6800:4001:807::200e"
             ],
             "timeout": 1000,
