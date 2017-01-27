@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"crypto/md5"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/opencontainers/runc/libcontainer/user"
@@ -23,6 +24,7 @@ type File interface {
 	Owner() (string, error)
 	Group() (string, error)
 	LinkedTo() (string, error)
+	Md5() (string, error)
 }
 
 type DefFile struct {
@@ -213,4 +215,24 @@ func realPath(path string) (string, error) {
 	realPath, err = filepath.Abs(realPath)
 
 	return realPath, err
+}
+
+func (f *DefFile) Md5() (string, error) {
+  var result []byte
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fh, err := os.Open(f.realPath)
+	if err != nil {
+		return "", err
+	}
+  defer fh.Close()
+
+	hash := md5.New()
+  if _, err := io.Copy(hash, fh); err != nil {
+    return string(result), err
+  }
+
+  return fmt.Sprintf("%x", hash.Sum(result)), nil
 }
