@@ -291,7 +291,7 @@ $ curl -s https://static/or/dynamic/goss.json | goss validate
 Total Duration: 0.002s
 Count: 6, Failed: 2, Skipped: 0
 
-$ goss render | ssh remote-host 'goss -f - validate'
+$ goss render | ssh remote-host 'goss -g - validate'
 ......
 
 Total Duration: 0.002s
