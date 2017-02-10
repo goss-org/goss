@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net"
 	"sort"
-	"time"
-	"strings"
 	"strconv"
-  "github.com/miekg/dns"
+	"strings"
+	"time"
+
 	"github.com/aelsabbahy/goss/util"
+	"github.com/miekg/dns"
 )
 
 type DNS interface {
@@ -108,7 +109,7 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 	var addrs []string
 	var err error
 	go func() {
-    if server != "" {
+		if server != "" {
 			switch qtype {
 			case "A":
 				addrs, err = LookupA(host, server)
@@ -130,7 +131,7 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 				addrs, err = LookupHost(host, server)
 			}
 		} else {
-		  addrs, err = net.LookupHost(host)
+			addrs, err = net.LookupHost(host)
 		}
 		if err != nil {
 			e1 <- err
@@ -179,7 +180,7 @@ func LookupPTR(addr string, server string) (name []string, err error) {
 func LookupHost(host string, server string) (addrs []string, err error) {
 	a, _ := LookupA(host, server)
 	aaaa, _ := LookupAAAA(host, server)
-  addrs = append(a, aaaa...)
+	addrs = append(a, aaaa...)
 
 	return
 }
@@ -194,7 +195,7 @@ func LookupA(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.A); ok {
@@ -215,7 +216,7 @@ func LookupAAAA(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.AAAA); ok {
@@ -236,7 +237,7 @@ func LookupCNAME(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.CNAME); ok {
@@ -257,7 +258,7 @@ func LookupMX(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.MX); ok {
@@ -279,7 +280,7 @@ func LookupNS(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.NS); ok {
@@ -300,7 +301,7 @@ func LookupSRV(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.SRV); ok {
@@ -325,7 +326,7 @@ func LookupTXT(host string, server string) (addrs []string, err error) {
 		return nil, fmt.Errorf("%s", err)
 	}
 	if len(r.Answer) == 0 {
-    return nil, fmt.Errorf("No DNS record found")
+		return nil, fmt.Errorf("No DNS record found")
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.TXT); ok {
