@@ -65,7 +65,7 @@ func ReadJSON(filePath string) GossConfig {
 // Reads json byte array returning GossConfig
 func ReadJSONData(data []byte) GossConfig {
 	if StoreFormat == UNSET {
-	  setStoreFormatFromData(data)
+		setStoreFormatFromData(data)
 	}
 	gossConfig := NewGossConfig()
 	// Horrible, but will do for now
@@ -128,17 +128,17 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 		log.Fatalf("Error writing: %v\n", err)
 	}
 
-  // check if the auto added json data is empty before writing to file.
+	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
 		log.Fatalf("Error writing: %v\n", err)
 	}
 
-  if string(emptyData) == string(jsonData) {
-	  log.Printf("Can't write empty configuration file. Please check resource name(s).")
+	if string(emptyData) == string(jsonData) {
+		log.Printf("Can't write empty configuration file. Please check resource name(s).")
 		return nil
-  }
+	}
 
 	if err := ioutil.WriteFile(filePath, jsonData, 0644); err != nil {
 		log.Fatalf("Error writing: %v\n", err)
