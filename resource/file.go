@@ -17,6 +17,7 @@ type File struct {
 	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
 	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
 	Contains []string `json:"contains" yaml:"contains"`
+	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
 }
 
 func (f *File) ID() string      { return f.Path }
@@ -54,6 +55,9 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	}
 	if f.Size != nil {
 		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
+	}
+	if f.Md5 != nil {
+		results = append(results, ValidateValue(f, "md5", f.Md5, sysFile.Md5, skip))
 	}
 	return results
 }
