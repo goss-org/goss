@@ -1,6 +1,7 @@
 package system
 
 import (
+	"crypto/md5"
 	"fmt"
 	"io"
 	"os"
@@ -8,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"crypto/md5"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/opencontainers/runc/libcontainer/user"
@@ -218,7 +218,7 @@ func realPath(path string) (string, error) {
 }
 
 func (f *DefFile) Md5() (string, error) {
-  var result []byte
+
 	if err := f.setup(); err != nil {
 		return "", err
 	}
@@ -227,12 +227,12 @@ func (f *DefFile) Md5() (string, error) {
 	if err != nil {
 		return "", err
 	}
-  defer fh.Close()
+	defer fh.Close()
 
 	hash := md5.New()
-  if _, err := io.Copy(hash, fh); err != nil {
-    return string(result), err
-  }
+	if _, err := io.Copy(hash, fh); err != nil {
+		return "", err
+	}
 
-  return fmt.Sprintf("%x", hash.Sum(result)), nil
+	return fmt.Sprintf("%x", hash.Sum(nil)), nil
 }
