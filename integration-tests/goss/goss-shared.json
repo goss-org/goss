@@ -26,6 +26,10 @@
                 "root"
             ]
         },
+        "/goss/hellogoss.txt": {
+            "exists": true,
+            "md5": "7c9bb14b3bf178e82c00c2a4398c93cd"
+        },
         "/tmp/goss/foobar": {
             "exists": false,
             "contains": []
