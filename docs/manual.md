@@ -501,6 +501,7 @@ file:
     group: root
     filetype: file # file, symlink, directory
     contains: [] # Check file content for these patterns
+    md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
 ```
 
 `contains` can be a string or a [pattern](#patterns)

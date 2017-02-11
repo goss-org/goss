@@ -19,27 +19,24 @@ import (
 func getGossConfig(c *cli.Context) GossConfig {
 	// handle stdin
 	var fh *os.File
-	var err error
 	var path, source string
+	var gossConfig GossConfig
 	specFile := c.GlobalString("gossfile")
 	if specFile == "-" {
 		source = "STDIN"
 		fh = os.Stdin
-	} else {
-		source = specFile
-		path = filepath.Dir(specFile)
-		fh, err = os.Open(specFile)
+		data, err := ioutil.ReadAll(fh)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
+		gossConfig = mergeJSONData(ReadJSONData(data), 0, path)
+	} else {
+		source = specFile
+		path = filepath.Dir(specFile)
+		gossConfig = mergeJSONData(ReadJSON(specFile), 0, path)
 	}
-	data, err := ioutil.ReadAll(fh)
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
-	}
-	gossConfig := mergeJSONData(ReadJSONData(data), 0, path)
+
 	if len(gossConfig.Resources()) == 0 {
 		fmt.Printf("Error: found 0 tests, source: %v\n", source)
 		os.Exit(1)

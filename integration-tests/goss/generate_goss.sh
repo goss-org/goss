@@ -61,6 +61,18 @@ goss a "${args[@]}" http https://www.google.com
 goss a "${args[@]}" http http://google.com -r
 
 # Auto-add
+# Validate that empty configs don't get created
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa nosuchresource
+if [[ -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json ]]
+then
+  echo "Error! Empty config file exists!" && exit 1
+fi
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
 # Validate that duplicates are ignored
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
+# Validate that we can aa none existent resources without destroying the file
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa nosuchresource
+if [[ ! -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json ]]
+then
+  echo "Error! Config file removed by aa!" && exit 1
+fi
