@@ -67,21 +67,26 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
-	if err != nil || len(addrs) == 0 {
-		d.resolveable = false
-		d.addrs = []string{}
-		// DNSError is resolvable == false, ignore error
-		if _, ok := err.(*net.DNSError); ok {
-			return nil
+	for i := 0; i < 5; i++ {
+		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
+		if err != nil || len(addrs) == 0 {
+			d.resolveable = false
+			d.addrs = []string{}
+			// DNSError is resolvable == false, ignore error
+			if _, ok := err.(*net.DNSError); ok {
+				return nil
+			}
+			d.err = err
+			time.Sleep(20 * time.Millisecond)
+			continue
 		}
-		d.err = err
-		return d.err
+		sort.Strings(addrs)
+		d.resolveable = true
+		d.addrs = addrs
+		d.err = nil
+		return nil
 	}
-	sort.Strings(addrs)
-	d.resolveable = true
-	d.addrs = addrs
-	return nil
+	return d.err
 }
 
 func (d *DefDNS) Addrs() ([]string, error) {
