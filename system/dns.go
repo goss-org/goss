@@ -195,10 +195,10 @@ func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []str
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.A); ok {
@@ -214,10 +214,10 @@ func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.AAAA); ok {
@@ -233,10 +233,10 @@ func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs [
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.CNAME); ok {
@@ -252,10 +252,10 @@ func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.MX); ok {
@@ -272,10 +272,10 @@ func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.NS); ok {
@@ -291,10 +291,10 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.SRV); ok {
@@ -314,10 +314,10 @@ func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
-		return nil, fmt.Errorf("%s", err)
+		return nil, err
 	}
 	if len(r.Answer) == 0 {
-		return nil, fmt.Errorf("No DNS record found")
+		return nil, nil
 	}
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.TXT); ok {
