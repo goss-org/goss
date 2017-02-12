@@ -156,32 +156,7 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 	}
 }
 
-// These are function are a re-implementation of the net.Lookup* ones
-// They are adapted to the package miekg/dns.
-
-// LookupPTR performs a reverse lookup for the given address, returning a
-// list of names mapping to that address.
-func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
-
-	reverse, err := dns.ReverseAddr(addr)
-	if err != nil {
-		return nil, err
-	}
-
-	m.SetQuestion(reverse, dns.TypePTR)
-
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
-	if err != nil {
-		return nil, err
-	}
-	for _, ans := range r.Answer {
-		name = append(name, ans.(*dns.PTR).Ptr)
-	}
-	return
-}
-
-// LookupHost looks up the given host. It returns
-// an array of that host's addresses IPv4 and IPv6.
+// A and AAAA record lookup - similar to net.LookupHost
 func LookupHost(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	a, _ := LookupA(host, server, c, m)
 	aaaa, _ := LookupAAAA(host, server, c, m)
@@ -309,6 +284,28 @@ func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 		if t, ok := ans.(*dns.TXT); ok {
 			addrs = append(addrs, t.Txt...)
 		}
+	}
+
+	return
+}
+
+// PTR record lookup
+func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
+
+	reverse, err := dns.ReverseAddr(addr)
+	if err != nil {
+		return nil, err
+	}
+
+	m.SetQuestion(reverse, dns.TypePTR)
+
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ans := range r.Answer {
+		name = append(name, ans.(*dns.PTR).Ptr)
 	}
 
 	return
