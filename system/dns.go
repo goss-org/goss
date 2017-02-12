@@ -67,7 +67,7 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	for i := 0; i < 5; i++ {
+	//for i := 0; i < 3; i++ {
 		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 		if err != nil || len(addrs) == 0 {
 			d.resolveable = false
@@ -77,16 +77,16 @@ func (d *DefDNS) setup() error {
 				return nil
 			}
 			d.err = err
-			time.Sleep(20 * time.Millisecond)
-			continue
+			return d.err
+			//continue
 		}
 		sort.Strings(addrs)
 		d.resolveable = true
 		d.addrs = addrs
 		d.err = nil
 		return nil
-	}
-	return d.err
+	//}
+	//return d.err
 }
 
 func (d *DefDNS) Addrs() ([]string, error) {
@@ -115,25 +115,29 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 	var err error
 	go func() {
 		if server != "" {
+			c := new(dns.Client)
+			c.Timeout = timeoutD
+			m := new(dns.Msg)
+
 			switch qtype {
 			case "A":
-				addrs, err = LookupA(host, server)
+				addrs, err = LookupA(host, server, c, m)
 			case "AAAA":
-				addrs, err = LookupAAAA(host, server)
+				addrs, err = LookupAAAA(host, server, c, m)
 			case "PTR":
-				addrs, err = LookupPTR(host, server)
+				addrs, err = LookupPTR(host, server, c, m)
 			case "CNAME":
-				addrs, err = LookupCNAME(host, server)
+				addrs, err = LookupCNAME(host, server, c, m)
 			case "MX":
-				addrs, err = LookupMX(host, server)
+				addrs, err = LookupMX(host, server, c, m)
 			case "NS":
-				addrs, err = LookupNS(host, server)
+				addrs, err = LookupNS(host, server, c, m)
 			case "SRV":
-				addrs, err = LookupSRV(host, server)
+				addrs, err = LookupSRV(host, server, c, m)
 			case "TXT":
-				addrs, err = LookupTXT(host, server)
+				addrs, err = LookupTXT(host, server, c, m)
 			default:
-				addrs, err = LookupHost(host, server)
+				addrs, err = LookupHost(host, server, c, m)
 			}
 		} else {
 			addrs, err = net.LookupHost(host)
@@ -158,15 +162,12 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 
 // LookupAddr performs a reverse lookup for the given address, returning a
 // list of names mapping to that address.
-func LookupPTR(addr string, server string) (name []string, err error) {
+func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
 
 	reverse, err := dns.ReverseAddr(addr)
 	if err != nil {
 		return nil, err
 	}
-
-	c := new(dns.Client)
-	m := new(dns.Msg)
 
 	m.SetQuestion(reverse, dns.TypePTR)
 
@@ -182,18 +183,16 @@ func LookupPTR(addr string, server string) (name []string, err error) {
 
 // LookupHost looks up the given host. It returns
 // an array of that host's addresses IPv4 and IPv6.
-func LookupHost(host string, server string) (addrs []string, err error) {
-	a, _ := LookupA(host, server)
-	aaaa, _ := LookupAAAA(host, server)
+func LookupHost(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+	a, _ := LookupA(host, server, c, m)
+	aaaa, _ := LookupAAAA(host, server, c, m)
 	addrs = append(a, aaaa...)
 
 	return
 }
 
 // A record lookup
-func LookupA(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -212,9 +211,7 @@ func LookupA(host string, server string) (addrs []string, err error) {
 }
 
 // AAAA (IPv6) record lookup
-func LookupAAAA(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -233,9 +230,7 @@ func LookupAAAA(host string, server string) (addrs []string, err error) {
 }
 
 // CNAME record lookup
-func LookupCNAME(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -254,9 +249,7 @@ func LookupCNAME(host string, server string) (addrs []string, err error) {
 }
 
 // MX record lookup
-func LookupMX(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -276,9 +269,7 @@ func LookupMX(host string, server string) (addrs []string, err error) {
 }
 
 // NS record lookup
-func LookupNS(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -297,9 +288,7 @@ func LookupNS(host string, server string) (addrs []string, err error) {
 }
 
 // SRV record lookup
-func LookupSRV(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
@@ -322,9 +311,7 @@ func LookupSRV(host string, server string) (addrs []string, err error) {
 }
 
 // TXT record lookup
-func LookupTXT(host string, server string) (addrs []string, err error) {
-	c := new(dns.Client)
-	m := new(dns.Msg)
+func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
 	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
 	if err != nil {
