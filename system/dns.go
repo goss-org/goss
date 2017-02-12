@@ -197,9 +197,7 @@ func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []str
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.A); ok {
 			addrs = append(addrs, t.A.String())
@@ -216,9 +214,7 @@ func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.AAAA); ok {
 			addrs = append(addrs, t.AAAA.String())
@@ -235,9 +231,7 @@ func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs [
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.CNAME); ok {
 			addrs = append(addrs, t.Target)
@@ -254,9 +248,7 @@ func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.MX); ok {
 			mxstring := strconv.Itoa(int(t.Preference)) + " " + t.Mx
@@ -274,9 +266,7 @@ func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.NS); ok {
 			addrs = append(addrs, t.Ns)
@@ -293,9 +283,7 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.SRV); ok {
 			prio := strconv.Itoa(int(t.Priority))
@@ -316,9 +304,7 @@ func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 	if err != nil {
 		return nil, err
 	}
-	if len(r.Answer) == 0 {
-		return nil, nil
-	}
+
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.TXT); ok {
 			addrs = append(addrs, t.Txt...)
