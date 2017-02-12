@@ -159,7 +159,7 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 // These are function are a re-implementation of the net.Lookup* ones
 // They are adapted to the package miekg/dns.
 
-// LookupAddr performs a reverse lookup for the given address, returning a
+// LookupPTR performs a reverse lookup for the given address, returning a
 // list of names mapping to that address.
 func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
 
