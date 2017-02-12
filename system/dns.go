@@ -67,7 +67,7 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	//for i := 0; i < 3; i++ {
+	for i := 0; i < 3; i++ {
 		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 		if err != nil || len(addrs) == 0 {
 			d.resolveable = false
@@ -77,16 +77,15 @@ func (d *DefDNS) setup() error {
 				return nil
 			}
 			d.err = err
-			return d.err
-			//continue
+			continue
 		}
 		sort.Strings(addrs)
 		d.resolveable = true
 		d.addrs = addrs
 		d.err = nil
 		return nil
-	//}
-	//return d.err
+	}
+	return d.err
 }
 
 func (d *DefDNS) Addrs() ([]string, error) {
