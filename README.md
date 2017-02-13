@@ -180,9 +180,10 @@ package:
 * nagios_verbose - nagios output with verbose failure output.
 
 ## Community Contributions
-* [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss
-* [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for GOSS
-* [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages
+* [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
+* [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
+* [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
+* [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
 
 ## Limitations
 
