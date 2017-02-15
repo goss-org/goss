@@ -181,6 +181,7 @@ package:
 
 ## Community Contributions
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
+* [degoss](https://github.com/naftulikay/ansible-role-degoss) - Ansible role for installing, running, and removing Goss in a single go.
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
