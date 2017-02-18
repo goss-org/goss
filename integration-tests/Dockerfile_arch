@@ -1,4 +1,5 @@
 FROM base/archlinux
 MAINTAINER @siddharthist
 
-RUN chmod 700 ~root
+RUN ln -s /does_not_exist /foo && \
+    chmod 700 ~root

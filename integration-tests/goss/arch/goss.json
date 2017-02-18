@@ -18,6 +18,12 @@
             "home": "/root"
         }
     },
+    "file": {
+        "/foo": {
+            "exists": true,
+            "filetype": "symlink"
+        }
+    },
     "gossfile": {
         "../goss-shared.json": {}
     }

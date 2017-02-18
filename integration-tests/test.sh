@@ -44,7 +44,7 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/$os/goss.json" validate
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-  egrep -q 'Count: 54, Failed: 0' <<<"$out"
+  egrep -q 'Count: 56, Failed: 0' <<<"$out"
 else
   egrep -q 'Count: 70, Failed: 0' <<<"$out"
 fi
