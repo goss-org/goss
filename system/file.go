@@ -64,7 +64,7 @@ func (f *DefFile) Exists() (bool, error) {
 		return false, err
 	}
 
-	if _, err := os.Stat(f.realPath); os.IsNotExist(err) {
+	if _, err := os.Lstat(f.realPath); os.IsNotExist(err) {
 		return false, nil
 	}
 	return true, nil
