@@ -5,4 +5,5 @@ type Config struct {
 	Timeout           int
 	AllowInsecure     bool
 	NoFollowRedirects bool
+	Server            string
 }

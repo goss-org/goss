@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"strings"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -12,6 +13,7 @@ type DNS struct {
 	Resolveable matcher `json:"resolveable" yaml:"resolveable"`
 	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
 	Timeout     int     `json:"timeout" yaml:"timeout"`
+	Server      string  `json:"server,omitempty" yaml:"server,omitempty"`
 }
 
 func (d *DNS) ID() string      { return d.Host }
@@ -25,7 +27,8 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	if d.Timeout == 0 {
 		d.Timeout = 500
 	}
-	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout})
+
+	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout, Server: d.Server})
 
 	var results []TestResult
 	results = append(results, ValidateValue(d, "resolveable", d.Resolveable, sysDNS.Resolveable, skip))
@@ -39,12 +42,21 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 }
 
 func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
-	host := sysDNS.Host()
+	var host string
+	if sysDNS.Qtype() != "" {
+	  host = strings.Join([]string{sysDNS.Qtype(), sysDNS.Host()}, ":")
+	} else {
+		host = sysDNS.Host()
+	}
+
 	resolveable, err := sysDNS.Resolveable()
+	server := sysDNS.Server()
+
 	d := &DNS{
 		Host:        host,
 		Resolveable: resolveable,
 		Timeout:     config.Timeout,
+		Server:      server,
 	}
 	if !contains(config.IgnoreList, "addrs") {
 		addrs, _ := sysDNS.Addrs()

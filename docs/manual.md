@@ -430,10 +430,49 @@ dns:
     # required attributes
     resolveable: true
     # optional attributes
+    server: 8.8.8.8
     addrs:
     - 127.0.0.1
     - ::1
     timeout: 500 # in milliseconds
+```
+
+With the server attribute set, it is possible to validate the following types of DNS record:
+
+- A
+- AAAA
+- CNAME
+- MX
+- NS
+- PTR
+- SRV
+- TXT
+
+To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:
+
+```yaml
+dns:
+  # Validate a CNAME record
+  CNAME:dnstest.github.io:
+    resolveable: true
+    server: 8.8.8.8
+    addrs:
+    - "github.map.fastly.net."
+
+  # Validate a PTR record
+  PTR:8.8.8.8:
+    resolveable: true
+    server: 8.8.8.8
+    addrs:
+    - "google-public-dns-a.google.com."
+
+  # Validate and SRV record
+  SRV:_https._tcp.dnstest.io:
+    resolveable: true
+    server: 8.8.8.8
+    addrs:
+    - "0 5 443 a.dnstest.io."
+    - "10 10 443 b.dnstest.io."
 ```
 
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
@@ -446,7 +485,6 @@ dns:
       consist-of: [127.0.0.1]
     timeout: 500 # in milliseconds
 ```
-
 
 ### file
 Validates the state of a file
@@ -673,6 +711,7 @@ Goss supports advanced matchers by converting json input to [gomega](https://ons
 ### Examples
 
 Validate that user `nobody` has a `uid` that is less than `500` and that they are **only** a member of the `nobody` group.
+
 ```yaml
 user:
   nobody:
@@ -684,6 +723,7 @@ user:
 ```
 
 Matchers can be nested for more complex logic, for example you can ensure that you have 3 kernel versions installed and none of them are `4.1.0`:
+
 ```yaml
 package:
   kernel:
