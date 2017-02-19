@@ -7,12 +7,12 @@ ARCH=$2
 [[ $3 == "-q" ]] && args=("--exclude-attr" "*")
 
 goss() {
-  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml "$@"
   # Validate that duplicates are ignored
-  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.json "$@"
+  $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml "$@"
 }
 
-rm -f $SCRIPT_DIR/${OS}/goss*generated*-$ARCH.json
+rm -f $SCRIPT_DIR/${OS}/goss*generated*-$ARCH.yaml
 
 for x in /etc/passwd /tmp/goss/foobar;do
   goss a "${args[@]}" file $x
@@ -62,17 +62,17 @@ goss a "${args[@]}" http http://google.com -r
 
 # Auto-add
 # Validate that empty configs don't get created
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa nosuchresource
-if [[ -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json ]]
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa nosuchresource
+if [[ -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml ]]
 then
   echo "Error! Empty config file exists!" && exit 1
 fi
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa $package
 # Validate that duplicates are ignored
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa $package
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa $package
 # Validate that we can aa none existent resources without destroying the file
-$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json aa nosuchresource
-if [[ ! -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.json ]]
+$SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa nosuchresource
+if [[ ! -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml ]]
 then
   echo "Error! Config file removed by aa!" && exit 1
 fi

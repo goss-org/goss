@@ -37,10 +37,10 @@ id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
-[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.json" validate -r 10s -s 100ms && sleep 1
+[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
-#out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.json validate")
-out=$(docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/$os/goss.json" validate)
+#out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
+out=$(docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
 if [[ $os == "arch" ]]; then
@@ -52,16 +52,16 @@ fi
 if [[ ! $os == "arch" ]]; then
   docker_exec /goss/generate_goss.sh "$os" "$arch"
 
-  #docker exec goss_int_test_$os bash -c "cp /goss/${os}/goss-generated-$arch.json /goss/${os}/goss-expected.json"
-  docker_exec diff -wu "/goss/${os}/goss-expected.json" "/goss/${os}/goss-generated-$arch.json"
+  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected.yaml"
+  docker_exec diff -wu "/goss/${os}/goss-expected.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 
-  #docker exec goss_int_test_$os bash -c "cp /goss/${os}/goss-aa-generated-$arch.json /goss/${os}/goss-aa-expected.json"
-  docker_exec diff -wu "/goss/${os}/goss-aa-expected.json" "/goss/${os}/goss-aa-generated-$arch.json"
+  #docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
+  docker_exec diff -wu "/goss/${os}/goss-aa-expected.yaml" "/goss/${os}/goss-aa-generated-$arch.yaml"
 
   docker_exec /goss/generate_goss.sh "$os" "$arch" -q
 
-  #docker exec goss_int_test_$os bash -c "cp /goss/${os}/goss-generated-$arch.json /goss/${os}/goss-expected-q.json"
-  docker_exec diff -wu "/goss/${os}/goss-expected-q.json" "/goss/${os}/goss-generated-$arch.json"
+  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected-q.yaml"
+  docker_exec diff -wu "/goss/${os}/goss-expected-q.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 fi
 
 #docker rm -vf goss_int_test_$os

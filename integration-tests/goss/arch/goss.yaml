@@ -1,0 +1,20 @@
+---
+package:
+  curl:
+    installed: true
+  pacman:
+    installed: true
+  foobar:
+    installed: false
+user:
+  root:
+    exists: true
+    uid: 0
+    gid: 0
+    home: "/root"
+file:
+  "/foo":
+    exists: true
+    filetype: symlink
+gossfile:
+  "../goss-shared.yaml": {}

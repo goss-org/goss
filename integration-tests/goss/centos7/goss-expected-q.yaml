@@ -1,0 +1,112 @@
+file:
+  /etc/passwd:
+    exists: true
+    contains: []
+  /tmp/goss/foobar:
+    exists: false
+    contains: []
+package:
+  foobar:
+    installed: false
+  httpd:
+    installed: true
+  vim-tiny:
+    installed: false
+addr:
+  tcp://google.com:22:
+    reachable: false
+    timeout: 1000
+  tcp://google.com:443:
+    reachable: true
+    timeout: 1000
+port:
+  tcp:80:
+    listening: false
+  tcp:9999:
+    listening: false
+  tcp6:80:
+    listening: true
+service:
+  foobar:
+    enabled: false
+    running: false
+  httpd:
+    enabled: true
+    running: true
+user:
+  apache:
+    exists: true
+  foobar:
+    exists: false
+group:
+  apache:
+    exists: true
+  foobar:
+    exists: false
+command:
+  echo 'hi':
+    exit-status: 0
+    stdout: []
+    stderr: []
+    timeout: 10000
+  foobar:
+    exit-status: 127
+    stdout: []
+    stderr: []
+    timeout: 10000
+dns:
+  CNAME:c.dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  MX:dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  NS:dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  PTR:8.8.8.8:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  SRV:_https._tcp.dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  TXT:txt._test.dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  ip6.dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
+  localhost:
+    resolveable: true
+    timeout: 1000
+process:
+  foobar:
+    running: false
+  httpd:
+    running: true
+kernel-param:
+  kernel.ostype:
+    value: Linux
+mount:
+  /dev:
+    exists: true
+http:
+  http://google.com:
+    status: 301
+    allow-insecure: false
+    no-follow-redirects: true
+    timeout: 5000
+    body: []
+  https://www.google.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []

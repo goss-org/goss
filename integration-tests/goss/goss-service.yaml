@@ -1,0 +1,5 @@
+---
+service:
+  foobar:
+    enabled: false
+    running: false
