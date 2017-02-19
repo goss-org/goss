@@ -1,0 +1,36 @@
+---
+package:
+  apache2:
+    installed: true
+    versions:
+    - 2.2.22-13+deb7u7
+service:
+  apache2:
+    enabled: true
+    running: true
+  autofs:
+    enabled: false
+    running: false
+user:
+  www-data:
+    exists: true
+    uid: 33
+    gid: 33
+    groups:
+    - www-data
+    home: "/var/www"
+group:
+  www-data:
+    exists: true
+    gid: 33
+process:
+  apache2:
+    running: true
+port:
+  tcp6:80:
+    listening: true
+    ip:
+    - "::"
+gossfile:
+  "../goss-shared.yaml": {}
+  "../goss-service.yaml": {}
