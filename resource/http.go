@@ -6,14 +6,15 @@ import (
 )
 
 type HTTP struct {
-	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	HTTP              string   `json:"-" yaml:"-"`
-	Status            matcher  `json:"status" yaml:"status"`
-	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
-	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
-	Timeout           int      `json:"timeout" yaml:"timeout"`
-	Body              []string `json:"body" yaml:"body"`
+	Title             string              `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta              meta                `json:"meta,omitempty" yaml:"meta,omitempty"`
+	HTTP              string              `json:"-" yaml:"-"`
+	Status            matcher             `json:"status" yaml:"status"`
+	AllowInsecure     bool                `json:"allow-insecure" yaml:"allow-insecure"`
+	NoFollowRedirects bool                `json:"no-follow-redirects" yaml:"no-follow-redirects"`
+	Timeout           int                 `json:"timeout" yaml:"timeout"`
+	Body              []string            `json:"body" yaml:"body"`
+	Headers           map[string][]string `json:"headers" yaml:"headers"`
 }
 
 func (u *HTTP) ID() string      { return u.HTTP }
@@ -40,6 +41,13 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if len(u.Body) > 0 {
 		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
+	if len(u.Headers) > 0 {
+		for k, v := range u.Headers {
+			header := make(map[string][]string)
+			header[k] = v
+			results = append(results, ValidateHeader(u, "Header", header, sysHTTP.Headers, skip))
+		}
+	}
 
 	return results
 }
@@ -51,6 +59,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		HTTP:              http,
 		Status:            status,
 		Body:              []string{},
+		Headers:           make(map[string][]string),
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.Timeout,

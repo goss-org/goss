@@ -13,6 +13,7 @@ type HTTP interface {
 	HTTP() string
 	Status() (int, error)
 	Body() (io.Reader, error)
+	Headers() (http.Header, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
 	SetNoFollowRedirects(bool)
@@ -97,4 +98,12 @@ func (u *DefHTTP) Body() (io.Reader, error) {
 	}
 
 	return u.resp.Body, nil
+}
+
+func (u *DefHTTP) Headers() (http.Header, error) {
+	if err := u.setup(); err != nil {
+		return nil, err
+	}
+
+	return u.resp.Header, nil
 }
