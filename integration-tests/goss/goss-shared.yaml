@@ -146,4 +146,4 @@ http:
       X-Frame-Options:
       Cache-Control:
         - 'private'
-        - 'public'
+        - '!public'
