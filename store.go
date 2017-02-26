@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,66 +11,135 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"text/template"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/urfave/cli"
 )
 
 const (
-	JSON = iota
+	UNSET = iota
+	JSON
 	YAML
-	UNSET
 )
 
-var StoreFormat = UNSET
+var OutStoreFormat = UNSET
+var TemplateFilter func(data []byte) []byte
+var debug = false
 
-func setStoreFormatFromFileName(f string) {
+func getStoreFormatFromFileName(f string) int {
 	ext := filepath.Ext(f)
 	switch ext {
 	case ".json":
-		StoreFormat = JSON
+		return JSON
 	case ".yaml", ".yml":
-		StoreFormat = YAML
+		return YAML
 	default:
 		log.Fatalf("Unknown file extension: %v", ext)
 	}
+	return 0
 }
 
-func setStoreFormatFromData(data []byte) {
+func getStoreFormatFromData(data []byte) int {
 	var v interface{}
 	if err := unmarshalJSON(data, &v); err == nil {
-		StoreFormat = JSON
-		return
+		return JSON
 	}
 	if err := unmarshalYAML(data, &v); err == nil {
-		StoreFormat = YAML
-		return
+		return YAML
 	}
 	log.Fatalf("Unable to determine format from content")
+	return 0
 }
 
 // Reads json file returning GossConfig
 func ReadJSON(filePath string) GossConfig {
-	// FIXME: Any problems with this?
-	setStoreFormatFromFileName(filePath)
 	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		fmt.Printf("File error: %v\n", err)
 		os.Exit(1)
 	}
 
-	return ReadJSONData(file)
+	return ReadJSONData(file, false)
+}
+
+type TmplVars struct {
+	Vars map[string]interface{}
+}
+
+func (t *TmplVars) Env() map[string]string {
+	env := make(map[string]string)
+	for _, i := range os.Environ() {
+		sep := strings.Index(i, "=")
+		env[i[0:sep]] = i[sep+1:]
+	}
+	return env
+}
+
+func varsFromFile(varsFile string) (map[string]interface{}, error) {
+	var vars map[string]interface{}
+	if varsFile == "" {
+		return vars, nil
+	}
+	data, err := ioutil.ReadFile(varsFile)
+	if err != nil {
+		return vars, err
+	}
+	format := getStoreFormatFromData(data)
+	if err := unmarshal(data, &vars, format); err != nil {
+		return vars, err
+	}
+	return vars, nil
+}
+
+func mkSlice(args ...interface{}) []interface{} {
+	return args
+}
+
+func NewTemplateFilter(varsFile string) func([]byte) []byte {
+	vars, err := varsFromFile(varsFile)
+	if err != nil {
+		fmt.Printf("Error: loading vars file '%s'\n%v\n", varsFile, err)
+		os.Exit(1)
+	}
+	tVars := &TmplVars{Vars: vars}
+
+	f := func(data []byte) []byte {
+		funcMap := map[string]interface{}{"mkSlice": mkSlice}
+		t := template.New("test").Funcs(template.FuncMap(funcMap))
+		tmpl, err := t.Parse(string(data))
+		if err != nil {
+			log.Fatal(err)
+		}
+		tmpl.Option("missingkey=error")
+		var doc bytes.Buffer
+		err = tmpl.Execute(&doc, tVars)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return doc.Bytes()
+	}
+	return f
 }
 
 // Reads json byte array returning GossConfig
-func ReadJSONData(data []byte) GossConfig {
-	if StoreFormat == UNSET {
-		setStoreFormatFromData(data)
+func ReadJSONData(data []byte, detectFormat bool) GossConfig {
+	if TemplateFilter != nil {
+		data = TemplateFilter(data)
+		if debug {
+			fmt.Println("DEBUG: file after text/template render")
+			fmt.Println(string(data))
+		}
+	}
+	format := OutStoreFormat
+	if detectFormat == true {
+		format = getStoreFormatFromData(data)
 	}
 	gossConfig := NewGossConfig()
 	// Horrible, but will do for now
-	if err := unmarshal(data, gossConfig); err != nil {
+	if err := unmarshal(data, gossConfig, format); err != nil {
 		// FIXME: really dude.. this is so ugly
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
@@ -78,8 +148,13 @@ func ReadJSONData(data []byte) GossConfig {
 }
 
 // Reads json file recursively returning string
-func RenderJSON(filePath string) string {
+func RenderJSON(c *cli.Context) string {
+	filePath := c.GlobalString("gossfile")
+	varsFile := c.GlobalString("vars")
+	debug = c.Bool("debug")
+	TemplateFilter = NewTemplateFilter(varsFile)
 	path := filepath.Dir(filePath)
+	OutStoreFormat = getStoreFormatFromFileName(filePath)
 	gossConfig := mergeJSONData(ReadJSON(filePath), 0, path)
 
 	b, err := marshal(gossConfig)
@@ -158,7 +233,7 @@ func resourcePrint(fileName string, res resource.ResourceRead) {
 }
 
 func marshal(gossConfig interface{}) ([]byte, error) {
-	switch StoreFormat {
+	switch OutStoreFormat {
 	case JSON:
 		return marshalJSON(gossConfig)
 	case YAML:
@@ -168,8 +243,8 @@ func marshal(gossConfig interface{}) ([]byte, error) {
 	}
 }
 
-func unmarshal(data []byte, v interface{}) error {
-	switch StoreFormat {
+func unmarshal(data []byte, v interface{}, storeFormat int) error {
+	switch storeFormat {
 	case JSON:
 		return unmarshalJSON(data, v)
 	case YAML:

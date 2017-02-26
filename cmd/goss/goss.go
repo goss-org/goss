@@ -28,6 +28,11 @@ func main() {
 			EnvVar: "GOSS_FILE",
 		},
 		cli.StringFlag{
+			Name:   "vars",
+			Usage:  "Variable json/yaml file to read for template",
+			EnvVar: "GOSS_VARS",
+		},
+		cli.StringFlag{
 			Name:  "package",
 			Usage: "Package type to use [rpm, deb, apk, pacman]",
 		},
@@ -118,8 +123,14 @@ func main() {
 			Name:    "render",
 			Aliases: []string{"r"},
 			Usage:   "render gossfile after imports",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "debug, d",
+					Usage: fmt.Sprintf("Print debugging info when rendering"),
+				},
+			},
 			Action: func(c *cli.Context) error {
-				fmt.Print(goss.RenderJSON(c.GlobalString("gossfile")))
+				fmt.Print(goss.RenderJSON(c))
 				return nil
 			},
 		},

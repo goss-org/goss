@@ -21,6 +21,7 @@ func getGossConfig(c *cli.Context) GossConfig {
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
+	TemplateFilter = NewTemplateFilter(c.GlobalString("vars"))
 	specFile := c.GlobalString("gossfile")
 	if specFile == "-" {
 		source = "STDIN"
@@ -30,12 +31,16 @@ func getGossConfig(c *cli.Context) GossConfig {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
-		gossConfig = mergeJSONData(ReadJSONData(data), 0, path)
+		OutStoreFormat = getStoreFormatFromData(data)
+		gossConfig = ReadJSONData(data, true)
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		gossConfig = mergeJSONData(ReadJSON(specFile), 0, path)
+		OutStoreFormat = getStoreFormatFromFileName(specFile)
+		gossConfig = ReadJSON(specFile)
 	}
+
+	gossConfig = mergeJSONData(gossConfig, 0, path)
 
 	if len(gossConfig.Resources()) == 0 {
 		fmt.Printf("Error: found 0 tests, source: %v\n", source)
