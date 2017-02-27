@@ -25,7 +25,7 @@ fi
 
 container_name="goss_int_test_${os}_${arch}"
 docker_exec() {
-  docker exec -e OS=$os "$container_name" "$@"
+  docker exec --env OS=$os "$container_name" "$@"
 }
 
 # Cleanup any old containers
