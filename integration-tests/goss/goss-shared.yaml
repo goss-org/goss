@@ -11,7 +11,8 @@ command:
     stderr:
     - not found
 file:
-  "/etc/passwd":
+{{range mkSlice "/etc/passwd" "/etc/group"}}
+  {{.}}:
     exists: true
     mode: '0644'
     owner: root
@@ -19,6 +20,7 @@ file:
     filetype: file
     contains:
     - root
+{{end}}
   "/goss/hellogoss.txt":
     exists: true
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd
@@ -34,6 +36,12 @@ file:
 package:
   foobar:
     installed: false
+{{- range $name, $ver := index .Vars "packages" .Env.OS}}
+  {{$name}}:
+    installed: true
+    versions:
+    - {{$ver}}
+{{end}}
 addr:
   tcp://google.com:22:
     reachable: false

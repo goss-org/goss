@@ -25,7 +25,7 @@ fi
 
 container_name="goss_int_test_${os}_${arch}"
 docker_exec() {
-  docker exec "$container_name" "$@"
+  docker exec -e OS=$os "$container_name" "$@"
 }
 
 # Cleanup any old containers
@@ -40,13 +40,13 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
-out=$(docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/$os/goss.yaml" validate)
+out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-  egrep -q 'Count: 56, Failed: 0' <<<"$out"
+  egrep -q 'Count: 62, Failed: 0' <<<"$out"
 else
-  egrep -q 'Count: 70, Failed: 0' <<<"$out"
+  egrep -q 'Count: 76, Failed: 0' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
