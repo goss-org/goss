@@ -29,7 +29,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:   "vars",
-			Usage:  "Variable json/yaml file to read for template",
+			Usage:  "json/yaml file containing variables for template",
 			EnvVar: "GOSS_VARS",
 		},
 		cli.StringFlag{
