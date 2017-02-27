@@ -1,0 +1,11 @@
+---
+packages:
+  alpine3:
+    apache2: "2.4.23-r1"
+  arch:
+  centos7:
+    httpd: "2.4.6"
+  precise:
+    apache2: "2.2.22-1ubuntu1.11"
+  wheezy:
+    apache2: "2.2.22-13+deb7u7"
