@@ -25,7 +25,6 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 			switch testResult.Result {
 			case resource.SUCCESS:
 				fmt.Fprintln(w, humanizeResult(testResult))
-				testCount++
 			case resource.SKIP:
 				fmt.Fprintln(w, humanizeResult(testResult))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
