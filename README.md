@@ -17,7 +17,7 @@
 
 ### What is Goss?
 
-Goss is a YAML based [serverspec](http://serverspec.org/)-like tool for validating a server’s configuration. It eases the process of writing tests by allowing the user to generate tests from the current system state. Once the test suite is written they can be executed, waited-on, or served as a health endpoint.
+Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for validating a server’s configuration. It eases the process of writing tests by allowing the user to generate tests from the current system state. Once the test suite is written they can be executed, waited-on, or served as a health endpoint.
 
 ### Why use Goss?
 
