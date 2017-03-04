@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
@@ -367,6 +368,135 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 		Meta:         meta,
 		Property:     property,
 		Expected:     expectedValues,
+		Found:        patternsToSlice(found),
+		Duration:     time.Now().Sub(startTime),
+	}
+}
+
+func ValidateHeader(res ResourceRead, property string, expectedValues map[string][]string, method func() (http.Header, error), skip bool) TestResult {
+	id := res.ID()
+	title := res.GetTitle()
+	meta := res.GetMeta()
+	typ := reflect.TypeOf(res)
+	typeS := strings.Split(typ.String(), ".")[1]
+	startTime := time.Now()
+
+	var hdrKey string
+	var hdrVals []string
+	for k, v := range expectedValues {
+		hdrKey = k
+		hdrVals = v
+	}
+
+	property = fmt.Sprintf("%v %v", hdrKey, property)
+
+	if skip {
+		return skipResult(
+			typeS,
+			Values,
+			id,
+			title,
+			meta,
+			property,
+			startTime,
+		)
+	}
+
+	var err error
+	var hdrs http.Header
+	var notfound []patternMatcher
+
+	notfound, err = sliceToPatterns(hdrVals)
+
+	// short circuit
+	if len(notfound) == 0 && err == nil {
+		return TestResult{
+			Successful:   true,
+			Result:       SUCCESS,
+			ResourceType: typeS,
+			TestType:     Contains,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Expected:     hdrVals,
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
+
+	if err == nil {
+		hdrs, err = method()
+	}
+	if err != nil {
+		return TestResult{
+			Successful:   false,
+			Result:       FAIL,
+			ResourceType: typeS,
+			TestType:     Contains,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
+
+	var found []patternMatcher
+
+	for _, hdr := range hdrs[hdrKey] {
+
+		i := 0
+		for _, pat := range notfound {
+			if pat.Match(hdr) {
+				// Found it, but wasn't supposed to, don't mark it as found, but remove it from search
+				if !pat.Inverse() {
+					found = append(found, pat)
+				}
+				continue
+			}
+			notfound[i] = pat
+			i++
+		}
+		notfound = notfound[:i]
+		if len(notfound) == 0 {
+			break
+		}
+	}
+
+	for _, pat := range notfound {
+		// Didn't find it, but we didn't want to.. so we mark it as found
+		// Empty pattern should match even if input to scanner is empty
+		if pat.Inverse() || pat.Pattern() == "" {
+			found = append(found, pat)
+		}
+	}
+
+	if len(hdrVals) != len(found) {
+		return TestResult{
+			Successful:   false,
+			Result:       FAIL,
+			ResourceType: typeS,
+			TestType:     Contains,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Expected:     hdrVals,
+			Found:        patternsToSlice(found),
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
+	return TestResult{
+		Successful:   true,
+		Result:       SUCCESS,
+		ResourceType: typeS,
+		TestType:     Contains,
+		ResourceId:   id,
+		Title:        title,
+		Meta:         meta,
+		Property:     property,
+		Expected:     hdrVals,
 		Found:        patternsToSlice(found),
 		Duration:     time.Now().Sub(startTime),
 	}

@@ -140,3 +140,10 @@ http:
     allow-insecure: false
     timeout: 5000
     body: []
+    headers:
+      Server:
+        - 'gws'
+      X-Frame-Options:
+      Cache-Control:
+        - 'private'
+        - '!public'

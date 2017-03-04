@@ -530,7 +530,7 @@ group:
 
 
 ### http
-Validates HTTP response status code and content.
+Validates HTTP response status code, content and headers.
 
 ```yaml
 http:
@@ -542,6 +542,12 @@ http:
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
     body: [] # Check http response content for these patterns
+    headers: # Check http response headers and values
+      Server:
+        - 'gws' # Check a header value is present
+      X-Frame-Options: # Check a header exists without checking values
+      Cache-Control:
+        - '!public' # Check a header value is absent
 ```
 
 
