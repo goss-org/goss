@@ -104,6 +104,11 @@ Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 
 ```
+* Edit it to use [templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates), and run with a vars file
+```
+goss --vars vars.yaml validate
+```
+
 * keep running it until the system enters a valid state or we timeout
 ```
 goss validate --retry-timeout 30s --sleep 1s
@@ -118,10 +123,11 @@ goss serve --format json &
 curl localhost:8080/healthz
 ```
 
-### Patterns, matchers and metadata
-Goss files can be manually edited to match:
+### Manually editing Goss files
+Goss files can be manually edited to use:
 * [Patterns](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#patterns)
-* [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers).
+* [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers)
+* [Templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
@@ -153,6 +159,16 @@ package:
       - have-len: 3
       - not:
           contain-element: 4.4.0
+
+  # Loaded from --vars YAML/JSON file
+  {{.Vars.package}}:
+    installed: true
+
+{{if eq .Env.OS "centos"}}
+  # This test is only when $OS environment variable is set to "centos"
+  libselinux:
+    installed: true
+{{end}}
 ```
 
 ## Supported resources

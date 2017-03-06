@@ -14,6 +14,7 @@
     * [validate, v \- Validate the system](#validate-v---validate-the-system)
 * [Important note about goss file format](#important-note-about-goss-file-format)
 * [Available tests](#available-tests)
+  * [addr](#addr)
   * [command](#command)
   * [dns](#dns)
   * [file](#file)
@@ -30,7 +31,7 @@
   * [user](#user)
 * [Patterns](#patterns)
 * [Advanced Matchers](#advanced-matchers)
-
+* [Templates](#templates)
 
 ## Usage
 
@@ -54,6 +55,7 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --gossfile, -g "./goss.yaml"	Goss file to read from / write to [$GOSS_FILE]
+   --vars value                 json/yaml file containing variables for template [$GOSS_VARS]
    --package 			Package type to use [rpm, deb, apk, pacman]
    --help, -h			show help
    --generate-bash-completion
@@ -66,6 +68,13 @@ GLOBAL OPTIONS:
 ## global options
 ### -g gossfile
 The file to use when reading/writing tests. Use `-g -` to read from `STDIN`.
+
+Valid formats:
+* **YAML** (default)
+* **JSON**
+
+### --vars
+The file to read variables from when rendering gossfile [templates](#templates).
 
 Valid formats:
 * **YAML** (default)
@@ -187,6 +196,10 @@ process:
 
 ### render, r - Render gossfile after importing all referenced gossfiles
 This command allows you to keep your tests separated and render a single, valid, gossfile, by including them with the `gossfile` directive.
+
+#### Flags
+##### --debug
+This prints the rendered golang template prior to printing the parsed JSON/YAML gossfile.
 
 #### Example:
 ```bash
@@ -676,7 +689,7 @@ For the attributes that use patterns (ex. `file`, `command` `output`), each patt
 
 **NOTE:** Pattern attributes do not support [Advanced Matchers](#advanced-matchers)
 
-**NOTE:** Regex support is based on golangs regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
+**NOTE:** Regex support is based on golang's regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
 
 **NOTE:** You will **need** the double backslash (`\\`) escape for Regex special entities, for example `\\s` for blank spaces.
 
@@ -738,3 +751,97 @@ package:
 For more information see:
 * [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
 * [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference
+
+## Templates
+
+Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests.
+
+Available variables:
+* `{{.Env}}`  - Containing environment variables
+* `{{.Vars}}` - Containing the values defined in [--vars](#global-options) file
+
+Available functions beyond text/template [built-in functions](https://golang.org/pkg/text/template/#hdr-Functions):
+* `mkSlice` - Retuns a slice of all the arguments. See examples below for usage.
+
+**NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
+
+### Examples
+
+Using [puppetlabs/facter](https://github.com/puppetlabs/facter) or [chef/ohai](https://github.com/chef/ohai) as external tools to provide vars.
+```bash
+$ goss --vars <(ohai) validate
+$ goss --vars <(facter -j) validate
+```
+
+Using `mkSlice` to define a loop locally.
+```yaml
+file:
+{{- range mkSlice "/etc/passwd" "/etc/group"}}
+  {{.}}:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+{{end}}
+```
+
+Using Env variables and a vars file:
+
+**vars.yaml:**
+```yaml
+centos:
+  packages:
+    kernel:
+      - "4.9.11-centos"
+      - "4.9.11-centos2"
+debian:
+  packages:
+    kernel:
+      - "4.9.11-debian"
+      - "4.9.11-debian2"
+users:
+  - user1
+  - user2
+```
+
+**goss.yaml:**
+```yaml
+package:
+# Looping over a variables defined in a vars.yaml using $OS environment variable as a lookup key
+{{range $name, $vers := index .Vars .Env.OS "packages"}}
+  {{$name}}:
+    installed: true
+    versions:
+    {{range $vers}}
+      - {{.}}
+    {{end}}
+{{end}}
+
+# This test is only when OS=centos variable is defined
+{{if eq .Env.OS "centos"}}
+  libselinux:
+    installed: true
+{{end}}
+
+# Loop over users
+user:
+{{range .Vars.users}}
+  {{.}}:
+    exists: true
+    groups:
+    - {{.}}
+    home: /home/{{.}}
+    shell: /bin/bash
+{{end}}
+```
+
+Rendered results:
+```bash
+# To validate:
+$ OS=centos goss --vars vars.yaml validate
+# To render:
+$ OS=centos goss --vars vars.yaml render
+# To render with debugging enabled:
+$ OS=centos goss --vars vars.yaml render --debug
+```

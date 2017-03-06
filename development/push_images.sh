@@ -16,4 +16,3 @@ popd
 for image in $images; do
   docker push "${image}:latest"
 done
-

@@ -14,7 +14,7 @@ import (
 
 // Simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *cli.Context) error {
-	setStoreFormatFromFileName(fileName)
+	OutStoreFormat = getStoreFormatFromFileName(fileName)
 	config := util.Config{
 		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
 		Timeout:           int(c.Duration("timeout") / time.Millisecond),
@@ -159,7 +159,7 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 
 // Simple wrapper to add multiple resources
 func AutoAddResources(fileName string, keys []string, c *cli.Context) error {
-	setStoreFormatFromFileName(fileName)
+	OutStoreFormat = getStoreFormatFromFileName(fileName)
 	config := util.Config{
 		IgnoreList: c.GlobalStringSlice("exclude-attr"),
 		Timeout:    int(c.Duration("timeout") / time.Millisecond),
