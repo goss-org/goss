@@ -790,12 +790,13 @@ Using Env variables and a vars file:
 
 **vars.yaml:**
 ```yaml
-packages:
-  centos:
+centos:
+  packages:
     kernel:
       - "4.9.11-centos"
       - "4.9.11-centos2"
-  debian:
+debian:
+  packages:
     kernel:
       - "4.9.11-debian"
       - "4.9.11-debian2"
@@ -808,7 +809,7 @@ users:
 ```yaml
 package:
 # Looping over a variables defined in a vars.yaml using $OS environment variable as a lookup key
-{{range $name, $vers := index .Vars "packages" .Env.OS}}
+{{range $name, $vers := index .Vars .Env.OS "packages"}}
   {{$name}}:
     installed: true
     versions:

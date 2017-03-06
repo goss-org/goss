@@ -36,7 +36,7 @@ file:
 package:
   foobar:
     installed: false
-{{- range $name, $ver := index .Vars "packages" .Env.OS}}
+{{- range $name, $ver := index .Vars .Env.OS "packages"}}
   {{$name}}:
     installed: true
     versions:
