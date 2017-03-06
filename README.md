@@ -27,6 +27,8 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ## Installation
 
+**Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
+
 ```bash
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
