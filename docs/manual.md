@@ -834,6 +834,14 @@ user:
     home: /home/{{.}}
     shell: /bin/bash
 {{end}}
+
+
+package:
+{{if eq .Env.OS "centos"}}
+  # This test is only when $OS environment variable is set to "centos"
+  libselinux:
+    installed: true
+{{end}}
 ```
 
 Rendered results:
