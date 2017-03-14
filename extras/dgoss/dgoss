@@ -45,7 +45,7 @@ GOSS_PATH="${GOSS_PATH:-$(which goss)}"
 [[ $GOSS_PATH ]] || { error "Couldn't find goss installation, please set GOSS_PATH to it"; }
 [[ ${GOSS_OPTS+x} ]] || GOSS_OPTS="--color --format documentation"
 [[ ${GOSS_WAIT_OPTS+x} ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
-GOSS_SLEEP=${GOSS_SLEEP:-0.1}
+GOSS_SLEEP=${GOSS_SLEEP:-0.2}
 
 case "$1" in
     run)

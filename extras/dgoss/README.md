@@ -49,5 +49,5 @@ Options to use for the goss test run. (Default: `--color --format documentation`
 Options to use for the goss wait run, when `./goss_wait.yaml` exists. (Default: `-r 30s -s 1s > /dev/null`)
 
 ##### GOSS_SLEEP
-Time to sleep after running container (and optionally `goss_wait.yaml`) and before running tests. (Default: `0.1s`)
+Time to sleep after running container (and optionally `goss_wait.yaml`) and before running tests. (Default: `0.2`)
 
