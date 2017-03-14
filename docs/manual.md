@@ -285,7 +285,7 @@ $ curl localhost:8080/healthz
   * `TAP`
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
-* `--color` - Enable color
+* `--color` - Force enable color
 * `--retry-timeout`, `-r` - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
 * `--sleep`, `-s` - Time to sleep between retries (default: 1s)
 
