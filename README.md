@@ -9,7 +9,7 @@
 
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/tree/master/extras/dgoss) wrapper
+**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
 
 **Note:** For some Docker HEALTHCHECK and health endpoint cases, see my blog post [here](https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c)
 
@@ -29,7 +29,7 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ## Installation
 
-This will install goss and [dgoss](https://github.com/aelsabbahy/tree/master/extras/dgoss) by default.
+This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) by default.
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
 
 ```bash
