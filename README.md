@@ -9,7 +9,9 @@
 
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
-**Note:** For some Docker use cases, see my blog post [here](https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c) and [dockerhub repo](https://hub.docker.com/r/aelsabbahy/goss/)
+**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
+
+**Note:** For some Docker/Kubernetes healtcheck, health endpoint, and container ordering examples, see my blog post [here](https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c)
 
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 
@@ -27,6 +29,7 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ## Installation
 
+This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) by default.
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
 
 ```bash
@@ -40,8 +43,12 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.0 GOSS_DST=~/bin sh
 ### Manual installation
 ```bash
 # See https://github.com/aelsabbahy/goss/releases for release versions
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.0/goss-linux-amd64 -o /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
+
+# (optional) dgoss docker wrapper (use 'master' for latest version)
+curl -L https://github.com/aelsabbahy/goss/tree/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dgoss
 ```
 
 ## Full Documentation

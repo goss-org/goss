@@ -285,6 +285,7 @@ $ curl localhost:8080/healthz
   * `TAP`
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
+* `--color` - Force enable color
 * `--retry-timeout`, `-r` - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
 * `--sleep`, `-s` - Time to sleep between retries (default: 1s)
 
@@ -761,7 +762,10 @@ Available variables:
 * `{{.Vars}}` - Containing the values defined in [--vars](#global-options) file
 
 Available functions beyond text/template [built-in functions](https://golang.org/pkg/text/template/#hdr-Functions):
-* `mkSlice` - Retuns a slice of all the arguments. See examples below for usage.
+* `mkSlice "ARG1" "ARG2"` - Retuns a slice of all the arguments. See examples below for usage.
+* `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
+* `readFile "fileName"` - Reads file content into a a string, trims whitespace. Useful when a file contains a token.
+  * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
 

@@ -27,6 +27,7 @@ deploy:
   file:
     - release/goss-linux-amd64
     - release/goss-linux-386
+    - extras/dgoss/dgoss
   skip_cleanup: true
   on:
     repo: aelsabbahy/goss

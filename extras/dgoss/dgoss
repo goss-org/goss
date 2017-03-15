@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+
+USAGE="$(basename "$0") [run|edit] <docker_run_params>"
+
+info() { echo -e "INFO: $*"; }
+error() { echo -e "ERROR: $*";exit 1; }
+
+cleanup() {
+    set +e
+    { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
+    rm -rf "$tmp_dir"
+    if [[ $id ]];then
+        info "Deleting container"
+        docker rm -vf "$id" > /dev/null
+    fi
+}
+
+run(){
+    # Copy in goss
+    cp "${GOSS_PATH}" "$tmp_dir/goss"
+    chmod 755 "$tmp_dir/goss"
+    [[ -e goss.yaml ]] && cp goss.yaml "$tmp_dir"
+    [[ -e goss_wait.yaml ]] && cp goss_wait.yaml "$tmp_dir"
+    info "Starting docker container"
+    id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
+    docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
+    log_pid=$!
+    info "Container ID: ${id:0:8}"
+}
+
+get_docker_file() {
+    if docker exec "$id" sh -c "test -e $1" > /dev/null;then
+        docker cp "$id:$1" .
+    fi
+}
+
+# Main
+tmp_dir=$(mktemp -d)
+chmod 777 "$tmp_dir"
+trap 'ret=$?;cleanup;exit $ret' EXIT
+
+GOSS_PATH="${GOSS_PATH:-$(which goss)}"
+[[ $GOSS_PATH ]] || { error "Couldn't find goss installation, please set GOSS_PATH to it"; }
+[[ ${GOSS_OPTS+x} ]] || GOSS_OPTS="--color --format documentation"
+[[ ${GOSS_WAIT_OPTS+x} ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
+GOSS_SLEEP=${GOSS_SLEEP:-0.2}
+
+case "$1" in
+    run)
+        run "$@"
+        if [[ -e goss_wait.yaml ]]; then
+            info "Found goss_wait.yaml, waiting for it to pass before running tests"
+            docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"
+        fi
+        [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
+        info "Running Tests"
+        docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
+        ;;
+    edit)
+        run "$@"
+        info "Run goss add/autoadd to add resources"
+        docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
+        get_docker_file "/goss/goss.yaml"
+        get_docker_file "/goss/goss_wait.yaml"
+        ;;
+    *)
+        error "$USAGE"
+esac
