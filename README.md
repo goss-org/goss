@@ -29,15 +29,16 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ## Installation
 
-This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) by default.
+This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
+
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
 
 ```bash
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.0 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.0 GOSS_DST=~/bin sh
+# Install v0.3.1 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.1 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
@@ -47,7 +48,7 @@ curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linu
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-curl -L https://github.com/aelsabbahy/goss/tree/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
