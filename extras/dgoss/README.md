@@ -3,7 +3,9 @@
 dgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker containers.
 
 ## Examples and Tutorials
-* [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples)
+* [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Introduction to dgoss tutorial
+* [blog tutorial]() - Same as above, but in written format
+* [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate docker images
 
 ## Usage
 
