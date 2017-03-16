@@ -38,11 +38,11 @@ get_docker_file() {
 }
 
 # Main
-tmp_dir=$(mktemp -d)
+tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 chmod 777 "$tmp_dir"
 trap 'ret=$?;cleanup;exit $ret' EXIT
 
-GOSS_PATH="${GOSS_PATH:-$(which goss)}"
+GOSS_PATH="${GOSS_PATH:-$(which goss 2> /dev/null || true)}"
 [[ $GOSS_PATH ]] || { error "Couldn't find goss installation, please set GOSS_PATH to it"; }
 [[ ${GOSS_OPTS+x} ]] || GOSS_OPTS="--color --format documentation"
 [[ ${GOSS_WAIT_OPTS+x} ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
@@ -53,7 +53,9 @@ case "$1" in
         run "$@"
         if [[ -e goss_wait.yaml ]]; then
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
-            docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"
+            if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                error "goss_wait.yaml never passed"
+            fi
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Running Tests"
