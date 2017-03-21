@@ -50,6 +50,11 @@ func main() {
 					EnvVar: "GOSS_FMT",
 				},
 				cli.BoolFlag{
+					Name:   "color",
+					Usage:  "Force color on",
+					EnvVar: "GOSS_COLOR",
+				},
+				cli.BoolFlag{
 					Name:   "no-color",
 					Usage:  "Force color off",
 					EnvVar: "GOSS_NOCOLOR",

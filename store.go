@@ -1,7 +1,6 @@
 package goss
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,7 +10,6 @@ import (
 	"reflect"
 	"sort"
 	"strings"
-	"text/template"
 
 	"gopkg.in/yaml.v2"
 
@@ -92,36 +90,6 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 		return vars, err
 	}
 	return vars, nil
-}
-
-func mkSlice(args ...interface{}) []interface{} {
-	return args
-}
-
-func NewTemplateFilter(varsFile string) func([]byte) []byte {
-	vars, err := varsFromFile(varsFile)
-	if err != nil {
-		fmt.Printf("Error: loading vars file '%s'\n%v\n", varsFile, err)
-		os.Exit(1)
-	}
-	tVars := &TmplVars{Vars: vars}
-
-	f := func(data []byte) []byte {
-		funcMap := map[string]interface{}{"mkSlice": mkSlice}
-		t := template.New("test").Funcs(template.FuncMap(funcMap))
-		tmpl, err := t.Parse(string(data))
-		if err != nil {
-			log.Fatal(err)
-		}
-		tmpl.Option("missingkey=error")
-		var doc bytes.Buffer
-		err = tmpl.Execute(&doc, tVars)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return doc.Bytes()
-	}
-	return f
 }
 
 // Reads json byte array returning GossConfig

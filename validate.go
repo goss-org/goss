@@ -53,6 +53,9 @@ func getOutputer(c *cli.Context) outputs.Outputer {
 	if c.Bool("no-color") {
 		color.NoColor = true
 	}
+	if c.Bool("color") {
+		color.NoColor = false
+	}
 	return outputs.GetOutputer(c.String("format"))
 }
 
