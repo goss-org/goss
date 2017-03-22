@@ -31,7 +31,7 @@ run(){
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
+        id=$(docker run -d -v "$tmp_dir:/goss" "${@:${docker_args}}")
         docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
         ;;
       cp)
@@ -68,6 +68,14 @@ GOSS_PATH="${GOSS_PATH:-$(which goss 2> /dev/null || true)}"
 [[ ${GOSS_WAIT_OPTS+x} ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
 GOSS_SLEEP=${GOSS_SLEEP:-0.2}
 
+if [ $2 == "--gossfile" ]; then
+  goss_file=$3
+  docker_args=4
+else
+  goss_file="goss.yaml"
+  docker_args=2
+fi
+
 case "$1" in
     run)
         run "$@"
@@ -95,7 +103,7 @@ case "$1" in
         run "$@"
         info "Run goss add/autoadd to add resources"
         docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
-        get_docker_file "/goss/goss.yaml"
+        get_docker_file "/goss/${goss_file}"
         get_docker_file "/goss/goss_wait.yaml"
         [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
         ;;
