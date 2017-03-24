@@ -8,11 +8,11 @@ dgoss is a convenience wrapper around goss that aims to bring the simplicity of 
 * [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate docker images
 
 ## Installation
-**Linux:**
+#### Linux:
 
 Follow the goss [installation instructions](https://github.com/aelsabbahy/goss#installation)
 
-**Mac OSX:**
+#### Mac OSX
 
 Since goss runs on the target container, dgoss can be used on a Mac OSX system by doing the following:
 ```
