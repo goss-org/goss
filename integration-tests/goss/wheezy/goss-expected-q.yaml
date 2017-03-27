@@ -99,7 +99,7 @@ mount:
     exists: true
 http:
   http://google.com:
-    status: 301
+    status: 302
     allow-insecure: false
     no-follow-redirects: true
     timeout: 5000
