@@ -283,6 +283,7 @@ $ curl localhost:8080/healthz
   * `nagios_verbose` - Nagios output with verbose failure output.
   * `rspecish` **(default)** - Similar to rspec output
   * `TAP`
+  * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
