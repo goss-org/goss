@@ -45,6 +45,7 @@ func (u *DefHTTP) setup() error {
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: u.allowInsecure},
+		DisableKeepAlives: true,
 	}
 	client := &http.Client{
 		Transport: tr,
