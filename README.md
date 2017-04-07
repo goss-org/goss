@@ -204,6 +204,7 @@ package:
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
 * nagios_verbose - nagios output with verbose failure output.
+* prometheus - prometheus metrics output
 
 ## Community Contributions
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
