@@ -528,11 +528,12 @@ file:
 
 
 ### gossfile
-Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples.
+Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples. Glob patterns can be also be used to specify matching gossfiles.
 
 ```yaml
 gossfile:
   goss_httpd.yaml: {}
+  /etc/goss.d/*.yaml: {}
 ```
 
 
