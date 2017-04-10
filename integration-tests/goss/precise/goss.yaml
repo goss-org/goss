@@ -24,5 +24,4 @@ port:
     ip:
     - 0.0.0.0
 gossfile:
-  "../goss-shared.yaml": {}
-  "../goss-service.yaml": {}
+  "../goss-s*.yaml": {}
