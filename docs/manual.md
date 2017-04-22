@@ -24,6 +24,7 @@
   * [interface](#interface)
   * [kernel-param](#kernel-param)
   * [mount](#mount)
+  * [matching](#matching)
   * [package](#package)
   * [port](#port)
   * [process](#process)
@@ -609,6 +610,30 @@ mount:
     filesystem: xfs
 ```
 
+### matching
+Validates specified content against a matcher. Best used with [Templates](#templates).
+
+```yaml
+matching:
+  has_substr: # friendly test name
+    content: some string
+    matches:
+      match-regexp: some str
+  has_2:
+    content:
+      - 2
+    matches:
+      contain-element: 2
+  has_foo_bar_and_baz:
+    content:
+      foo: bar
+      baz: bing
+    matches:
+      and:
+        - have-key-with-value:
+            foo: bar
+        - have-key: baz
+```
 
 ### package
 Validates the state of a package
