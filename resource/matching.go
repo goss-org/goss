@@ -6,17 +6,16 @@ import (
 	"reflect"
 	"strings"
 
-	. "github.com/aelsabbahy/goss/resource/types"
-	system "github.com/aelsabbahy/goss/system/types"
+	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
 
 type Matching struct {
 	Title   string      `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    Meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Meta    meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Content interface{} `json:"content,omitempty" yaml:"content,omitempty"`
 	Id      string      `json:"-" yaml:"-"`
-	Matches Matcher     `json:"matches" yaml:"matches"`
+	Matches matcher     `json:"matches" yaml:"matches"`
 }
 
 type MatchingMap map[string]*Matching
@@ -26,7 +25,7 @@ func (a *Matching) SetID(id string) { a.Id = id }
 
 // FIXME: Can this be refactored?
 func (r *Matching) GetTitle() string { return r.Title }
-func (r *Matching) GetMeta() Meta    { return r.Meta }
+func (r *Matching) GetMeta() meta    { return r.Meta }
 
 func (a *Matching) Validate(sys system.System) []TestResult {
 	skip := false

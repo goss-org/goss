@@ -45,8 +45,8 @@ func NewGossConfig() *GossConfig {
 	}
 }
 
-func (c *GossConfig) Resources() []resourceTypes.Resource {
-	var tests []resourceTypes.Resource
+func (c *GossConfig) Resources() []resource.Resource {
+	var tests []resource.Resource
 
 	gm := genericConcatMaps(c.Commands,
 		c.HTTPs,
