@@ -83,6 +83,14 @@ var gomegaTests = []struct {
 		in:   `{"have-len": 3}`,
 		want: gomega.HaveLen(3),
 	},
+	{
+		in: `{"have-key-with-value": { "foo": 1, "bar": "baz" }}`,
+		want: gomega.And(
+			gomega.HaveKeyWithValue(gomega.Equal("foo"), gomega.Equal(1)),
+			gomega.HaveKeyWithValue(gomega.Equal("bar"), gomega.Equal("baz")),
+		),
+		useNegateTester: true,
+	},
 
 	// Negation
 	{
