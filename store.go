@@ -158,9 +158,16 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 		} else {
 			fpath = filepath.Join(path, g.ID())
 		}
-		fdir := filepath.Dir(fpath)
-		j := mergeJSONData(ReadJSON(fpath), depth, fdir)
-		ret = mergeGoss(ret, j)
+		matches, err := filepath.Glob(fpath)
+		if err != nil {
+			fmt.Printf("Error in expanding glob pattern: \"%s\"\n", err.Error())
+			os.Exit(1)
+		}
+		for _, match := range matches {
+			fdir := filepath.Dir(match)
+			j := mergeJSONData(ReadJSON(match), depth, fdir)
+			ret = mergeGoss(ret, j)
+		}
 	}
 	return ret
 }
