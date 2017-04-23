@@ -1,17 +1,21 @@
 package outputs
 
 import (
+	"bytes"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"strconv"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/fatih/color"
 )
 
 type JUnit struct{}
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+	color.NoColor = true
 	var testCount, failed, skipped int
 
 	// ISO8601 timeformat
@@ -26,15 +30,15 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 			duration := strconv.FormatFloat(m["duration"].(float64)/1000/1000/1000, 'f', 3, 64)
 			summary[testCount] = "<testcase name=\"" +
 				testResult.ResourceType + " " +
-				testResult.ResourceId + " " +
+				escapeString(testResult.ResourceId) + " " +
 				testResult.Property + "\" " +
 				"time=\"" + duration + "\">\n"
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
-					humanizeResult2(testResult) +
+					escapeString(humanizeResult2(testResult)) +
 					"</system-err>\n"
 				summary[testCount] += "<failure>" +
-					humanizeResult2(testResult) +
+					escapeString(humanizeResult2(testResult)) +
 					"</failure>\n</testcase>\n"
 
 				failed++
@@ -44,7 +48,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 					skipped++
 				}
 				summary[testCount] += "<system-out>" +
-					humanizeResult2(testResult) +
+					escapeString(humanizeResult2(testResult)) +
 					"</system-out>\n</testcase>\n"
 			}
 			testCount++
@@ -72,4 +76,10 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 
 func init() {
 	RegisterOutputer("junit", &JUnit{})
+}
+
+func escapeString(str string) string {
+	buffer := new(bytes.Buffer)
+	xml.EscapeText(buffer, []byte(str))
+	return buffer.String()
 }
