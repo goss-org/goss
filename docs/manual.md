@@ -773,6 +773,7 @@ Available functions beyond text/template [built-in functions](https://golang.org
 * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
 * `readFile "fileName"` - Reads file content into a a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
+* `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
 
@@ -829,8 +830,8 @@ package:
     {{end}}
 {{end}}
 
-# This test is only when OS=centos variable is defined
-{{if eq .Env.OS "centos"}}
+# This test is only when the OS environment variable matches the pattern
+{{if .Env.OS | "[Cc]ent(OS|os)"}}
   libselinux:
     installed: true
 {{end}}
