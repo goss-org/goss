@@ -297,6 +297,14 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
+
+	defer func() {
+		//Do we need to close the stream?
+		if rc, ok := fh.(io.ReadCloser); ok {
+			rc.Close()
+		}
+	}()
+
 	scanner := bufio.NewScanner(fh)
 	var found []patternMatcher
 	for scanner.Scan() {
