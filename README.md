@@ -204,6 +204,7 @@ package:
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
 * nagios_verbose - nagios output with verbose failure output.
+* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
