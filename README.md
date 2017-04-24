@@ -37,8 +37,8 @@ This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/maste
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.1 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.1 GOSS_DST=~/bin sh
+# Install v0.3.2 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.2 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
@@ -204,6 +204,7 @@ package:
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
 * nagios_verbose - nagios output with verbose failure output.
+* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.

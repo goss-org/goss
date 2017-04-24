@@ -56,6 +56,12 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			}
 		}
 		return gomega.And(subMatchers...), nil
+	case "have-key":
+		subMatcher, err := matcherToGomegaMatcher(value)
+		if err != nil {
+			return nil, err
+		}
+		return gomega.HaveKey(subMatcher), nil
 	case "contain-element":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {

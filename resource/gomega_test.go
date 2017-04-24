@@ -91,6 +91,10 @@ var gomegaTests = []struct {
 		),
 		useNegateTester: true,
 	},
+	{
+		in:   `{"have-key": "foo"}`,
+		want: gomega.HaveKey(gomega.Equal("foo")),
+	},
 
 	// Negation
 	{
