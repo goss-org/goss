@@ -118,13 +118,8 @@ func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err erro
 		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
 	}
 
-	var key, val types.GomegaMatcher
-	for k, v := range valueI {
-		key, err = matcherToGomegaMatcher(k)
-		if err != nil {
-			return
-		}
-		val, err = matcherToGomegaMatcher(v)
+	for key, val := range valueI {
+		val, err = matcherToGomegaMatcher(val)
 		if err != nil {
 			return
 		}
