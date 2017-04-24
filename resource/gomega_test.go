@@ -83,6 +83,10 @@ var gomegaTests = []struct {
 		in:   `{"have-len": 3}`,
 		want: gomega.HaveLen(3),
 	},
+	{
+		in:   `{"have-key": "foo"}`,
+		want: gomega.HaveKey(gomega.Equal("foo")),
+	},
 
 	// Negation
 	{

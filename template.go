@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -32,10 +33,20 @@ func getEnv(key string, def ...string) string {
 	return os.Getenv(key)
 }
 
+func regexMatch(re, s string) (bool, error) {
+	compiled, err := regexp.Compile(re)
+	if err != nil {
+		return false, err
+	}
+
+	return compiled.MatchString(s), nil
+}
+
 var funcMap = map[string]interface{}{
-	"mkSlice":  mkSlice,
-	"readFile": readFile,
-	"getEnv":   getEnv,
+	"mkSlice":    mkSlice,
+	"readFile":   readFile,
+	"getEnv":     getEnv,
+	"regexMatch": regexMatch,
 }
 
 func NewTemplateFilter(varsFile string) func([]byte) []byte {
