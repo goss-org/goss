@@ -81,3 +81,5 @@ Options to use for the goss wait run, when `./goss_wait.yaml` exists. (Default: 
 ##### GOSS_SLEEP
 Time to sleep after running container (and optionally `goss_wait.yaml`) and before running tests. (Default: `0.2`)
 
+##### GOSS_FILES_PATH
+Location of the goss yaml files. (Default: `.`)
