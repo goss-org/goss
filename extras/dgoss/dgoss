@@ -34,7 +34,7 @@ run(){
 get_docker_file() {
     if docker exec "$id" sh -c "test -e $1" > /dev/null;then
         info "Copied '$1' from container to current directory"
-        docker cp "$id:$1" .
+        docker cp "$id:$1" "${GOSS_FILES_PATH}"
     fi
 }
 
