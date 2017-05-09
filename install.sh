@@ -25,7 +25,7 @@ fi
 url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$arch"
 
 echo "Downloading $url"
-curl -L "$url" -o "$INSTALL_LOC"
+curl --compressed -L "$url" -o "$INSTALL_LOC"
 chmod +rx "$INSTALL_LOC"
 echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
@@ -33,7 +33,7 @@ echo "goss --version"
 
 dgoss_url="https://raw.githubusercontent.com/aelsabbahy/goss/$DGOSS_VER/extras/dgoss/dgoss"
 echo "Downloading $dgoss_url"
-curl -L "$dgoss_url" -o "$DGOSS_INSTALL_LOC"
+curl --compressed -L "$dgoss_url" -o "$DGOSS_INSTALL_LOC"
 chmod +rx "$DGOSS_INSTALL_LOC"
 echo "dgoss $DGOSS_VER has been installed to $DGOSS_INSTALL_LOC"
 }
