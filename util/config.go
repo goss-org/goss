@@ -1,9 +1,9 @@
 package util
 
 import (
-  "reflect"
-  "fmt"
-  "strings"
+	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/oleiade/reflections"
 )
@@ -17,38 +17,39 @@ type Config struct {
 }
 
 type format string
+
 const (
-  JSON format = "json"
-  YAML format = "yaml"
+	JSON format = "json"
+	YAML format = "yaml"
 )
 
 func ValidateSection(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
-  // Get generic input
+	// Get generic input
 	var toValidate map[string]interface{}
 	if err := unmarshal(&toValidate); err != nil {
 		return err
 	}
 
-  // Run input through whitelist
+	// Run input through whitelist
 	typ := reflect.TypeOf(i)
 	typs := strings.Split(typ.String(), ".")[1]
-  for k, _ := range toValidate {
-    if !whitelist[k] {
-      return fmt.Errorf("Invalid Attribute for %s: %s", typs, k)
-    }
-  }
+	for k, _ := range toValidate {
+		if !whitelist[k] {
+			return fmt.Errorf("Invalid Attribute for %s: %s", typs, k)
+		}
+	}
 
-  return nil
+	return nil
 }
 
 func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
-  // Get generic input
+	// Get generic input
 	var toValidate map[string]map[string]interface{}
 	if err := unmarshal(&toValidate); err != nil {
 		return err
 	}
 
-  // Run input through whitelist
+	// Run input through whitelist
 	typ := reflect.TypeOf(i)
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, v := range toValidate {
@@ -59,10 +60,10 @@ func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelis
 		}
 	}
 
-  return nil
+	return nil
 }
 
-func WhitelistAttrs (i interface{}, format format) (map[string]bool, error) {
+func WhitelistAttrs(i interface{}, format format) (map[string]bool, error) {
 	validAttrs := make(map[string]bool)
 	tags, err := reflections.Tags(i, string(format))
 	if err != nil {

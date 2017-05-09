@@ -51,67 +51,67 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 }
 
 func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {
-  // Curried json.Unmarshal
-  unmarshal := func (i interface{}) error {
-    if err := json.Unmarshal(data, i); err != nil {
-      return err
-    }
-    return nil
-  }
+	// Curried json.Unmarshal
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
 
-  // Validate configuration
-  zero := ResourceType{}
-  whitelist, err := util.WhitelistAttrs(zero, util.JSON)
-  if err != nil {
-    return err
-  }
-  if err:= util.ValidateSections(unmarshal, zero, whitelist); err != nil {
-    return err
-  }
+	// Validate configuration
+	zero := ResourceType{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
 
-  var tmp map[string]*ResourceType
+	var tmp map[string]*ResourceType
 	if err := unmarshal(&tmp); err != nil {
 		return err
 	}
 
 	typ := reflect.TypeOf(zero)
 	typs := strings.Split(typ.String(), ".")[1]
-  for id, res := range tmp {
+	for id, res := range tmp {
 		if res == nil {
 			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
 		}
 		res.SetID(id)
 	}
 
-  *ret = tmp
+	*ret = tmp
 	return nil
 }
 
 func (ret *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
-  // Validate configuration
-  zero := ResourceType{}
-  whitelist, err := util.WhitelistAttrs(zero, util.YAML)
-  if err != nil {
-    return err
-  }
-  if err:= util.ValidateSections(unmarshal, zero, whitelist); err != nil {
-    return err
-  }
+	// Validate configuration
+	zero := ResourceType{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
 
-  var tmp map[string]*ResourceType
+	var tmp map[string]*ResourceType
 	if err := unmarshal(&tmp); err != nil {
 		return err
 	}
 
 	typ := reflect.TypeOf(zero)
 	typs := strings.Split(typ.String(), ".")[1]
-  for id, res := range tmp {
+	for id, res := range tmp {
 		if res == nil {
 			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
 		}
 		res.SetID(id)
 	}
 
-  *ret = tmp
+	*ret = tmp
 	return nil
 }
