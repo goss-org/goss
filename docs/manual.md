@@ -857,7 +857,7 @@ package:
 {{end}}
 
 # This test is only when the OS environment variable matches the pattern
-{{if .Env.OS | "[Cc]ent(OS|os)"}}
+{{if .Env.OS | regexMatch "[Cc]ent(OS|os)"}}
   libselinux:
     installed: true
 {{end}}
