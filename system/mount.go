@@ -95,7 +95,8 @@ func getMount(mountpoint string) (*mount.Info, error) {
 
 	// Search the table for the mountpoint
 	for _, e := range entries {
-		if e.Mountpoint == mountpoint {
+		// Make sure that the source is a full path
+		if (e.Mountpoint == mountpoint) && (string(e.Source[0]) == "/") {
 			return e, nil
 		}
 	}
