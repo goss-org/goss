@@ -39,6 +39,9 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
+# Disable apache2 service on boot for "precise"
+[[ $os == "precise" ]] && docker_exec bash -c "echo manual > /etc/init/apache2.override"
+
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate)
 echo "$out"

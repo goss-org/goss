@@ -10,7 +10,7 @@ port:
     - 0.0.0.0
 service:
   apache2:
-    enabled: true
+    enabled: false
     running: true
 process:
   apache2:
