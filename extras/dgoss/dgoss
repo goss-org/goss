@@ -22,8 +22,8 @@ run(){
     # Copy in goss
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
-    [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
+    [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && "${GOSS_PATH}" render "${GOSS_FILES_PATH}/goss.yaml" > "$tmp_dir/goss.yaml"
+    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && "${GOSS_PATH}" render "${GOSS_FILES_PATH}/goss_wait.yaml" > "$tmp_dir/goss_wait.yaml"
     info "Starting docker container"
     id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
     docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
