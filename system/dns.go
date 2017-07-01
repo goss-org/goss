@@ -135,6 +135,8 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 				addrs, err = LookupSRV(host, server, c, m)
 			case "TXT":
 				addrs, err = LookupTXT(host, server, c, m)
+			case "CAA":
+				addrs, err = LookupCAA(host, server, c, m)
 			default:
 				addrs, err = LookupHost(host, server, c, m)
 			}
@@ -306,6 +308,25 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 
 	for _, ans := range r.Answer {
 		name = append(name, ans.(*dns.PTR).Ptr)
+	}
+
+	return
+}
+
+// CAA record lookup
+func LookupCAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+	m.SetQuestion(dns.Fqdn(host), dns.TypeCAA)
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ans := range r.Answer {
+		if t, ok := ans.(*dns.CAA); ok {
+			flag := strconv.Itoa(int(t.Flag))
+			caarec := strings.Join([]string{flag, t.Tag, t.Value}, " ")
+			addrs = append(addrs, caarec)
+		}
 	}
 
 	return
