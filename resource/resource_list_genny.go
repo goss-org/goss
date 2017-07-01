@@ -50,64 +50,23 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 	return res, sysres, true
 }
 
-func (r *ResourceTypeMap) UnmarshalJSON(data []byte) error {
-	resEmpty := ResourceType{}
-	validAttrs, err := validAttrs(resEmpty, "json")
+func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {
+	// Curried json.Unmarshal
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// Validate configuration
+	zero := ResourceType{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
 	if err != nil {
 		return err
 	}
-	var validate map[string]map[string]interface{}
-	if err := json.Unmarshal(data, &validate); err != nil {
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
 		return err
-	}
-
-	typ := reflect.TypeOf(resEmpty)
-	typs := strings.Split(typ.String(), ".")[1]
-	for id, v := range validate {
-		for k, _ := range v {
-			if !validAttrs[k] {
-				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
-			}
-		}
-	}
-
-	var tmp map[string]*ResourceType
-	if err := json.Unmarshal(data, &tmp); err != nil {
-		return err
-	}
-
-	for id, res := range tmp {
-		if res == nil {
-			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
-		}
-		res.SetID(id)
-	}
-
-	*r = tmp
-
-	return nil
-}
-
-//func (r *ResourceTypeMap) UnmarshalYAML(data []byte) error {
-func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
-	resEmpty := ResourceType{}
-	validAttrs, err := validAttrs(resEmpty, "yaml")
-	if err != nil {
-		return err
-	}
-	var validate map[string]map[string]interface{}
-	if err := unmarshal(&validate); err != nil {
-		return err
-	}
-
-	typ := reflect.TypeOf(resEmpty)
-	typs := strings.Split(typ.String(), ".")[1]
-	for id, v := range validate {
-		for k, _ := range v {
-			if !validAttrs[k] {
-				return fmt.Errorf("Invalid Attribute for %s:%s: %s", typs, id, k)
-			}
-		}
 	}
 
 	var tmp map[string]*ResourceType
@@ -115,6 +74,8 @@ func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) err
 		return err
 	}
 
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
 			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
@@ -122,7 +83,35 @@ func (r *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) err
 		res.SetID(id)
 	}
 
-	*r = tmp
+	*ret = tmp
+	return nil
+}
 
+func (ret *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	// Validate configuration
+	zero := ResourceType{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*ResourceType
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
 	return nil
 }
