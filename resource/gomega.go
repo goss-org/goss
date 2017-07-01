@@ -45,6 +45,17 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "have-len":
 		value = sanitizeExpectedValue(value)
 		return gomega.HaveLen(value.(int)), nil
+	case "have-key-with-value":
+		subMatchers, err := mapToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		for key, val := range subMatchers {
+			if val == nil {
+				fmt.Printf("%d is nil", key)
+			}
+		}
+		return gomega.And(subMatchers...), nil
 	case "have-key":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -99,6 +110,24 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 
 	}
+}
+
+func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err error) {
+	valueI, ok := value.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
+	}
+
+	for key, val := range valueI {
+		val, err = matcherToGomegaMatcher(val)
+		if err != nil {
+			return
+		}
+
+		subMatcher := gomega.HaveKeyWithValue(key, val)
+		subMatchers = append(subMatchers, subMatcher)
+	}
+	return
 }
 
 func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
