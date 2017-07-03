@@ -83,3 +83,11 @@ Time to sleep after running container (and optionally `goss_wait.yaml`) and befo
 
 ##### GOSS_FILES_PATH
 Location of the goss yaml files. (Default: `.`)
+
+##### GOSS_VARS
+The name of the variables file relative to `GOSS_FILES_PATH` to copy into the
+docker container and use for valiation (i.e. `dgoss run`) and copy out of the
+docker container when writing tests (i.e. `dgoss edit`). If set, the
+`--vars` flag is passed to `goss validate` commands inside the container.
+If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
+(Default: `''`).
