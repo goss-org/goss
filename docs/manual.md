@@ -457,6 +457,7 @@ With the server attribute set, it is possible to validate the following types of
 
 - A
 - AAAA
+- CAA
 - CNAME
 - MX
 - NS

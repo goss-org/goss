@@ -23,25 +23,6 @@ const (
 	YAML format = "yaml"
 )
 
-func ValidateSection(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
-	// Get generic input
-	var toValidate map[string]interface{}
-	if err := unmarshal(&toValidate); err != nil {
-		return err
-	}
-
-	// Run input through whitelist
-	typ := reflect.TypeOf(i)
-	typs := strings.Split(typ.String(), ".")[1]
-	for k, _ := range toValidate {
-		if !whitelist[k] {
-			return fmt.Errorf("Invalid Attribute for %s: %s", typs, k)
-		}
-	}
-
-	return nil
-}
-
 func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
 	// Get generic input
 	var toValidate map[string]map[string]interface{}

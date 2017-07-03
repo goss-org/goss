@@ -24,6 +24,7 @@ run(){
     chmod 755 "$tmp_dir/goss"
     [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
     [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
+    [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
     info "Starting docker container"
     id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
     docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
@@ -55,13 +56,23 @@ case "$1" in
         run "$@"
         if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
-            if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
-                error "goss_wait.yaml never passed"
+            if [[ -z "${GOSS_VARS}" ]]; then
+                if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                    error "goss_wait.yaml never passed"
+                fi
+            else
+                if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
+                    error "goss_wait.yaml never passed"
+                fi
             fi
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Running Tests"
-        docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
+        if [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]]; then
+            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_OPTS"
+        else
+            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
+        fi
         ;;
     edit)
         run "$@"
@@ -69,6 +80,7 @@ case "$1" in
         docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
         get_docker_file "/goss/goss.yaml"
         get_docker_file "/goss/goss_wait.yaml"
+        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
         ;;
     *)
         error "$USAGE"

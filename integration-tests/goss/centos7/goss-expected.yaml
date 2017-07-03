@@ -75,6 +75,14 @@ command:
     - 'sh: foobar: command not found'
     timeout: 10000
 dns:
+  CAA:dnstest.io:
+    resolveable: true
+    addrs:
+    - 0 issue comodoca.com
+    - 0 issue letsencrypt.org
+    - 0 issuewild ;
+    timeout: 1000
+    server: 8.8.8.8
   CNAME:c.dnstest.io:
     resolveable: true
     addrs:

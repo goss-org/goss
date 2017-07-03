@@ -212,6 +212,7 @@ package:
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
+* [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
 
 ## Limitations
 
