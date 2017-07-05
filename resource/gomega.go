@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
@@ -118,7 +119,16 @@ func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err erro
 		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
 	}
 
-	for key, val := range valueI {
+	// Get keys
+	keys := []string{}
+	for key, _ := range valueI {
+		keys = append(keys, key)
+	}
+	// Iterate through keys in a deterministic way, since ranging over a map
+	// does not guarantee order
+	sort.Strings(keys)
+	for _, key := range keys {
+		val := valueI[key]
 		val, err = matcherToGomegaMatcher(val)
 		if err != nil {
 			return
