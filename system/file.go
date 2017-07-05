@@ -2,6 +2,7 @@ package system
 
 import (
 	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"os"
@@ -25,6 +26,7 @@ type File interface {
 	Group() (string, error)
 	LinkedTo() (string, error)
 	Md5() (string, error)
+	Sha256() (string, error)
 }
 
 type DefFile struct {
@@ -220,6 +222,26 @@ func (f *DefFile) Md5() (string, error) {
 	defer fh.Close()
 
 	hash := md5.New()
+	if _, err := io.Copy(hash, fh); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+}
+
+func (f *DefFile) Sha256() (string, error) {
+
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fh, err := os.Open(f.realPath)
+	if err != nil {
+		return "", err
+	}
+	defer fh.Close()
+
+	hash := sha256.New()
 	if _, err := io.Copy(hash, fh); err != nil {
 		return "", err
 	}

@@ -18,6 +18,7 @@ type File struct {
 	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
 	Contains []string `json:"contains" yaml:"contains"`
 	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
+	Sha256   matcher  `json:"sha256,omitempty" yaml:"sha256,omitempty"`
 }
 
 func (f *File) ID() string      { return f.Path }
@@ -58,6 +59,9 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	}
 	if f.Md5 != nil {
 		results = append(results, ValidateValue(f, "md5", f.Md5, sysFile.Md5, skip))
+	}
+	if f.Sha256 != nil {
+		results = append(results, ValidateValue(f, "sha256", f.Sha256, sysFile.Sha256, skip))
 	}
 	return results
 }
