@@ -2,6 +2,7 @@ package resource
 
 import (
 	"strings"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -44,7 +45,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 	var host string
 	if sysDNS.Qtype() != "" {
-	  host = strings.Join([]string{sysDNS.Qtype(), sysDNS.Host()}, ":")
+		host = strings.Join([]string{sysDNS.Qtype(), sysDNS.Host()}, ":")
 	} else {
 		host = sysDNS.Host()
 	}

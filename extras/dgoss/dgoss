@@ -68,10 +68,10 @@ case "$1" in
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Running Tests"
-        if [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]]; then
-            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_OPTS"
-        else
+        if [[ -z "${GOSS_VARS}" ]]; then
             docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
+        else
+            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_OPTS"
         fi
         ;;
     edit)
