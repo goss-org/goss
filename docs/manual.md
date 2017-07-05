@@ -519,6 +519,8 @@ file:
     filetype: file # file, symlink, directory
     contains: [] # Check file content for these patterns
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
+    # A stronger checksum alternative to md5 (recommended)
+    sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
   /etc/alternatives/mta:
     # required attributes
     exists: true

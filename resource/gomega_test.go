@@ -85,9 +85,11 @@ var gomegaTests = []struct {
 	},
 	{
 		in: `{"have-key-with-value": { "foo": 1, "bar": "baz" }}`,
+		// Keys are sorted and then passed to gomega.And so the order
+		// of the conditions in this `want` is important
 		want: gomega.And(
-			gomega.HaveKeyWithValue("foo", gomega.Equal(1)),
 			gomega.HaveKeyWithValue("bar", gomega.Equal("baz")),
+			gomega.HaveKeyWithValue("foo", gomega.Equal(1)),
 		),
 		useNegateTester: true,
 	},
