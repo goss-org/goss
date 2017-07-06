@@ -618,6 +618,39 @@ mount:
 ### matching
 Validates specified content against a matcher. Best used with [Templates](#templates).
 
+#### With [Templates](#templates):
+Let's say we have a `data.json` file that gets generated as part of some testing pipeline:
+
+```json
+{
+  "instance_count": 14,
+  "failures": 3,
+  "status": "FAIL"
+}
+```
+
+This could then be passed into goss: `goss --vars data.json validate`
+
+And then validated against:
+
+```yaml
+matching:
+  check_instance_count: # Make sure there is at least one instance
+    content: {{ .Vars.instance_count }}
+    matches:
+      gt: 0
+
+  check_failure_count_from_all_instance: # expect no failures
+    content: {{ .Vars.failures }}
+    matches: 0
+
+  check_status:
+    content: {{ .Vars.status }}
+    matches:
+      - not: FAIL
+```
+
+#### Without [Templates](#templates):
 ```yaml
 matching:
   has_substr: # friendly test name
