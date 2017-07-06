@@ -28,7 +28,7 @@ port:
     listening: false
 service:
   apache2:
-    enabled: true
+    enabled: false
     running: true
   foobar:
     enabled: false
