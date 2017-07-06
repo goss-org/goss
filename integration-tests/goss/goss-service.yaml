@@ -8,5 +8,9 @@ service:
 {{else}}
   apache2:
 {{end}}
+{{ if .Env.OS | regexMatch "precise" }}
+    enabled: false
+{{else}}
     enabled: true
+{{end}}
     running: true
