@@ -692,6 +692,8 @@ package:
 ### port
 Validates the state of a local port.
 
+**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/aelsabbahy/goss/issues/149))
+
 ```yaml
 port:
   # {tcp,tcp6,udp,udp6}:port_num
