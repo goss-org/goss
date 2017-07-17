@@ -42,8 +42,14 @@ func (p *DefProcess) Pids() ([]int, error) {
 }
 
 func (p *DefProcess) Running() (bool, error) {
+	fmt.Println("debug: Checking if ProcMap contains", p.executable)
 	if _, ok := p.procMap[p.executable]; ok {
+		fmt.Println("debug: ProcMap did contain", p.executable)
 		return true, nil
+	}
+	fmt.Println("debug: ProcMap did not contain it, here's what it looks like")
+	for k, _ := range p.procMap {
+		fmt.Println("debug: Running()", "found executable", k)
 	}
 	return false, nil
 }
@@ -57,6 +63,9 @@ func GetProcs() map[string][]ps.Process {
 	}
 	for _, p := range processes {
 		pmap[p.Executable()] = append(pmap[p.Executable()], p)
+	}
+	for k, _ := range pmap {
+		fmt.Println("debug: GetProcs()", "found executable", k)
 	}
 
 	return pmap

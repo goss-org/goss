@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -49,6 +50,7 @@ func (s *System) Ports() map[string][]GOnetstat.Process {
 
 func (s *System) ProcMap() map[string][]ps.Process {
 	s.procOnce.Do(func() {
+		fmt.Println("debug: getting ProcMap")
 		s.procMap = GetProcs()
 	})
 	return s.procMap
