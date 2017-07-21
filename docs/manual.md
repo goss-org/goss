@@ -278,12 +278,13 @@ $ curl localhost:8080/healthz
 #### Flags
 * `--format`, `-f` (output format)
   * `documentation` - Verbose test results
-  * `JSON` - Detailed test result
-  * `JUnit`
+  * `json` - Detailed test result
+  * `json_oneline` - Same as json, but oneliner
+  * `junit`
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
   * `nagios_verbose` - Nagios output with verbose failure output.
   * `rspecish` **(default)** - Similar to rspec output
-  * `TAP`
+  * `tap`
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
