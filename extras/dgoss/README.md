@@ -21,7 +21,7 @@ curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dg
 chmod +rx /usr/local/bin/dgoss
 
 # Download goss to your preferred location
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.3/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.4/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
 
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64

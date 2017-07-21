@@ -3,7 +3,7 @@
 {
 set -e
 
-LATEST="v0.3.3"
+LATEST="v0.3.4"
 DGOSS_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
