@@ -9,8 +9,8 @@ import (
 
 	"github.com/aelsabbahy/GOnetstat"
 	// This needs a better name
+	"github.com/aelsabbahy/go-ps"
 	util2 "github.com/aelsabbahy/goss/util"
-	"github.com/mitchellh/go-ps"
 	"github.com/urfave/cli"
 )
 
