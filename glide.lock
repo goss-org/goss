@@ -21,8 +21,8 @@ imports:
   version: 66b8e73f3f5cda9f96b69efd03dd3d7fc4a5cdb8
 - name: github.com/miekg/dns
   version: 58f52c57ce9df13460ac68200cef30a008b9c468
-- name: github.com/mitchellh/go-ps
-  version: e2d21980687ce16e58469d98dcee92d27fbbd7fb
+- name: github.com/aelsabbahy/go-ps
+  version: 443386855ca1f4d28d990ae9e46e9bc1533de994
 - name: github.com/oleiade/reflections
   version: 0e86b3c98b2ff33e30c85cfe97d9a63d439fe7eb
 - name: github.com/onsi/gomega
