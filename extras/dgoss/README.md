@@ -91,3 +91,7 @@ docker container when writing tests (i.e. `dgoss edit`). If set, the
 `--vars` flag is passed to `goss validate` commands inside the container.
 If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 (Default: `''`).
+
+##### GOSS_FILES_STRATEGY
+Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the local machine. 
+(Default `'mount'`)
