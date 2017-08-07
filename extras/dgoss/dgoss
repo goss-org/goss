@@ -42,7 +42,7 @@ run(){
         info "Starting docker container"
         docker start $id > /dev/null
         ;;
-      *) error "Wrong goss files strategy used! Correct options are \"mount\" of \"cp\"."
+      *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
 
     log_pid=$!
