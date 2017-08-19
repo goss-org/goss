@@ -3,10 +3,14 @@ service:
   foobar:
     enabled: false
     running: false
-{{if eq .Env.OS "centos7"}}
+{{ if .Env.OS | regexMatch "centos[7]" }}
   httpd:
 {{else}}
   apache2:
 {{end}}
+{{ if .Env.OS | regexMatch "precise" }}
+    enabled: false
+{{else}}
     enabled: true
+{{end}}
     running: true

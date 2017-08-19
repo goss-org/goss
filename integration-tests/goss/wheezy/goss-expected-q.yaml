@@ -55,6 +55,10 @@ command:
     stderr: []
     timeout: 10000
 dns:
+  CAA:dnstest.io:
+    resolveable: true
+    timeout: 1000
+    server: 8.8.8.8
   CNAME:c.dnstest.io:
     resolveable: true
     timeout: 1000

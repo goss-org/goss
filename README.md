@@ -37,8 +37,8 @@ This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/maste
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.1 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.1 GOSS_DST=~/bin sh
+# Install v0.3.4 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.4 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
@@ -203,7 +203,7 @@ package:
 * TAP
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
-* nagios_verbose - nagios output with verbose failure output.
+* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
@@ -211,6 +211,7 @@ package:
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
+* [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
 
 ## Limitations
 

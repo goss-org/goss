@@ -2,6 +2,7 @@ package system
 
 import (
 	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"os"
@@ -25,6 +26,7 @@ type File interface {
 	Group() (string, error)
 	LinkedTo() (string, error)
 	Md5() (string, error)
+	Sha256() (string, error)
 }
 
 type DefFile struct {
@@ -149,12 +151,7 @@ func (f *DefFile) Owner() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	user, err := user.LookupUid(uid)
-	if err != nil {
-		return "", err
-	}
-
-	return user.Name, nil
+	return getUserForUid(uid)
 }
 
 func (f *DefFile) Group() (string, error) {
@@ -172,12 +169,7 @@ func (f *DefFile) Group() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	group, err := user.LookupGid(gid)
-	if err != nil {
-		return "", err
-	}
-
-	return group.Name, nil
+	return getGroupForGid(gid)
 }
 
 func (f *DefFile) LinkedTo() (string, error) {
@@ -235,4 +227,52 @@ func (f *DefFile) Md5() (string, error) {
 	}
 
 	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+}
+
+func (f *DefFile) Sha256() (string, error) {
+
+	if err := f.setup(); err != nil {
+		return "", err
+	}
+
+	fh, err := os.Open(f.realPath)
+	if err != nil {
+		return "", err
+	}
+	defer fh.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(hash, fh); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+}
+
+func getUserForUid(uid int) (string, error) {
+	if user, err := user.LookupUid(uid); err == nil {
+		return user.Name, nil
+	}
+
+	cmd := util.NewCommand("getent", "passwd", strconv.Itoa(uid))
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("Error: no matching entries in passwd file. getent passwd: %v", err)
+	}
+	userS := strings.Split(cmd.Stdout.String(), ":")[0]
+
+	return userS, nil
+}
+
+func getGroupForGid(gid int) (string, error) {
+	if group, err := user.LookupGid(gid); err == nil {
+		return group.Name, nil
+	}
+
+	cmd := util.NewCommand("getent", "group", strconv.Itoa(gid))
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("Error: no matching entries in passwd file. getent group: %v", err)
+	}
+	groupS := strings.Split(cmd.Stdout.String(), ":")[0]
+
+	return groupS, nil
 }

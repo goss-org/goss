@@ -6,7 +6,8 @@ import:
   - generic
 - package: github.com/urfave/cli
 - package: github.com/fatih/color
-- package: github.com/mitchellh/go-ps
+- package: github.com/aelsabbahy/go-ps
+  version: unix_race_condition
 - package: github.com/oleiade/reflections
 - package: github.com/onsi/gomega
   subpackages:

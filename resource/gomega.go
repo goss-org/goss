@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
@@ -45,6 +46,23 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "have-len":
 		value = sanitizeExpectedValue(value)
 		return gomega.HaveLen(value.(int)), nil
+	case "have-key-with-value":
+		subMatchers, err := mapToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		for key, val := range subMatchers {
+			if val == nil {
+				fmt.Printf("%d is nil", key)
+			}
+		}
+		return gomega.And(subMatchers...), nil
+	case "have-key":
+		subMatcher, err := matcherToGomegaMatcher(value)
+		if err != nil {
+			return nil, err
+		}
+		return gomega.HaveKey(subMatcher), nil
 	case "contain-element":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -93,6 +111,33 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 
 	}
+}
+
+func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err error) {
+	valueI, ok := value.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
+	}
+
+	// Get keys
+	keys := []string{}
+	for key, _ := range valueI {
+		keys = append(keys, key)
+	}
+	// Iterate through keys in a deterministic way, since ranging over a map
+	// does not guarantee order
+	sort.Strings(keys)
+	for _, key := range keys {
+		val := valueI[key]
+		val, err = matcherToGomegaMatcher(val)
+		if err != nil {
+			return
+		}
+
+		subMatcher := gomega.HaveKeyWithValue(key, val)
+		subMatchers = append(subMatchers, subMatcher)
+	}
+	return
 }
 
 func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {

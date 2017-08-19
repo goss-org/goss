@@ -22,6 +22,7 @@ type GossConfig struct {
 	Mounts       resource.MountMap       `json:"mount,omitempty" yaml:"mount,omitempty"`
 	Interfaces   resource.InterfaceMap   `json:"interface,omitempty" yaml:"interface,omitempty"`
 	HTTPs        resource.HTTPMap        `json:"http,omitempty" yaml:"http,omitempty"`
+	Matchings    resource.MatchingMap    `json:"matching,omitempty" yaml:"matching,omitempty"`
 }
 
 func NewGossConfig() *GossConfig {
@@ -47,7 +48,23 @@ func NewGossConfig() *GossConfig {
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands, c.HTTPs, c.Addrs, c.DNS, c.Packages, c.Services, c.Files, c.Processes, c.Users, c.Groups, c.Ports, c.KernelParams, c.Mounts, c.Interfaces)
+	gm := genericConcatMaps(c.Commands,
+		c.HTTPs,
+		c.Addrs,
+		c.DNS,
+		c.Packages,
+		c.Services,
+		c.Files,
+		c.Processes,
+		c.Users,
+		c.Groups,
+		c.Ports,
+		c.KernelParams,
+		c.Mounts,
+		c.Interfaces,
+		c.Matchings,
+	)
+
 	for _, m := range gm {
 		for _, t := range m {
 			// FIXME: Can this be moved to a safer compile-time check?

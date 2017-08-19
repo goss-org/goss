@@ -83,6 +83,20 @@ var gomegaTests = []struct {
 		in:   `{"have-len": 3}`,
 		want: gomega.HaveLen(3),
 	},
+	{
+		in: `{"have-key-with-value": { "foo": 1, "bar": "baz" }}`,
+		// Keys are sorted and then passed to gomega.And so the order
+		// of the conditions in this `want` is important
+		want: gomega.And(
+			gomega.HaveKeyWithValue("bar", gomega.Equal("baz")),
+			gomega.HaveKeyWithValue("foo", gomega.Equal(1)),
+		),
+		useNegateTester: true,
+	},
+	{
+		in:   `{"have-key": "foo"}`,
+		want: gomega.HaveKey(gomega.Equal("foo")),
+	},
 
 	// Negation
 	{
@@ -124,13 +138,13 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		gomegaTestEqual(t, got, c.want, c.useNegateTester)
+		gomegaTestEqual(t, got, c.want, c.useNegateTester, c.in)
 	}
 }
 
-func gomegaTestEqual(t *testing.T, got, want interface{}, useNegateTester bool) {
+func gomegaTestEqual(t *testing.T, got, want interface{}, useNegateTester bool, in string) {
 	if !gomegaEqual(got, want, useNegateTester) {
-		t.Errorf("got %T %v, want %T %v", got, got, want, want)
+		t.Errorf("For input '%s': got %T %v, want %T %v", in, got, got, want, want)
 	}
 }
 func gomegaEqual(g, w interface{}, negateTester bool) bool {

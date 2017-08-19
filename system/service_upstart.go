@@ -15,6 +15,7 @@ type ServiceUpstart struct {
 }
 
 var upstartEnabled = regexp.MustCompile(`^\s*start on`)
+var upstartDisabled = regexp.MustCompile(`^manual`)
 
 func NewServiceUpstart(service string, system *System, config util.Config) Service {
 	return &ServiceUpstart{service: service}
@@ -38,6 +39,18 @@ func (s *ServiceUpstart) Exists() (bool, error) {
 }
 
 func (s *ServiceUpstart) Enabled() (bool, error) {
+	if fh, err := os.Open(fmt.Sprintf("/etc/init/%s.override", s.service)); err == nil {
+		scanner := bufio.NewScanner(fh)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if upstartDisabled.MatchString(line) {
+				return false, nil
+			}
+		}
+	}
+
+	// If no /etc/init/<service>.override with `manual` keyword in it has been found
+	// Check the contents of the upstart manifest.
 	if fh, err := os.Open(fmt.Sprintf("/etc/init/%s.conf", s.service)); err == nil {
 		scanner := bufio.NewScanner(fh)
 		for scanner.Scan() {

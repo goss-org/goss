@@ -46,6 +46,8 @@ goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 SRV:_https._tcp.dnstest.io
 
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 TXT:txt._test.dnstest.io
 
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CAA:dnstest.io
+
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 ip6.dnstest.io
 
 goss a "${args[@]}" dns --timeout 1s localhost

@@ -24,6 +24,7 @@ file:
   "/goss/hellogoss.txt":
     exists: true
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd
+    sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
   "/tmp/goss/foobar":
     exists: false
     contains: []
@@ -61,6 +62,14 @@ group:
   foobar:
     exists: false
 dns:
+  CAA:dnstest.io:
+    resolveable: true
+    addrs:
+    - 0 issue comodoca.com
+    - 0 issue letsencrypt.org
+    - 0 issuewild ;
+    timeout: 2000
+    server: 8.8.8.8
   CNAME:c.dnstest.io:
     resolveable: true
     addrs:

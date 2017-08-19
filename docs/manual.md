@@ -24,6 +24,7 @@
   * [interface](#interface)
   * [kernel-param](#kernel-param)
   * [mount](#mount)
+  * [matching](#matching)
   * [package](#package)
   * [port](#port)
   * [process](#process)
@@ -277,12 +278,14 @@ $ curl localhost:8080/healthz
 #### Flags
 * `--format`, `-f` (output format)
   * `documentation` - Verbose test results
-  * `JSON` - Detailed test result
-  * `JUnit`
+  * `json` - Detailed test result
+  * `json_oneline` - Same as json, but oneliner
+  * `junit`
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
   * `nagios_verbose` - Nagios output with verbose failure output.
   * `rspecish` **(default)** - Similar to rspec output
-  * `TAP`
+  * `tap`
+  * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
@@ -455,6 +458,7 @@ With the server attribute set, it is possible to validate the following types of
 
 - A
 - AAAA
+- CAA
 - CNAME
 - MX
 - NS
@@ -501,7 +505,7 @@ dns:
 ```
 
 ### file
-Validates the state of a file
+Validates the state of a file, directory, or symbolic link
 
 ```yaml
 file:
@@ -516,17 +520,26 @@ file:
     filetype: file # file, symlink, directory
     contains: [] # Check file content for these patterns
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
+    # A stronger checksum alternative to md5 (recommended)
+    sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+  /etc/alternatives/mta:
+    # required attributes
+    exists: true
+    # optional attributes
+    filetype: symlink # file, symlink, directory
+    linked-to: /usr/sbin/sendmail.sendmail
 ```
 
 `contains` can be a string or a [pattern](#patterns)
 
 
 ### gossfile
-Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples.
+Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples. Glob patterns can be also be used to specify matching gossfiles.
 
 ```yaml
 gossfile:
   goss_httpd.yaml: {}
+  /etc/goss.d/*.yaml: {}
 ```
 
 
@@ -603,6 +616,63 @@ mount:
     filesystem: xfs
 ```
 
+### matching
+Validates specified content against a matcher. Best used with [Templates](#templates).
+
+#### With [Templates](#templates):
+Let's say we have a `data.json` file that gets generated as part of some testing pipeline:
+
+```json
+{
+  "instance_count": 14,
+  "failures": 3,
+  "status": "FAIL"
+}
+```
+
+This could then be passed into goss: `goss --vars data.json validate`
+
+And then validated against:
+
+```yaml
+matching:
+  check_instance_count: # Make sure there is at least one instance
+    content: {{ .Vars.instance_count }}
+    matches:
+      gt: 0
+
+  check_failure_count_from_all_instance: # expect no failures
+    content: {{ .Vars.failures }}
+    matches: 0
+
+  check_status:
+    content: {{ .Vars.status }}
+    matches:
+      - not: FAIL
+```
+
+#### Without [Templates](#templates):
+```yaml
+matching:
+  has_substr: # friendly test name
+    content: some string
+    matches:
+      match-regexp: some str
+  has_2:
+    content:
+      - 2
+    matches:
+      contain-element: 2
+  has_foo_bar_and_baz:
+    content:
+      foo: bar
+      baz: bing
+    matches:
+      and:
+        - have-key-with-value:
+            foo: bar
+        - have-key: baz
+```
 
 ### package
 Validates the state of a package
@@ -622,6 +692,8 @@ package:
 
 ### port
 Validates the state of a local port.
+
+**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/aelsabbahy/goss/issues/149))
 
 ```yaml
 port:
@@ -766,6 +838,7 @@ Available functions beyond text/template [built-in functions](https://golang.org
 * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
 * `readFile "fileName"` - Reads file content into a a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
+* `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
 
@@ -822,8 +895,8 @@ package:
     {{end}}
 {{end}}
 
-# This test is only when OS=centos variable is defined
-{{if eq .Env.OS "centos"}}
+# This test is only when the OS environment variable matches the pattern
+{{if .Env.OS | regexMatch "[Cc]ent(OS|os)"}}
   libselinux:
     installed: true
 {{end}}
