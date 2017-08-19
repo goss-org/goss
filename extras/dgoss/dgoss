@@ -22,7 +22,6 @@ run(){
     # Copy in goss
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
-<<<<<<< b0d0e31e3b67aac1e8ab0fa9f6bdbbeb40afc9fc
     [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
     [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
     [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
@@ -46,13 +45,6 @@ run(){
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
 
-=======
-    [[ -e $goss_file ]] && cp $goss_file "$tmp_dir" && chmod 766 "$tmp_dir/$goss_file"
-    [[ -e goss_wait.yaml ]] && cp goss_wait.yaml "$tmp_dir"
-    info "Starting docker container"
-    id=$(docker run -d -v "$tmp_dir:/goss" "${@:${docker_args}}")
-    docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
->>>>>>> Mod: Set write variable on gossfile when existing file being passed in for edit
     log_pid=$!
     info "Container ID: ${id:0:8}"
 }
