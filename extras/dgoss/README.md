@@ -56,7 +56,9 @@ Run is used to validate a docker container. It expects a `./goss.yaml` file to e
   * This allows writing tests or waits against the docker output
 * (optional) Run `goss` with `$GOSS_WAIT_OPTS` if `./goss_wait.yaml` file exists in the current dir
 * Run `goss` with `$GOSS_OPTS` using `./goss.yaml`
+* Pass an alternate gossfile if --gossfile is specified, default is goss.yaml.
 
+`$ ./dgoss run --gossfile goss2.yaml -it ubuntu bash`
 
 ### Edit
 
@@ -65,6 +67,25 @@ Edit will launch a docker container, install goss, and drop the user into an int
 **Example:**
 
 `dgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+
+To write to the alternate gossfile when inside the container you need to add it to the command run:
+
+`./dgoss edit --gossfile goss2.yaml -it ubuntu bash`
+
+Followed by
+```
+  goss --g goss2.yaml a user root
+  Adding User to 'goss2.yaml':
+
+  root:
+    exists: true
+    uid: 0
+    gid: 0
+    groups:
+    - root
+    home: /root
+    shell: /bin/bash
+```
 
 ### Environment vars and defaults
 The following environment variables can be set to change the behavior of dgoss.
@@ -93,5 +114,6 @@ If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 (Default: `''`).
 
 ##### GOSS_FILES_STRATEGY
-Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the local machine. 
+Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the local machine.
 (Default `'mount'`)
+=======
