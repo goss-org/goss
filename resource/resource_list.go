@@ -1513,3 +1513,100 @@ func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	*ret = tmp
 	return nil
 }
+
+type MatchingMap map[string]*Matching
+
+func (r MatchingMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Matching, error) {
+	sysres := sys.NewMatching(sr, sys, config)
+	res, err := NewMatching(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r MatchingMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Matching, system.Matching, bool) {
+	sysres := sys.NewMatching(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewMatching(sysres, util.Config{})
+	if e, _ := sysres.Exists(); e != true {
+		return res, sysres, false
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
+	// Curried json.Unmarshal
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// Validate configuration
+	zero := Matching{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*Matching
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
+
+func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	// Validate configuration
+	zero := Matching{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*Matching
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
