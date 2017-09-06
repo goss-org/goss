@@ -195,6 +195,7 @@ package:
 * interface - add new network interface
 * http - add new network http url
 * goss - add new goss file, it will be imported from this one
+* matching - test for matches in supplied content
 
 ## Supported output formats
 * rspecish **(default)** - Similar to rspec output
