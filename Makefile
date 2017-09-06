@@ -51,7 +51,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64
+build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
 
 test-int: centos7 wheezy precise alpine3 arch
 test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
