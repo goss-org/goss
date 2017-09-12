@@ -42,6 +42,7 @@ func NewGossConfig() *GossConfig {
 		Mounts:       make(resource.MountMap),
 		Interfaces:   make(resource.InterfaceMap),
 		HTTPs:        make(resource.HTTPMap),
+		Matchings:    make(resource.MatchingMap),
 	}
 }
 
@@ -155,6 +156,10 @@ func mergeGoss(g1, g2 GossConfig) GossConfig {
 
 	for k, v := range g2.HTTPs {
 		g1.HTTPs[k] = v
+	}
+
+	for k, v := range g2.Matchings {
+		g1.Matchings[k] = v
 	}
 
 	return g1
