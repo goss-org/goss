@@ -11,7 +11,8 @@ type DNS struct {
 	Title       string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta        meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Host        string  `json:"-" yaml:"-"`
-	Resolveable matcher `json:"resolveable" yaml:"resolveable"`
+	Resolveable matcher `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
+	Resolvable  matcher `json:"resolvable" yaml:"resolvable"`
 	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
 	Timeout     int     `json:"timeout" yaml:"timeout"`
 	Server      string  `json:"server,omitempty" yaml:"server,omitempty"`
@@ -32,7 +33,11 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout, Server: d.Server})
 
 	var results []TestResult
-	results = append(results, ValidateValue(d, "resolveable", d.Resolveable, sysDNS.Resolveable, skip))
+	// Backwards copatibility hack for now
+	if d.Resolvable == nil {
+		d.Resolvable = d.Resolveable
+	}
+	results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
@@ -50,14 +55,14 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 		host = sysDNS.Host()
 	}
 
-	resolveable, err := sysDNS.Resolveable()
+	resolvable, err := sysDNS.Resolvable()
 	server := sysDNS.Server()
 
 	d := &DNS{
-		Host:        host,
-		Resolveable: resolveable,
-		Timeout:     config.Timeout,
-		Server:      server,
+		Host:       host,
+		Resolvable: resolvable,
+		Timeout:    config.Timeout,
+		Server:     server,
 	}
 	if !contains(config.IgnoreList, "addrs") {
 		addrs, _ := sysDNS.Addrs()
