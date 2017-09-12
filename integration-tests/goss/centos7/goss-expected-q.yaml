@@ -56,39 +56,39 @@ command:
     timeout: 10000
 dns:
   CAA:dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   CNAME:c.dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   MX:dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   NS:dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   PTR:8.8.8.8:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   TXT:txt._test.dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   ip6.dnstest.io:
-    resolveable: true
+    resolvable: true
     timeout: 1000
     server: 8.8.8.8
   localhost:
-    resolveable: true
+    resolvable: true
     timeout: 1000
 process:
   foobar:

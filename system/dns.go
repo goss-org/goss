@@ -15,21 +15,21 @@ import (
 type DNS interface {
 	Host() string
 	Addrs() ([]string, error)
-	Resolveable() (bool, error)
+	Resolvable() (bool, error)
 	Exists() (bool, error)
 	Server() string
 	Qtype() string
 }
 
 type DefDNS struct {
-	host        string
-	resolveable bool
-	addrs       []string
-	Timeout     int
-	loaded      bool
-	err         error
-	server      string
-	qtype       string
+	host       string
+	resolvable bool
+	addrs      []string
+	Timeout    int
+	loaded     bool
+	err        error
+	server     string
+	qtype      string
 }
 
 func NewDefDNS(host string, system *System, config util.Config) DNS {
@@ -70,7 +70,7 @@ func (d *DefDNS) setup() error {
 	for i := 0; i < 3; i++ {
 		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 		if err != nil || len(addrs) == 0 {
-			d.resolveable = false
+			d.resolvable = false
 			d.addrs = []string{}
 			// DNSError is resolvable == false, ignore error
 			if _, ok := err.(*net.DNSError); ok {
@@ -80,7 +80,7 @@ func (d *DefDNS) setup() error {
 			continue
 		}
 		sort.Strings(addrs)
-		d.resolveable = true
+		d.resolvable = true
 		d.addrs = addrs
 		d.err = nil
 		return nil
@@ -94,10 +94,10 @@ func (d *DefDNS) Addrs() ([]string, error) {
 	return d.addrs, err
 }
 
-func (d *DefDNS) Resolveable() (bool, error) {
+func (d *DefDNS) Resolvable() (bool, error) {
 	err := d.setup()
 
-	return d.resolveable, err
+	return d.resolvable, err
 }
 
 // Stub out

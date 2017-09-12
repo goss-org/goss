@@ -297,7 +297,7 @@ $ curl localhost:8080/healthz
 ```bash
 $ goss validate --format documentation
 File: /etc/hosts: exists: matches expectation: [true]
-DNS: localhost: resolveable: matches expectation: [true]
+DNS: localhost: resolvable: matches expectation: [true]
 [...]
 Total Duration: 0.002s
 Count: 10, Failed: 2, Skipped: 0
@@ -439,13 +439,13 @@ command:
 
 
 ### dns
-Validates that the provided address is resolveable and the addrs it resolves to.
+Validates that the provided address is resolvable and the addrs it resolves to.
 
 ```yaml
 dns:
   localhost:
     # required attributes
-    resolveable: true
+    resolvable: true
     # optional attributes
     server: 8.8.8.8
     addrs:
@@ -472,21 +472,21 @@ To validate specific DNS address types, prepend the hostname with the type and a
 dns:
   # Validate a CNAME record
   CNAME:dnstest.github.io:
-    resolveable: true
+    resolvable: true
     server: 8.8.8.8
     addrs:
     - "github.map.fastly.net."
 
   # Validate a PTR record
   PTR:8.8.8.8:
-    resolveable: true
+    resolvable: true
     server: 8.8.8.8
     addrs:
     - "google-public-dns-a.google.com."
 
   # Validate and SRV record
   SRV:_https._tcp.dnstest.io:
-    resolveable: true
+    resolvable: true
     server: 8.8.8.8
     addrs:
     - "0 5 443 a.dnstest.io."
@@ -498,7 +498,7 @@ Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll 
 ```yaml
 dns:
   localhost:
-    resolveable: true
+    resolvable: true
     addrs:
       consist-of: [127.0.0.1]
     timeout: 500 # in milliseconds
