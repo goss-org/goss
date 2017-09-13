@@ -102,65 +102,18 @@ func interfaceMap(slice interface{}) map[string]interface{} {
 func mergeGoss(g1, g2 GossConfig) GossConfig {
 	g1.Gossfiles = nil
 
-	for k, v := range g2.Files {
-		g1.Files[k] = v
-	}
+	v1 := reflect.ValueOf(g1)
+	v2 := reflect.ValueOf(g2)
+	for i := 0; i < v1.NumField(); i++ {
+		if v1.Type().Field(i).Name == "Gossfiles" {
+			continue
+		}
+		f1 := v1.Field(i)
+		f2 := v2.Field(i)
+		for _, k := range f2.MapKeys() {
+			f1.SetMapIndex(k, f2.MapIndex(k))
 
-	for k, v := range g2.Packages {
-		g1.Packages[k] = v
+		}
 	}
-
-	for k, v := range g2.Addrs {
-		g1.Addrs[k] = v
-	}
-
-	for k, v := range g2.Ports {
-		g1.Ports[k] = v
-	}
-
-	for k, v := range g2.Services {
-		g1.Services[k] = v
-	}
-
-	for k, v := range g2.Users {
-		g1.Users[k] = v
-	}
-
-	for k, v := range g2.Groups {
-		g1.Groups[k] = v
-	}
-
-	for k, v := range g2.Commands {
-		g1.Commands[k] = v
-	}
-
-	for k, v := range g2.DNS {
-		g1.DNS[k] = v
-	}
-
-	for k, v := range g2.Processes {
-		g1.Processes[k] = v
-	}
-
-	for k, v := range g2.KernelParams {
-		g1.KernelParams[k] = v
-	}
-
-	for k, v := range g2.Mounts {
-		g1.Mounts[k] = v
-	}
-
-	for k, v := range g2.Interfaces {
-		g1.Interfaces[k] = v
-	}
-
-	for k, v := range g2.HTTPs {
-		g1.HTTPs[k] = v
-	}
-
-	for k, v := range g2.Matchings {
-		g1.Matchings[k] = v
-	}
-
-	return g1
+	return v1.Interface().(GossConfig)
 }
