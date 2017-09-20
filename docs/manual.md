@@ -584,6 +584,7 @@ interface:
     addrs:
     - 172.17.0.2/16
     - fe80::42:acff:fe11:2/64
+    mtu: 1500
 ```
 
 
