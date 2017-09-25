@@ -5,8 +5,13 @@ set -e
 USAGE="USAGE: $(basename "$0") [run|edit] <docker_run_params>"
 GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
 
-info() { echo -e "INFO: $*"; }
-error() { echo -e "ERROR: $*";exit 1; }
+info() {
+    echo -e "INFO: $*" >&2;
+}
+error() {
+    echo -e "ERROR: $*" >&2;
+    exit 1;
+}
 
 cleanup() {
     set +e
