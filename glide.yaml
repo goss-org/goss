@@ -1,13 +1,16 @@
 package: github.com/aelsabbahy/goss
 import:
+- package: github.com/achanda/go-sysctl
 - package: github.com/aelsabbahy/GOnetstat
+- package: github.com/aelsabbahy/go-ps
 - package: github.com/cheekybits/genny
   subpackages:
   - generic
-- package: github.com/urfave/cli
+- package: github.com/docker/docker
+  subpackages:
+  - pkg/mount
 - package: github.com/fatih/color
-- package: github.com/aelsabbahy/go-ps
-  version: unix_race_condition
+- package: github.com/miekg/dns
 - package: github.com/oleiade/reflections
 - package: github.com/onsi/gomega
   subpackages:
@@ -15,10 +18,6 @@ import:
 - package: github.com/opencontainers/runc
   subpackages:
   - libcontainer/user
-- package: gopkg.in/yaml.v2
-- package: github.com/achanda/go-sysctl
-- package: github.com/docker/docker
-  subpackages:
-  - pkg/mount
 - package: github.com/patrickmn/go-cache
-- package: github.com/miekg/dns
+- package: github.com/urfave/cli
+- package: gopkg.in/yaml.v2

@@ -2,8 +2,10 @@ package system
 
 import (
 	"crypto/tls"
+    "fmt"
 	"io"
 	"net/http"
+    "strings"
 	"time"
 
 	"github.com/aelsabbahy/goss/util"
@@ -12,6 +14,7 @@ import (
 type HTTP interface {
 	HTTP() string
 	Status() (int, error)
+    Header() (io.Reader, error)
 	Body() (io.Reader, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
@@ -35,6 +38,15 @@ func NewDefHTTP(http string, system *System, config util.Config) HTTP {
 		noFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.Timeout,
 	}
+}
+
+func HeaderToArray(header http.Header) (res []string) {
+    for name, values := range header {
+        for _, value := range values {
+            res = append(res, fmt.Sprintf("%s: %s", name, value))
+        }
+    }
+    return
 }
 
 func (u *DefHTTP) setup() error {
@@ -90,6 +102,15 @@ func (u *DefHTTP) Status() (int, error) {
 	}
 
 	return u.resp.StatusCode, nil
+}
+
+func (u *DefHTTP) Header() (io.Reader, error) {
+	if err := u.setup(); err != nil {
+		return nil, err
+	}
+
+    var headerString = strings.Join(HeaderToArray(u.resp.Header), "\n")
+	return strings.NewReader(headerString), nil
 }
 
 func (u *DefHTTP) Body() (io.Reader, error) {
