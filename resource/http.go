@@ -54,7 +54,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 	u := &HTTP{
 		HTTP:              http,
 		Status:            status,
-        Header:            []string{},
+		Header:            []string{},
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
