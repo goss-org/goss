@@ -156,10 +156,12 @@ http:
     allow-insecure: false
     no-follow-redirects: true
     timeout: 5000
+    headers: []
     body: []
   https://www.google.com:
     status: 200
     allow-insecure: false
     no-follow-redirects: false
     timeout: 5000
+    headers: []
     body: []
