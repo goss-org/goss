@@ -3,6 +3,7 @@ import:
 - package: github.com/achanda/go-sysctl
 - package: github.com/aelsabbahy/GOnetstat
 - package: github.com/aelsabbahy/go-ps
+  version: unix_race_condition
 - package: github.com/cheekybits/genny
   subpackages:
   - generic
