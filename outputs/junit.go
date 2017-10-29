@@ -14,6 +14,8 @@ import (
 
 type JUnit struct{}
 
+func (r JUnit) SetReportURL(stringified string) error { return nil }
+
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	color.NoColor = true
 	var testCount, failed, skipped int

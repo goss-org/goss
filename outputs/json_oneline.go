@@ -12,6 +12,8 @@ import (
 
 type JsonOneline struct{}
 
+func (r JsonOneline) SetReportURL(stringified string) error { return nil }
+
 func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	color.NoColor = true
 	testCount := 0

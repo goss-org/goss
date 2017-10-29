@@ -49,20 +49,31 @@ func getGossConfig(c *cli.Context) GossConfig {
 	return gossConfig
 }
 
-func getOutputer(c *cli.Context) outputs.Outputer {
+func getOutputer(c *cli.Context) (outputs.Outputer, error) {
 	if c.Bool("no-color") {
 		color.NoColor = true
 	}
 	if c.Bool("color") {
 		color.NoColor = false
 	}
-	return outputs.GetOutputer(c.String("format"))
+	o := outputs.GetOutputer(c.String("format"))
+	if len(c.String("report")) != 0 {
+		if err := o.setReportURL(c.String("report")); err != nil {
+			return o, err
+		}
+	}
+
+	return o, nil
 }
 
 func Validate(c *cli.Context, startTime time.Time) {
 	gossConfig := getGossConfig(c)
 	sys := system.New(c)
-	outputer := getOutputer(c)
+	outputer, err := getOutputer(c)
+	if err != nil {
+		fmt.Errorf(err.Error())
+		os.Exit(1)
+	}
 
 	sleep := c.Duration("sleep")
 	retryTimeout := c.Duration("retry-timeout")
