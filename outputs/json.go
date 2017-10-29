@@ -4,19 +4,60 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/fatih/color"
 )
 
-type Json struct{}
+type Json struct {
+	Report *url.URL
+}
 
-func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r *Json) SetReportURL(stringified string) error {
+	u, err := url.Parse(stringified)
+	if err != nil {
+		return err
+	}
+
+	r.Report = u
+
+	return nil
+}
+
+func (r *Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	color.NoColor = true
-	testCount := 0
-	failed := 0
-	var resultsOut []map[string]interface{}
+
+	out, failed := makeMap(results, startTime)
+
+	j, _ := json.MarshalIndent(out, "", "    ")
+	fmt.Fprintln(w, string(j))
+
+	if r.Report != nil {
+		if err := postReport(j, r.Report); err != nil {
+			fmt.Errorf("errors sending report: %s", err.Error())
+		}
+	}
+
+	if failed > 0 {
+		return 1
+	}
+
+	return 0
+}
+
+func init() {
+	RegisterOutputer("json", &Json{})
+}
+
+func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[string]interface{}, int) {
+	var (
+		testCount  = 0
+		failed     = 0
+		resultsOut []map[string]interface{}
+	)
+
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			if !testResult.Successful {
@@ -41,18 +82,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTim
 	out["results"] = resultsOut
 	out["summary"] = summary
 
-	j, _ := json.MarshalIndent(out, "", "    ")
-	fmt.Fprintln(w, string(j))
-
-	if failed > 0 {
-		return 1
-	}
-
-	return 0
-}
-
-func init() {
-	RegisterOutputer("json", &Json{})
+	return out, failed
 }
 
 func struct2map(i interface{}) map[string]interface{} {

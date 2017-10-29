@@ -49,6 +49,12 @@ func main() {
 					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
 					EnvVar: "GOSS_FMT",
 				},
+				cli.StringFlag{
+					Name:   "report",
+					Value:  "localhost:9090",
+					Usage:  "Optional report URL to send output to",
+					EnvVar: "GOSS_REPORT",
+				},
 				cli.BoolFlag{
 					Name:   "color",
 					Usage:  "Force color on",

@@ -10,6 +10,8 @@ import (
 
 type Nagios struct{}
 
+func (r Nagios) SetReportURL(stringified string) error { return nil }
+
 func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var testCount, failed, skipped int
 	for resultGroup := range results {

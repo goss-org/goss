@@ -11,6 +11,8 @@ import (
 
 type NagiosVerbose struct{}
 
+func (r NagiosVerbose) SetReportURL(stringified string) error { return nil }
+
 func (r NagiosVerbose) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var testCount, failed, skipped int
 
