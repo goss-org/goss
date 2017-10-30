@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -71,6 +72,10 @@ func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[str
 		}
 	}
 
+	// Not concerned with hiting an error on hostname discovery
+	// worst case we don't add it
+	hostname, _ := os.Hostname()
+
 	summary := make(map[string]interface{})
 	duration := time.Since(startTime)
 	summary["test-count"] = testCount
@@ -79,6 +84,8 @@ func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[str
 	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", testCount, failed, duration.Seconds())
 
 	out := make(map[string]interface{})
+
+	out["hostname"] = hostname
 	out["results"] = resultsOut
 	out["summary"] = summary
 
