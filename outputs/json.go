@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -78,7 +79,9 @@ func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[str
 	summary["total-duration"] = duration
 	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", testCount, failed, duration.Seconds())
 
+	hostname, _ := os.Hostname()
 	out := make(map[string]interface{})
+	out["hostname"] = hostname
 	out["results"] = resultsOut
 	out["summary"] = summary
 
