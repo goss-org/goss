@@ -58,7 +58,7 @@ func getOutputer(c *cli.Context) (outputs.Outputer, error) {
 	}
 	o := outputs.GetOutputer(c.String("format"))
 	if len(c.String("report")) != 0 {
-		if err := o.setReportURL(c.String("report")); err != nil {
+		if err := o.SetReportURL(c.String("report")); err != nil {
 			return o, err
 		}
 	}

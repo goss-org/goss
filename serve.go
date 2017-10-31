@@ -18,12 +18,16 @@ func Serve(c *cli.Context) {
 	endpoint := c.String("endpoint")
 	color.NoColor = true
 	cache := cache.New(c.Duration("cache"), 30*time.Second)
+	o, err := getOutputer(c)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	health := healthHandler{
 		c:             c,
 		gossConfig:    getGossConfig(c),
 		sys:           system.New(c),
-		outputer:      getOutputer(c),
+		outputer:      o,
 		cache:         cache,
 		gossMu:        &sync.Mutex{},
 		maxConcurrent: c.Int("max-concurrent"),

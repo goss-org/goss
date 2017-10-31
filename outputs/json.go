@@ -16,7 +16,7 @@ type Json struct {
 	Report *url.URL
 }
 
-func (r Json) SetReportURL(stringified string) error {
+func (r *Json) SetReportURL(stringified string) error {
 	u, err := url.Parse(stringified)
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func (r Json) SetReportURL(stringified string) error {
 	return nil
 }
 
-func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r *Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	color.NoColor = true
 
 	out, failed := makeMap(results, startTime)
@@ -72,10 +72,6 @@ func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[str
 		}
 	}
 
-	// Not concerned with hiting an error on hostname discovery
-	// worst case we don't add it
-	hostname, _ := os.Hostname()
-
 	summary := make(map[string]interface{})
 	duration := time.Since(startTime)
 	summary["test-count"] = testCount
@@ -83,8 +79,8 @@ func makeMap(results <-chan []resource.TestResult, startTime time.Time) (map[str
 	summary["total-duration"] = duration
 	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", testCount, failed, duration.Seconds())
 
+	hostname, _ := os.Hostname()
 	out := make(map[string]interface{})
-
 	out["hostname"] = hostname
 	out["results"] = resultsOut
 	out["summary"] = summary
