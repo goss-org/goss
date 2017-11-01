@@ -13,3 +13,4 @@ RUN mv /sbin/initctl /sbin/initctl.orig && \
     echo manual > /etc/init/apache2.override
 
 RUN chkconfig apache2 on
+RUN mkfifo /pipe

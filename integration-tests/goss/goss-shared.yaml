@@ -37,6 +37,9 @@ file:
   "/dev/random":
     exists: true
     filetype: character-device
+  "/pipe":
+    exists: true
+    filetype: pipe
 package:
   foobar:
     installed: false
