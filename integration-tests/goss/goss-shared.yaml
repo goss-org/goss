@@ -34,6 +34,9 @@ file:
   "/tmp":
     exists: true
     mode: '1777'
+  "/dev/random":
+    exists: true
+    filetype: character-device
 package:
   foobar:
     installed: false
