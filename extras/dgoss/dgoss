@@ -89,6 +89,10 @@ case "$1" in
             fi
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
+        info "Container health"
+        if ! docker top $id; then
+            docker logs $id
+        fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
             docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
