@@ -157,6 +157,7 @@ http:
     status: 200
     allow-insecure: false
     timeout: 5000
+    header: ["Content-Type: text/html"]
     body: []
 matching:
   has_substr:
