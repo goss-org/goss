@@ -313,6 +313,14 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:  "env-var",
+					Usage: "add new goss environmetal variable",
+					Action: func(c *cli.Context) error {
+						goss.AddResources(c.GlobalString("gossfile"), "EnvVar", c.Args(), c)
+						return nil
+					},
+				},
 			},
 		},
 	}
