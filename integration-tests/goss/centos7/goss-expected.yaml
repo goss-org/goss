@@ -33,7 +33,7 @@ port:
   tcp:9999:
     listening: false
     ip: []
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
     - '::'

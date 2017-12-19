@@ -19,7 +19,7 @@ process:
   httpd:
     running: true
 port:
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
     - "::"

@@ -24,7 +24,7 @@ port:
     listening: false
   tcp:9999:
     listening: false
-  tcp6:80:
+  tcp:80:
     listening: true
 service:
   foobar:
