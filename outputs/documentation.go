@@ -10,6 +10,8 @@ import (
 
 type Documentation struct{}
 
+func (r Documentation) SetReportURL(stringified string) error { return nil }
+
 func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult

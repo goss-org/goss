@@ -10,6 +10,8 @@ import (
 
 type Rspecish struct{}
 
+func (r Rspecish) SetReportURL(stringified string) error { return nil }
+
 func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult

@@ -11,6 +11,8 @@ import (
 
 type Tap struct{}
 
+func (r Tap) SetReportURL(stringified string) error { return nil }
+
 func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	testCount := 0
 	failed := 0

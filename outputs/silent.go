@@ -9,6 +9,8 @@ import (
 
 type Silent struct{}
 
+func (r Silent) SetReportURL(stringified string) error { return nil }
+
 func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
 	var failed int
 	for resultGroup := range results {
