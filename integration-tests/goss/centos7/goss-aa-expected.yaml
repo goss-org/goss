@@ -7,7 +7,7 @@ port:
   tcp:80:
     listening: true
     ip:
-    - '::'
+    - 0.0.0.0
 service:
   httpd:
     enabled: true
