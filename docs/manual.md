@@ -837,7 +837,7 @@ Available variables:
 Available functions beyond text/template [built-in functions](https://golang.org/pkg/text/template/#hdr-Functions):
 * `mkSlice "ARG1" "ARG2"` - Retuns a slice of all the arguments. See examples below for usage.
 * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
-* `readFile "fileName"` - Reads file content into a a string, trims whitespace. Useful when a file contains a token.
+* `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
 * `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
 
