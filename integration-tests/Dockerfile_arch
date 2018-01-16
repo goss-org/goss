@@ -1,5 +1,7 @@
 FROM base/archlinux
 MAINTAINER @siddharthist
 
+ENV GOSS_TEST true
+
 RUN ln -s /does_not_exist /foo && \
     chmod 700 ~root

@@ -1,6 +1,8 @@
 FROM gliderlabs/alpine:3.3
 MAINTAINER Ahmed
 
+ENV GOSS_TEST true
+
 # install apache2 and remove un-needed services
 RUN apk update && \
   apk add openrc apache2 bash ca-certificates && \

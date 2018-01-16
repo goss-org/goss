@@ -1,6 +1,8 @@
 FROM ubuntu-upstart:precise
 MAINTAINER Ahmed
 
+ENV GOSS_TEST true
+
 # dpkg-divert - https://github.com/docker/docker/issues/1024#issuecomment-20018600
 RUN mv /sbin/initctl /sbin/initctl.orig && \
     ln -s /bin/true /sbin/initctl && \

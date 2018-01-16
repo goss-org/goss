@@ -177,3 +177,6 @@ matching:
         - have-key-with-value:
             foo: bar
         - have-key: baz
+env-var:
+  GOSS_TEST: true
+
