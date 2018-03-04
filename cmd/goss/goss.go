@@ -140,6 +140,15 @@ func main() {
 			},
 		},
 		{
+			Name:    "boss",
+			Aliases: []string{"b"},
+			Usage:   "show the goss boss",
+			Action: func(c *cli.Context) error {
+				fmt.Print("aelsabbahy\n")
+				return nil
+			},
+		},
+		{
 			Name:    "autoadd",
 			Aliases: []string{"aa"},
 			Usage:   "automatically add all matching resource to the test suite",
