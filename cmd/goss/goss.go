@@ -275,6 +275,14 @@ func main() {
 							Name:  "timeout",
 							Value: 5 * time.Second,
 						},
+						cli.StringFlag{
+							Name: "username, u",
+							Usage: "Username for basic auth",
+						},
+						cli.StringFlag{
+							Name: "password, p",
+							Usage: "Password for basic auth",
+						},
 					},
 					Action: func(c *cli.Context) error {
 						goss.AddResources(c.GlobalString("gossfile"), "HTTP", c.Args(), c)

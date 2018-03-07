@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"time"
-
+	"fmt"
 	"github.com/aelsabbahy/goss/util"
 )
 
@@ -26,6 +26,8 @@ type DefHTTP struct {
 	Timeout           int
 	loaded            bool
 	err               error
+	Username          string
+	Password          string
 }
 
 func NewDefHTTP(http string, system *System, config util.Config) HTTP {
@@ -34,6 +36,8 @@ func NewDefHTTP(http string, system *System, config util.Config) HTTP {
 		allowInsecure:     config.AllowInsecure,
 		noFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.Timeout,
+		Username:		   config.Username,
+		Password:          config.Password,
 	}
 }
 
@@ -57,7 +61,16 @@ func (u *DefHTTP) setup() error {
 			return http.ErrUseLastResponse
 		}
 	}
-	u.resp, u.err = client.Get(u.http)
+
+	req, err := http.NewRequest("GET", u.http, nil)
+	if err != nil {
+		return u.err
+	}
+	if u.Username != "" || u.Password != "" {
+		fmt.Print("Set Basic Auth" )
+		req.SetBasicAuth(u.Username, u.Password)
+	}
+	u.resp, u.err = client.Do(req)
 
 	return u.err
 }
