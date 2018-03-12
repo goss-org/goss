@@ -6,7 +6,7 @@ USAGE="USAGE: $(basename "$0") [run|edit] <docker_run_params>"
 GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
 
 info() {
-    echo -e "INFO: $*" >&2;
+    echo -e "INFO: $*";
 }
 error() {
     echo -e "ERROR: $*" >&2;
