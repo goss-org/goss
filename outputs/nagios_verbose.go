@@ -7,11 +7,14 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type NagiosVerbose struct{}
 
-func (r NagiosVerbose) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r NagiosVerbose) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	var testCount, failed, skipped int
 
 	var summary map[int]string
@@ -43,5 +46,5 @@ func (r NagiosVerbose) Output(w io.Writer, results <-chan []resource.TestResult,
 }
 
 func init() {
-	RegisterOutputer("nagios_verbose", &NagiosVerbose{})
+	RegisterOutputer("nagios_verbose", &NagiosVerbose{}, []string{})
 }
