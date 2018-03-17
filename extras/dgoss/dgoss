@@ -36,7 +36,7 @@ run(){
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
+        id=$(docker run -d -i -v "$tmp_dir:/goss" "${@:2}")
         docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
         ;;
       cp)
