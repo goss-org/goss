@@ -67,7 +67,6 @@ func (u *DefHTTP) setup() error {
 		return u.err
 	}
 	if u.Username != "" || u.Password != "" {
-		fmt.Print("Set Basic Auth" )
 		req.SetBasicAuth(u.Username, u.Password)
 	}
 	u.resp, u.err = client.Do(req)
