@@ -158,6 +158,15 @@ http:
     allow-insecure: false
     timeout: 5000
     body: []
+  https://httpbin.org/basic-auth/username/secret:
+    status: 200
+    username: username
+    password: secret
+  https://httpbin.org/basic-auth/username/secret:
+    status: 401
+    username: username
+    password: wrong
+
 matching:
   has_substr:
     content: some string
