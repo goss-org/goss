@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 	"time"
-	"fmt"
 	"github.com/aelsabbahy/goss/util"
 )
 
