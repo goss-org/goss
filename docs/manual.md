@@ -423,6 +423,8 @@ Validates if a remote `address:port` are accessible.
 tcp://ip-address-or-domain-name:80:
   reachable: true
   timeout: 500
+  #optional attributes
+  localaddress: 127.0.0.1
 ```
 
 

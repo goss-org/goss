@@ -16,6 +16,7 @@ type Addr interface {
 
 type DefAddr struct {
 	address string
+	LocalAddress string
 	Timeout int
 }
 
@@ -23,6 +24,7 @@ func NewDefAddr(address string, system *System, config util.Config) Addr {
 	addr := normalizeAddress(address)
 	return &DefAddr{
 		address: addr,
+		LocalAddress: config.LocalAddress,
 		Timeout: config.Timeout,
 	}
 }
@@ -38,7 +40,12 @@ func (a *DefAddr) Exists() (bool, error) { return a.Reachable() }
 func (a *DefAddr) Reachable() (bool, error) {
 	network, address := splitAddress(a.address)
 
-	conn, err := net.DialTimeout(network, address, time.Duration(a.Timeout)*time.Millisecond)
+	localAddr := &net.TCPAddr{
+		IP: net.ParseIP(a.LocalAddress),
+	}
+
+	d := net.Dialer{LocalAddr: localAddr, Timeout: time.Duration(a.Timeout)*time.Millisecond}
+	conn, err := d.Dial(network, address)
 	if err != nil {
 		return false, nil
 	}
@@ -52,7 +59,6 @@ func splitAddress(fulladdress string) (network, address string) {
 		return split[0], split[1]
 	}
 	return "tcp", fulladdress
-
 }
 
 func normalizeAddress(fulladdress string) string {
