@@ -153,12 +153,18 @@ interface:
         have-prefix: '172.17'
     mtu: 1500
 http:
-  https://www.google.com:
-    status: 200
+  https://github.com/:
     allow-insecure: false
     timeout: 5000
-    header: ["Content-Type: text/html"]
+    status: 200
     body: []
+http:
+  https://github.com/:
+    allow-insecure: false
+    timeout: 5000
+    status: 200
+    header: ["Content-Type: text/html"]
+    body: ["github"]
 matching:
   has_substr:
     content: some string
