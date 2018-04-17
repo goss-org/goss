@@ -33,6 +33,10 @@ func getEnv(key string, def ...string) string {
 	return os.Getenv(key)
 }
 
+func loop(iterations int) []struct{} {
+    return make([]struct{}, iterations)
+}
+
 func regexMatch(re, s string) (bool, error) {
 	compiled, err := regexp.Compile(re)
 	if err != nil {
@@ -46,6 +50,7 @@ var funcMap = map[string]interface{}{
 	"mkSlice":    mkSlice,
 	"readFile":   readFile,
 	"getEnv":     getEnv,
+	"loop":       loop,
 	"regexMatch": regexMatch,
 }
 
