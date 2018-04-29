@@ -25,6 +25,10 @@ const (
 	SKIP
 )
 
+const (
+	maxScanTokenSize = 512 * 1024
+)
+
 type TestResult struct {
 	Successful   bool          `json:"successful" yaml:"successful"`
 	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
@@ -306,6 +310,7 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	}()
 
 	scanner := bufio.NewScanner(fh)
+	scanner.Buffer(nil, maxScanTokenSize)
 	var found []patternMatcher
 	for scanner.Scan() {
 		line := scanner.Text()
