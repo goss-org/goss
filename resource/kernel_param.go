@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"strconv"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -24,7 +26,18 @@ func (a *KernelParam) Validate(sys *system.System) []TestResult {
 	sysKernelParam := sys.NewKernelParam(a.Key, sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "value", a.Value, sysKernelParam.Value, skip))
+	// Cast to string
+	var value matcher
+	switch v := a.Value.(type) {
+	case int:
+		value = strconv.Itoa(v)
+	case bool:
+		value = strconv.FormatBool(v)
+	default:
+		value = v
+	}
+
+	results = append(results, ValidateValue(a, "value", value, sysKernelParam.Value, skip))
 	return results
 }
 
