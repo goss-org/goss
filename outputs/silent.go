@@ -5,11 +5,14 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Silent struct{}
 
-func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	var failed int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -27,5 +30,5 @@ func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult, startT
 }
 
 func init() {
-	RegisterOutputer("silent", &Silent{})
+	RegisterOutputer("silent", &Silent{}, []string{})
 }
