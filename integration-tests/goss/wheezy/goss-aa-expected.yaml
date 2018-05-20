@@ -4,10 +4,10 @@ package:
     versions:
     - 2.2.22-13+deb7u12
 port:
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
-    - '::'
+    - 0.0.0.0
 service:
   apache2:
     enabled: true

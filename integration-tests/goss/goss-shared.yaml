@@ -157,6 +157,7 @@ interface:
     addrs:
       contain-element:
         have-prefix: '172.17'
+    mtu: 1500
 http:
   https://www.google.com:
     status: 200

@@ -4,10 +4,10 @@ package:
     versions:
     - 2.4.6
 port:
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
-    - '::'
+    - 0.0.0.0
 service:
   httpd:
     enabled: true

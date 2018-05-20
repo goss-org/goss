@@ -7,12 +7,15 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 )
 
 type Json struct{}
 
-func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	color.NoColor = true
 	testCount := 0
 	failed := 0
@@ -52,7 +55,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult, startTim
 }
 
 func init() {
-	RegisterOutputer("json", &Json{})
+	RegisterOutputer("json", &Json{}, []string{})
 }
 
 func struct2map(i interface{}) map[string]interface{} {

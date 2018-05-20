@@ -9,12 +9,15 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 )
 
 type JUnit struct{}
 
-func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	color.NoColor = true
 	var testCount, failed, skipped int
 
@@ -75,7 +78,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 }
 
 func init() {
-	RegisterOutputer("junit", &JUnit{})
+	RegisterOutputer("junit", &JUnit{}, []string{})
 }
 
 func escapeString(str string) string {

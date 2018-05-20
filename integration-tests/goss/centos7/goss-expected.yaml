@@ -28,15 +28,15 @@ addr:
     timeout: 1000
 port:
   tcp:80:
-    listening: false
-    ip: []
+    listening: true
+    ip:
+    - 0.0.0.0
   tcp:9999:
     listening: false
     ip: []
   tcp6:80:
-    listening: true
-    ip:
-    - '::'
+    listening: false
+    ip: []
 service:
   foobar:
     enabled: false
