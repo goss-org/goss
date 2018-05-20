@@ -282,10 +282,12 @@ $ curl localhost:8080/healthz
   * `json_oneline` - Same as json, but oneliner
   * `junit`
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
-  * `nagios_verbose` - Nagios output with verbose failure output.
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
+* `--format-options`, `-o` (output format option)
+  * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output.
+  * `verbose` - Gives verbose output. Applies to `nagios` output.
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
@@ -313,9 +315,13 @@ $ goss render | ssh remote-host 'goss -g - validate'
 
 Total Duration: 0.002s
 Count: 6, Failed: 0, Skipped: 0
+
+$ goss validate --format nagios -o verbose  -o perfdata
+GOSS CRITICAL - Count: 76, Failed: 1, Skipped: 0, Duration: 1.009s|total=76 failed=1 skipped=0 duration=1.009s
+Fail 1 - DNS: localhost: addrs: doesn't match, expect: [["127.0.0.1","::1"]] found: [["127.0.0.1"]]
+$ echo $?
+2
 ```
-
-
 
 ## Important note about goss file format
 It is important to note that both YAML and JSON are formats that describe a nested data structure.
@@ -534,7 +540,7 @@ file:
 
 
 ### gossfile
-Import other gossfiles from this one. This is the best way to maintain a large mumber of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples. Glob patterns can be also be used to specify matching gossfiles.
+Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles) for more examples. Glob patterns can be also be used to specify matching gossfiles.
 
 ```yaml
 gossfile:

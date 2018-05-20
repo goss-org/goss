@@ -9,6 +9,7 @@ import (
 
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 	"github.com/patrickmn/go-cache"
 	"github.com/urfave/cli"
@@ -53,6 +54,11 @@ type healthHandler struct {
 }
 
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	outputConfig := util.OutputConfig{
+		FormatOptions: h.c.StringSlice("format-options"),
+	}
+
 	log.Printf("%v: requesting health probe", r.RemoteAddr)
 	var resp res
 	tmp, found := h.cache.Get("res")
@@ -70,7 +76,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			iStartTime := time.Now()
 			out := validate(h.sys, h.gossConfig, h.maxConcurrent)
 			var b bytes.Buffer
-			exitCode := h.outputer.Output(&b, out, iStartTime)
+			exitCode := h.outputer.Output(&b, out, iStartTime, outputConfig)
 			resp = res{exitCode: exitCode, b: b}
 			h.cache.Set("res", resp, cache.DefaultExpiration)
 		}

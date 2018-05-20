@@ -18,6 +18,10 @@ type Config struct {
 	Password          string
 }
 
+type OutputConfig struct {
+	FormatOptions []string
+}
+
 type format string
 
 const (
@@ -56,4 +60,13 @@ func WhitelistAttrs(i interface{}, format format) (map[string]bool, error) {
 		validAttrs[strings.Split(v, ",")[0]] = true
 	}
 	return validAttrs, nil
+}
+
+func IsValueInList(value string, list []string) bool {
+	for _, v := range list {
+		if strings.ToLower(v) == strings.ToLower(value) {
+			return true
+		}
+	}
+	return false
 }
