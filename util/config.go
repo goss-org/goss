@@ -14,6 +14,8 @@ type Config struct {
 	AllowInsecure     bool
 	NoFollowRedirects bool
 	Server            string
+	Username          string
+	Password          string
 }
 
 type OutputConfig struct {

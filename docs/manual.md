@@ -575,6 +575,8 @@ http:
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
     body: [] # Check http response content for these patterns
+    username: "" # username for basic auth
+    password: "" # password for basic auth
 ```
 
 
