@@ -14,7 +14,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.2.22-13+deb7u7
+    - 2.2.22-13+deb7u12
   foobar:
     installed: false
   vim-tiny:
@@ -28,15 +28,15 @@ addr:
     timeout: 1000
 port:
   tcp:80:
-    listening: false
-    ip: []
+    listening: true
+    ip:
+    - 0.0.0.0
   tcp:9999:
     listening: false
     ip: []
   tcp6:80:
-    listening: true
-    ip:
-    - '::'
+    listening: false
+    ip: []
 service:
   apache2:
     enabled: true

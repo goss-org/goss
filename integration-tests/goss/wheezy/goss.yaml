@@ -19,9 +19,9 @@ process:
   apache2:
     running: true
 port:
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
-    - "::"
+    - '0.0.0.0'
 gossfile:
   "../goss-s*.yaml": {}

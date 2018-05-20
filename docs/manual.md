@@ -282,10 +282,12 @@ $ curl localhost:8080/healthz
   * `json_oneline` - Same as json, but oneliner
   * `junit`
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
-  * `nagios_verbose` - Nagios output with verbose failure output.
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
+* `--format-options`, `-o` (output format option)
+  * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output.
+  * `verbose` - Gives verbose output. Applies to `nagios` output.
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
@@ -313,9 +315,13 @@ $ goss render | ssh remote-host 'goss -g - validate'
 
 Total Duration: 0.002s
 Count: 6, Failed: 0, Skipped: 0
+
+$ goss validate --format nagios -o verbose  -o perfdata
+GOSS CRITICAL - Count: 76, Failed: 1, Skipped: 0, Duration: 1.009s|total=76 failed=1 skipped=0 duration=1.009s
+Fail 1 - DNS: localhost: addrs: doesn't match, expect: [["127.0.0.1","::1"]] found: [["127.0.0.1"]]
+$ echo $?
+2
 ```
-
-
 
 ## Important note about goss file format
 It is important to note that both YAML and JSON are formats that describe a nested data structure.
@@ -584,6 +590,7 @@ interface:
     addrs:
     - 172.17.0.2/16
     - fe80::42:acff:fe11:2/64
+    mtu: 1500
 ```
 
 
@@ -836,7 +843,7 @@ Available variables:
 Available functions beyond text/template [built-in functions](https://golang.org/pkg/text/template/#hdr-Functions):
 * `mkSlice "ARG1" "ARG2"` - Retuns a slice of all the arguments. See examples below for usage.
 * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
-* `readFile "fileName"` - Reads file content into a a string, trims whitespace. Useful when a file contains a token.
+* `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
 * `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
 

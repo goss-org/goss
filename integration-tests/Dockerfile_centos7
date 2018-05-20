@@ -17,3 +17,4 @@ RUN yum -y --disablerepo='*' --enablerepo=base install httpd && yum clean all
 
 RUN systemctl enable httpd
 RUN chmod 700 ~root
+RUN mkfifo /pipe

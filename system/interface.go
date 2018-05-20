@@ -10,6 +10,7 @@ type Interface interface {
 	Name() string
 	Exists() (bool, error)
 	Addrs() ([]string, error)
+	MTU() (int, error)
 }
 
 type DefInterface struct {
@@ -74,4 +75,12 @@ func (i *DefInterface) Addrs() ([]string, error) {
 		ret = append(ret, addr.String())
 	}
 	return ret, nil
+}
+
+func (i *DefInterface) MTU() (int, error) {
+	if err := i.setup(); err != nil {
+		return 0, err
+	}
+
+	return i.iface.MTU, nil
 }

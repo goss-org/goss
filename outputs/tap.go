@@ -7,11 +7,14 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Tap struct{}
 
-func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	testCount := 0
 	failed := 0
 
@@ -49,5 +52,5 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult, startTime
 }
 
 func init() {
-	RegisterOutputer("tap", &Tap{})
+	RegisterOutputer("tap", &Tap{}, []string{})
 }
