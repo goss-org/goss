@@ -36,7 +36,7 @@ run(){
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        id=$(docker run -d -v "$tmp_dir:/goss" "${@:2}")
+        id=$(docker run -d -v "$tmp_dir:/goss:z" "${@:2}")
         docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
         ;;
       cp)
@@ -89,6 +89,10 @@ case "$1" in
             fi
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
+        info "Container health"
+        if ! docker top $id; then
+            docker logs $id
+        fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
             docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"

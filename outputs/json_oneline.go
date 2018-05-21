@@ -7,12 +7,15 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 )
 
 type JsonOneline struct{}
 
-func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	color.NoColor = true
 	testCount := 0
 	failed := 0
@@ -52,5 +55,5 @@ func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult, s
 }
 
 func init() {
-	RegisterOutputer("json_oneline", &JsonOneline{})
+	RegisterOutputer("json_oneline", &JsonOneline{}, []string{})
 }
