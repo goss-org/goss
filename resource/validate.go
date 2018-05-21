@@ -26,7 +26,7 @@ const (
 )
 
 const (
-	maxScanTokenSize = 512 * 1024
+	maxScanTokenSize = 1024 * 1024
 )
 
 type TestResult struct {
