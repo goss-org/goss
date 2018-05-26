@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 )
 
 type Outputer interface {
-	Output(io.Writer, <-chan []resource.TestResult, time.Time) int
+	Output(io.Writer, <-chan []resource.TestResult, time.Time, util.OutputConfig) int
 }
 
 var green = color.New(color.FgGreen).SprintfFunc()
@@ -78,11 +79,12 @@ func humanizeResult2(r resource.TestResult) string {
 
 // Copied from database/sql
 var (
-	outputersMu sync.Mutex
-	outputers   = make(map[string]Outputer)
+	outputersMu           sync.Mutex
+	outputers             = make(map[string]Outputer)
+	outputerFormatOptions = make(map[string][]string)
 )
 
-func RegisterOutputer(name string, outputer Outputer) {
+func RegisterOutputer(name string, outputer Outputer, formatOptions []string) {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
 
@@ -93,6 +95,7 @@ func RegisterOutputer(name string, outputer Outputer) {
 		panic("goss: Register called twice for ouputer " + name)
 	}
 	outputers[name] = outputer
+	outputerFormatOptions[name] = formatOptions
 }
 
 // Outputers returns a sorted list of the names of the registered outputers.
@@ -102,6 +105,21 @@ func Outputers() []string {
 	var list []string
 	for name := range outputers {
 		list = append(list, name)
+	}
+	sort.Strings(list)
+	return list
+}
+
+func FormatOptions() []string {
+	outputersMu.Lock()
+	defer outputersMu.Unlock()
+	var list []string
+	for _, formatOptions := range outputerFormatOptions {
+		for _, opt := range formatOptions {
+			if !(util.IsValueInList(opt, list)) {
+				list = append(list, opt)
+			}
+		}
 	}
 	sort.Strings(list)
 	return list

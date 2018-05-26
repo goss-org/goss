@@ -21,11 +21,11 @@ addr:
     timeout: 1000
 port:
   tcp:80:
-    listening: false
+    listening: true
   tcp:9999:
     listening: false
   tcp6:80:
-    listening: true
+    listening: false
 service:
   apache2:
     enabled: true

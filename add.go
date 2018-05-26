@@ -22,6 +22,8 @@ func AddResources(fileName, resourceName string, keys []string, c *cli.Context) 
 		AllowInsecure:     c.Bool("insecure"),
 		NoFollowRedirects: c.Bool("no-follow-redirects"),
 		Server:            c.String("server"),
+		Username:          c.String("username"),
+		Password:          c.String("password"),
 	}
 
 	var gossConfig GossConfig

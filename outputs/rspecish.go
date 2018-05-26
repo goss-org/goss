@@ -6,11 +6,14 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Rspecish struct{}
 
-func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
@@ -47,5 +50,5 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult, star
 }
 
 func init() {
-	RegisterOutputer("rspecish", &Rspecish{})
+	RegisterOutputer("rspecish", &Rspecish{}, []string{})
 }
