@@ -278,8 +278,7 @@ $ curl localhost:8080/healthz
 #### Flags
 * `--format`, `-f` (output format)
   * `documentation` - Verbose test results
-  * `json` - Detailed test result
-  * `json_oneline` - Same as json, but oneliner
+  * `json` - Detailed test result on a single line (See `pretty` format option).
   * `junit`
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
   * `rspecish` **(default)** - Similar to rspec output
@@ -288,13 +287,14 @@ $ curl localhost:8080/healthz
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output.
   * `verbose` - Gives verbose output. Applies to `nagios` output.
+  * `pretty` - Pretty printing for the `json` output.
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
 * `--retry-timeout`, `-r` - Retry on failure so long as elapsed + sleep time is less than this (default: 0)
 * `--sleep`, `-s` - Time to sleep between retries (default: 1s)
 
-#### Example:
+#### Examples:
 
 ```bash
 $ goss validate --format documentation
@@ -316,7 +316,7 @@ $ goss render | ssh remote-host 'goss -g - validate'
 Total Duration: 0.002s
 Count: 6, Failed: 0, Skipped: 0
 
-$ goss validate --format nagios -o verbose  -o perfdata
+$ goss validate --format nagios -o verbose -o perfdata
 GOSS CRITICAL - Count: 76, Failed: 1, Skipped: 0, Duration: 1.009s|total=76 failed=1 skipped=0 duration=1.009s
 Fail 1 - DNS: localhost: addrs: doesn't match, expect: [["127.0.0.1","::1"]] found: [["127.0.0.1"]]
 $ echo $?
