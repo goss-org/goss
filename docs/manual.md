@@ -285,9 +285,9 @@ $ curl localhost:8080/healthz
   * `tap`
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 * `--format-options`, `-o` (output format option)
-  * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output.
-  * `verbose` - Gives verbose output. Applies to `nagios` output.
-  * `pretty` - Pretty printing for the `json` output.
+  * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
+  * `verbose` - Gives verbose output. Applies to `nagios` output
+  * `pretty` - Pretty printing for the `json` output
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color

@@ -217,11 +217,11 @@ package:
 
 * rspecish **(default)** - Similar to rspec output
 * documentation - Verbose test results
-* JSON - Detailed test result
+* JSON - Detailed test result on a single line
 * TAP
 * JUnit
-* nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
-* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
+* nagios - Nagios/Sensu compatible output /w exit code 2 for failures
+* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 
 ## Community Contributions
 
