@@ -47,10 +47,11 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	out["results"] = resultsOut
 	out["summary"] = summary
 
+	var j []byte
 	if pretty {
-		j, _ := json.MarshalIndent(out, "", "    ")
+		j, _ = json.MarshalIndent(out, "", "    ")
 	} else {
-		j, _ := json.Marshal(out)
+		j, _ = json.Marshal(out)
 	}
 
 	fmt.Fprintln(w, string(j))
