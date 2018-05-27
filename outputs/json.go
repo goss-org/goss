@@ -16,6 +16,9 @@ type Json struct{}
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
+	var pretty bool
+	pretty = util.IsValueInList("pretty", outConfig.FormatOptions)
+
 	color.NoColor = true
 	testCount := 0
 	failed := 0
@@ -44,7 +47,12 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	out["results"] = resultsOut
 	out["summary"] = summary
 
-	j, _ := json.MarshalIndent(out, "", "    ")
+	if pretty {
+		j, _ := json.MarshalIndent(out, "", "    ")
+	} else {
+		j, _ := json.Marshal(out)
+	}
+
 	fmt.Fprintln(w, string(j))
 
 	if failed > 0 {
@@ -55,7 +63,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 }
 
 func init() {
-	RegisterOutputer("json", &Json{}, []string{})
+	RegisterOutputer("json", &Json{}, []string{"pretty"})
 }
 
 func struct2map(i interface{}) map[string]interface{} {
