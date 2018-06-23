@@ -22,3 +22,4 @@ import:
   - pkg/mount
 - package: github.com/patrickmn/go-cache
 - package: github.com/miekg/dns
+- package: github.com/prometheus/client_golang/prometheus

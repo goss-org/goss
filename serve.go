@@ -32,6 +32,9 @@ func Serve(c *cli.Context) {
 	if c.String("format") == "json" {
 		health.contentType = "application/json"
 	}
+	if c.String("format") == "prometheus" {
+		health.contentType = "text/plain; version=0.0.4"
+	}
 	http.Handle(endpoint, health)
 	listenAddr := c.String("listen-addr")
 	log.Printf("Starting to listen on: %s", listenAddr)
@@ -84,7 +87,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.contentType != "" {
 		w.Header().Set("Content-Type", h.contentType)
 	}
-	if resp.exitCode == 0 {
+	if resp.exitCode == 0 || h.c.String("format") == "prometheus" {
 		resp.b.WriteTo(w)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
