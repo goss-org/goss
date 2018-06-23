@@ -3,7 +3,6 @@ package outputs
 import (
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -65,7 +64,6 @@ func init() {
 }
 
 func mechanizeResult(r resource.TestResult) string {
-	resourceName := fmt.Sprintf("goss_%s", strings.ToLower(r.ResourceType))
-	return fmt.Sprintf("%s{resource_id=\"%s\",property=\"%s\"} %d",
-		resourceName, r.ResourceId, r.Property, int64(r.Result))
+	return fmt.Sprintf("goss{resource_type=\"%s\",resource_id=\"%s\",property=\"%s\"} %d",
+		r.ResourceType, r.ResourceId, r.Property, int64(r.Result))
 }
