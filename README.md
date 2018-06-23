@@ -221,6 +221,7 @@ package:
 * TAP
 * JUnit
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+* prometheus - Prometheus compatible output /w values: 0 for successful, 1 for failed and 2 for skipped tests.
 * silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
