@@ -33,7 +33,7 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}
 
-			summary[testCount] = fmt.Sprintf("%s\n", mechanizeResult(testResult))
+			summary[testCount] = fmt.Sprintf("%s\n", promFormat(testResult))
 
 			testCount++
 		}
@@ -63,7 +63,7 @@ func init() {
 	RegisterOutputer("prometheus", &Prometheus{}, []string{})
 }
 
-func mechanizeResult(r resource.TestResult) string {
+func promFormat(r resource.TestResult) string {
 	return fmt.Sprintf("goss{resource_type=\"%s\",resource_id=\"%s\",property=\"%s\"} %d",
 		r.ResourceType, r.ResourceId, r.Property, int64(r.Result))
 }
