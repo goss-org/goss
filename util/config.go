@@ -39,6 +39,7 @@ type Config struct {
 	Password          string
 	RequestHeader     []string
 	RetryTimeout      time.Duration
+	RunLevel          string `default:"sysinit"`
 	Server            string
 	Sleep             time.Duration
 	Spec              string
