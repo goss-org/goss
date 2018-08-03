@@ -18,6 +18,7 @@ type Config struct {
 	Username          string
 	Password          string
 	LocalAddress      string
+	RunLevel          string `default:"sysinit"`
 }
 
 type OutputConfig struct {

@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 
 	"github.com/aelsabbahy/goss/util"
 )
 
 type ServiceInit struct {
-	service string
-	alpine  bool
+	service  string
+	alpine   bool
+	runlevel string
 }
 
 func NewServiceInit(service string, system *System, config util.Config) Service {
@@ -18,7 +20,13 @@ func NewServiceInit(service string, system *System, config util.Config) Service 
 }
 
 func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
-	return &ServiceInit{service: service, alpine: true}
+	runlevel := config.RunLevel
+	if runlevel == "" {
+		typ := reflect.TypeOf(config)
+		f, _ := typ.FieldByName("RunLevel")
+		runlevel = f.Tag.Get("default")
+	}
+	return &ServiceInit{service: service, alpine: true, runlevel: runlevel}
 }
 
 func (s *ServiceInit) Service() string {
@@ -40,7 +48,7 @@ func (s *ServiceInit) Enabled() (bool, error) {
 		return false, nil
 	}
 	if s.alpine {
-		return alpineInitServiceEnabled(s.service, "sysinit")
+		return alpineInitServiceEnabled(s.service, s.runlevel)
 	} else {
 		return initServiceEnabled(s.service, 3)
 	}
