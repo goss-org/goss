@@ -12,7 +12,7 @@ type Service struct {
 	Enabled  matcher `json:"enabled" yaml:"enabled"`
 	Running  matcher `json:"running" yaml:"running"`
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
-	RunLevel string  `json:"runlevel" yaml:"runlevel"`
+	RunLevel string  `json:"runlevel,omitempty" yaml:"runlevel,omitempty"`
 }
 
 func (s *Service) ID() string      { return s.Service }
