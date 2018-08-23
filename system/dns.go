@@ -174,7 +174,7 @@ func LookupHost(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 // A record lookup
 func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -188,10 +188,19 @@ func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []str
 	return
 }
 
+// FindServerPort - Find the DNS Port in server config, returns 53 if one is not provided
+func FindServerPort(server string) string {
+	_, srvport, err := net.SplitHostPort(server)
+	if err != nil {
+		return "53"
+	}
+	return srvport
+}
+
 // AAAA (IPv6) record lookup
 func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +217,7 @@ func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 // CNAME record lookup
 func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +234,7 @@ func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs [
 // MX record lookup
 func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +252,7 @@ func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 // NS record lookup
 func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +269,7 @@ func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 // SRV record lookup
 func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +290,7 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 // TXT record lookup
 func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +314,7 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 
 	m.SetQuestion(reverse, dns.TypePTR)
 
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +329,7 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 // CAA record lookup
 func LookupCAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCAA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, net.JoinHostPort(server, FindServerPort(server)))
 	if err != nil {
 		return nil, err
 	}
