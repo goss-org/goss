@@ -44,6 +44,12 @@ release/goss-linux-amd64: $(GO_FILES)
 release/goss-linux-arm: $(GO_FILES)
 	$(info INFO: Starting build $@)
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-linux-arm $(exe)
+release/goss-darwin-amd64: $(GO_FILES)
+	$(info INFO: Starting build $@)
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-darwin-amd64 $(exe)
+release/goss-windows-amd64: $(GO_FILES)
+	$(info INFO: Starting build $@)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-windows-amd64.exe $(exe)
 
 
 
@@ -51,7 +57,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
+build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-darwin-amd64 release/goss-windows-amd64
 
 test-int: centos7 wheezy precise alpine3 arch
 test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
