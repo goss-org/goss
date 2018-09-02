@@ -36,13 +36,14 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if f.Mode != nil {
+	// mode, owner and group do not have equivalents on Windows.
+	if f.Mode != nil && runtime.GOOS != "windows" {
 		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode, skip))
 	}
-	if f.Owner != nil {
+	if f.Owner != nil && runtime.GOOS != "windows" {
 		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner, skip))
 	}
-	if f.Group != nil {
+	if f.Group != nil && runtime.GOOS != "windows" {
 		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group, skip))
 	}
 	if f.LinkedTo != nil {
