@@ -7,9 +7,9 @@ func (f *DefFile) Mode() (string, error) {
 }
 
 func (f *DefFile) Owner() (string, error) {
-	return "windows"
+	return "windows", nil
 }
 
 func (f *DefFile) Group() (string, error) {
-	return "windows"
+	return "windows", nil
 }
