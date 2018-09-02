@@ -1,6 +1,8 @@
 package resource
 
 import (
+    "runtime"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
