@@ -129,8 +129,6 @@ func (f *DefFile) Filetype() (string, error) {
 	return "file", nil
 }
 
-
-
 func (f *DefFile) LinkedTo() (string, error) {
 	if err := f.setup(); err != nil {
 		return "", err
