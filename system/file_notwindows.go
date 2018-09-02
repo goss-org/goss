@@ -3,18 +3,10 @@
 package system
 
 import (
-	"crypto/md5"
-	"crypto/sha256"
 	"fmt"
-	"io"
 	"os"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"syscall"
-
-	"github.com/aelsabbahy/goss/util"
-	"github.com/opencontainers/runc/libcontainer/user"
 )
 
 func (f *DefFile) Mode() (string, error) {

@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/opencontainers/runc/libcontainer/user"
