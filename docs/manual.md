@@ -848,6 +848,8 @@ Available functions beyond text/template [built-in functions](https://golang.org
 * `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
 * `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
+* `ToLower` - Changes piped input to lowercase
+* `ToUpper` - Changes piped input to UPPERCASE
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
 
