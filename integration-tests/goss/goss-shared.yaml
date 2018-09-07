@@ -11,8 +11,8 @@ command:
     stderr:
     - not found
 file:
-{{range mkSlice "/etc/passwd" "/etc/group"}}
-  {{.}}:
+{{range mkSlice "/etc/PAsswD" "/etc/group"}}
+  {{. | ToLower}}:
     exists: true
     mode: '0644'
     owner: root
