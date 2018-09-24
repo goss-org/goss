@@ -272,6 +272,14 @@ func main() {
 					},
 				},
 				{
+					Name:  "docker_container",
+					Usage: "add new docker container name",
+					Action: func(c *cli.Context) error {
+						goss.AddResources(c.GlobalString("gossfile"), "DockerContainer", c.Args(), c)
+						return nil
+					},
+				},
+				{
 					Name:  "http",
 					Usage: "add new http",
 					Flags: []cli.Flag{
@@ -286,11 +294,11 @@ func main() {
 							Value: 5 * time.Second,
 						},
 						cli.StringFlag{
-							Name: "username, u",
+							Name:  "username, u",
 							Usage: "Username for basic auth",
 						},
 						cli.StringFlag{
-							Name: "password, p",
+							Name:  "password, p",
 							Usage: "Password for basic auth",
 						},
 					},

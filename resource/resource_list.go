@@ -917,6 +917,106 @@ func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
 //go:generate goimports -w resource_list.go resource_list.go
 
+type DockerContainerMap map[string]*DockerContainer
+
+func (r DockerContainerMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*DockerContainer, error) {
+	sysres := sys.NewDockerContainer(sr, sys, config)
+	res, err := NewDockerContainer(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r DockerContainerMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DockerContainer, system.DockerContainer, bool) {
+	sysres := sys.NewDockerContainer(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewDockerContainer(sysres, util.Config{})
+	if e, _ := sysres.Exists(); e != true {
+		return res, sysres, false
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (ret *DockerContainerMap) UnmarshalJSON(data []byte) error {
+	// Curried json.Unmarshal
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// Validate configuration
+	zero := DockerContainer{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*DockerContainer
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
+
+func (ret *DockerContainerMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	// Validate configuration
+	zero := DockerContainer{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*DockerContainer
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
+
+//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
+
 type ServiceMap map[string]*Service
 
 func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Service, error) {

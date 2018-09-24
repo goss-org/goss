@@ -11,6 +11,7 @@ import (
 	// This needs a better name
 	"github.com/aelsabbahy/go-ps"
 	util2 "github.com/aelsabbahy/goss/util"
+	docker "github.com/docker/docker/api/types"
 	"github.com/urfave/cli"
 )
 
@@ -19,25 +20,28 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage     func(string, *System, util2.Config) Package
-	NewFile        func(string, *System, util2.Config) File
-	NewAddr        func(string, *System, util2.Config) Addr
-	NewPort        func(string, *System, util2.Config) Port
-	NewService     func(string, *System, util2.Config) Service
-	NewUser        func(string, *System, util2.Config) User
-	NewGroup       func(string, *System, util2.Config) Group
-	NewCommand     func(string, *System, util2.Config) Command
-	NewDNS         func(string, *System, util2.Config) DNS
-	NewProcess     func(string, *System, util2.Config) Process
-	NewGossfile    func(string, *System, util2.Config) Gossfile
-	NewKernelParam func(string, *System, util2.Config) KernelParam
-	NewMount       func(string, *System, util2.Config) Mount
-	NewInterface   func(string, *System, util2.Config) Interface
-	NewHTTP        func(string, *System, util2.Config) HTTP
-	ports          map[string][]GOnetstat.Process
-	portsOnce      sync.Once
-	procMap        map[string][]ps.Process
-	procOnce       sync.Once
+	NewPackage         func(string, *System, util2.Config) Package
+	NewFile            func(string, *System, util2.Config) File
+	NewAddr            func(string, *System, util2.Config) Addr
+	NewPort            func(string, *System, util2.Config) Port
+	NewService         func(string, *System, util2.Config) Service
+	NewUser            func(string, *System, util2.Config) User
+	NewGroup           func(string, *System, util2.Config) Group
+	NewCommand         func(string, *System, util2.Config) Command
+	NewDNS             func(string, *System, util2.Config) DNS
+	NewProcess         func(string, *System, util2.Config) Process
+	NewDockerContainer func(string, *System, util2.Config) DockerContainer
+	NewGossfile        func(string, *System, util2.Config) Gossfile
+	NewKernelParam     func(string, *System, util2.Config) KernelParam
+	NewMount           func(string, *System, util2.Config) Mount
+	NewInterface       func(string, *System, util2.Config) Interface
+	NewHTTP            func(string, *System, util2.Config) HTTP
+	ports              map[string][]GOnetstat.Process
+	portsOnce          sync.Once
+	procMap            map[string][]ps.Process
+	procOnce           sync.Once
+	cntMap             map[string][]docker.Container
+	cntOnce            sync.Once
 }
 
 func (s *System) Ports() map[string][]GOnetstat.Process {
@@ -54,21 +58,29 @@ func (s *System) ProcMap() map[string][]ps.Process {
 	return s.procMap
 }
 
+func (s *System) DockerContainerMap() map[string][]docker.Container {
+	s.cntOnce.Do(func() {
+		s.cntMap = GetContainers()
+	})
+	return s.cntMap
+}
+
 func New(c *cli.Context) *System {
 	sys := &System{
-		NewFile:        NewDefFile,
-		NewAddr:        NewDefAddr,
-		NewPort:        NewDefPort,
-		NewUser:        NewDefUser,
-		NewGroup:       NewDefGroup,
-		NewCommand:     NewDefCommand,
-		NewDNS:         NewDefDNS,
-		NewProcess:     NewDefProcess,
-		NewGossfile:    NewDefGossfile,
-		NewKernelParam: NewDefKernelParam,
-		NewMount:       NewDefMount,
-		NewInterface:   NewDefInterface,
-		NewHTTP:        NewDefHTTP,
+		NewFile:            NewDefFile,
+		NewAddr:            NewDefAddr,
+		NewPort:            NewDefPort,
+		NewUser:            NewDefUser,
+		NewGroup:           NewDefGroup,
+		NewCommand:         NewDefCommand,
+		NewDNS:             NewDefDNS,
+		NewProcess:         NewDefProcess,
+		NewDockerContainer: NewDefDockerContainer,
+		NewGossfile:        NewDefGossfile,
+		NewKernelParam:     NewDefKernelParam,
+		NewMount:           NewDefMount,
+		NewInterface:       NewDefInterface,
+		NewHTTP:            NewDefHTTP,
 	}
 	sys.detectService()
 	sys.detectPackage(c)
