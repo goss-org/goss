@@ -14,7 +14,7 @@ before_install:
   > glide.zip
 - unzip glide.zip
 - export PATH="$PATH:$PWD/linux-amd64"
-- go get -u github.com/golang/lint/golint
+- go get -u golang.org/x/lint/golint
 
 script:
 - make deps
