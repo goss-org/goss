@@ -529,8 +529,6 @@ file:
     # A stronger checksum alternative to md5 (recommended)
     sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
   /etc/alternatives/mta:
-    # required attributes
-    exists: true
     # optional attributes
     filetype: symlink # file, symlink, directory
     linked-to: /usr/sbin/sendmail.sendmail
