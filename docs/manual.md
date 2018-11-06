@@ -408,6 +408,7 @@ If you want to keep your tests in separate files, the best way to obtain a singl
 * [http](#http)
 * [interface](#interface)
 * [kernel-param](#kernel-param)
+* [matching](#matching)
 * [mount](#mount)
 * [package](#package)
 * [port](#port)
