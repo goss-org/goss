@@ -10,6 +10,10 @@ matrix:
       go: "1.9"
       sudo: required
       dist: trusty
+    - os: linux
+      go: "1.10"
+      sudo: required
+      dist: trusty
 
 before_install:
   - "before_install.${TRAVIS_OS_NAME}.sh"
