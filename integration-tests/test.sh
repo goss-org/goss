@@ -14,8 +14,8 @@ seccomp_opts() {
   fi
 }
 
-os="$(uname -s)"
-if [[ "${os}" == "Darwin" ]]; then
+current_platform="$(uname -s)"
+if [[ "${current_platform}" == "Darwin" ]]; then
   echo "Cannot run integration tests (docker) on macOS. Skipping; they run on linux inside dockers. Exiting 0."
   exit 0
 fi
