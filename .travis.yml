@@ -17,6 +17,7 @@ matrix:
 
 before_install:
   - "ci/before_install.${TRAVIS_OS_NAME}.sh"
+  - export PATH="$PATH:$PWD/${TRAVIS_OS_NAME}-amd64"
 
 script:
   - make deps
