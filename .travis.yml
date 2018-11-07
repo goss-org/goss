@@ -1,9 +1,6 @@
 ---
 language: go
 
-services:
-  - docker
-
 matrix:
   allow_failures:
     - os: osx     # GH-192 - implement any missing macOS support
@@ -13,14 +10,20 @@ matrix:
       go: "1.9.x"
       sudo: required
       dist: trusty
+      services:
+        - docker
     - os: linux
       go: "1.10.x"
       sudo: required
       dist: trusty
+      services:
+        - docker
     - os: linux
       go: "1.11.x"
       sudo: required
       dist: trusty
+      services:
+        - docker
     - os: osx
       go: "1.9.x"
       osx_image: xcode9.4
