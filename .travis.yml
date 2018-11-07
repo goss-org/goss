@@ -16,7 +16,7 @@ matrix:
       dist: trusty
 
 before_install:
-  - "before_install.${TRAVIS_OS_NAME}.sh"
+  - "ci/before_install.${TRAVIS_OS_NAME}.sh"
 
 script:
   - make deps
