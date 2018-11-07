@@ -20,6 +20,7 @@ matrix:
       dist: trusty
     - os: osx
       osx_image: xcode9.4
+    - os: windows
 
 before_install:
   - "ci/before_install.${TRAVIS_OS_NAME}.sh"
