@@ -11,5 +11,4 @@ fi
 
 curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip --output glide.zip
 unzip glide.zip
-export PATH="$PATH:$PWD/linux-amd64"
-go get -u github.com/golang/lint/golint
+go get -u golang.org/x/lint/golint
