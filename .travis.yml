@@ -7,11 +7,11 @@ services:
 matrix:
   include:
     - os: linux
-      go: "1.9"
+      go: "1.9.x"
       sudo: required
       dist: trusty
     - os: linux
-      go: "1.10"
+      go: "1.10.x"
       sudo: required
       dist: trusty
 
