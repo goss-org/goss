@@ -1,24 +1,27 @@
+---
 language: go
 
+os:
+  - linux
+
 go:
-- 1.9
+  - 1.9
 
 sudo: required
 dist: trusty
 
 services:
-- docker
+  - docker
 
 before_install:
-- curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip
-  > glide.zip
-- unzip glide.zip
-- export PATH="$PATH:$PWD/linux-amd64"
-- go get -u github.com/golang/lint/golint
+  - curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip --output glide.zip
+  - unzip glide.zip
+  - export PATH="$PATH:$PWD/linux-amd64"
+  - go get -u github.com/golang/lint/golint
 
 script:
-- make deps
-- make
+  - make deps
+  - make
 
 deploy:
   provider: releases
