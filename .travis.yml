@@ -1,17 +1,15 @@
 ---
 language: go
 
-os:
-  - linux
-
-go:
-  - 1.9
-
-sudo: required
-dist: trusty
-
 services:
   - docker
+
+matrix:
+  include:
+    - os: linux
+      go: "1.9"
+      sudo: required
+      dist: trusty
 
 before_install:
   - curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip --output glide.zip
