@@ -3,7 +3,6 @@ language: go
 
 matrix:
   allow_failures:
-    - os: osx     # GH-192 - implement any missing macOS support
     - os: windows # GH-191 - implement any missing Windows support
   include:
     - os: linux
