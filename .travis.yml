@@ -18,10 +18,13 @@ matrix:
       go: "1.11.x"
       sudo: required
       dist: trusty
+    - os: osx
+      osx_image: xcode9.4
 
 before_install:
   - "ci/before_install.${TRAVIS_OS_NAME}.sh"
-  - export PATH="$PATH:$PWD/${TRAVIS_OS_NAME}-amd64"
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export PATH="$PATH:${PWD}/linux-amd64"  fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]];   then export PATH="$PATH:${PWD}/darwin-amd64" fi
 
 script:
   - make deps
