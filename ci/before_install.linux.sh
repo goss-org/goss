@@ -9,6 +9,6 @@ if ! cd "$(dirname "${BASH_SOURCE[0]}")/.."; then
   return 1
 fi
 
-curl -L https://github.com/Masterminds/glide/releases/download/0.11.0/glide-0.11.0-linux-amd64.zip --output glide.zip
+curl -L https://github.com/Masterminds/glide/releases/download/v0.11.0/glide-v0.11.0-linux-amd64.zip --output glide.zip
 unzip glide.zip
 go get -u golang.org/x/lint/golint
