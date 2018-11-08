@@ -4,7 +4,7 @@ exe = github.com/aelsabbahy/goss/cmd/goss
 pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
-GO_FILES = $(shell /bin/find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
+GO_FILES = $(shell git ls-files -- '*.go' ':!:*_test.go')
 
 .PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
