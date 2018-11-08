@@ -20,7 +20,7 @@ if [[ "${current_platform}" == "Darwin" ]]; then
   echo "Cannot run integration tests (docker) on macOS. Skipping; they run on linux inside dockers. Exiting 0."
   exit 0
 fi
-if [[ "${current_platform}" == "MINGW"* ]]; then
+if [[ "${current_platform}" == "MINGW"* || "${current_platform}" == "MSYS_NT"* ]]; then
   echo "Cannot run integration tests (docker) on Windows. Skipping; they run on linux inside dockers. Exiting 0."
   exit 0
 fi
