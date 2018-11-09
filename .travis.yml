@@ -1,24 +1,30 @@
+---
 language: go
 
 go:
-- 1.9
+  - "1.9.x"
+  - "1.10.x"
+  - "1.11.x"
+
+os:
+  - linux
+  - windows
 
 sudo: required
+
 dist: trusty
 
 services:
-- docker
+  - docker
 
 before_install:
-- curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip
-  > glide.zip
-- unzip glide.zip
-- export PATH="$PATH:$PWD/linux-amd64"
-- go get -u github.com/golang/lint/golint
+  - "ci/before_install.sh ${TRAVIS_OS_NAME}"
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]];   then export PATH="$PATH:${PWD}/linux-amd64"   ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then export PATH="$PATH:${PWD}/windows-amd64" ; fi
 
 script:
-- make deps
-- make
+  - make deps
+  - make
 
 deploy:
   provider: releases
@@ -28,6 +34,7 @@ deploy:
     - release/goss-linux-amd64
     - release/goss-linux-386
     - release/goss-linux-arm
+    - release/goss-windows-amd64.exe
     - extras/dgoss/dgoss
   skip_cleanup: true
   on:
