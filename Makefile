@@ -8,7 +8,7 @@ GO_FILES = $(shell git ls-files -- '*.go' ':!:*_test.go')
 
 .PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32 darwin test-int-darwin
 
-all: test-all test-all-32
+all: test-all test-all-32 test-int-darwin
 
 install: release/goss-linux-amd64
 	$(info INFO: Starting build $@)

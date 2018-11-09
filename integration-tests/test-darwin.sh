@@ -12,6 +12,11 @@ if ! cd "$(dirname "${BASH_SOURCE[0]}")/.."; then
   return 1
 fi
 
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  echo "Not running $0 on non-Darwin host."
+  exit 0
+fi
+
 os="${1-darwin}"
 arch="${2-amd64}"
 
