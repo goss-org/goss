@@ -4,7 +4,7 @@ exe = github.com/aelsabbahy/goss/cmd/goss
 pkgs = $(shell glide novendor)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
-GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
+GO_FILES = $(shell git ls-files -- '*.go' ':!:*_test.go')
 
 .PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
@@ -35,6 +35,9 @@ coverage:
 	#go tool cover -html=/tmp/coverage.out -o /tmp/coverage.html
 	#xdg-open /tmp/coverage.html
 
+release/goss-darwin-amd64: $(GO_FILES)
+	$(info INFO: Starting build $@)
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-darwin-amd64 $(exe)
 release/goss-linux-386: $(GO_FILES)
 	$(info INFO: Starting build $@)
 	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-linux-386 $(exe)
@@ -45,13 +48,11 @@ release/goss-linux-arm: $(GO_FILES)
 	$(info INFO: Starting build $@)
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-linux-arm $(exe)
 
-
-
 release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
+build: release/goss-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
 
 test-int: centos7 wheezy precise alpine3 arch
 test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
