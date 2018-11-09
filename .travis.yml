@@ -37,7 +37,7 @@ deploy:
     - release/goss-linux-amd64
     - release/goss-linux-386
     - release/goss-linux-arm
-    - release/goss-windows-amd64
+    - release/goss-windows-amd64.exe
     - extras/dgoss/dgoss
   skip_cleanup: true
   on:
