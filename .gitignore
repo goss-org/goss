@@ -14,3 +14,5 @@ tmp/
 /goss.yaml
 
 /.idea
+# glide install dir
+/*-amd64

@@ -13,3 +13,10 @@ precise:
 wheezy:
   packages:
     apache2: "2.2.22-13+deb7u13"
+
+darwin:
+  packages:
+    # homebrew does not allow version-pinning, so unless this gets
+    # put in its own tap, controlled via goss, this will periodically
+    # break as releases of httpd happen.
+    httpd: "2.4.37"

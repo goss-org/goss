@@ -1,0 +1,27 @@
+---
+service:
+  autofs:
+    enabled: false
+    running: false
+user:
+  www-data:
+    exists: true
+    uid: 33
+    gid: 33
+    groups:
+    - www-data
+    home: "/var/www"
+group:
+  www-data:
+    exists: true
+    gid: 33
+process:
+  apache2:
+    running: true
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - '0.0.0.0'
+gossfile:
+  "../goss-s*.yaml": {}

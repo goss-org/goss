@@ -6,7 +6,7 @@ cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 GO_FILES = $(shell git ls-files -- '*.go' ':!:*_test.go')
 
-.PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+.PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32 darwin test-int-darwin
 
 all: test-all test-all-32
 
@@ -56,6 +56,7 @@ build: release/goss-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64
 
 test-int: centos7 wheezy precise alpine3 arch
 test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+test-int-darwin: darwin
 
 centos7-32: build
 	$(info INFO: Starting build $@)
@@ -87,10 +88,12 @@ alpine3: build
 arch: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh arch amd64
-
+darwin: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test-darwin.sh darwin amd64
 
 test-all-32: lint test test-int-32
-test-all: lint test test-int
+test-all: lint test test-int test-int-darwin
 
 deps:
 	$(info INFO: Starting build $@)

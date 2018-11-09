@@ -5,6 +5,8 @@ service:
     running: false
 {{ if .Env.OS | regexMatch "centos[7]" }}
   httpd:
+{{else if .Env.OS | regexMatch "darwin" }}
+  httpd:
 {{else}}
   apache2:
 {{end}}
