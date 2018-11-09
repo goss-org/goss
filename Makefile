@@ -97,8 +97,6 @@ test-all: lint test test-int
 
 deps:
 	$(info INFO: Starting build $@)
-	$(info $$GOPATH is [${GOPATH}])
-	$(info $$GOROOT is [${GOROOT}])
 	glide install
 
 gen:
