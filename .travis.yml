@@ -2,8 +2,6 @@
 language: go
 
 matrix:
-  allow_failures:
-    - os: windows # GH-191 - implement any missing Windows support
   include:
     - os: linux
       go: "1.9.x"
