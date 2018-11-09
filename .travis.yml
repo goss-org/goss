@@ -1,41 +1,22 @@
 ---
 language: go
 
-matrix:
-  include:
-    - os: linux
-      go: "1.9.x"
-      sudo: required
-      dist: trusty
-      services:
-        - docker
-    - os: linux
-      go: "1.10.x"
-      sudo: required
-      dist: trusty
-      services:
-        - docker
-    - os: linux
-      go: "1.11.x"
-      sudo: required
-      dist: trusty
-      services:
-        - docker
-    - os: osx
-      go: "1.9.x"
-      osx_image: xcode9.4
-    - os: osx
-      go: "1.10.x"
-      osx_image: xcode9.4
-    - os: osx
-      go: "1.11.x"
-      osx_image: xcode9.4
-    - os: windows
-      go: "1.9.x"
-    - os: windows
-      go: "1.10.x"
-    - os: windows
-      go: "1.11.x"
+go:
+  - "1.9.x"
+  - "1.10.x"
+  - "1.11.x"
+
+os:
+  - osx
+  - linux
+  - windows
+
+sudo: required
+
+dist: trusty
+
+services:
+  - docker
 
 before_install:
   - "ci/before_install.${TRAVIS_OS_NAME}.sh"
