@@ -9,6 +9,10 @@ if ! cd "$(dirname "${BASH_SOURCE[0]}")/.."; then
   return 1
 fi
 
-curl -L https://github.com/Masterminds/glide/releases/download/v0.12.0/glide-v0.12.0-darwin-amd64.zip --output glide.zip
+os="${1:-}"
+if [[ "${os}" == "osx" ]]; then
+  os="darwin"
+fi
+curl -L "https://github.com/Masterminds/glide/releases/download/v0.12.0/glide-v0.12.0-${os}-amd64.zip" --output glide.zip
 unzip glide.zip
 go get -u golang.org/x/lint/golint
