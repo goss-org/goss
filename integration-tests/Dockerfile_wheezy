@@ -1,3 +1,33 @@
+# tester build stage runs the golang integration tests within the container
+FROM debian:wheezy as tester
+
+ARG arch=amd64
+ARG golang_version=1.9.3
+
+RUN apt-get update && \
+    apt-get install -y \
+      ca-certificates \
+      curl \
+      unzip && \
+    apt-get remove -y vim-tiny && \
+    apt-get clean
+RUN curl -L "https://dl.google.com/go/go${golang_version}.linux-${arch}.tar.gz" --output golang.tgz && \
+    tar zxvf golang.tgz --directory /usr/local && \
+    ln -s /usr/local/go/bin/go /usr/local/bin/go && \
+    rm -rf golang.tgz
+COPY ./ /code/src/github.com/aelsabbahy/goss
+RUN cd /code/src/github.com/aelsabbahy/goss && \
+    export GOPATH=/code && \
+    curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-${arch}.zip --output glide.zip && \
+    unzip glide.zip && \
+    linux-amd64/glide install && \
+    go test -v -tags integration ./cmd/goss && \
+    rm -rf /code && \
+    rm /usr/local/bin/go && \
+    rm -rf /usr/local/bin/go && \
+    unset GOPATH && \
+    apt-get remove -y curl unzip && apt-get clean
+
 FROM debian:wheezy
 MAINTAINER Ahmed
 

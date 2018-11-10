@@ -4,6 +4,7 @@ set -xeu
 
 os=$1
 arch=$2
+golang_version="${TRAVIS_GO_VERSION-1.9.3}"
 
 seccomp_opts() {
   local docker_ver minor_ver
@@ -17,7 +18,12 @@ seccomp_opts() {
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then
-  docker build -t "aelsabbahy/goss_${os}:latest" - < "Dockerfile_$os"
+  docker build \
+    -t "aelsabbahy/goss_${os}:latest" \
+    --file "Dockerfile_${os}" \
+    --build-arg "golang_version=${golang_version}" \
+    --build-arg "arch=${arch}" \
+    ".."
 # Pull if image doesn't exist locally
 elif ! docker images | grep "aelsabbahy/goss_$os";then
   docker pull "aelsabbahy/goss_$os"
