@@ -21,7 +21,7 @@ before_install:
   - "ci/before_install.sh ${TRAVIS_OS_NAME}"
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]];   then export PATH="$PATH:${PWD}/linux-amd64"   ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]];     then export PATH="$PATH:${PWD}/darwin-amd64"  ; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]];     ci/before_install.osx.sh                      ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]];     then ci/before_install.osx.sh                      ; fi
 
 script:
   - make deps
