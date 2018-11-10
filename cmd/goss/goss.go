@@ -8,8 +8,9 @@ import (
 	"github.com/aelsabbahy/goss"
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/urfave/cli"
-	//"time"
 )
+
+const gossName = "goss"
 
 var version string
 
@@ -18,7 +19,7 @@ func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
 	app.Version = version
-	app.Name = "goss"
+	app.Name = gossName
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -286,11 +287,11 @@ func main() {
 							Value: 5 * time.Second,
 						},
 						cli.StringFlag{
-							Name: "username, u",
+							Name:  "username, u",
 							Usage: "Username for basic auth",
 						},
 						cli.StringFlag{
-							Name: "password, p",
+							Name:  "password, p",
 							Usage: "Password for basic auth",
 						},
 					},

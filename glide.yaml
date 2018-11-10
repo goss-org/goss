@@ -22,3 +22,9 @@ import:
   - pkg/mount
 - package: github.com/patrickmn/go-cache
 - package: github.com/miekg/dns
+- package: github.com/rendon/testcli
+- package: github.com/stretchr/testify
+  version: ~1.2.2
+  subpackages:
+  - assert
+  - require
