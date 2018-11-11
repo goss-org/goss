@@ -21,7 +21,9 @@ os="${1-darwin}"
 arch="${2-amd64}"
 
 pushd "integration-tests/goss"
+set +e
 out="$(OS="darwin" "../../release/goss-${os}-${arch}" --vars "vars.yaml" --gossfile "darwin/goss.yaml" validate)"
+set -e
 echo "output:"
 echo "${out}"
 egrep -q 'Count: 88, Failed: 0' <<<"$out"
