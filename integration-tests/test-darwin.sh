@@ -22,6 +22,7 @@ arch="${2-amd64}"
 
 pushd "integration-tests/goss"
 set +e
+OS="darwin" "../../release/goss-${os}-${arch}" --vars "vars.yaml" --gossfile "darwin/goss.yaml" validate --output tap
 out="$(OS="darwin" "../../release/goss-${os}-${arch}" --vars "vars.yaml" --gossfile "darwin/goss.yaml" validate --output tap)"
 set -e
 echo "output:"
