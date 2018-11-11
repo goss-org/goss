@@ -12,7 +12,7 @@ RUN apt-get update && \
     apt-get remove -y vim-tiny && \
     apt-get clean
 RUN curl -L "https://dl.google.com/go/go${golang_version}.linux-${arch}.tar.gz" --output golang.tgz && \
-    tar zxvf golang.tgz --directory /usr/local && \
+    tar zxvf golang.tgz --directory /usr/local >/dev/null && \
     ln -s /usr/local/go/bin/go /usr/local/bin/go && \
     rm -rf golang.tgz
 COPY ./ /code/src/github.com/aelsabbahy/goss
