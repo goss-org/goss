@@ -8,6 +8,7 @@ RUN apt-get update && \
     apt-get install -y \
       ca-certificates \
       curl \
+      git \
       unzip && \
     apt-get remove -y vim-tiny && \
     apt-get clean
@@ -27,7 +28,11 @@ RUN cd /code/src/github.com/aelsabbahy/goss && \
     rm /usr/local/bin/go && \
     rm -rf /usr/local/bin/go && \
     unset GOPATH && \
-    apt-get remove -y curl unzip && apt-get clean
+    apt-get remove -y \
+      curl \
+      git \
+      unzip && \
+      apt-get clean
 
 FROM debian:wheezy
 MAINTAINER Ahmed
