@@ -6,7 +6,8 @@
 # -e: exit on unhandled error
 # pipefail: any failure in a pipe causes the pipe to fail
 set -eET -o pipefail
-[[ -n "${DEBUG:-}" ]] && set -x
+#[[ -n "${DEBUG:-}" ]] && set -x
+set -x
 if ! cd "$(dirname "${BASH_SOURCE[0]}")/.."; then
   echo -e "Failed to cd to repository root"
   return 1
@@ -21,8 +22,8 @@ os="${1-darwin}"
 arch="${2-amd64}"
 
 pushd "integration-tests/goss"
-set +e
 OS="darwin" "../../release/goss-${os}-${arch}" --vars "vars.yaml" --gossfile "darwin/goss.yaml" validate --format tap
+set +e
 out="$(OS="darwin" "../../release/goss-${os}-${arch}" --vars "vars.yaml" --gossfile "darwin/goss.yaml" validate --format tap)"
 set -e
 echo "output:"
