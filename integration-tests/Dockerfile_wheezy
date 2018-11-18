@@ -20,9 +20,9 @@ COPY ./ /code/src/github.com/aelsabbahy/goss
 RUN cd /code/src/github.com/aelsabbahy/goss && \
     export GOPATH=/code && \
     curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-${arch}.zip --output glide.zip && \
-    rm -rf linux-amd64 && \
+    rm -rf linux-${arch} && \
     unzip glide.zip && \
-    linux-amd64/glide install && \
+    linux-${arch}/glide install && \
     go test -v -tags integration ./cmd/goss && \
     rm -rf /code && \
     rm /usr/local/bin/go && \
