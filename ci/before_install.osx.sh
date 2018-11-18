@@ -21,3 +21,4 @@ HOMEBREW_NO_AUTO_UPDATE=1 brew install httpd
 # brew's httpd listens on 8080; adjust to make tests pass.
 sudo sed -i '' 's/Listen 8080/Listen 80/' /usr/local/etc/httpd/httpd.conf
 sudo brew services start httpd
+sudo brew services
