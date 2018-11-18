@@ -23,5 +23,5 @@ port:
     listening: true
     ip:
     - '0.0.0.0'
-gossfile:
-  "../goss-s*.yaml": {}
+# gossfile:
+#   "../goss-s*.yaml": {}
