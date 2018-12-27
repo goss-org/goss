@@ -1,0 +1,57 @@
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  name = "github.com/achanda/go-sysctl"
+  revision = "6be7678c45d2052640e72060e4f5db6165b1ecab"
+
+[[constraint]]
+    name = "github.com/aelsabbahy/GOnetstat"
+    revision = "edf89f784e0876818dc19f7744a16742a0a66f16"
+
+[[constraint]]
+    name = "github.com/cheekybits/genny"
+    revision = "e8e29e67948b15c64e60d6617182c18cf7eead7f"
+    #subpackage: generic
+
+[[constraint]]
+    name = "github.com/docker/docker"
+    revision = "383a2f046b16c9f79d2fb800844e6550cc784871"
+    #subpackage: pkg/mount
+
+[[constraint]]
+    name = "github.com/fatih/color"
+    revision = "bf82308e8c8546dc2b945157173eb8a959ae9505"
+
+[[constraint]]
+    name = "github.com/miekg/dns"
+    revision = "58f52c57ce9df13460ac68200cef30a008b9c468"
+
+[[constraint]]
+    name = "github.com/aelsabbahy/go-ps"
+    revision = "443386855ca1f4d28d990ae9e46e9bc1533de994"
+
+[[constraint]]
+    name = "github.com/oleiade/reflections"
+    revision = "0e86b3c98b2ff33e30c85cfe97d9a63d439fe7eb"
+
+[[constraint]]
+    name = "github.com/onsi/gomega"
+    revision = "ff4bc6b6f9f5affa66635cd04d31d2a7ee21ffd6"
+
+[[constraint]]
+    name ="github.com/opencontainers/runc"
+    revision = "8779fa57eb4a810a7360187dfa5e168a76cf5d21"
+
+[[constraint]]
+    name = "github.com/patrickmn/go-cache"
+    revision = "1881a9bccb818787f68c52bfba648c6cf34c34fa"
+
+[[constraint]]
+    name = "github.com/urfave/cli"
+    revision = "d86a009f5e13f83df65d0d6cee9a2e3f1445f0da"
+
+[[constraint]]
+    name = "gopkg.in/yaml.v2"
+    revision = "a5b47d31c556af34a302ce5d659e6fea44d90de0"
