@@ -56,6 +56,12 @@ curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
+### Build it yourself
+
+```bash
+make build
+```
+
 ## Full Documentation
 
 Documentation is available here: https://github.com/aelsabbahy/goss/blob/master/docs/manual.md
