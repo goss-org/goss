@@ -1,7 +1,7 @@
 export GO15VENDOREXPERIMENT=1
 
 exe = github.com/aelsabbahy/goss/cmd/goss
-pkgs = $(shell glide novendor)
+pkgs = $(shell ./novendor.sh)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
@@ -93,7 +93,7 @@ test-all: lint test test-int
 
 deps:
 	$(info INFO: Starting build $@)
-	glide install
+	dep ensure
 
 gen:
 	$(info INFO: Starting build $@)
