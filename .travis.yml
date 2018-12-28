@@ -10,7 +10,7 @@ services:
 - docker
 
 before_install:
-- go get -u github.com/golang/lint/golint
+- go get -u golang.org/x/lint/golint
 - DEP_RELEASE_TAG=0.5.0 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 script:
