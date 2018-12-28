@@ -43,7 +43,7 @@ run(){
         info "Creating docker container"
         id=$(docker create "${@:2}")
         info "Copy goss files into container"
-        docker cp $tmp_dir $id:/goss
+        docker cp $tmp_dir/. $id:/goss
         info "Starting docker container"
         docker start $id > /dev/null
         ;;
