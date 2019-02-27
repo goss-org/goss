@@ -6,11 +6,14 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 type Documentation struct{}
 
-func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time) (exitCode int) {
+func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
+	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
@@ -52,5 +55,5 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 }
 
 func init() {
-	RegisterOutputer("documentation", &Documentation{})
+	RegisterOutputer("documentation", &Documentation{}, []string{})
 }

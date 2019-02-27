@@ -12,6 +12,7 @@ import (
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
@@ -60,6 +61,11 @@ func getOutputer(c *cli.Context) outputs.Outputer {
 }
 
 func Validate(c *cli.Context, startTime time.Time) {
+
+	outputConfig := util.OutputConfig{
+		FormatOptions: c.StringSlice("format-options"),
+	}
+
 	gossConfig := getGossConfig(c)
 	sys := system.New(c)
 	outputer := getOutputer(c)
@@ -70,7 +76,7 @@ func Validate(c *cli.Context, startTime time.Time) {
 	for {
 		iStartTime := time.Now()
 		out := validate(sys, gossConfig, c.Int("max-concurrent"))
-		exitCode := outputer.Output(os.Stdout, out, iStartTime)
+		exitCode := outputer.Output(os.Stdout, out, iStartTime, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			os.Exit(exitCode)
 		}

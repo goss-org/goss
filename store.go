@@ -163,6 +163,10 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 			fmt.Printf("Error in expanding glob pattern: \"%s\"\n", err.Error())
 			os.Exit(1)
 		}
+		if matches == nil {
+			fmt.Printf("No matched files were found: \"%s\"\n", fpath)
+			os.Exit(1)
+		}
 		for _, match := range matches {
 			fdir := filepath.Dir(match)
 			j := mergeJSONData(ReadJSON(match), depth, fdir)

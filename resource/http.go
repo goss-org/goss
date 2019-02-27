@@ -15,6 +15,8 @@ type HTTP struct {
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	Header            []string `json:"header" yaml:"header"`
 	Body              []string `json:"body" yaml:"body"`
+	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
+	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
 }
 
 func (u *HTTP) ID() string      { return u.HTTP }
@@ -29,7 +31,9 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects, Timeout: u.Timeout})
+	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
+		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
+		Timeout: u.Timeout, Username: u.Username, Password: u.Password})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 
@@ -59,6 +63,8 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.Timeout,
+		Username:		   config.Username,
+		Password:          config.Password,
 	}
 	return u, err
 }

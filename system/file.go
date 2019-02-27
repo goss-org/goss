@@ -127,6 +127,15 @@ func (f *DefFile) Filetype() (string, error) {
 	switch {
 	case fi.Mode()&os.ModeSymlink == os.ModeSymlink:
 		return "symlink", nil
+	case fi.Mode()&os.ModeDevice == os.ModeDevice:
+		if fi.Mode()&os.ModeCharDevice == os.ModeCharDevice {
+			return "character-device", nil
+		}
+		return "block-device", nil
+	case fi.Mode()&os.ModeNamedPipe == os.ModeNamedPipe:
+		return "pipe", nil
+	case fi.Mode()&os.ModeSocket == os.ModeSocket:
+		return "socket", nil
 	case fi.IsDir():
 		return "directory", nil
 	case fi.Mode().IsRegular():

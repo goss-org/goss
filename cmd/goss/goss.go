@@ -49,6 +49,11 @@ func main() {
 					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
 					EnvVar: "GOSS_FMT",
 				},
+				cli.StringSliceFlag{
+					Name:   "format-options, o",
+					Usage:  fmt.Sprintf("Extra options passed to the formatter, valid options: %s", outputs.FormatOptions()),
+					EnvVar: "GOSS_FMT_OPTIONS",
+				},
 				cli.BoolFlag{
 					Name:   "color",
 					Usage:  "Force color on",
@@ -93,6 +98,11 @@ func main() {
 					Value:  "rspecish",
 					Usage:  fmt.Sprintf("Format to output in, valid options: %s", outputs.Outputers()),
 					EnvVar: "GOSS_FMT",
+				},
+				cli.StringSliceFlag{
+					Name:   "format-options, o",
+					Usage:  fmt.Sprintf("Extra options passed to the formatter, valid options: %s", outputs.FormatOptions()),
+					EnvVar: "GOSS_FMT_OPTIONS",
 				},
 				cli.DurationFlag{
 					Name:   "cache,c",
@@ -274,6 +284,14 @@ func main() {
 						cli.DurationFlag{
 							Name:  "timeout",
 							Value: 5 * time.Second,
+						},
+						cli.StringFlag{
+							Name: "username, u",
+							Usage: "Username for basic auth",
+						},
+						cli.StringFlag{
+							Name: "password, p",
+							Usage: "Password for basic auth",
 						},
 					},
 					Action: func(c *cli.Context) error {

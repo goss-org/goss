@@ -34,6 +34,12 @@ file:
   "/tmp":
     exists: true
     mode: '1777'
+  "/dev/random":
+    exists: true
+    filetype: character-device
+  "/pipe":
+    exists: true
+    filetype: pipe
 package:
   foobar:
     installed: false
@@ -157,14 +163,16 @@ http:
     allow-insecure: false
     timeout: 5000
     status: 200
-    body: []
-http:
-  https://github.com/:
-    allow-insecure: false
-    timeout: 5000
-    status: 200
     header: ["Content-Type: text/html"]
     body: ["github"]
+  https://httpbin.org/basic-auth/username/secret:
+    status: 200
+    username: username
+    password: secret
+  https://httpbin.org/basic-auth/username/secret:
+    status: 401
+    username: username
+    password: wrong
 matching:
   has_substr:
     content: some string

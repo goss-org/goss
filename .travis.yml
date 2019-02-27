@@ -1,7 +1,7 @@
 language: go
 
 go:
-- 1.9
+- 1.11.x
 
 sudo: required
 dist: trusty
@@ -10,11 +10,8 @@ services:
 - docker
 
 before_install:
-- curl -L https://github.com/Masterminds/glide/releases/download/0.10.2/glide-0.10.2-linux-amd64.zip
-  > glide.zip
-- unzip glide.zip
-- export PATH="$PATH:$PWD/linux-amd64"
-- go get -u github.com/golang/lint/golint
+- go get -u golang.org/x/lint/golint
+- DEP_RELEASE_TAG=0.5.0 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 script:
 - make deps

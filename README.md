@@ -1,8 +1,9 @@
 # Goss - Quick and Easy server validation
+
 [![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
 [![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=604800)](https://github.com/aelsabbahy/goss/releases)
 **
-[![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)]()
+[![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/aelsabbahy1)
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
 ## Goss in 45 seconds
@@ -11,7 +12,9 @@
 
 **Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
 
-**Note:** For some Docker/Kubernetes healtcheck, health endpoint, and container ordering examples, see my blog post [here](https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c)
+**Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
+container ordering examples, see my blog post
+[here][kubernetes-simplified-health-checks].
 
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 
@@ -23,8 +26,8 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ### Why use Goss?
 
-* Goss is EASY!  - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST!  - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
+* Goss is EASY! - [Goss in 45 seconds](#goss-in-45-seconds)
+* Goss is FAST! - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
@@ -37,11 +40,12 @@ This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/maste
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.5 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.5 GOSS_DST=~/bin sh
+# Install v0.3.6 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
+
 ```bash
 # See https://github.com/aelsabbahy/goss/releases for release versions
 curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o /usr/local/bin/goss
@@ -50,6 +54,12 @@ chmod +rx /usr/local/bin/goss
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
+```
+
+### Build it yourself
+
+```bash
+make build
 ```
 
 ## Full Documentation
@@ -68,7 +78,9 @@ Let's write a simple sshd test using autoadd.
 # Running it as root will allow it to also detect ports
 $ sudo goss autoadd sshd
 ```
+
 Generated `goss.yaml`:
+
 ```yaml
 $ cat goss.yaml
 port:
@@ -101,27 +113,33 @@ process:
   sshd:
     running: true
 ```
+
 Now that we have a test suite, we can:
 
 * Run it once
+
 ```
 goss validate
 ...............
 
 Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
-
 ```
+
 * Edit it to use [templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates), and run with a vars file
+
 ```
 goss --vars vars.yaml validate
 ```
 
 * keep running it until the system enters a valid state or we timeout
+
 ```
 goss validate --retry-timeout 30s --sleep 1s
 ```
+
 * serve the tests as a health endpoint
+
 ```
 goss serve &
 curl localhost:8080/healthz
@@ -132,13 +150,16 @@ curl localhost:8080/healthz
 ```
 
 ### Manually editing Goss files
+
 Goss files can be manually edited to use:
+
 * [Patterns](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers)
 * [Templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
+
 ```yaml
 user:
   sshd:
@@ -180,6 +201,7 @@ package:
 ```
 
 ## Supported resources
+
 * package - add new package
 * file - add new file
 * addr - add new remote address:port - ex: google.com:80
@@ -198,6 +220,7 @@ package:
 * matching - test for matches in supplied content
 
 ## Supported output formats
+
 * rspecish **(default)** - Similar to rspec output
 * documentation - Verbose test results
 * JSON - Detailed test result
@@ -207,6 +230,7 @@ package:
 * silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
+
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
 * [degoss](https://github.com/naftulikay/ansible-role-degoss) - Ansible role for installing, running, and removing Goss in a single go.
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
@@ -221,13 +245,17 @@ Currently goss only runs on Linux.
 The following tests have limitations.
 
 Package:
-  * rpm
-  * deb
-  * Alpine apk
-  * pacman
+
+* rpm
+* deb
+* Alpine apk
+* pacman
 
 Service:
-  * systemd
-  * sysV init
-  * OpenRC init
-  * Upstart
+
+* systemd
+* sysV init
+* OpenRC init
+* Upstart
+
+[kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
