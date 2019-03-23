@@ -40,7 +40,7 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
-out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate)
+out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate -r 1s)
 echo "$out"
 
 if [[ $os == "arch" ]]; then
