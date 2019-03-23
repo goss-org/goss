@@ -9,7 +9,7 @@ seccomp_opts() {
   local docker_ver minor_ver
   docker_ver=$(docker version -f '{{.Client.Version}}')
   minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  if ((10#$minor_ver>=10)); then
+  if ((10#minor_ver>=10)); then
     echo '--security-opt seccomp:unconfined'
   fi
 }
