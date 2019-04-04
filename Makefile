@@ -54,8 +54,11 @@ release:
 
 build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
 
-test-int: centos7 wheezy precise alpine3 arch
-test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+# TODO(stefan): wheezy URLs are inaccessible and other linuxes are still using dnstest.io that is down. Consider reenabling them.
+# test-int: centos7 wheezy precise alpine3 arch
+# test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+test-int: centos7
+test-int-32: centos7-32
 
 centos7-32: build
 	$(info INFO: Starting build $@)
@@ -89,11 +92,8 @@ arch: build
 	cd integration-tests/ && ./test.sh arch amd64
 
 
-# TODO(stefan): test-int* are disabled, because dnstest.io is down and the integration tests fail.
-# test-all-32: lint test test-int-32
-# test-all: lint test test-int
-test-all-32: lint test
-test-all: lint test
+test-all-32: lint test test-int-32
+test-all: lint test test-int
 
 gen:
 	$(info INFO: Starting build $@)
