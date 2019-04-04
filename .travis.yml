@@ -6,6 +6,10 @@ go:
 sudo: required
 dist: trusty
 
+os:
+  - linux
+  - windows
+
 services:
 - docker
 
