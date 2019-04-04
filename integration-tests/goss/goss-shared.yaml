@@ -80,63 +80,10 @@ group:
   foobar:
     exists: false
 dns:
-  CAA:dnstest.io:
-    resolvable: true
-    addrs:
-    - 0 issue comodoca.com
-    - 0 issue letsencrypt.org
-    - 0 issuewild ;
-    timeout: 2000
-    server: 8.8.8.8
-  CNAME:c.dnstest.io:
-    resolvable: true
-    addrs:
-    - a.dnstest.io.
-    timeout: 2000
-    server: 8.8.8.8
-  c.dnstest.io:
-    resolvable: true
-    addrs:
-    - 192.30.252.153
-    timeout: 2000
-    server: 8.8.8.8
-  MX:dnstest.io:
-    resolvable: true
-    addrs:
-    - 10 b.dnstest.io.
-    - 5 a.dnstest.io.
-    timeout: 2000
-    server: 8.8.8.8
-  NS:dnstest.io:
-    resolvable: true
-    addrs:
-    - ns1.dnstest.io.
-    - ns2.dnstest.io.
-    timeout: 2000
-    server: 8.8.8.8
   PTR:8.8.8.8:
     resolvable: true
     addrs:
     - google-public-dns-a.google.com.
-    timeout: 2000
-    server: 8.8.8.8
-  SRV:_https._tcp.dnstest.io:
-    resolvable: true
-    addrs:
-    - 0 5 443 a.dnstest.io.
-    - 10 10 443 b.dnstest.io.
-    timeout: 2000
-    server: 8.8.8.8
-  TXT:txt._test.dnstest.io:
-    resolvable: true
-    addrs:
-    - Hello DNS
-    timeout: 2000
-    server: 8.8.8.8
-  ip6.dnstest.io:
-    resolvable: true
-    addrs:
-    - 2404:6800:4001:807::200e
     timeout: 2000
     server: 8.8.8.8
   localhost:
@@ -144,10 +91,6 @@ dns:
     addrs:
     - 127.0.0.1
     - "::1"
-    timeout: 2000
-  dnstest.io:
-    resolvable: true
-    server: 8.8.8.8
     timeout: 2000
 process:
   foobar:
