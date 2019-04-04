@@ -3,12 +3,10 @@ language: go
 go:
 - 1.11.x
 
+go_import_path: github.com/aelsabbahy/goss
+
 sudo: required
 dist: trusty
-
-os:
-  - linux
-  - windows
 
 services:
 - docker
