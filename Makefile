@@ -92,8 +92,11 @@ arch: build
 	cd integration-tests/ && ./test.sh arch amd64
 
 
-test-all-32: lint test test-int-32
-test-all: lint test test-int
+# TODO(stefan): test-int* are disabled, because dnstest.io is down and the integration tests fail.
+# test-all-32: lint test test-int-32
+# test-all: lint test test-int
+test-all-32: lint test
+test-all: lint test
 
 gen:
 	$(info INFO: Starting build $@)
