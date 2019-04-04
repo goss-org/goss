@@ -45,11 +45,13 @@ group:
     exists: false
 command:
   echo 'hi':
+    exec: echo 'hi'
     exit-status: 0
     stdout: []
     stderr: []
     timeout: 10000
   foobar:
+    exec: foobar
     exit-status: 127
     stdout: []
     stderr: []

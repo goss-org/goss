@@ -432,18 +432,23 @@ Validates the exit-status and output of a command
 
 ```yaml
 command:
-  go version:
+  version:
     # required attributes
     exit-status: 0
+    # defaults to hash key
+    exec: "go version" 
     # optional attributes
     stdout:
     - go version go1.6 linux/amd64
     stderr: []
     timeout: 10000 # in milliseconds
+    skip: false
 ```
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
+The `exec` attribute is the command to run; this defaults to the name of
+the hash for backwards compatibility
 
 ### dns
 Validates that the provided address is resolvable and the addrs it resolves to.
@@ -535,6 +540,7 @@ file:
     # optional attributes
     filetype: symlink # file, symlink, directory
     linked-to: /usr/sbin/sendmail.sendmail
+    skip: false
 ```
 
 `contains` can be a string or a [pattern](#patterns)
@@ -560,6 +566,7 @@ group:
     exists: true
     # optional attributes
     gid: 65534
+    skip: false
 ```
 
 
@@ -578,6 +585,7 @@ http:
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
+    skip: false
 ```
 
 
@@ -695,6 +703,7 @@ package:
     # optional attributes
     versions:
     - 2.2.15
+    skip: false
 ```
 
 **NOTE:** this check uses the `--package <format>` parameter passed on the command line.
@@ -714,6 +723,7 @@ port:
     # optional attributes
     ip: # what IP(s) is it listening on
     - 0.0.0.0
+    skip: false
 ```
 
 
@@ -725,6 +735,7 @@ process:
   chrome:
     # required attributes
     running: true
+    skip: false
 ```
 
 
@@ -737,6 +748,7 @@ service:
     # required attributes
     enabled: true
     running: true
+    skip: false
 ```
 
 **NOTE:** this will **not** automatically check if the process is alive, it will check the status from `systemd`/`upstart`/`init`.
@@ -757,6 +769,7 @@ user:
     - nfsnobody
     home: /var/lib/nfs
     shell: /sbin/nologin
+    skip: false
 ```
 
 

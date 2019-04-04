@@ -17,6 +17,7 @@ type User struct {
 	Groups   matcher `json:"groups,omitempty" yaml:"groups,omitempty"`
 	Home     matcher `json:"home,omitempty" yaml:"home,omitempty"`
 	Shell    matcher `json:"shell,omitempty" yaml:"shell,omitempty"`
+	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (u *User) ID() string      { return u.Username }
@@ -28,6 +29,8 @@ func (u *User) GetMeta() meta    { return u.Meta }
 func (u *User) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})
+
+	if u.Skip { skip = true }
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))

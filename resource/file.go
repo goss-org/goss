@@ -19,6 +19,7 @@ type File struct {
 	Contains []string `json:"contains" yaml:"contains"`
 	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
 	Sha256   matcher  `json:"sha256,omitempty" yaml:"sha256,omitempty"`
+	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (f *File) ID() string      { return f.Path }
@@ -30,6 +31,8 @@ func (f *File) GetMeta() meta    { return f.Meta }
 func (f *File) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})
+
+	if f.Skip { skip = true }
 
 	var results []TestResult
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))
