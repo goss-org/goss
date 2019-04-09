@@ -5,8 +5,9 @@ pkgs = $(shell ./novendor.sh)
 cmd = goss
 TRAVIS_TAG ?= "0.0.0"
 GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
+GO111MODULE=on
 
-.PHONY: all build install test coverage deps release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+.PHONY: all build install test coverage release bench test-int lint gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
 all: test-all test-all-32
 
@@ -93,10 +94,6 @@ arch: build
 
 test-all-32: lint test test-int-32
 test-all: lint test test-int
-
-deps:
-	$(info INFO: Starting build $@)
-	dep ensure
 
 gen:
 	$(info INFO: Starting build $@)
