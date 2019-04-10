@@ -26,13 +26,13 @@ script:
 deploy:
   provider: releases
   api_key:
-    secure: hEHCC4EN7iHz7pIWKRn2qw22NTqUxnuBp59wfAlLBtV26j5rHMzSu8mlxkJInusDUGLJiNLrZPRWN0mzOdIXalbUeLhlX7EflJgEj6Q0MchUR69LzCAp0KMIFL1Sfq0v81VgujRLUUy5utxDL8Er4tZknn2PpXAMzpO+ozjNRDhhSEM4iMXfY3bcOIMnx6XRgCjFCb036wlBgOfdgv5fwm2PP638DTKar4W6ZZbqCQByhJ5RyL3BMDPTT0moA/tYbG+FA6p6Rme1OcBkMnpsiJZoB3u8gxsNiEJ43/C2RcULW/18qqp2UVD5FipSDYP7GQ5ugKCbgpWXb0Ctl8o4hv1UsNl0XoyJhAt0PRp6vqnyy6LWB2FzX30Xj/vGIhO/IfiJvspHxpatTk7Esjr46K4u9ao/x63LX6F6yI1ZTfbzt2MhRYRjwh4ORNfqhysuzXChftX1S9hj6s6gO0/zqoOsRK/PK8DProbUn4bxrGOBzi16P0GEk4agWWUm74Pis9qCThXNW8MXEV936KvE1wb1RxTACYvFBtO2IM5eQ26t2Y7mGJd7FJup9LR4oUtUTSbYo5P2Sal6xntBKH5P4nwEtM+TtHoeSCKQ3X5i1VSdvAH7soEAly6rP5d5wwPhqqx9mgUPYO/3ulvxLJOYHamrbj6nlHDXnCEoj1ZMxX4=
+    secure: fjSvruBkLiuIXxCyomXRAcXjz6i+/sQiNWMrVjq2lICvs8OTXiYnOPtQZDsps8rfZTb4weDUQP8hJjd2IQKefMJuqRi4xcm976PhqFn/hjBJngOvHCrReHrfjuV5McGZlmxxittcvxBNj94hCRcQPL0CM7VFH11Jd/tmavQcpkLqjASwVWEozQjQlXRzWwbHCLt+xy1q/5Ql9+FvNAscQNqsgguUMUpa9D07ofMWBc/0UwEQsSeWOc+KujRXga+bjJvJ+Bg/s0jW9fUSwIwS9u7ib8f46mAZzz+Qwvz1qx5KOzUCUjhBqPz+e5b9i9hRvNHpnaK7wSlpbIurff4/8B6qGTQ/UP0+N0fYgx0vvIhQs976scGglsf2u3Mt3IYUnyG7m9kp28kjBXv3bKJZGGuqec/p37xkUIuNwA7dQepeNB2/d0VZE5M0IgItLHuv4pZNwp6jNVHzLN5lFXiLVpjLqRQYNR1cu9V1ImeKWuHg+sgop4CboBNrzp0hKRiUysqp31EU24s9RxzUZSbXF8lk1dLhLCjzuy0qkjPgGZudkUhXU+d6pZEkIP3Li5mWHJrcRaHSXrPMFfH7JHLHjkEJTRnh4kHdD3u7eAv+B5qIEp9mEweQEBXonjmoZp4jj0MKLrE6j6j/hIJC/HS1omscMQwauAliOGyHtSZTgAw=
   file:
     - release/goss-linux-amd64
     - release/goss-linux-386
     - release/goss-linux-arm
+    - release/goss-windows-amd64
     - extras/dgoss/dgoss
-  skip_cleanup: true
   on:
-    repo: aelsabbahy/goss
+    repo: improbable-eng/goss
     tags: true
