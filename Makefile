@@ -45,6 +45,9 @@ release/goss-linux-amd64: $(GO_FILES)
 release/goss-linux-arm: $(GO_FILES)
 	$(info INFO: Starting build $@)
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-linux-arm $(exe)
+release/goss-windows-amd64: $(GO_FILES)
+	$(info INFO: Starting build $@)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o release/$(cmd)-windows-amd64 $(exe)
 
 
 
@@ -52,7 +55,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
+build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-windows-amd64
 
 # TODO(stefan): wheezy URLs are inaccessible and other linuxes are still using dnstest.io that is down. Consider reenabling them.
 # test-int: centos7 wheezy precise alpine3 arch
