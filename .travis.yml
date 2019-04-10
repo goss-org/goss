@@ -13,10 +13,8 @@ services:
 
 before_install:
 - go get -u golang.org/x/lint/golint
-- DEP_RELEASE_TAG=0.5.0 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 script:
-- make deps
 - make
 
 deploy:
