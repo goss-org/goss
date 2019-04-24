@@ -8,6 +8,7 @@
 /vendor/
 /integration-tests/**/goss-linux-386
 /integration-tests/**/goss-linux-amd64
+/go.sum
 
 # Random stuff for my local testing/development that I don't want checked in
 tmp/
