@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"sync"
 
 	"github.com/aelsabbahy/GOnetstat"
@@ -97,6 +98,8 @@ func (sys *System) detectPackage(c *cli.Context) {
 // detectService adds the correct service creation function to a System struct
 func (sys *System) detectService() {
 	switch DetectService() {
+	case "windows":
+		sys.NewService = NewServiceWindows
 	case "upstart":
 		sys.NewService = NewServiceUpstart
 	case "systemd":
@@ -140,6 +143,9 @@ func DetectPackageManager() string {
 // command to detect systemd, and falls back on DetectDistro otherwise. If it can't
 // decide, it returns "init".
 func DetectService() string {
+	if runtime.GOOS == "windows" {
+		return "windows"
+	}
 	if HasCommand("systemctl") {
 		if isLegacySystemd() {
 			return "systemdlegacy"

@@ -37,7 +37,7 @@ func TestDetectService(t *testing.T) {
 	t.Parallel()
 	testOutputs(
 		DetectService,
-		[]string{"systemd", "init", "alpineinit", "upstart", ""},
+		[]string{"systemd", "init", "alpineinit", "upstart", "windows", ""},
 		t,
 	)
 }
