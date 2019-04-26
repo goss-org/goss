@@ -65,7 +65,6 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 	exitStatus, err := sysCommand.ExitStatus()
 	c := &Command{
 		Command:    command,
-		Exec:       command,
 		ExitStatus: exitStatus,
 		Stdout:     []string{},
 		Stderr:     []string{},

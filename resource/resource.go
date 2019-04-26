@@ -59,7 +59,16 @@ func validAttrs(i interface{}, t string) (map[string]bool, error) {
 }
 
 func shouldSkip(results []TestResult) bool {
-	if results[0].Err != nil || results[0].Found[0] == "false" {
+    if len(results) < 1 {
+        return false
+    }
+	if results[0].Err != nil {
+		return true
+	}
+    if len(results[0].Found) < 1 {
+        return false
+    }
+    if results[0].Found[0] == "false" {
 		return true
 	}
 	return false

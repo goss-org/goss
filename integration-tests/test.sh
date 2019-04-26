@@ -32,7 +32,7 @@ docker_exec() {
 if docker ps -a | grep "$container_name";then
   docker rm -vf "$container_name"
 fi
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss"  -d --name "$container_name" $(seccomp_opts))
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" $(seccomp_opts))
 id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
@@ -44,9 +44,9 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/gos
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-  egrep -q 'Count: 55, Failed: 0' <<<"$out"
+  egrep -q 'Count: 59, Failed: 0, Skipped: 3' <<<"$out"
 else
-  egrep -q 'Count: 69, Failed: 0' <<<"$out"
+  egrep -q 'Count: 75, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

@@ -12,6 +12,8 @@ type Interface struct {
 	Exists matcher `json:"exists" yaml:"exists"`
 	Addrs  matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
 	MTU    matcher `json:"mtu,omitempty" yaml:"mtu,omitempty"`
+    Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+
 }
 
 func (i *Interface) ID() string      { return i.Name }
@@ -24,6 +26,8 @@ func (i *Interface) GetMeta() meta    { return i.Meta }
 func (i *Interface) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysInterface := sys.NewInterface(i.Name, sys, util.Config{})
+
+    if i.Skip { skip = true }
 
 	var results []TestResult
 	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip))

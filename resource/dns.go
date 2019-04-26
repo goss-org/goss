@@ -16,6 +16,8 @@ type DNS struct {
 	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
 	Timeout     int     `json:"timeout" yaml:"timeout"`
 	Server      string  `json:"server,omitempty" yaml:"server,omitempty"`
+    Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+
 }
 
 func (d *DNS) ID() string      { return d.Host }
@@ -29,6 +31,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	if d.Timeout == 0 {
 		d.Timeout = 500
 	}
+    if d.Skip { skip = true }
 
 	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout, Server: d.Server})
 
