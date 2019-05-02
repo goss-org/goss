@@ -19,21 +19,23 @@ type Command struct {
 	Stdout     []string `json:"stdout" yaml:"stdout"`
 	Stderr     []string `json:"stderr" yaml:"stderr"`
 	Timeout    int      `json:"timeout" yaml:"timeout"`
-    Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (c *Command) ID() string      { 
-	if ( c.Exec != "" && c.Exec != c.Command ) {
-		return fmt.Sprintf("%s: %s",c.Command,c.Exec) 
+func (c *Command) ID() string {
+	if c.Exec != "" && c.Exec != c.Command {
+		return fmt.Sprintf("%s: %s", c.Command, c.Exec)
 	}
-	return c.Command 
+	return c.Command
 }
 func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) GetTitle() string { return c.Title }
 func (c *Command) GetMeta() meta    { return c.Meta }
-func (c *Command) GetExec() string  { 
-	if c.Exec != "" { return c.Exec }
+func (c *Command) GetExec() string {
+	if c.Exec != "" {
+		return c.Exec
+	}
 	return c.Command
 }
 

@@ -23,7 +23,9 @@ func (p *Process) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysProcess := sys.NewProcess(p.Executable, sys, util.Config{})
 
-	if p.Skip { skip = true }
+	if p.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))

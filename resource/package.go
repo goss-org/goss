@@ -24,7 +24,9 @@ func (p *Package) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
 
-	if p.Skip { skip = true }
+	if p.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))

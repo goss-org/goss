@@ -13,7 +13,7 @@ type Mount struct {
 	Opts       matcher `json:"opts,omitempty" yaml:"opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
 	Filesystem matcher `json:"filesystem,omitempty" yaml:"filesystem,omitempty"`
-    Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (m *Mount) ID() string      { return m.MountPoint }
@@ -27,7 +27,9 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
 
-    if m.Skip { skip = true }
+	if m.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))

@@ -26,7 +26,9 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})
 
-	if g.Skip { skip = true }
+	if g.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))

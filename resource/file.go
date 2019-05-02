@@ -32,7 +32,9 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})
 
-	if f.Skip { skip = true }
+	if f.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))

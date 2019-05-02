@@ -37,7 +37,9 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 
-	if u.Skip { skip = true }
+	if u.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))
@@ -61,7 +63,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.Timeout,
-		Username:		   config.Username,
+		Username:          config.Username,
 		Password:          config.Password,
 	}
 	return u, err

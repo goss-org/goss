@@ -24,7 +24,9 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysservice := sys.NewService(s.Service, sys, util.Config{})
 
-	if s.Skip { skip = true }
+	if s.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))

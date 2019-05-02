@@ -24,7 +24,9 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysPort := sys.NewPort(p.Port, sys, util.Config{})
 
-	if p.Skip { skip = true }
+	if p.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))

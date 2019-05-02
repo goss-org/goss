@@ -30,7 +30,9 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})
 
-	if u.Skip { skip = true }
+	if u.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))
