@@ -55,6 +55,38 @@ command:
     stderr: []
     timeout: 10000
 dns:
+  CAA:dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  CNAME:c.dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  MX:dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  NS:dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  PTR:8.8.8.8:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  SRV:_https._tcp.dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  TXT:txt._test.dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
+  ip6.dnstest.io:
+    resolvable: true
+    timeout: 1000
+    server: 8.8.8.8
   localhost:
     resolvable: true
     timeout: 1000
