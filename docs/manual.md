@@ -343,7 +343,7 @@ service:
 file:
   /var/www/html:
     filetype: directory
-    exists: true  
+    exists: true
 ```
 
 If you try to validate this file, it will **only** run the second `file` test:
@@ -371,7 +371,7 @@ file:
     exists: true
   /var/www/html:
     filetype: directory
-    exists: true  
+    exists: true
 
 service:
   httpd:
@@ -440,7 +440,7 @@ command:
     # required attributes
     exit-status: 0
     # defaults to hash key
-    exec: "go version" 
+    exec: "go version"
     # optional attributes
     stdout:
     - go version go1.6 linux/amd64
