@@ -14,3 +14,7 @@ service:
     enabled: true
 {{end}}
     running: true
+  skippable:
+    enabled: true
+    running: true
+    skip: true
