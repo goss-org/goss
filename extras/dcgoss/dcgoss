@@ -1,0 +1,113 @@
+#!/bin/bash
+
+set -e
+
+USAGE="USAGE: $(basename "$0") [run|edit] <docker-compose-service>"
+GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
+
+info() {
+    echo -e "INFO: $*" >&2;
+}
+error() {
+    echo -e "ERROR: $*" >&2;
+    exit 1;
+}
+
+cleanup() {
+    set +e
+    { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
+    rm -rf "$tmp_dir"
+    if [[ -n "$service" ]]; then
+        info "Deleting container"
+        docker-compose down -v > /dev/null
+    fi
+}
+
+run(){
+    # Copy in goss
+    cp "${GOSS_PATH}" "$tmp_dir/goss"
+    chmod 755 "$tmp_dir/goss"
+    [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
+    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
+    [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
+
+    info "Starting docker container"
+    docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
+    docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
+    log_pid="$!"
+    info "Container name: $service"
+}
+
+get_docker_file() {
+    set +e
+    if docker exec "$service" sh -c "test -e $1" > /dev/null; then
+        mkdir -p "${GOSS_FILES_PATH}"
+        info "Copied '$1' from container to '${GOSS_FILES_PATH}'"
+        docker cp "$service:$1" "${GOSS_FILES_PATH}"
+    fi
+    set -e
+}
+
+# Main
+tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
+chmod 777 "$tmp_dir"
+# shellcheck disable=SC2154
+trap 'ret=$?; cleanup; exit $ret' EXIT
+service="$2"
+
+if [[ ! -f docker-compose.yaml && ! -f docker-compose.yml ]]; then
+    echo "no docker-compose file found in ."
+    exit 1
+fi
+
+state=$(docker inspect --format '{{.State.Status}}' "$service" 2> /dev/null || true)
+if [[ "$state" == running ]]; then
+    docker rm -f "$service"
+elif [[ "$state" == exited ]]; then
+    docker rm "$service"
+fi
+
+GOSS_PATH="${GOSS_PATH:-$(command -v goss 2> /dev/null || true)}"
+[[ "$GOSS_PATH" ]] || { error "Couldn't find goss installation, please set GOSS_PATH to it"; }
+[[ "${GOSS_OPTS+x}" ]] || GOSS_OPTS="--color --format documentation"
+[[ "${GOSS_WAIT_OPTS+x}" ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
+GOSS_SLEEP="${GOSS_SLEEP:-0.2}"
+
+case "$1" in
+    run)
+        run "$@"
+        if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
+            info "Found goss_wait.yaml, waiting for it to pass before running tests"
+            if [[ -z "${GOSS_VARS}" ]]; then
+                if ! docker exec "$service" sh -c "/goss/goss -g /goss/goss_wait.yaml render | /goss/goss -g - validate $GOSS_WAIT_OPTS"; then
+                    error "goss_wait.yaml never passed"
+                fi
+            else
+                if ! docker exec "$service" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' render | /goss/goss -g - validate $GOSS_WAIT_OPTS"; then
+                    error "goss_wait.yaml never passed"
+                fi
+            fi
+        fi
+        [[ "$GOSS_SLEEP" ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
+        info "Container health"
+        if ! docker top "$service"; then
+            docker logs "$service"
+        fi
+        info "Running Tests"
+        if [[ -z "${GOSS_VARS}" ]]; then
+            docker exec "$service" sh -c "/goss/goss -g /goss/goss.yaml render | /goss/goss -g - validate $GOSS_OPTS"
+        else
+            docker exec "$service" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' render | /goss/goss -g - validate $GOSS_OPTS"
+        fi
+        ;;
+    edit)
+        run "$@"
+        info "Run goss add/autoadd to add resources"
+        docker exec -it "$service" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
+        get_docker_file "/goss/goss.yaml"
+        get_docker_file "/goss/goss_wait.yaml"
+        [[ -n "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
+        ;;
+    *)
+        error "$USAGE"
+esac
