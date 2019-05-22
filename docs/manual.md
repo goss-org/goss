@@ -421,9 +421,10 @@ If you want to keep your tests in separate files, the best way to obtain a singl
 Validates if a remote `address:port` are accessible.
 
 ```yaml
-tcp://ip-address-or-domain-name:80:
-  reachable: true
-  timeout: 500
+addr:
+  tcp://ip-address-or-domain-name:80:
+    reachable: true
+    timeout: 500
 ```
 
 
@@ -483,11 +484,11 @@ To validate specific DNS address types, prepend the hostname with the type and a
 ```yaml
 dns:
   # Validate a CNAME record
-  CNAME:dnstest.github.io:
+  CNAME:c.dnstest.io:
     resolvable: true
-    server: 8.8.8.8
+    server: 208.67.222.222
     addrs:
-    - "github.map.fastly.net."
+    - "a.dnstest.io."
 
   # Validate a PTR record
   PTR:8.8.8.8:
@@ -499,7 +500,7 @@ dns:
   # Validate and SRV record
   SRV:_https._tcp.dnstest.io:
     resolvable: true
-    server: 8.8.8.8
+    server: 208.67.222.222
     addrs:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
