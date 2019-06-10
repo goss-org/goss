@@ -636,6 +636,8 @@ mount:
     - relatime
     source: /dev/mapper/fedora-home
     filesystem: xfs
+    usage: #% of blocks used in this mountpoint
+      lt: 95
 ```
 
 ### matching
