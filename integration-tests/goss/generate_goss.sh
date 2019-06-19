@@ -34,22 +34,21 @@ goss a "${args[@]}" group $user foobar
 
 goss a "${args[@]}" command "echo 'hi'" foobar
 
-# TODO(ENG-1551): reenable dnstest.io tests when dnstest.io is not broken anymore.
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CNAME:c.dnstest.io
-# 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 MX:dnstest.io
-# 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 NS:dnstest.io
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CNAME:c.dnstest.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 MX:dnstest.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 NS:dnstest.io
 
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 PTR:8.8.8.8
 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 SRV:_https._tcp.dnstest.io
-# 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 TXT:txt._test.dnstest.io
-# 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CAA:dnstest.io
-# 
-# goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 ip6.dnstest.io
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 SRV:_https._tcp.dnstest.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 TXT:txt._test.dnstest.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 CAA:dnstest.io
+
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 ip6.dnstest.io
 
 goss a "${args[@]}" dns --timeout 1s localhost
 
