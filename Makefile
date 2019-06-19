@@ -57,11 +57,8 @@ release:
 
 build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-windows-amd64
 
-# TODO(stefan): wheezy URLs are inaccessible and other linuxes are still using dnstest.io that is down. Consider reenabling them.
-# test-int: centos7 wheezy precise alpine3 arch
-# test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
-test-int: centos7
-test-int-32: centos7-32
+test-int: centos7 wheezy precise alpine3 arch
+test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
 centos7-32: build
 	$(info INFO: Starting build $@)
