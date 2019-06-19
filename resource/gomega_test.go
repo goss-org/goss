@@ -19,15 +19,15 @@ var gomegaTests = []struct {
 	// Default for simple types
 	{
 		in:   `"foo"`,
-		want: gomega.Equal("foo"),
+		want: gomega.BeEquivalentTo("foo"),
 	},
 	{
 		in:   `1`,
-		want: gomega.Equal(float64(1)),
+		want: gomega.BeEquivalentTo(float64(1)),
 	},
 	{
 		in:   `true`,
-		want: gomega.Equal(true),
+		want: gomega.BeEquivalentTo(true),
 	},
 	// Default for Array
 	{
@@ -73,11 +73,11 @@ var gomegaTests = []struct {
 	// Collection
 	{
 		in:   `{"consist-of": ["foo"]}`,
-		want: gomega.ConsistOf(gomega.Equal("foo")),
+		want: gomega.ConsistOf(gomega.BeEquivalentTo("foo")),
 	},
 	{
 		in:   `{"contain-element": "foo"}`,
-		want: gomega.ContainElement(gomega.Equal("foo")),
+		want: gomega.ContainElement(gomega.BeEquivalentTo("foo")),
 	},
 	{
 		in:   `{"have-len": 3}`,
@@ -88,30 +88,30 @@ var gomegaTests = []struct {
 		// Keys are sorted and then passed to gomega.And so the order
 		// of the conditions in this `want` is important
 		want: gomega.And(
-			gomega.HaveKeyWithValue("bar", gomega.Equal("baz")),
-			gomega.HaveKeyWithValue("foo", gomega.Equal(1)),
+			gomega.HaveKeyWithValue("bar", gomega.BeEquivalentTo("baz")),
+			gomega.HaveKeyWithValue("foo", gomega.BeEquivalentTo(1)),
 		),
 		useNegateTester: true,
 	},
 	{
 		in:   `{"have-key": "foo"}`,
-		want: gomega.HaveKey(gomega.Equal("foo")),
+		want: gomega.HaveKey(gomega.BeEquivalentTo("foo")),
 	},
 
 	// Negation
 	{
 		in:   `{"not": "foo"}`,
-		want: gomega.Not(gomega.Equal("foo")),
+		want: gomega.Not(gomega.BeEquivalentTo("foo")),
 	},
 	// Complex logic
 	{
 		in:              `{"and": ["foo", "foo"]}`,
-		want:            gomega.And(gomega.Equal("foo"), gomega.Equal("foo")),
+		want:            gomega.And(gomega.BeEquivalentTo("foo"), gomega.BeEquivalentTo("foo")),
 		useNegateTester: true,
 	},
 	{
 		in:              `{"and": [{"have-prefix": "foo"}, "foo"]}`,
-		want:            gomega.And(gomega.HavePrefix("foo"), gomega.Equal("foo")),
+		want:            gomega.And(gomega.HavePrefix("foo"), gomega.BeEquivalentTo("foo")),
 		useNegateTester: true,
 	},
 	{
@@ -120,7 +120,7 @@ var gomegaTests = []struct {
 	},
 	{
 		in:   `{"or": ["foo", "foo"]}`,
-		want: gomega.Or(gomega.Equal("foo"), gomega.Equal("foo")),
+		want: gomega.Or(gomega.BeEquivalentTo("foo"), gomega.BeEquivalentTo("foo")),
 	},
 	{
 		in:   `{"not": {"and": [{"have-prefix": "foo"}]}}`,

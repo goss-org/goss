@@ -36,6 +36,7 @@ type System struct {
 	NewMount       func(string, *System, util2.Config) Mount
 	NewInterface   func(string, *System, util2.Config) Interface
 	NewHTTP        func(string, *System, util2.Config) HTTP
+	NewDiskUsage   func(string, *System, util2.Config) DiskUsage
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -71,6 +72,7 @@ func New(c *cli.Context) *System {
 		NewMount:       NewDefMount,
 		NewInterface:   NewDefInterface,
 		NewHTTP:        NewDefHTTP,
+		NewDiskUsage:   NewDefDiskUsage,
 	}
 	sys.detectService()
 	sys.detectPackage(c)

@@ -1513,3 +1513,103 @@ func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	*ret = tmp
 	return nil
 }
+
+//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate goimports -w resource_list.go resource_list.go
+
+type DiskUsageMap map[string]*DiskUsage
+
+func (r DiskUsageMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*DiskUsage, error) {
+	sysres := sys.NewDiskUsage(sr, sys, config)
+	res, err := NewDiskUsage(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r DiskUsageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DiskUsage, system.DiskUsage, bool) {
+	sysres := sys.NewDiskUsage(sr, sys, util.Config{})
+	// FIXME: Do we want to be silent about errors?
+	res, _ := NewDiskUsage(sysres, util.Config{})
+	if e, _ := sysres.Exists(); e != true {
+		return res, sysres, false
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true
+}
+
+func (ret *DiskUsageMap) UnmarshalJSON(data []byte) error {
+	// Curried json.Unmarshal
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// Validate configuration
+	zero := DiskUsage{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*DiskUsage
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
+
+func (ret *DiskUsageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	// Validate configuration
+	zero := DiskUsage{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*DiskUsage
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}

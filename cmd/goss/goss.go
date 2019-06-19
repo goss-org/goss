@@ -332,6 +332,14 @@ func main() {
 						return nil
 					},
 				},
+				{
+					Name:  "disk-usage",
+					Usage: "add new disk usage",
+					Action: func(c *cli.Context) error {
+						goss.AddResources(c.GlobalString("gossfile"), "DiskUsage", c.Args(), c)
+						return nil
+					},
+				},
 			},
 		},
 	}

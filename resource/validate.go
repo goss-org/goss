@@ -87,6 +87,8 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		foundValue, err = f()
 	case func() (int, error):
 		foundValue, err = f()
+	case func() (uint64, error):
+		foundValue, err = f()
 	case func() ([]string, error):
 		foundValue, err = f()
 	case func() (interface{}, error):
