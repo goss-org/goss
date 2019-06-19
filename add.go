@@ -152,6 +152,13 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 			os.Exit(1)
 		}
 		resourcePrint(fileName, res)
+	case "DiskUsage":
+		res, err := gossConfig.DiskUsages.AppendSysResource(key, sys, config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		resourcePrint(fileName, res)
 	default:
 		panic("Undefined resource name: " + resourceName)
 	}

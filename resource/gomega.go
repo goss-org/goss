@@ -10,8 +10,8 @@ import (
 
 func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	switch x := matcher.(type) {
-	case string, int, bool, float64:
-		return gomega.Equal(x), nil
+	case string, int, uint, int64, uint64, bool, float64:
+		return gomega.BeEquivalentTo(x), nil
 	case []interface{}:
 		var matchers []types.GomegaMatcher
 		for _, valueI := range x {
