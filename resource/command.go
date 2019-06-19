@@ -14,26 +14,43 @@ type Command struct {
 	Title      string   `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta       meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Command    string   `json:"-" yaml:"-"`
+	Exec       string   `json:"exec,omitempty" yaml:"exec,omitempty"`
 	ExitStatus matcher  `json:"exit-status" yaml:"exit-status"`
 	Stdout     []string `json:"stdout" yaml:"stdout"`
 	Stderr     []string `json:"stderr" yaml:"stderr"`
 	Timeout    int      `json:"timeout" yaml:"timeout"`
+	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (c *Command) ID() string      { return c.Command }
+func (c *Command) ID() string {
+	if c.Exec != "" && c.Exec != c.Command {
+		return fmt.Sprintf("%s: %s", c.Command, c.Exec)
+	}
+	return c.Command
+}
 func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) GetTitle() string { return c.Title }
 func (c *Command) GetMeta() meta    { return c.Meta }
+func (c *Command) GetExec() string {
+	if c.Exec != "" {
+		return c.Exec
+	}
+	return c.Command
+}
 
 func (c *Command) Validate(sys *system.System) []TestResult {
 	skip := false
 	if c.Timeout == 0 {
 		c.Timeout = 10000
 	}
-	sysCommand := sys.NewCommand(c.Command, sys, util.Config{Timeout: c.Timeout})
+	if c.Skip {
+		skip = true
+	}
 
 	var results []TestResult
+	sysCommand := sys.NewCommand(c.GetExec(), sys, util.Config{Timeout: c.Timeout})
+
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
 	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
 	if len(c.Stdout) > 0 {

@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	"strconv"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -103,6 +104,8 @@ func (sys *System) detectService() {
 		sys.NewService = NewServiceUpstart
 	case "systemd":
 		sys.NewService = NewServiceSystemd
+	case "systemdlegacy":
+		sys.NewService = NewServiceSystemdLegacy
 	case "alpineinit":
 		sys.NewService = NewAlpineServiceInit
 	default:
@@ -144,6 +147,9 @@ func DetectService() string {
 		return "windows"
 	}
 	if HasCommand("systemctl") {
+		if isLegacySystemd() {
+			return "systemdlegacy"
+		}
 		return "systemd"
 	}
 	// Centos Docker container doesn't run systemd, so we detect it or use init.
@@ -180,6 +186,19 @@ func DetectDistro() string {
 func HasCommand(cmd string) bool {
 	if _, err := exec.LookPath(cmd); err == nil {
 		return true
+	}
+	return false
+}
+
+func isLegacySystemd() bool {
+	if b, err := ioutil.ReadFile("/etc/debian_version"); err == nil {
+		i := bytes.Index(b, []byte("."))
+		if i < 0 {
+			return false
+		}
+		if major, err := strconv.Atoi(string(b[:i])); err == nil {
+			return major < 9
+		}
 	}
 	return false
 }
