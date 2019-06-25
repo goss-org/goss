@@ -35,6 +35,8 @@ type DefDNS struct {
 
 func NewDefDNS(host string, system *System, config util.Config) DNS {
 	var h string
+	var p string
+	var s string
 	var t string
 
 	splitHost := strings.SplitN(host, ":", 2)
@@ -45,10 +47,18 @@ func NewDefDNS(host string, system *System, config util.Config) DNS {
 		h = host
 	}
 
+	splitServer := strings.SplitN(config.Server, ":", 2)
+	if len(splitServer) == 2 && regexp.MustCompile(`^[0-9]+$`).MatchString(splitServer[1]) {
+		p = splitServer[1]
+	} else {
+		p = "53"
+	}
+	s = net.JoinHostPort(splitServer[0], p)
+
 	return &DefDNS{
 		host:    h,
 		Timeout: config.Timeout,
-		server:  config.Server,
+		server:  s,
 		qtype:   t,
 	}
 }
@@ -174,7 +184,7 @@ func LookupHost(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 // A record lookup
 func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +201,7 @@ func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []str
 // AAAA (IPv6) record lookup
 func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +218,7 @@ func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []
 // CNAME record lookup
 func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +235,7 @@ func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs [
 // MX record lookup
 func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -243,7 +253,7 @@ func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 // NS record lookup
 func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +270,7 @@ func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 // SRV record lookup
 func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +291,7 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 // TXT record lookup
 func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -305,7 +315,7 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 
 	m.SetQuestion(reverse, dns.TypePTR)
 
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +330,7 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 // CAA record lookup
 func LookupCAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCAA)
-	r, _, err := c.Exchange(m, net.JoinHostPort(server, "53"))
+	r, _, err := c.Exchange(m, server)
 	if err != nil {
 		return nil, err
 	}
