@@ -11,6 +11,7 @@ type Package struct {
 	Name      string  `json:"-" yaml:"-"`
 	Installed matcher `json:"installed" yaml:"installed"`
 	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
+	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (p *Package) ID() string      { return p.Name }
@@ -22,6 +23,10 @@ func (p *Package) GetMeta() meta    { return p.Meta }
 func (p *Package) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
+
+	if p.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))
