@@ -506,6 +506,15 @@ dns:
     - "10 10 443 b.dnstest.io."
 ```
 
+To specify a different DNS server port, append a colon and number to the server string. For example:
+
+```yaml
+dns:
+  localhost:
+    resolvable: true
+    server: 127.0.0.1:5553
+```
+
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
 
 ```yaml
