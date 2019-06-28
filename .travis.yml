@@ -18,7 +18,7 @@ before_install:
 - go get -u golang.org/x/lint/golint
 
 script:
-# TODO(ENG-1523): windows does not currently support test-int-*, only unit tests executed from make.
+# Windows does not support test-int-*, only unit tests executed from make.
 - if [ "$TRAVIS_OS_NAME" == "windows" ]; then make lint test; else make; fi
 
 deploy:
