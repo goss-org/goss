@@ -90,8 +90,8 @@ case "$1" in
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Container health"
-        if ! docker top $id; then
-            docker logs $id
+        if ! docker top $id > /dev/null; then
+            docker logs $id 2>&1 "$tmp_dir/docker_output.log"
         fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
