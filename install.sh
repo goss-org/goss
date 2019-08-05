@@ -3,7 +3,22 @@
 {
 set -e
 
-LATEST="v0.3.6"
+LATEST_URL="https://github.com/aelsabbahy/goss/releases/latest"
+
+if [[ ! -x $(which cut) ]]; then
+    echo "cut is not present; backfalling then to v0.3.7"
+    LATEST="v0.3.7"
+fi
+
+if [[ -x $(which curl) ]]; then 
+    LATEST="$(/usr/bin/curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}' | /usr/bin/cut -f 8 -d '/')"
+elif [[ -x $(which wget) ]]; then
+    LATEST="$(/usr/bin/wget -S  https://github.com/aelsabbahy/goss/releases/latest -O /dev/null 2>&1 | grep "Location" | /usr/bin/cut -f 8 -d '/')"
+else 
+    echo "neither wget nor curl is installed; backfalling to v0.3.7"
+    LATEST="v0.3.7"
+fi
+    
 DGOSS_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
