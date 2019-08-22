@@ -33,6 +33,7 @@ deploy:
     - release/goss-linux-386
     - release/goss-linux-arm
     - release/goss-windows-amd64
+    - release/goss-darwin-amd64
     - extras/dgoss/dgoss
   on:
     repo: improbable-eng/goss
