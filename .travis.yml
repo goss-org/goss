@@ -17,8 +17,6 @@ script:
 
 deploy:
   provider: releases
-  api_key:
-    secure: hEHCC4EN7iHz7pIWKRn2qw22NTqUxnuBp59wfAlLBtV26j5rHMzSu8mlxkJInusDUGLJiNLrZPRWN0mzOdIXalbUeLhlX7EflJgEj6Q0MchUR69LzCAp0KMIFL1Sfq0v81VgujRLUUy5utxDL8Er4tZknn2PpXAMzpO+ozjNRDhhSEM4iMXfY3bcOIMnx6XRgCjFCb036wlBgOfdgv5fwm2PP638DTKar4W6ZZbqCQByhJ5RyL3BMDPTT0moA/tYbG+FA6p6Rme1OcBkMnpsiJZoB3u8gxsNiEJ43/C2RcULW/18qqp2UVD5FipSDYP7GQ5ugKCbgpWXb0Ctl8o4hv1UsNl0XoyJhAt0PRp6vqnyy6LWB2FzX30Xj/vGIhO/IfiJvspHxpatTk7Esjr46K4u9ao/x63LX6F6yI1ZTfbzt2MhRYRjwh4ORNfqhysuzXChftX1S9hj6s6gO0/zqoOsRK/PK8DProbUn4bxrGOBzi16P0GEk4agWWUm74Pis9qCThXNW8MXEV936KvE1wb1RxTACYvFBtO2IM5eQ26t2Y7mGJd7FJup9LR4oUtUTSbYo5P2Sal6xntBKH5P4nwEtM+TtHoeSCKQ3X5i1VSdvAH7soEAly6rP5d5wwPhqqx9mgUPYO/3ulvxLJOYHamrbj6nlHDXnCEoj1ZMxX4=
   file:
     - release/goss-linux-amd64
     - release/goss-linux-386
@@ -26,5 +24,5 @@ deploy:
     - extras/dgoss/dgoss
   skip_cleanup: true
   on:
-    repo: aelsabbahy/goss
+    repo: squarecale/goss
     tags: true
