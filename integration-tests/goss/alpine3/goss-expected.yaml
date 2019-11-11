@@ -100,7 +100,7 @@ dns:
   PTR:8.8.8.8:
     resolvable: true
     addrs:
-    - google-public-dns-a.google.com.
+    - dns.google.
     timeout: 1000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:

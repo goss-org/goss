@@ -495,7 +495,7 @@ dns:
     resolvable: true
     server: 8.8.8.8
     addrs:
-    - "google-public-dns-a.google.com."
+    - "dns.google."
 
   # Validate and SRV record
   SRV:_https._tcp.dnstest.io:
