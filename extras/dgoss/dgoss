@@ -80,10 +80,12 @@ case "$1" in
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
             if [[ -z "${GOSS_VARS}" ]]; then
                 if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                    docker logs $id
                     error "goss_wait.yaml never passed"
                 fi
             else
                 if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
+                    docker logs $id
                     error "goss_wait.yaml never passed"
                 fi
             fi
@@ -92,6 +94,7 @@ case "$1" in
         info "Container health"
         if [ "true" != "$(docker inspect -f \"{{.State.Running}}\" $id)" ]; then
             docker logs $id
+            error "the container failed to start"
         fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
