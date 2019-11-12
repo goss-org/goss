@@ -42,6 +42,7 @@ run(){
       cp)
         info "Creating docker container"
         id=$(docker create "${@:2}")
+        chmod -R 644 $tmp_dir
         info "Copy goss files into container"
         docker cp $tmp_dir/. $id:/goss
         info "Starting docker container"
