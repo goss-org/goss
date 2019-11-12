@@ -30,6 +30,7 @@ run(){
     [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
     [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
     [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
+    chmod -R 644 $tmp_dir
 
     # Switch between mount or cp files strategy
     GOSS_FILES_STRATEGY=${GOSS_FILES_STRATEGY:="mount"}
@@ -42,7 +43,6 @@ run(){
       cp)
         info "Creating docker container"
         id=$(docker create "${@:2}")
-        chmod -R 644 $tmp_dir
         info "Copy goss files into container"
         docker cp $tmp_dir/. $id:/goss
         info "Starting docker container"
