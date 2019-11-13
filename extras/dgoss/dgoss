@@ -92,7 +92,7 @@ case "$1" in
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Container health"
-        if [ "true" != $(docker inspect -f "{{.State.Running}}" $id) ]; then
+        if [ "true" != "$(docker inspect -f '{{.State.Running}}' $id)" ]; then
             docker logs $id
             error "the container failed to start"
         fi
