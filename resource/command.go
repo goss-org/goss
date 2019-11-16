@@ -22,12 +22,7 @@ type Command struct {
 	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (c *Command) ID() string {
-	if c.Exec != "" && c.Exec != c.Command {
-		return fmt.Sprintf("%s: %s", c.Command, c.Exec)
-	}
-	return c.Command
-}
+func (c *Command) ID() string      { return c.Command }
 func (c *Command) SetID(id string) { c.Command = id }
 
 func (c *Command) GetTitle() string { return c.Title }
