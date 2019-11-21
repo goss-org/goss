@@ -4,7 +4,9 @@ import (
 	"crypto/tls"
 	"io"
 	"net/http"
+	"strings"
 	"time"
+
 	"github.com/aelsabbahy/goss/util"
 )
 
@@ -22,6 +24,7 @@ type DefHTTP struct {
 	allowInsecure     bool
 	noFollowRedirects bool
 	resp              *http.Response
+	RequestHeader     http.Header
 	Timeout           int
 	loaded            bool
 	err               error
@@ -29,13 +32,19 @@ type DefHTTP struct {
 	Password          string
 }
 
-func NewDefHTTP(http string, system *System, config util.Config) HTTP {
+func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
+	headers := http.Header{}
+	for _, r := range config.RequestHeader {
+		str := strings.SplitN(r, ": ", 2)
+		headers.Add(str[0], str[1])
+	}
 	return &DefHTTP{
-		http:              http,
+		http:              httpStr,
 		allowInsecure:     config.AllowInsecure,
 		noFollowRedirects: config.NoFollowRedirects,
+		RequestHeader:     headers,
 		Timeout:           config.Timeout,
-		Username:		   config.Username,
+		Username:          config.Username,
 		Password:          config.Password,
 	}
 }
@@ -65,6 +74,7 @@ func (u *DefHTTP) setup() error {
 	if err != nil {
 		return u.err
 	}
+	req.Header = u.RequestHeader.Clone()
 	if u.Username != "" || u.Password != "" {
 		req.SetBasicAuth(u.Username, u.Password)
 	}
