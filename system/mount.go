@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/docker/docker/pkg/mount"
+	"github.com/moby/moby/pkg/mount"
 )
 
 type Mount interface {

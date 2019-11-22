@@ -10,6 +10,7 @@ require (
 	github.com/mattn/go-colorable v0.0.9
 	github.com/mattn/go-isatty v0.0.4
 	github.com/miekg/dns v0.0.0-20161018060808-58f52c57ce9d
+	github.com/moby/moby v1.13.1
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
 	github.com/onsi/gomega v0.0.0-20161031154339-ff4bc6b6f9f5
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
@@ -18,3 +19,5 @@ require (
 	golang.org/x/sys v0.0.0-20181210030007-2a47403f2ae5
 	gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556
 )
+
+go 1.13
