@@ -583,6 +583,8 @@ http:
     allow-insecure: false
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
+    request-header: # Optionally you can set request header values
+       - "Content-Type: text/html"
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth

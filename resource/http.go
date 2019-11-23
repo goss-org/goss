@@ -13,6 +13,7 @@ type HTTP struct {
 	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
+	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
@@ -33,7 +34,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	}
 	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
-		Timeout: u.Timeout, Username: u.Username, Password: u.Password})
+		Timeout: u.Timeout, Username: u.Username, Password: u.Password,
+		RequestHeader: u.RequestHeader})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 
@@ -59,6 +61,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 	u := &HTTP{
 		HTTP:              http,
 		Status:            status,
+		RequestHeader:     []string{},
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,

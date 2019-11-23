@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	IgnoreList        []string
+	RequestHeader     []string
 	Timeout           int
 	AllowInsecure     bool
 	NoFollowRedirects bool

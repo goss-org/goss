@@ -175,6 +175,12 @@ http:
     allow-insecure: false
     timeout: 5000
     body: []
+  https://google.com:
+    status: 200
+    allow-insecure: false
+    timeout: 5000
+    request-headers:
+      - "Host: www.google.com"
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
