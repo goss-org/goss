@@ -170,11 +170,12 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
-  https://www.google.com:
-    status: 200
+  https://github.com/:
     allow-insecure: false
     timeout: 5000
-    body: []
+    status: 200
+    header: ["Content-Type: text/html"]
+    body: ["github"]
   https://google.com:
     status: 200
     allow-insecure: false
@@ -189,7 +190,6 @@ http:
     status: 401
     username: username
     password: wrong
-
 matching:
   has_substr:
     content: some string
