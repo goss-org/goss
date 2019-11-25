@@ -163,6 +163,12 @@ mount:
     - nosuid
     source: tmpfs
     filesystem: tmpfs
+  "/":
+    exists: true
+    usage:
+      and:
+        - lt: 25
+        - gt: 0
 interface:
   eth0:
     exists: true
