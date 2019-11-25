@@ -4,7 +4,7 @@ dcgoss is a convenience wrapper around goss that aims to bring the simplicity of
 
 ## Usage
 
-`dgoss [run|edit] <docker_run_params>`
+`dcgoss [run|edit] <docker_run_params>`
 
 
 ### Run
@@ -36,7 +36,7 @@ Edit will launch a docker container, install goss, and drop the user into an int
 `dcgoss db`
 
 ### Environment vars and defaults
-The following environment variables can be set to change the behavior of dgoss.
+The following environment variables can be set to change the behavior of dcgoss.
 
 ##### GOSS_PATH
 Location of the goss binary to use. (Default: `$(which goss)`)
@@ -55,8 +55,8 @@ Location of the goss yaml files. (Default: `.`)
 
 ##### GOSS_VARS
 The name of the variables file relative to `GOSS_FILES_PATH` to copy into the
-docker container and use for valiation (i.e. `dgoss run`) and copy out of the
-docker container when writing tests (i.e. `dgoss edit`). If set, the
+docker container and use for valiation (i.e. `dcgoss run`) and copy out of the
+docker container when writing tests (i.e. `dcgoss edit`). If set, the
 `--vars` flag is passed to `goss validate` commands inside the container.
 If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 (Default: `''`).
