@@ -170,18 +170,14 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
-  https://github.com/:
-    allow-insecure: false
-    timeout: 5000
-    status: 200
-    header: ["Content-Type: text/html"]
-    body: ["github"]
-  https://google.com:
+  https://httpbin.org/headers:
     status: 200
     allow-insecure: false
     timeout: 5000
     request-headers:
-      - "Host: www.google.com"
+      - "Foo: bar"
+    header: ["Content-Type: application/json"]
+    body: ['"Foo": "bar"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
