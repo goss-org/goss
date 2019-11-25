@@ -9,7 +9,7 @@ import (
 
 type ServiceSystemd struct {
 	service string
-	legacy bool
+	legacy  bool
 }
 
 func NewServiceSystemd(service string, system *System, config util.Config) Service {
@@ -21,7 +21,7 @@ func NewServiceSystemd(service string, system *System, config util.Config) Servi
 func NewServiceSystemdLegacy(service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
-		legacy: true,
+		legacy:  true,
 	}
 }
 
