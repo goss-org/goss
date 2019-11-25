@@ -4,27 +4,18 @@
 set -e
 
 LATEST_URL="https://github.com/aelsabbahy/goss/releases/latest"
-
-if [[ ! -x $(which cut) ]]; then
-    echo "cut is not present; backfalling then to v0.3.7"
-    LATEST="v0.3.7"
-fi
-
-if [[ -x $(which curl) ]]; then 
-    LATEST="$(/usr/bin/curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}' | /usr/bin/cut -f 8 -d '/')"
-elif [[ -x $(which wget) ]]; then
-    LATEST="$(/usr/bin/wget -S  https://github.com/aelsabbahy/goss/releases/latest -O /dev/null 2>&1 | grep "Location" | /usr/bin/cut -f 8 -d '/')"
-else 
-    echo "neither wget nor curl is installed; backfalling to v0.3.7"
-    LATEST="v0.3.7"
-fi
-    
+LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
+LATEST=${LATEST_EFFECTIVE##*/}
 
 DGOSS_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
     GOSS_VER=${GOSS_VER:-$LATEST}
     DGOSS_VER='master'
+fi
+if [ -z "$GOSS_VER" ]; then
+    echo "ERROR: Could not automatically detect latest version, set GOSS_VER env var and re-run"
+    exit 1
 fi
 GOSS_DST=${GOSS_DST:-/usr/local/bin}
 INSTALL_LOC="${GOSS_DST%/}/goss"
