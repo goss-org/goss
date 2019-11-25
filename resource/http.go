@@ -14,7 +14,7 @@ type HTTP struct {
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	Header            []string `json:"header" yaml:"header"`
+	Header            []string `json:"header,omitempty" yaml:"header,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`

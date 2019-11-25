@@ -583,7 +583,7 @@ http:
     allow-insecure: false
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
-    request-header: # Optionally you can set request header values
+    request-header: # Set request header values
        - "Content-Type: text/html"
     header: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     body: [] # Check http response content for these patterns
