@@ -117,7 +117,7 @@ dns:
   PTR:8.8.8.8:
     resolvable: true
     addrs:
-    - google-public-dns-a.google.com.
+    - dns.google.
     timeout: 2000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:
@@ -170,11 +170,14 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
-  https://www.google.com:
+  https://httpbin.org/headers:
     status: 200
     allow-insecure: false
     timeout: 5000
-    body: []
+    request-headers:
+      - "Foo: bar"
+    header: ["Content-Type: application/json"]
+    body: ['"Foo": "bar"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
@@ -183,7 +186,6 @@ http:
     status: 401
     username: username
     password: wrong
-
 matching:
   has_substr:
     content: some string

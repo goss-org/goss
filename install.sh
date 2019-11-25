@@ -19,6 +19,7 @@ else
     LATEST="v0.3.7"
 fi
     
+
 DGOSS_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
