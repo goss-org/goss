@@ -19,7 +19,7 @@ command:
     skip: true
 file:
 {{range mkSlice "/etc/PAsswD" "/etc/group"}}
-  {{. | ToLower}}:
+  {{. | toLower}}:
     exists: true
     mode: '0644'
     owner: root
