@@ -1,6 +1,6 @@
 # dcgoss
 
-dcgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker-compose managed containers. It is based on `dcgoss`.
+dcgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker-compose managed containers. It is based on `dgoss`.
 
 ## Usage
 

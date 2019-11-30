@@ -20,9 +20,6 @@ cleanup() {
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
     [ "$DEBUG" ] || rm -rf "$tmp_dir"
     if [[ -n "$service" ]]; then
-        #TODO setting for down -v vs stop?
-        #info "Deleting container"
-        #docker-compose down -v > /dev/null
         info "Stopping container"
         echo "Deleting $(docker rm -f "$service")"
         docker-compose stop > /dev/null
@@ -95,7 +92,6 @@ case "$1" in
                 fi
             fi
         fi
-        # TODO does it ever go into the if?
         info "Container health"
         if ! docker top "$service"; then
             error "The container failed to start"
