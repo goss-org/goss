@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/aelsabbahy/goss/matchers"
+
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
@@ -106,6 +108,17 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			"le": "<=",
 		}[matchType]
 		return gomega.BeNumerically(comparator, value), nil
+
+	case "version-eq", "version-gt", "version-ge", "version-lt", "version-le":
+		// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
+		comparator := map[string]string{
+			"version-eq": "==",
+			"version-gt": ">",
+			"version-ge": ">=",
+			"version-lt": "<",
+			"version-le": "<=",
+		}[matchType]
+		return matchers.BeVersion(comparator, value), nil
 
 	default:
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)

@@ -55,11 +55,17 @@ file:
 package:
   foobar:
     installed: false
-{{- range $name, $ver := index .Vars .Env.OS "packages"}}
+{{- range $name, $ver := index .Vars .Env.OS "packages_apache"}}
   {{$name}}:
     installed: true
     versions:
     - {{$ver}}
+{{end}}
+{{- range $name, $k := index .Vars .Env.OS "packages_bash"}}
+  {{$name}}:
+    installed: true
+    versions:
+      version-gt: 4.0.0
 {{end}}
 addr:
   tcp://google.com:22:

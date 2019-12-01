@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/aelsabbahy/goss/matchers"
+
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
@@ -125,6 +127,29 @@ var gomegaTests = []struct {
 	{
 		in:   `{"not": {"and": [{"have-prefix": "foo"}]}}`,
 		want: gomega.Not(gomega.And(gomega.HavePrefix("foo"))),
+	},
+
+	// Version
+	// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
+	{
+		in:   `{"version-eq": 1}`,
+		want: matchers.BeVersion("==", float64(1)),
+	},
+	{
+		in:   `{"version-gt": 1}`,
+		want: matchers.BeVersion(">", float64(1)),
+	},
+	{
+		in:   `{"version-ge": 1}`,
+		want: matchers.BeVersion(">=", float64(1)),
+	},
+	{
+		in:   `{"version-lt": 1}`,
+		want: matchers.BeVersion("<", float64(1)),
+	},
+	{
+		in:   `{"version-le": 1}`,
+		want: matchers.BeVersion("<=", float64(1)),
 	},
 }
 

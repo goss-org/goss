@@ -852,9 +852,20 @@ package:
             contain-element: "4.1.0"
 ```
 
+Custom version matcher are available `version-(eq|gt|ge|lt|le)`: 
+
+```yaml
+package:
+  kernel:
+    installed: true
+    versions:
+      version-gt: "4.0.0"
+```
+
 For more information see:
 * [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
 * [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference
+* [go-version](https://github.com/hashicorp/go-version) - Go Version syntax reference
 
 ## Templates
 

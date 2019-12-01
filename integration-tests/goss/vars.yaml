@@ -1,15 +1,24 @@
 ---
 alpine3:
-  packages:
+  packages_bash:
+    bash: null
+  packages_apache:
     apache2: "2.4.27-r1"
 arch:
-  packages:
+  packages_bash:
+    bash: null
+  packages_apache:
 centos7:
-  packages:
+  packages_bash:
+    bash: null
+  packages_apache:
     httpd: "2.4.6"
 precise:
-  packages:
+  packages_bash:
+    bash: null
+  packages_apache:
     apache2: "2.2.22-1ubuntu1.11"
 wheezy:
-  packages:
+  packages_bash:
+  packages_apache:
     apache2: "2.2.22-13+deb7u13"
