@@ -9,6 +9,7 @@ require (
 	github.com/fatih/color v0.0.0-20161025120501-bf82308e8c85
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
+	github.com/hashicorp/go-version v1.2.0
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
@@ -19,7 +20,7 @@ require (
 	github.com/onsi/gomega v0.0.0-20161031154339-ff4bc6b6f9f5
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.0.0+incompatible
-	github.com/stretchr/testify v1.4.0 // indirect
+	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
 	golang.org/x/sys v0.0.0-20181210030007-2a47403f2ae5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect

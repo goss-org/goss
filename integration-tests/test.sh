@@ -43,11 +43,17 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
-if [[ $os == "arch" ]]; then
-  egrep -q 'Count: 81, Failed: 0, Skipped: 3' <<<"$out"
-else
-  egrep -q 'Count: 97, Failed: 0, Skipped: 5' <<<"$out"
-fi
+case $os in
+  "arch")
+    egrep -q 'Count: 83, Failed: 0, Skipped: 3' <<<"$out"
+    ;;
+  "wheezy")
+    egrep -q 'Count: 97, Failed: 0, Skipped: 5' <<<"$out"
+    ;;
+  *)
+    egrep -q 'Count: 99, Failed: 0, Skipped: 5' <<<"$out"
+    ;;
+esac
 
 if [[ ! $os == "arch" ]]; then
   docker_exec /goss/generate_goss.sh "$os" "$arch"
