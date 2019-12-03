@@ -24,7 +24,6 @@ deploy:
     - release/goss-linux-386
     - release/goss-linux-arm
     - extras/dgoss/dgoss
-    - extras/kgoss/kgoss
   skip_cleanup: true
   on:
     repo: aelsabbahy/goss
