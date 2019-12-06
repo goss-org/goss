@@ -71,7 +71,7 @@ dns:
     resolvable: true
     timeout: 1000
     server: 8.8.8.8
-  PTR:8.8.8.8:
+  PTR:127.0.0.1:
     resolvable: true
     timeout: 1000
     server: 8.8.8.8

@@ -97,10 +97,10 @@ dns:
     - ns2.dnstest.io.
     timeout: 1000
     server: 8.8.8.8
-  PTR:8.8.8.8:
+  PTR:127.0.0.1:
     resolvable: true
     addrs:
-    - dns.google.
+    - localhost.
     timeout: 1000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:
