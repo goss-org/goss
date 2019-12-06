@@ -8,21 +8,18 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+<!-- A clear and concise description of what the bug is. -->
 
 **How To Reproduce**
-Please provide a minimal reproducible example
-https://stackoverflow.com/help/minimal-reproducible-example
+<!-- Please provide a minimal reproducible example
+https://stackoverflow.com/help/minimal-reproducible-example -->
 
 **Expected Behavior**
-A clear and concise description of what you expected to happen.
+<!-- A clear and concise description of what you expected to happen. -->
 
 **Actual Behavior**
-A clear and concise description of what actually happened.
+<!-- A clear and concise description of what actually happened. -->
 
 **Environment:**
  - Version of goss
  - OS/Distribution version (if applicable)
-
-**Additional context**
-Add any other context about the problem here.

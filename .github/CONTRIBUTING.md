@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Goss. Goss wouldn't be where it i
 * Improve the [README](https://github.com/aelsabbahy/goss/blob/master/README.md) and/or [Docs](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md) - This makes it easier for new users to learn goss.
 * Create tutorials, blog posts and example use-cases on how to use Goss.
 * Help users with questions they ask on the [issue](https://github.com/aelsabbahy/goss/issues) tracker.
-* Fix [bugs](https://github.com/aelsabbahy/goss/labels/bug).
+* Fix verified [bugs](https://github.com/aelsabbahy/goss/labels/bug).
 * Implement approved [feature requests](https://github.com/aelsabbahy/goss/issues).
 * Spread the word.
 
