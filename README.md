@@ -10,7 +10,7 @@
 
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
+**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper. For testing containers in Kubernetes pods see the [kgoss](https://github.com/aelsabbahy/goss/tree/master/extras/kgoss) wrapper.
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
