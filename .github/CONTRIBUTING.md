@@ -4,10 +4,11 @@ Contributing to Goss
 Thank you for your interest in contributing to Goss. Goss wouldn't be where it is today if it wasn't for people like you. Some ways you can contribute:
 
 * Improve the [README](https://github.com/aelsabbahy/goss/blob/master/README.md) and/or [Docs](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md) - This makes it easier for new users to learn goss.
+* Vote on bugs and feature requests by adding a thrumbs up to the inital post.
 * Create tutorials, blog posts and example use-cases on how to use Goss.
-* Help users with questions they ask on the [issue](https://github.com/aelsabbahy/goss/issues) tracker.
+* Help users with [questions](https://github.com/aelsabbahy/goss/labels/question) tracker.
 * Fix verified [bugs](https://github.com/aelsabbahy/goss/labels/bug).
-* Implement approved [feature requests](https://github.com/aelsabbahy/goss/issues).
+* Implement approved [feature requests](https://github.com/aelsabbahy/goss/labels/feature).
 * Spread the word.
 
 
@@ -19,7 +20,7 @@ Please search the [issues](https://github.com/aelsabbahy/goss/issues) page befor
 Bug reports
 -----------
 
-If you think you found a bug in Goss, please submit a [issue](https://github.com/aelsabbahy/goss/issues).
+If you think you found a bug in Goss, please submit a [bug report](https://github.com/aelsabbahy/goss/issues).
 
 Feature requests
 ----------------
@@ -31,7 +32,7 @@ Some things to note prior to opening a Goss feature request:
 * Goss is focused on the 20% of the 80/20 rule. In other words, Goss focuses on the 20% of features that cover the core aspects of OS testing and benefit 80% of users.
 * Goss provides a generic [command](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#command) runner to allow users to cover more nuanced test cases.
 
-If you believe your feature falls in this category please open a [feature request](https://github.com/aelsabbahy/goss/issues) on GitHub which describes the feature you would like to see, why it is useful, and how it should work.
+If you believe your feature adheres to the goals of Goss, please open a [feature request](https://github.com/aelsabbahy/goss/issues) on GitHub which describes the feature you would like to see, why it is useful, and how it should work.
 
 Once a feature is submitted, it will be reviewed. Upon approval, the issue can be worked on and PRs can be submitted that implement this new feature.
 
