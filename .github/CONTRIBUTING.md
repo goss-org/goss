@@ -7,8 +7,8 @@ Thank you for your interest in contributing to Goss. Goss wouldn't be where it i
 * Vote on bugs and feature requests by adding a thrumbs up to the inital post.
 * Create tutorials, blog posts and example use-cases on how to use Goss.
 * Help users with [questions](https://github.com/aelsabbahy/goss/labels/question) tracker.
-* Fix verified [bugs](https://github.com/aelsabbahy/goss/labels/bug).
-* Implement approved [feature requests](https://github.com/aelsabbahy/goss/labels/feature).
+* Fix verified [bugs](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Atriaged+label%3Abug).
+* Implement approved [feature requests](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Atriaged+label%3Aenhancement).
 * Spread the word.
 
 
