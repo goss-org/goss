@@ -14,7 +14,7 @@ Contributors guide: ./CONTRIBUTING.md
 <!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->
 
 - [ ] `make test-all` (UNIX) passes. CI will also test this.
-- [ ] tests are included
+- [ ] unit and/or integration tests are included
 - [ ] documentation is changed or added
 
 <!-- _NOTE: these things are not required to open a PR and can be done afterwards / while the PR is open._ -->
