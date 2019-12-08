@@ -129,27 +129,10 @@ var gomegaTests = []struct {
 		want: gomega.Not(gomega.And(gomega.HavePrefix("foo"))),
 	},
 
-	// Version
-	// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
+	// Semver Constraint
 	{
-		in:   `{"version-eq": 1}`,
-		want: matchers.BeVersion("==", float64(1)),
-	},
-	{
-		in:   `{"version-gt": 1}`,
-		want: matchers.BeVersion(">", float64(1)),
-	},
-	{
-		in:   `{"version-ge": 1}`,
-		want: matchers.BeVersion(">=", float64(1)),
-	},
-	{
-		in:   `{"version-lt": 1}`,
-		want: matchers.BeVersion("<", float64(1)),
-	},
-	{
-		in:   `{"version-le": 1}`,
-		want: matchers.BeVersion("<=", float64(1)),
+		in:   `{"semver-constraint": "> 1.0.0"}`,
+		want: matchers.BeSemverConstraint("> 1.0.0"),
 	},
 }
 
