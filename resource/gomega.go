@@ -109,17 +109,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		}[matchType]
 		return gomega.BeNumerically(comparator, value), nil
 
-	case "version-eq", "version-gt", "version-ge", "version-lt", "version-le":
-		// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
-		comparator := map[string]string{
-			"version-eq": "==",
-			"version-gt": ">",
-			"version-ge": ">=",
-			"version-lt": "<",
-			"version-le": "<=",
-		}[matchType]
-		return matchers.BeVersion(comparator, value), nil
-
+	case "semver-constraint":
+		return matchers.BeSemverConstraint(value.(string)), nil
 	default:
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 

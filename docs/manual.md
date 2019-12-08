@@ -852,20 +852,21 @@ package:
             contain-element: "4.1.0"
 ```
 
-Custom version matcher are available `version-(eq|gt|ge|lt|le)`: 
+Custom semver matcher is available under `semver-constraint`: 
 
 ```yaml
-package:
-  kernel:
-    installed: true
-    versions:
-      version-gt: "4.0.0"
+example:
+  content:
+    - 1.0.1
+    - 1.9.9
+  matches:
+    semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
 ```
 
 For more information see:
 * [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
 * [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference
-* [go-version](https://github.com/hashicorp/go-version) - Go Version syntax reference
+* [semver](https://github.com/blang/semver#ranges) - Semver constraint (or range) syntax
 
 ## Templates
 

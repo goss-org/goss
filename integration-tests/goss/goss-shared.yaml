@@ -55,17 +55,11 @@ file:
 package:
   foobar:
     installed: false
-{{- range $name, $ver := index .Vars .Env.OS "packages_apache"}}
+{{- range $name, $ver := index .Vars .Env.OS "packages"}}
   {{$name}}:
     installed: true
     versions:
     - {{$ver}}
-{{end}}
-{{- range $name, $k := index .Vars .Env.OS "packages_bash"}}
-  {{$name}}:
-    installed: true
-    versions:
-      version-gt: 4.0.0
 {{end}}
 addr:
   tcp://google.com:22:
@@ -217,3 +211,9 @@ matching:
         - have-key-with-value:
             foo: bar
         - have-key: baz
+  semver:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
