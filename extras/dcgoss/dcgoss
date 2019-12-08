@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+[ "$DEBUG" ] && set -x
 
 USAGE="USAGE: $(basename "$0") [run|edit] <docker-compose-service>"
 GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
@@ -10,16 +11,18 @@ info() {
 }
 error() {
     echo -e "ERROR: $*" >&2;
+    [[ -e "$service" ]] && docker logs "$service"
     exit 1;
 }
 
 cleanup() {
     set +e
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
-    rm -rf "$tmp_dir"
+    [ "$DEBUG" ] || rm -rf "$tmp_dir"
     if [[ -n "$service" ]]; then
-        info "Deleting container"
-        docker-compose down -v > /dev/null
+        info "Stopping container"
+        echo "Deleting $(docker rm -f "$service")"
+        docker-compose stop > /dev/null
     fi
 }
 
@@ -27,9 +30,9 @@ run(){
     # Copy in goss
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
-    [[ -e "${GOSS_FILES_PATH}/goss.yaml" ]] && cp "${GOSS_FILES_PATH}/goss.yaml" "$tmp_dir"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
-    [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
+    [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" "$tmp_dir"
+    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
+    [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
 
     info "Starting docker container"
     docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
@@ -52,7 +55,7 @@ get_docker_file() {
 tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 chmod 777 "$tmp_dir"
 # shellcheck disable=SC2154
-trap 'ret=$?; cleanup; exit $ret' EXIT
+trap 'ret=$?; cleanup; info "Test ran for a total of $SECONDS seconds"; exit $ret' EXIT
 service="$2"
 
 if [[ ! -f docker-compose.yaml && ! -f docker-compose.yml ]]; then
@@ -62,9 +65,9 @@ fi
 
 state=$(docker inspect --format '{{.State.Status}}' "$service" 2> /dev/null || true)
 if [[ "$state" == running ]]; then
-    docker rm -f "$service"
+    docker rm -f "$service" > /dev/null
 elif [[ "$state" == exited ]]; then
-    docker rm "$service"
+    docker rm "$service" > /dev/null
 fi
 
 GOSS_PATH="${GOSS_PATH:-$(command -v goss 2> /dev/null || true)}"
@@ -76,6 +79,7 @@ GOSS_SLEEP="${GOSS_SLEEP:-0.2}"
 case "$1" in
     run)
         run "$@"
+        [[ "$GOSS_SLEEP" ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
             if [[ -z "${GOSS_VARS}" ]]; then
@@ -88,22 +92,22 @@ case "$1" in
                 fi
             fi
         fi
-        [[ "$GOSS_SLEEP" ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Container health"
         if ! docker top "$service"; then
-            docker logs "$service"
+            error "The container failed to start"
         fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
-            docker exec "$service" sh -c "/goss/goss -g /goss/goss.yaml render | /goss/goss -g - validate $GOSS_OPTS"
+            docker exec "$service" sh -c "/goss/goss -g /goss/${GOSS_FILE:-goss.yaml} render | /goss/goss -g - validate $GOSS_OPTS"
         else
-            docker exec "$service" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' render | /goss/goss -g - validate $GOSS_OPTS"
+            docker exec "$service" sh -c "/goss/goss -g /goss/${GOSS_FILE:-goss.yaml} --vars='/goss/${GOSS_VARS}' render | /goss/goss -g - validate $GOSS_OPTS"
         fi
         ;;
     edit)
         run "$@"
         info "Run goss add/autoadd to add resources"
         docker exec -it "$service" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
+        [[ -n "${GOSS_FILE}" ]] && get_docker_file "/goss/${GOSS_FILE}"
         get_docker_file "/goss/goss.yaml"
         get_docker_file "/goss/goss_wait.yaml"
         [[ -n "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"

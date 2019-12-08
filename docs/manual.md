@@ -460,11 +460,11 @@ dns:
     # required attributes
     resolvable: true
     # optional attributes
-    server: 8.8.8.8
     addrs:
     - 127.0.0.1
     - ::1
-    timeout: 500 # in milliseconds
+    server: 8.8.8.8
+    timeout: 500 # in milliseconds (Only used when server attribute is provided)
 ```
 
 With the server attribute set, it is possible to validate the following types of DNS record:
