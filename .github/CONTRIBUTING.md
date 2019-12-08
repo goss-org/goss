@@ -46,4 +46,4 @@ We enjoy working with contributors to get their code accepted. There are many ap
 
 Note that it is unlikely the project will merge refactors for the sake of refactoring or niche features that aren't common use-cases (see the feature request section above). These types of pull requests have a high cost to maintainers but provide little benefit to the community.
 
-Lastly, in order for a pull request to be merged, it must provide tests proving the change works as intended, this also prevents future changes from introducing regressions.
+Lastly, in order for a pull request to be merged, it must provide automated tests (unit and integration) proving the change works as intended, this also prevents future changes from introducing regressions. It would be quite odd for a testing tool to not have a healthy approach to test automation, after all. :-)
