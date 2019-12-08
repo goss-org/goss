@@ -114,10 +114,10 @@ dns:
     - ns2.dnstest.io.
     timeout: 2000
     server: 8.8.8.8
-  PTR:127.0.0.1:
+  PTR:54.243.154.1:
     resolvable: true
     addrs:
-    - localhost.
+    - ec2-54-243-154-1.compute-1.amazonaws.com.
     timeout: 2000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:
