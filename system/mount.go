@@ -2,7 +2,9 @@ package system
 
 import (
 	"fmt"
+	"math"
 	"strings"
+	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/docker/docker/pkg/mount"
@@ -14,6 +16,7 @@ type Mount interface {
 	Opts() ([]string, error)
 	Source() (string, error)
 	Filesystem() (string, error)
+	Usage() (int, error)
 }
 
 type DefMount struct {
@@ -21,6 +24,7 @@ type DefMount struct {
 	loaded     bool
 	exists     bool
 	mountInfo  *mount.Info
+	usage      int
 	err        error
 }
 
@@ -44,6 +48,14 @@ func (m *DefMount) setup() error {
 	}
 	m.mountInfo = mountInfo
 	m.exists = true
+
+	usage, err := getUsage(m.mountPoint)
+	if err != nil {
+		m.err = err
+		return m.err
+	}
+	m.usage = usage
+
 	return nil
 }
 
@@ -87,6 +99,14 @@ func (m *DefMount) Filesystem() (string, error) {
 	return m.mountInfo.Fstype, nil
 }
 
+func (m *DefMount) Usage() (int, error) {
+	if err := m.setup(); err != nil {
+		return -1, err
+	}
+
+	return m.usage, nil
+}
+
 func getMount(mountpoint string) (*mount.Info, error) {
 	entries, err := mount.GetMounts()
 	if err != nil {
@@ -100,4 +120,17 @@ func getMount(mountpoint string) (*mount.Info, error) {
 		}
 	}
 	return nil, fmt.Errorf("Mountpoint not found")
+}
+
+func getUsage(mountpoint string) (int, error) {
+	statfsOut := &syscall.Statfs_t{}
+	err := syscall.Statfs(mountpoint, statfsOut)
+	if err != nil {
+		return -1, err
+	}
+
+	percentageFree := float64(statfsOut.Bfree) / float64(statfsOut.Blocks)
+	usage := math.Round((1 - percentageFree) * 100)
+
+	return int(usage), nil
 }

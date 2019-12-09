@@ -10,7 +10,7 @@
 
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
+**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper. Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/aelsabbahy/goss/tree/master/extras/kgoss) and Docker Compose [dcgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dcgoss).
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
@@ -221,11 +221,11 @@ package:
 
 ## Supported output formats
 
-* rspecish **(default)** - Similar to rspec output
+* rspecish - **(default)** Similar to rspec output
 * documentation - Verbose test results
-* JSON - Detailed test result
-* TAP
-* JUnit
+* json - JSON, detailed test result
+* tap - TAP style
+* junit - JUnit style
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
 * silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 

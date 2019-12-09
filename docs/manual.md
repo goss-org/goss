@@ -112,7 +112,7 @@ This will add a test for a resource. Non existent resources will add a test to e
 * `file` - can validate a [file](#file) existence, permissions, stats (size, etc) and contents
 * `goss` - allows you to include the contents of another [gossfile](#gossfile)
 * `group` - can validate the existence and values of a [group](#group) on the system
-* `http` - can validate the HTTP response code and content of a URI, see [http](#http)
+* `http` - can validate the HTTP response code, headers, and content of a URI, see [http](#http)
 * `interface` - can validate the existence and values (es. the addresses) of a network interface, see [interface](#interface)
 * `kernel-param` - can validate kernel parameters (sysctl values), see [kernel-param](#kernel-param)
 * `mount` - can validate the existence and options relative to a [mount](#mount) point
@@ -460,11 +460,11 @@ dns:
     # required attributes
     resolvable: true
     # optional attributes
-    server: 8.8.8.8
     addrs:
     - 127.0.0.1
     - ::1
-    timeout: 500 # in milliseconds
+    server: 8.8.8.8
+    timeout: 500 # in milliseconds (Only used when server attribute is provided)
 ```
 
 With the server attribute set, it is possible to validate the following types of DNS record:
@@ -495,7 +495,7 @@ dns:
     resolvable: true
     server: 8.8.8.8
     addrs:
-    - "google-public-dns-a.google.com."
+    - "dns.google."
 
   # Validate and SRV record
   SRV:_https._tcp.dnstest.io:
@@ -583,6 +583,9 @@ http:
     allow-insecure: false
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
+    request-header: # Set request header values
+       - "Content-Type: text/html"
+    header: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
@@ -633,6 +636,8 @@ mount:
     - relatime
     source: /dev/mapper/fedora-home
     filesystem: xfs
+    usage: #% of blocks used in this mountpoint
+      lt: 95
 ```
 
 ### matching
@@ -739,6 +744,7 @@ process:
     skip: false
 ```
 
+**NOTE:** This check is inspecting the name of the binary, not the name of the process. For example, a process with the name `nginx: master process /usr/sbin/nginx` would be checked with the process `nginx`. To discover the binary of a pid run `ps -p <PID> -o comm`.
 
 ### service
 Validates the state of a service.
@@ -773,6 +779,7 @@ user:
     skip: false
 ```
 
+**NOTE:** This check is inspecting the contents of local passwd file `/etc/passwd`, this does not validate remote users (e.g. LDAP).
 
 
 ## Patterns
@@ -863,6 +870,8 @@ Available functions beyond text/template [built-in functions](https://golang.org
 * `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
   * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
 * `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
+* `toLower` - Changes piped input to lowercase
+* `toUpper` - Changes piped input to UPPERCASE
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
 

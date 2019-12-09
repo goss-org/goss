@@ -2,10 +2,10 @@ package system
 
 import (
 	"bytes"
-	"strconv"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strconv"
 	"sync"
 
 	"github.com/aelsabbahy/GOnetstat"
