@@ -47,6 +47,8 @@ var funcMap = map[string]interface{}{
 	"readFile":   readFile,
 	"getEnv":     getEnv,
 	"regexMatch": regexMatch,
+	"toUpper":    strings.ToUpper,
+	"toLower":    strings.ToLower,
 }
 
 func NewTemplateFilter(varsFile string) func([]byte) []byte {
