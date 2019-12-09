@@ -28,8 +28,8 @@ run(){
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
     [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && cp "${GOSS_FILES_PATH}/{$GOSS_FILE:-goss.yaml}" "$tmp_dir/goss.yaml" && chmod 644 "$tmp_dir/goss.yaml"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
-    [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
+    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir" && chmod 644 "$tmp_dir/goss_wait.yaml"
+    [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir" && chmod 644 "$tmp_dir/${GOSS_VARS}"
 
     # Switch between mount or cp files strategy
     GOSS_FILES_STRATEGY=${GOSS_FILES_STRATEGY:="mount"}
