@@ -40,7 +40,6 @@ run(){
       mount)
         info "Starting docker container"
         docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
-        docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
         ;;
       cp)
         info "Creating docker container"
@@ -51,6 +50,7 @@ run(){
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
 
+    docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
     log_pid="$!"
     info "Container name: $service"
 }
