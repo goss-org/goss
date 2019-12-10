@@ -34,9 +34,23 @@ run(){
     [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
     [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
 
-    info "Starting docker container"
-    docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
-    docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
+    # Switch between mount or cp files strategy
+    GOSS_FILES_STRATEGY=${GOSS_FILES_STRATEGY:="mount"}
+    case "$GOSS_FILES_STRATEGY" in
+      mount)
+        info "Starting docker container"
+        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
+        docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
+        ;;
+      cp)
+        info "Creating docker container"
+        docker-compose run -d -T --name "$service" "$service"
+        info "Copy goss files into container"
+        docker cp $tmp_dir/. $service:/goss
+        ;;
+      *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
+    esac
+
     log_pid="$!"
     info "Container name: $service"
 }
