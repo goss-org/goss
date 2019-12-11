@@ -22,7 +22,7 @@ cleanup() {
     if [[ -n "$service" ]]; then
         info "Stopping container"
         echo "Deleting $(docker rm -f "$service")"
-        docker-compose stop > /dev/null
+        docker-compose -f "${compose_file}" stop "${service}" > /dev/null
     fi
 }
 
@@ -35,7 +35,7 @@ run(){
     [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
 
     info "Starting docker container"
-    docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
+    docker-compose -f "${compose_file}" run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
     docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
     log_pid="$!"
     info "Container name: $service"
@@ -56,13 +56,33 @@ tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 chmod 777 "$tmp_dir"
 # shellcheck disable=SC2154
 trap 'ret=$?; cleanup; info "Test ran for a total of $SECONDS seconds"; exit $ret' EXIT
-service="$2"
 
-if [[ ! -f docker-compose.yaml && ! -f docker-compose.yml ]]; then
+compose_file='docker-compose.yml'
+
+while getopts :f: flag
+do
+    case "$flag" in
+      f) compose_file=$OPTARG;;
+      \?) echo "Unsupported arg ${OPTARG}: dcgoss currently supports only a few docker-compose parameters"
+           exit 1;;
+    esac
+done
+
+if [[ ! -f "${compose_file}" ]]; then
     echo "no docker-compose file found in ."
     exit 1
 fi
 
+set +e; validation_errors=$(docker-compose -f "${compose_file}" config)
+
+# shellcheck disable=SC2181
+if [ $? -ne 0 ]; then
+    echo "Compose file configuration errors detected!"
+    echo "$validation_errors"
+    exit 1
+fi
+
+service=${@:$OPTIND+1:1}
 state=$(docker inspect --format '{{.State.Status}}' "$service" 2> /dev/null || true)
 if [[ "$state" == running ]]; then
     docker rm -f "$service" > /dev/null
@@ -76,7 +96,7 @@ GOSS_PATH="${GOSS_PATH:-$(command -v goss 2> /dev/null || true)}"
 [[ "${GOSS_WAIT_OPTS+x}" ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
 GOSS_SLEEP="${GOSS_SLEEP:-0.2}"
 
-case "$1" in
+case ${@:$OPTIND:1} in
     run)
         run "$@"
         [[ "$GOSS_SLEEP" ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
