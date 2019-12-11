@@ -45,7 +45,7 @@ run(){
         info "Creating docker container"
         docker-compose run -d -T --name "$service" "$service"
         info "Copy goss files into container"
-        docker cp "$tmp_dir/." $service:/goss
+        docker cp "$tmp_dir/." "$service:/goss"
         ;;
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
