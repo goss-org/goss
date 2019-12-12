@@ -16,6 +16,9 @@ error() {
 cleanup() {
     set +e
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
+    if [ -n "$CONTAINER_LOG_OUTPUT" ]; then
+        cp "$tmp_dir/docker_output.log" "$CONTAINER_LOG_OUTPUT"
+    fi
     rm -rf "$tmp_dir"
     if [[ $id ]];then
         info "Deleting container"
