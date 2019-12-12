@@ -11,6 +11,7 @@ type Port struct {
 	Port      string  `json:"-" yaml:"-"`
 	Listening matcher `json:"listening" yaml:"listening"`
 	IP        matcher `json:"ip,omitempty" yaml:"ip,omitempty"`
+	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (p *Port) ID() string      { return p.Port }
@@ -22,6 +23,10 @@ func (p *Port) GetMeta() meta    { return p.Meta }
 func (p *Port) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysPort := sys.NewPort(p.Port, sys, util.Config{})
+
+	if p.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))

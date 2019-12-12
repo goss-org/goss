@@ -20,7 +20,7 @@ Since goss runs on the target container, dgoss can be used on a Mac OSX system b
 curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
-# Download goss to your preferred location
+# Download desired goss version to your preferred location (e.g. v0.3.6)
 curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
 
 # Set your GOSS_PATH to the above location
@@ -71,6 +71,9 @@ The following environment variables can be set to change the behavior of dgoss.
 
 ##### GOSS_PATH
 Location of the goss binary to use. (Default: `$(which goss)`)
+
+#### GOSS_FILE
+Name of the goss file to use. (Default: `goss.yaml`)
 
 ##### GOSS_OPTS
 Options to use for the goss test run. (Default: `--color --format documentation`)

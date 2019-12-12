@@ -3,6 +3,7 @@ package system
 import (
 	"fmt"
 	"net"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -35,12 +36,15 @@ type DefDNS struct {
 func NewDefDNS(host string, system *System, config util.Config) DNS {
 	var h string
 	var t string
-	if len(strings.Split(host, ":")) > 1 {
-		h = strings.Split(host, ":")[1]
-		t = strings.Split(host, ":")[0]
+
+	splitHost := strings.SplitN(host, ":", 2)
+	if len(splitHost) == 2 && regexp.MustCompile(`^[A-Z]+$`).MatchString(splitHost[0]) {
+		h = splitHost[1]
+		t = splitHost[0]
 	} else {
 		h = host
 	}
+
 	return &DefDNS{
 		host:    h,
 		Timeout: config.Timeout,

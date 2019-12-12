@@ -11,6 +11,7 @@ type Service struct {
 	Service string  `json:"-" yaml:"-"`
 	Enabled matcher `json:"enabled" yaml:"enabled"`
 	Running matcher `json:"running" yaml:"running"`
+	Skip    bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (s *Service) ID() string      { return s.Service }
@@ -22,6 +23,10 @@ func (s *Service) GetMeta() meta    { return s.Meta }
 func (s *Service) Validate(sys *system.System) []TestResult {
 	skip := false
 	sysservice := sys.NewService(s.Service, sys, util.Config{})
+
+	if s.Skip {
+		skip = true
+	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
