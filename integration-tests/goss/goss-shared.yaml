@@ -87,14 +87,14 @@ dns:
     addrs:
     - 192.30.252.153
     timeout: 2000
-    server: 8.8.8.8
+    server: 8.8.8.8:53
   MX:dnstest.io:
     resolvable: true
     addrs:
     - 10 b.dnstest.io.
     - 5 a.dnstest.io.
     timeout: 2000
-    server: 8.8.8.8
+    server: 8.8.8.8:53
   NS:dnstest.io:
     resolvable: true
     addrs:
