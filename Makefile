@@ -24,6 +24,14 @@ lint:
 	#go tool vet .
 	golint $(pkgs) | grep -v 'unexported' || true
 
+fmt:
+	$(info INFO: Starting build $@)
+	{ \
+set -e ;\
+fmt=$$(gofmt -l .) ;\
+[ -z "$$fmt" ] && echo "valid gofmt" || (echo "invalid gofmt"; exit 1)\
+}
+
 bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
@@ -89,8 +97,8 @@ arch: build
 	cd integration-tests/ && ./test.sh arch amd64
 
 
-test-all-32: lint test test-int-32
-test-all: lint test test-int
+test-all-32: fmt lint test test-int-32
+test-all: fmt lint test test-int
 
 gen:
 	$(info INFO: Starting build $@)
