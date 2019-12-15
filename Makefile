@@ -29,7 +29,7 @@ fmt:
 	{ \
 set -e ;\
 fmt=$$(gofmt -l .) ;\
-[ -z "$$fmt" ] && echo "valid gofmt" || (echo "invalid gofmt"; exit 1)\
+[ -z "$$fmt" ] && echo "valid gofmt" || (echo -e "invalid gofmt\n$$fmt"; exit 1)\
 }
 
 bench:
