@@ -28,7 +28,7 @@ fmt:
 	$(info INFO: Starting build $@)
 	{ \
 set -e ;\
-fmt=$$(gofmt -l .) ;\
+fmt=$$(gofmt -l ${GO_FILES}) ;\
 [ -z "$$fmt" ] && echo "valid gofmt" || (echo -e "invalid gofmt\n$$fmt"; exit 1)\
 }
 
