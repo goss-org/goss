@@ -1,30 +1,44 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=3af2fdc78699b5151e7ce396abec56fe6c520f1a1f4086bd383dcda75239a057
+
 language: go
 
 go:
-- 1.13.x
+  - 1.13.x
 
-sudo: required
+os:
+  - linux
+
 dist: trusty
 
 services:
-- docker
+  - docker
 
-before_install:
-- go get -u golang.org/x/lint/golint
+install:
+  - go get -u golang.org/x/lint/golint
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+
+before_script:
+  - ./cc-test-reporter before-build
 
 script:
-- make
+  - make test
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -d
 
 deploy:
   provider: releases
-  api_key:
+  token:
     secure: hEHCC4EN7iHz7pIWKRn2qw22NTqUxnuBp59wfAlLBtV26j5rHMzSu8mlxkJInusDUGLJiNLrZPRWN0mzOdIXalbUeLhlX7EflJgEj6Q0MchUR69LzCAp0KMIFL1Sfq0v81VgujRLUUy5utxDL8Er4tZknn2PpXAMzpO+ozjNRDhhSEM4iMXfY3bcOIMnx6XRgCjFCb036wlBgOfdgv5fwm2PP638DTKar4W6ZZbqCQByhJ5RyL3BMDPTT0moA/tYbG+FA6p6Rme1OcBkMnpsiJZoB3u8gxsNiEJ43/C2RcULW/18qqp2UVD5FipSDYP7GQ5ugKCbgpWXb0Ctl8o4hv1UsNl0XoyJhAt0PRp6vqnyy6LWB2FzX30Xj/vGIhO/IfiJvspHxpatTk7Esjr46K4u9ao/x63LX6F6yI1ZTfbzt2MhRYRjwh4ORNfqhysuzXChftX1S9hj6s6gO0/zqoOsRK/PK8DProbUn4bxrGOBzi16P0GEk4agWWUm74Pis9qCThXNW8MXEV936KvE1wb1RxTACYvFBtO2IM5eQ26t2Y7mGJd7FJup9LR4oUtUTSbYo5P2Sal6xntBKH5P4nwEtM+TtHoeSCKQ3X5i1VSdvAH7soEAly6rP5d5wwPhqqx9mgUPYO/3ulvxLJOYHamrbj6nlHDXnCEoj1ZMxX4=
   file:
     - release/goss-linux-amd64
     - release/goss-linux-386
     - release/goss-linux-arm
     - extras/dgoss/dgoss
-  skip_cleanup: true
+  cleanup: true
   on:
     repo: aelsabbahy/goss
     tags: true

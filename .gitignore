@@ -14,3 +14,6 @@ tmp/
 /goss.yaml
 
 /.idea
+
+/c.out
+/c.out.tmp
