@@ -14,7 +14,7 @@ type HTTP struct {
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	Header            []string `json:"header,omitempty" yaml:"header,omitempty"`
+	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
@@ -49,8 +49,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if len(u.Header) > 0 {
-		results = append(results, ValidateContains(u, "Header", u.Header, sysHTTP.Header, skip))
+	if len(u.Headers) > 0 {
+		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
 	if len(u.Body) > 0 {
 		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip))
@@ -66,7 +66,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		HTTP:              http,
 		Status:            status,
 		RequestHeader:     []string{},
-		Header:            []string{},
+		Headers:           []string{},
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,

@@ -14,7 +14,7 @@ import (
 type HTTP interface {
 	HTTP() string
 	Status() (int, error)
-	Header() (io.Reader, error)
+	Headers() (io.Reader, error)
 	Body() (io.Reader, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
@@ -124,7 +124,7 @@ func (u *DefHTTP) Status() (int, error) {
 	return u.resp.StatusCode, nil
 }
 
-func (u *DefHTTP) Header() (io.Reader, error) {
+func (u *DefHTTP) Headers() (io.Reader, error) {
 	if err := u.setup(); err != nil {
 		return nil, err
 	}
