@@ -4,6 +4,8 @@ github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08 h1:oD15ssIOuF
 github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08/go.mod h1:FETZSu2VGNDJbGfeRExaz/SNbX0TTaqJEMo1yvsKoZ8=
 github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1 h1:s4dvLggvQOov0YFdv8XQvX+72TAFzfJg+6SgoXiIaq4=
 github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1/go.mod h1:70tSBushy/POz6cCR294bKno4BNAC7XWVdkkxWQ1N6E=
+github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
+github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cheekybits/genny v0.0.0-20160824153601-e8e29e67948b h1:EaV7ZKUbpQK3eErRkV5GKl7s6SZU30dEB6gimH5BLLk=
 github.com/cheekybits/genny v0.0.0-20160824153601-e8e29e67948b/go.mod h1:+tQajlRqAUrPI7DOSpB0XAqZYtQakVtB7wXkRAgjxjQ=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=

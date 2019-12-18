@@ -4,6 +4,7 @@ require (
 	github.com/achanda/go-sysctl v0.0.0-20160222034550-6be7678c45d2
 	github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08
 	github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v0.0.0-20160824153601-e8e29e67948b
 	github.com/docker/docker v0.0.0-20161109014415-383a2f046b16
 	github.com/fatih/color v0.0.0-20161025120501-bf82308e8c85
@@ -19,7 +20,7 @@ require (
 	github.com/onsi/gomega v0.0.0-20161031154339-ff4bc6b6f9f5
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.0.0+incompatible
-	github.com/stretchr/testify v1.4.0 // indirect
+	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
 	golang.org/x/sys v0.0.0-20181210030007-2a47403f2ae5 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect

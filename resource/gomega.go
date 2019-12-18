@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/aelsabbahy/goss/matchers"
+
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
@@ -107,6 +109,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		}[matchType]
 		return gomega.BeNumerically(comparator, value), nil
 
+	case "semver-constraint":
+		return matchers.BeSemverConstraint(value.(string)), nil
 	default:
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 
