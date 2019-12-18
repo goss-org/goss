@@ -3,14 +3,14 @@
 [![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
 [![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=604800)](https://github.com/aelsabbahy/goss/releases)
 **
-[![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)]()
+[![Twitter Follow](https://img.shields.io/twitter/follow/aelsabbahy1.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/aelsabbahy1)
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
 ## Goss in 45 seconds
 
 **Note:** For an even faster way of doing this, see: [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper
+**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper. Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/aelsabbahy/goss/tree/master/extras/kgoss) and Docker Compose [dcgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dcgoss).
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
@@ -54,6 +54,12 @@ chmod +rx /usr/local/bin/goss
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
+```
+
+### Build it yourself
+
+```bash
+make build
 ```
 
 ## Full Documentation
@@ -215,13 +221,13 @@ package:
 
 ## Supported output formats
 
-* rspecish **(default)** - Similar to rspec output
+* rspecish - **(default)** Similar to rspec output
 * documentation - Verbose test results
-* JSON - Detailed test result on a single line
-* TAP
-* JUnit
-* nagios - Nagios/Sensu compatible output /w exit code 2 for failures
-* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
+* json - JSON, detailed test result
+* tap - TAP style
+* junit - JUnit style
+* nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+* silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
 

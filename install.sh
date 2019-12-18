@@ -3,12 +3,19 @@
 {
 set -e
 
-LATEST="v0.3.6"
+LATEST_URL="https://github.com/aelsabbahy/goss/releases/latest"
+LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
+LATEST=${LATEST_EFFECTIVE##*/}
+
 DGOSS_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
     GOSS_VER=${GOSS_VER:-$LATEST}
     DGOSS_VER='master'
+fi
+if [ -z "$GOSS_VER" ]; then
+    echo "ERROR: Could not automatically detect latest version, set GOSS_VER env var and re-run"
+    exit 1
 fi
 GOSS_DST=${GOSS_DST:-/usr/local/bin}
 INSTALL_LOC="${GOSS_DST%/}/goss"
@@ -18,6 +25,8 @@ touch "$INSTALL_LOC" || { echo "ERROR: Cannot write to $GOSS_DST set GOSS_DST el
 arch=""
 if [ "$(uname -m)" = "x86_64" ]; then
     arch="amd64"
+elif [ "$(uname -m)" = "aarch64" ]; then
+    arch="arm"
 else
     arch="386"
 fi
