@@ -9,7 +9,7 @@ type Addr struct {
 	Title        string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta         meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Address      string  `json:"-" yaml:"-"`
-	LocalAddress string  `json:"localaddress" yaml:"localaddress,omitempty"`
+	LocalAddress string  `json:"local-address,omitempty" yaml:"local-address,omitempty"`
 	Reachable    matcher `json:"reachable" yaml:"reachable"`
 	Timeout      int     `json:"timeout" yaml:"timeout"`
 }

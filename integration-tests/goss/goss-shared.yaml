@@ -71,7 +71,7 @@ addr:
   tcp://google.com:80:
     reachable: false
     timeout: 5000
-    localaddress: 127.0.0.1
+    local-address: 127.0.0.1
 port:
   tcp:9999:
     listening: false
