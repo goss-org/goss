@@ -23,5 +23,10 @@ port:
     listening: true
     ip:
     - 0.0.0.0
+addr:
+  tcp://127.0.0.1:80:
+    reachable: true
+    timeout: 500
+    localaddress: 127.0.0.1
 gossfile:
   "../goss-s*.yaml": {}

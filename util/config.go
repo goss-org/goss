@@ -17,7 +17,7 @@ type Config struct {
 	Server            string
 	Username          string
 	Password          string
-    LocalAddress      string
+	LocalAddress      string
 }
 
 type OutputConfig struct {
