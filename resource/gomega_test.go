@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/aelsabbahy/goss/matchers"
+
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 )
@@ -125,6 +127,12 @@ var gomegaTests = []struct {
 	{
 		in:   `{"not": {"and": [{"have-prefix": "foo"}]}}`,
 		want: gomega.Not(gomega.And(gomega.HavePrefix("foo"))),
+	},
+
+	// Semver Constraint
+	{
+		in:   `{"semver-constraint": "> 1.0.0"}`,
+		want: matchers.BeSemverConstraint("> 1.0.0"),
 	},
 }
 

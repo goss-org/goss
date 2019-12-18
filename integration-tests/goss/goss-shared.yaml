@@ -10,9 +10,16 @@ command:
     stdout: []
     stderr:
     - not found
+  command-override:
+    exec: true
+    exit-status: 0
+  commandskip:
+    exec: false
+    exit-status: 0
+    skip: true
 file:
-{{range mkSlice "/etc/passwd" "/etc/group"}}
-  {{.}}:
+{{range mkSlice "/etc/PAsswD" "/etc/group"}}
+  {{. | toLower}}:
     exists: true
     mode: '0644'
     owner: root
@@ -40,6 +47,11 @@ file:
   "/pipe":
     exists: true
     filetype: pipe
+  "/does/not/exist":
+    exists: true
+    contains:
+    - skip-this-test
+    skip: true
 package:
   foobar:
     installed: false
@@ -87,14 +99,14 @@ dns:
     addrs:
     - 192.30.252.153
     timeout: 2000
-    server: 8.8.8.8
+    server: 8.8.8.8:53
   MX:dnstest.io:
     resolvable: true
     addrs:
     - 10 b.dnstest.io.
     - 5 a.dnstest.io.
     timeout: 2000
-    server: 8.8.8.8
+    server: 8.8.8.8:53
   NS:dnstest.io:
     resolvable: true
     addrs:
@@ -102,10 +114,10 @@ dns:
     - ns2.dnstest.io.
     timeout: 2000
     server: 8.8.8.8
-  PTR:8.8.8.8:
+  PTR:54.243.154.1:
     resolvable: true
     addrs:
-    - google-public-dns-a.google.com.
+    - ec2-54-243-154-1.compute-1.amazonaws.com.
     timeout: 2000
     server: 8.8.8.8
   SRV:_https._tcp.dnstest.io:
@@ -151,19 +163,27 @@ mount:
     - nosuid
     source: tmpfs
     filesystem: tmpfs
+  "/":
+    exists: true
+    usage:
+      and:
+        - lt: 25
+        - gt: 0
 interface:
   eth0:
     exists: true
     addrs:
       contain-element:
         have-prefix: '172.17'
-    mtu: 1500
 http:
-  https://www.google.com:
+  https://httpbin.org/headers:
     status: 200
     allow-insecure: false
     timeout: 5000
-    body: []
+    request-headers:
+      - "Foo: bar"
+    header: ["Content-Type: application/json"]
+    body: ['"Foo": "bar"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
@@ -172,7 +192,6 @@ http:
     status: 401
     username: username
     password: wrong
-
 matching:
   has_substr:
     content: some string
@@ -192,3 +211,17 @@ matching:
         - have-key-with-value:
             foo: bar
         - have-key: baz
+  semver:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver2:
+    content:
+      - 1.0.1
+      - 1.5.0
+      - 1.9.9
+    matches:
+      not:
+        semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"

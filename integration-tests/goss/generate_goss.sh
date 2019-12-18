@@ -40,7 +40,7 @@ goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 MX:dnstest.io
 
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 NS:dnstest.io
 
-goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 PTR:8.8.8.8
+goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 PTR:54.243.154.1
 
 goss a "${args[@]}" dns --timeout 1s --server 8.8.8.8 SRV:_https._tcp.dnstest.io
 
