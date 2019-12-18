@@ -465,7 +465,7 @@ dns:
     addrs:
     - 127.0.0.1
     - ::1
-    server: 8.8.8.8
+    server: 8.8.8.8 # Also supports server:port
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
 ```
 
