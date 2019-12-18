@@ -186,7 +186,7 @@ http:
     timeout: 5000
     request-headers:
       - "Foo: bar"
-    header: ["Content-Type: application/json"]
+    headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
