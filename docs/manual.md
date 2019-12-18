@@ -278,12 +278,12 @@ $ curl localhost:8080/healthz
 #### Flags
 * `--format`, `-f` (output format)
   * `documentation` - Verbose test results
-  * `json` - Detailed test result on a single line (See `pretty` format option).
+  * `json` - Detailed test result on a single line (See `pretty` format option)
   * `junit`
-  * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures.
+  * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
-  * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
+  * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
   * `verbose` - Gives verbose output. Applies to `nagios` output
