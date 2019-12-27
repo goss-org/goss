@@ -4,11 +4,11 @@ Contributing to Goss
 Thank you for your interest in contributing to Goss. Goss wouldn't be where it is today if it wasn't for people like you. Some ways you can contribute:
 
 * Improve the [README](https://github.com/aelsabbahy/goss/blob/master/README.md) and/or [Docs](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md) - This makes it easier for new users to learn goss.
-* Vote on bugs and feature requests by adding a thrumbs up to the inital post.
+* Vote on bugs and feature requests by adding a :+1: reaction to the inital post.
 * Create tutorials, blog posts and example use-cases on how to use Goss.
 * Help users with [questions](https://github.com/aelsabbahy/goss/labels/question) tracker.
-* Fix verified [bugs](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Aapproved+label%3Abug).
-* Implement approved [feature requests](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Aapproved+label%3Aenhancement).
+* Fix verified [bugs](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Aapproved+label%3Abug+sort%3Areactions-%2B1-desc).
+* Implement approved [feature requests](https://github.com/aelsabbahy/goss/issues?q=is%3Aopen+is%3Aissue+label%3Aapproved+label%3Aenhancement+sort%3Areactions-%2B1-desc).
 * Spread the word.
 
 
