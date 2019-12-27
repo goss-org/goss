@@ -20,4 +20,7 @@ Contributors guide: ./CONTRIBUTING.md
 <!-- _NOTE: these things are not required to open a PR and can be done afterwards / while the PR is open._ -->
 
 ### Description of change
-<!-- Please provide a description of the change here. -->
+<!--
+Please provide a description of the change here. Be sure to use issue references when applicable:
+https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords
+-->
