@@ -66,10 +66,11 @@ func (f *DefFile) Exists() (bool, error) {
 		return false, err
 	}
 
-	if _, err := os.Lstat(f.realPath); os.IsNotExist(err) {
+	_, err := os.Lstat(f.realPath)
+	if os.IsNotExist(err) {
 		return false, nil
 	}
-	return true, nil
+	return true, err
 }
 
 func (f *DefFile) Contains() (io.Reader, error) {
