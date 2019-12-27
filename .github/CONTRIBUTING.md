@@ -30,6 +30,7 @@ If there's a feature you wish Goss would support, please open a feature request.
 Some things to note prior to opening a Goss feature request:
 * Goss is intended to be quick and easy to learn.
 * Goss is focused on the 20% of the 80/20 rule. In other words, Goss focuses on the 20% of features that cover the core aspects of OS testing and benefit 80% of users.
+* Goss is intendted to test the local machine it's running on. Tests aren't intended to be used to validate remote systems or endpoints.
 * Goss provides a generic [command](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#command) runner to allow users to cover more nuanced test cases.
 
 If you believe your feature adheres to the goals of Goss, please open a [feature request](https://github.com/aelsabbahy/goss/issues) on GitHub which describes the feature you would like to see, why it is useful, and how it should work.
