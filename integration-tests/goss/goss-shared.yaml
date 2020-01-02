@@ -229,3 +229,11 @@ matching:
     matches:
       not:
         semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  vars_inline_simple:
+    content: {{ .Vars.inline }}
+    matches:
+      match-regexp: bar
+  vars_inline_overwrite:
+    content: {{ .Vars.overwrite }}
+    matches:
+      match-regexp: bar

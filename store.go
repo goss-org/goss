@@ -52,7 +52,7 @@ func getStoreFormatFromData(data []byte) int {
 	return 0
 }
 
-// Reads json file returning GossConfig
+// ReadJSON Reads json file returning GossConfig
 func ReadJSON(filePath string) GossConfig {
 	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -92,7 +92,20 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 	return vars, nil
 }
 
-// Reads json byte array returning GossConfig
+func varsFromString(varsString string) (map[string]interface{}, error) {
+	var vars map[string]interface{}
+	if varsString == "" {
+		return vars, nil
+	}
+	data := []byte(varsString)
+	format := getStoreFormatFromData(data)
+	if err := unmarshal(data, &vars, format); err != nil {
+		return vars, err
+	}
+	return vars, nil
+}
+
+// ReadJSONData Reads json byte array returning GossConfig
 func ReadJSONData(data []byte, detectFormat bool) GossConfig {
 	if TemplateFilter != nil {
 		data = TemplateFilter(data)
@@ -115,12 +128,13 @@ func ReadJSONData(data []byte, detectFormat bool) GossConfig {
 	return *gossConfig
 }
 
-// Reads json file recursively returning string
+// RenderJSON Reads json file recursively returning string
 func RenderJSON(c *cli.Context) string {
 	filePath := c.GlobalString("gossfile")
 	varsFile := c.GlobalString("vars")
+	varsInline := c.GlobalString("vars-inline")
 	debug = c.Bool("debug")
-	TemplateFilter = NewTemplateFilter(varsFile)
+	TemplateFilter = NewTemplateFilter(varsFile, varsInline)
 	path := filepath.Dir(filePath)
 	OutStoreFormat = getStoreFormatFromFileName(filePath)
 	gossConfig := mergeJSONData(ReadJSON(filePath), 0, path)
@@ -144,7 +158,7 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 
 	// Sort the gossfiles to ensure consistent ordering
 	var keys []string
-	for k, _ := range gossConfig.Gossfiles {
+	for k := range gossConfig.Gossfiles {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)

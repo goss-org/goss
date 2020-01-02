@@ -42,7 +42,7 @@ func regexMatch(re, s string) (bool, error) {
 	return compiled.MatchString(s), nil
 }
 
-var funcMap = map[string]interface{}{
+var funcMap = template.FuncMap{
 	"mkSlice":    mkSlice,
 	"readFile":   readFile,
 	"getEnv":     getEnv,
@@ -51,17 +51,28 @@ var funcMap = map[string]interface{}{
 	"toLower":    strings.ToLower,
 }
 
-func NewTemplateFilter(varsFile string) func([]byte) []byte {
+func NewTemplateFilter(varsFile string, varsInline string) func([]byte) []byte {
 	vars, err := varsFromFile(varsFile)
 	if err != nil {
 		fmt.Printf("Error: loading vars file '%s'\n%v\n", varsFile, err)
 		os.Exit(1)
 	}
+
+	varsExtra, err := varsFromString(varsInline)
+	if err != nil {
+		fmt.Printf("Error: loading inline vars\n%v\n", err)
+		os.Exit(1)
+	}
+
+	for k, v := range varsExtra {
+		vars[k] = v
+	}
+
 	tVars := &TmplVars{Vars: vars}
 
 	f := func(data []byte) []byte {
 		funcMap := funcMap
-		t := template.New("test").Funcs(template.FuncMap(funcMap))
+		t := template.New("test").Funcs(funcMap)
 		tmpl, err := t.Parse(string(data))
 		if err != nil {
 			log.Fatal(err)

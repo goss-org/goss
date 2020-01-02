@@ -22,7 +22,9 @@ func getGossConfig(c *cli.Context) GossConfig {
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
-	TemplateFilter = NewTemplateFilter(c.GlobalString("vars"))
+	varsFile := c.GlobalString("vars")
+	varsInline := c.GlobalString("vars-inline")
+	TemplateFilter = NewTemplateFilter(varsFile, varsInline)
 	specFile := c.GlobalString("gossfile")
 	if specFile == "-" {
 		source = "STDIN"
