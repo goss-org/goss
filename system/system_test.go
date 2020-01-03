@@ -28,7 +28,7 @@ func TestPackageManager(t *testing.T) {
 	t.Parallel()
 	testOutputs(
 		DetectPackageManager,
-		[]string{"deb", "rpm", "apk", "pacman", ""},
+		[]string{"dpkg", "rpm", "apk", "pacman", ""},
 		t,
 	)
 }
