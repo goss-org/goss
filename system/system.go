@@ -79,11 +79,11 @@ func New(c *cli.Context) *System {
 // detectPackage adds the correct package creation function to a System struct
 func (sys *System) detectPackage(c *cli.Context) {
 	p := c.GlobalString("package")
-	if p != "deb" && p != "apk" && p != "pacman" && p != "rpm" {
+	if p != "dpkg" && p != "apk" && p != "pacman" && p != "rpm" {
 		p = DetectPackageManager()
 	}
 	switch p {
-	case "deb":
+	case "dpkg":
 		sys.NewPackage = NewDebPackage
 	case "apk":
 		sys.NewPackage = NewAlpinePackage
@@ -111,13 +111,13 @@ func (sys *System) detectService() {
 }
 
 // DetectPackageManager attempts to detect whether or not the system is using
-// "deb", "rpm", "apk", or "pacman" package managers. It first attempts to
+// "dpkg", "rpm", "apk", or "pacman" package managers. It first attempts to
 // detect the distro. If that fails, it falls back to finding package manager
 // executables. If that fails, it returns the empty string.
 func DetectPackageManager() string {
 	switch DetectDistro() {
 	case "ubuntu":
-		return "deb"
+		return "dpkg"
 	case "redhat":
 		return "rpm"
 	case "alpine":
@@ -125,9 +125,9 @@ func DetectPackageManager() string {
 	case "arch":
 		return "pacman"
 	case "debian":
-		return "deb"
+		return "dpkg"
 	}
-	for _, manager := range []string{"deb", "rpm", "apk", "pacman"} {
+	for _, manager := range []string{"dpkg", "rpm", "apk", "pacman"} {
 		if HasCommand(manager) {
 			return manager
 		}
