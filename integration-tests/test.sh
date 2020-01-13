@@ -52,6 +52,8 @@ echo "$out"
 
 if [[ $os == "arch" ]]; then
     egrep -q 'Count: 91, Failed: 0, Skipped: 3' <<<"$out"
+elif [[ $os == "alpine3" ]]; then
+    egrep -q 'Count: 112, Failed: 0, Skipped: 5' <<<"$out"
 else
     egrep -q 'Count: 110, Failed: 0, Skipped: 5' <<<"$out"
 fi
