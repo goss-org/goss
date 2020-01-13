@@ -757,8 +757,13 @@ service:
     # required attributes
     enabled: true
     running: true
+    # Optional attributes - Alpine systems
+    runlevel: default
+    # Optional attributes
     skip: false
 ```
+
+`runlevel` will default to `sysinit` if omitted.
 
 **NOTE:** this will **not** automatically check if the process is alive, it will check the status from `systemd`/`upstart`/`init`.
 
