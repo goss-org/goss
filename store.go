@@ -76,8 +76,26 @@ func (t *TmplVars) Env() map[string]string {
 	return env
 }
 
+func loadVars(varsFile string, varsInline string) (map[string]interface{}, error) {
+	vars, err := varsFromFile(varsFile)
+	if err != nil {
+		return nil, fmt.Errorf("Error: loading vars file '%s'\n%w", varsFile, err)
+	}
+
+	varsExtra, err := varsFromString(varsInline)
+	if err != nil {
+		return nil, fmt.Errorf("Error: loading inline vars\n%w", err)
+	}
+
+	for k, v := range varsExtra {
+		vars[k] = v
+	}
+
+	return vars, nil
+}
+
 func varsFromFile(varsFile string) (map[string]interface{}, error) {
-	var vars map[string]interface{}
+	vars := make(map[string]interface{})
 	if varsFile == "" {
 		return vars, nil
 	}
@@ -93,7 +111,7 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 }
 
 func varsFromString(varsString string) (map[string]interface{}, error) {
-	var vars map[string]interface{}
+	vars := make(map[string]interface{})
 	if varsString == "" {
 		return vars, nil
 	}

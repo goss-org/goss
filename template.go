@@ -2,7 +2,6 @@ package goss
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -52,20 +51,9 @@ var funcMap = template.FuncMap{
 }
 
 func NewTemplateFilter(varsFile string, varsInline string) func([]byte) []byte {
-	vars, err := varsFromFile(varsFile)
+	vars, err := loadVars(varsFile, varsInline)
 	if err != nil {
-		fmt.Printf("Error: loading vars file '%s'\n%v\n", varsFile, err)
-		os.Exit(1)
-	}
-
-	varsExtra, err := varsFromString(varsInline)
-	if err != nil {
-		fmt.Printf("Error: loading inline vars\n%v\n", err)
-		os.Exit(1)
-	}
-
-	for k, v := range varsExtra {
-		vars[k] = v
+		log.Fatal(err)
 	}
 
 	tVars := &TmplVars{Vars: vars}
