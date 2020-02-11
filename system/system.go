@@ -11,8 +11,8 @@ import (
 	"github.com/aelsabbahy/GOnetstat"
 	// This needs a better name
 	"github.com/aelsabbahy/go-ps"
+
 	util2 "github.com/aelsabbahy/goss/util"
-	"github.com/urfave/cli"
 )
 
 type Resource interface {
@@ -55,7 +55,7 @@ func (s *System) ProcMap() map[string][]ps.Process {
 	return s.procMap
 }
 
-func New(c *cli.Context) *System {
+func New(packageManager string) *System {
 	sys := &System{
 		NewFile:        NewDefFile,
 		NewAddr:        NewDefAddr,
@@ -71,14 +71,15 @@ func New(c *cli.Context) *System {
 		NewInterface:   NewDefInterface,
 		NewHTTP:        NewDefHTTP,
 	}
+
 	sys.detectService()
-	sys.detectPackage(c)
+	sys.detectPackage(packageManager)
+
 	return sys
 }
 
 // detectPackage adds the correct package creation function to a System struct
-func (sys *System) detectPackage(c *cli.Context) {
-	p := c.GlobalString("package")
+func (sys *System) detectPackage(p string) {
 	if p != "dpkg" && p != "apk" && p != "pacman" && p != "rpm" {
 		p = DetectPackageManager()
 	}

@@ -14,7 +14,6 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/aelsabbahy/goss/resource"
-	"github.com/urfave/cli"
 )
 
 const (
@@ -151,22 +150,19 @@ func ReadJSONData(data []byte, detectFormat bool) GossConfig {
 	return *gossConfig
 }
 
-// RenderJSON Reads json file recursively returning string
-func RenderJSON(c *cli.Context) string {
-	filePath := c.GlobalString("gossfile")
-	varsFile := c.GlobalString("vars")
-	varsInline := c.GlobalString("vars-inline")
-	debug = c.Bool("debug")
-	currentTemplateFilter = NewTemplateFilter(varsFile, varsInline)
-	path := filepath.Dir(filePath)
-	outStoreFormat = getStoreFormatFromFileName(filePath)
-	gossConfig := mergeJSONData(ReadJSON(filePath), 0, path)
+// RenderJSON reads json file recursively returning string
+func RenderJSON(c *RuntimeConfig) (string, error) {
+	debug = c.Debug
+	currentTemplateFilter = NewTemplateFilter(c.Vars, c.VarsInline)
+	outStoreFormat = getStoreFormatFromFileName(c.Spec)
+	gossConfig := mergeJSONData(ReadJSON(c.Spec), 0, filepath.Dir(c.Spec))
 
 	b, err := marshal(gossConfig)
 	if err != nil {
-		log.Fatalf("Error rendering: %v\n", err)
+		return "", err
 	}
-	return string(b)
+
+	return string(b), err
 }
 
 func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {

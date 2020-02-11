@@ -9,20 +9,19 @@ import (
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
-	"github.com/urfave/cli"
 )
 
 // Simple wrapper to add multiple resources
-func AddResources(fileName, resourceName string, keys []string, c *cli.Context) error {
+func AddResources(fileName, resourceName string, keys []string, c *RuntimeConfig) error {
 	outStoreFormat = getStoreFormatFromFileName(fileName)
 	config := util.Config{
-		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
-		Timeout:           int(c.Duration("timeout") / time.Millisecond),
-		AllowInsecure:     c.Bool("insecure"),
-		NoFollowRedirects: c.Bool("no-follow-redirects"),
-		Server:            c.String("server"),
-		Username:          c.String("username"),
-		Password:          c.String("password"),
+		IgnoreList:        c.ExcludeAttributes,
+		Timeout:           int(c.Timeout / time.Millisecond),
+		AllowInsecure:     c.Insecure,
+		NoFollowRedirects: c.NoFollowRedirects,
+		Server:            c.Server,
+		Username:          c.Username,
+		Password:          c.Password,
 	}
 
 	var gossConfig GossConfig
@@ -32,19 +31,18 @@ func AddResources(fileName, resourceName string, keys []string, c *cli.Context) 
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c)
+	sys := system.New(c.PackageManager)
 
 	for _, key := range keys {
-		if err := AddResource(fileName, gossConfig, resourceName, key, c, config, sys); err != nil {
+		if err := AddResource(fileName, gossConfig, resourceName, key, config, sys); err != nil {
 			return err
 		}
 	}
-	WriteJSON(fileName, gossConfig)
 
-	return nil
+	return WriteJSON(fileName, gossConfig)
 }
 
-func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, c *cli.Context, config util.Config, sys *system.System) error {
+func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case "Addr":
@@ -160,12 +158,8 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 }
 
 // Simple wrapper to add multiple resources
-func AutoAddResources(fileName string, keys []string, c *cli.Context) error {
+func AutoAddResources(fileName string, keys []string, c *RuntimeConfig) error {
 	outStoreFormat = getStoreFormatFromFileName(fileName)
-	config := util.Config{
-		IgnoreList: c.GlobalStringSlice("exclude-attr"),
-		Timeout:    int(c.Duration("timeout") / time.Millisecond),
-	}
 
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
@@ -174,19 +168,18 @@ func AutoAddResources(fileName string, keys []string, c *cli.Context) error {
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c)
+	sys := system.New(c.PackageManager)
 
 	for _, key := range keys {
-		if err := AutoAddResource(fileName, gossConfig, key, c, config, sys); err != nil {
+		if err := AutoAddResource(fileName, gossConfig, key, sys); err != nil {
 			return err
 		}
 	}
-	WriteJSON(fileName, gossConfig)
 
-	return nil
+	return WriteJSON(fileName, gossConfig)
 }
 
-func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *cli.Context, config util.Config, sys *system.System) error {
+func AutoAddResource(fileName string, gossConfig GossConfig, key string, sys *system.System) error {
 	// file
 	if strings.Contains(key, "/") {
 		if res, _, ok := gossConfig.Files.AppendSysResourceIfExists(key, sys); ok == true {
