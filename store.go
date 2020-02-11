@@ -23,8 +23,8 @@ const (
 	YAML
 )
 
-var OutStoreFormat = UNSET
-var TemplateFilter func(data []byte) []byte
+var outStoreFormat = UNSET
+var currentTemplateFilter TemplateFilter
 var debug = false
 
 func getStoreFormatFromFileName(f string) int {
@@ -125,14 +125,19 @@ func varsFromString(varsString string) (map[string]interface{}, error) {
 
 // ReadJSONData Reads json byte array returning GossConfig
 func ReadJSONData(data []byte, detectFormat bool) GossConfig {
-	if TemplateFilter != nil {
-		data = TemplateFilter(data)
+	if currentTemplateFilter != nil {
+		var err error
+		data, err = currentTemplateFilter(data)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
 		if debug {
 			fmt.Println("DEBUG: file after text/template render")
 			fmt.Println(string(data))
 		}
 	}
-	format := OutStoreFormat
+	format := outStoreFormat
 	if detectFormat == true {
 		format = getStoreFormatFromData(data)
 	}
@@ -152,9 +157,9 @@ func RenderJSON(c *cli.Context) string {
 	varsFile := c.GlobalString("vars")
 	varsInline := c.GlobalString("vars-inline")
 	debug = c.Bool("debug")
-	TemplateFilter = NewTemplateFilter(varsFile, varsInline)
+	currentTemplateFilter = NewTemplateFilter(varsFile, varsInline)
 	path := filepath.Dir(filePath)
-	OutStoreFormat = getStoreFormatFromFileName(filePath)
+	outStoreFormat = getStoreFormatFromFileName(filePath)
 	gossConfig := mergeJSONData(ReadJSON(filePath), 0, path)
 
 	b, err := marshal(gossConfig)
@@ -244,7 +249,7 @@ func resourcePrint(fileName string, res resource.ResourceRead) {
 }
 
 func marshal(gossConfig interface{}) ([]byte, error) {
-	switch OutStoreFormat {
+	switch outStoreFormat {
 	case JSON:
 		return marshalJSON(gossConfig)
 	case YAML:

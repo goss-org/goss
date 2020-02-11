@@ -10,6 +10,35 @@ import (
 	"text/template"
 )
 
+//TemplateFilter is the type of the Goss Template Filter which include custom variables and functions.
+type TemplateFilter func([]byte) ([]byte, error)
+
+//NewTemplateFilter creates a new Template Filter based in the file and inline variables.
+func NewTemplateFilter(varsFile string, varsInline string) TemplateFilter {
+	vars, err := loadVars(varsFile, varsInline)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tVars := &TmplVars{Vars: vars}
+
+	return func(data []byte) ([]byte, error) {
+		funcMap := funcMap
+		t := template.New("goss").Funcs(funcMap)
+
+		tmpl, err := t.Parse(string(data))
+		if err != nil {
+			return nil, err
+		}
+
+		tmpl.Option("missingkey=error")
+		var doc bytes.Buffer
+
+		err = tmpl.Execute(&doc, tVars)
+		return doc.Bytes(), err
+	}
+}
+
 func mkSlice(args ...interface{}) []interface{} {
 	return args
 }
@@ -48,30 +77,4 @@ var funcMap = template.FuncMap{
 	"regexMatch": regexMatch,
 	"toUpper":    strings.ToUpper,
 	"toLower":    strings.ToLower,
-}
-
-func NewTemplateFilter(varsFile string, varsInline string) func([]byte) []byte {
-	vars, err := loadVars(varsFile, varsInline)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tVars := &TmplVars{Vars: vars}
-
-	f := func(data []byte) []byte {
-		funcMap := funcMap
-		t := template.New("test").Funcs(funcMap)
-		tmpl, err := t.Parse(string(data))
-		if err != nil {
-			log.Fatal(err)
-		}
-		tmpl.Option("missingkey=error")
-		var doc bytes.Buffer
-		err = tmpl.Execute(&doc, tVars)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return doc.Bytes()
-	}
-	return f
 }
