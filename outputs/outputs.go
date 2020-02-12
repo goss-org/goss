@@ -3,7 +3,6 @@ package outputs
 import (
 	"fmt"
 	"io"
-	"os"
 	"sort"
 	"strings"
 	"sync"
@@ -125,12 +124,11 @@ func FormatOptions() []string {
 	return list
 }
 
-func GetOutputer(name string) Outputer {
+func GetOutputer(name string) (Outputer, error) {
 	if _, ok := outputers[name]; !ok {
-		fmt.Println("goss: Bad output format: " + name)
-		os.Exit(1)
+		return nil, fmt.Errorf("bad output format: " + name)
 	}
-	return outputers[name]
+	return outputers[name], nil
 }
 
 func subtractSlice(x, y []string) []string {

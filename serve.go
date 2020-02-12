@@ -26,11 +26,18 @@ func Serve(c *RuntimeConfig) {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
+
+	output, err := getOutputer(c.NoColor, c.OutputFormat)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
+
 	health := healthHandler{
 		c:             c,
 		gossConfig:    *cfg,
 		sys:           system.New(c.PackageManager),
-		outputer:      getOutputer(c.NoColor, c.OutputFormat),
+		outputer:      output,
 		cache:         cache,
 		gossMu:        &sync.Mutex{},
 		maxConcurrent: c.MaxConcurrent,

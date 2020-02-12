@@ -49,7 +49,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
-	currentTemplateFilter = NewTemplateFilter(vars, varsInline)
+
+	currentTemplateFilter, err = NewTemplateFilter(vars, varsInline)
+	if err != nil {
+		return nil, err
+	}
 
 	if specFile == "-" {
 		source = "STDIN"
@@ -58,16 +62,33 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 		if err != nil {
 			return nil, err
 		}
-		outStoreFormat = getStoreFormatFromData(data)
-		gossConfig = ReadJSONData(data, true)
+		outStoreFormat, err = getStoreFormatFromData(data)
+		if err != nil {
+			return nil, err
+		}
+
+		gossConfig, err = ReadJSONData(data, true)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		outStoreFormat = getStoreFormatFromFileName(specFile)
-		gossConfig = ReadJSON(specFile)
+		outStoreFormat, err = getStoreFormatFromFileName(specFile)
+		if err != nil {
+			return nil, err
+		}
+
+		gossConfig, err = ReadJSON(specFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	gossConfig = mergeJSONData(gossConfig, 0, path)
+	gossConfig, err = mergeJSONData(gossConfig, 0, path)
+	if err != nil {
+		return nil, err
+	}
 
 	if len(gossConfig.Resources()) == 0 {
 		return nil, fmt.Errorf("found 0 tests, source: %v", source)
@@ -76,13 +97,14 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	return &gossConfig, nil
 }
 
-func getOutputer(c *bool, format string) outputs.Outputer {
+func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 	if c != nil && *c {
 		color.NoColor = true
 	}
 	if c != nil && !*c {
 		color.NoColor = false
 	}
+
 	return outputs.GetOutputer(format)
 }
 
@@ -97,7 +119,10 @@ func Validate(c *RuntimeConfig, startTime time.Time) (code int, err error) {
 	}
 
 	sys := system.New(c.PackageManager)
-	outputer := getOutputer(c.NoColor, c.OutputFormat)
+	outputer, err := getOutputer(c.NoColor, c.OutputFormat)
+	if err != nil {
+		return 1, err
+	}
 
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout

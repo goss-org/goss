@@ -29,7 +29,7 @@ type System struct {
 	NewGroup       func(string, *System, util2.Config) Group
 	NewCommand     func(string, *System, util2.Config) Command
 	NewDNS         func(string, *System, util2.Config) DNS
-	NewProcess     func(string, *System, util2.Config) Process
+	NewProcess     func(string, *System, util2.Config) (Process, error)
 	NewGossfile    func(string, *System, util2.Config) Gossfile
 	NewKernelParam func(string, *System, util2.Config) KernelParam
 	NewMount       func(string, *System, util2.Config) Mount
@@ -48,11 +48,14 @@ func (s *System) Ports() map[string][]GOnetstat.Process {
 	return s.ports
 }
 
-func (s *System) ProcMap() map[string][]ps.Process {
+func (s *System) ProcMap() (map[string][]ps.Process, error) {
+	var err error
+
 	s.procOnce.Do(func() {
-		s.procMap = GetProcs()
+		s.procMap, err = GetProcs()
 	})
-	return s.procMap
+
+	return s.procMap, err
 }
 
 func New(packageManager string) *System {

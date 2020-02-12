@@ -26,37 +26,35 @@ var outStoreFormat = UNSET
 var currentTemplateFilter TemplateFilter
 var debug = false
 
-func getStoreFormatFromFileName(f string) int {
+func getStoreFormatFromFileName(f string) (int, error) {
 	ext := filepath.Ext(f)
 	switch ext {
 	case ".json":
-		return JSON
+		return JSON, nil
 	case ".yaml", ".yml":
-		return YAML
+		return YAML, nil
 	default:
-		log.Fatalf("Unknown file extension: %v", ext)
+		return 0, fmt.Errorf("unknown file extension: %v", ext)
 	}
-	return 0
 }
 
-func getStoreFormatFromData(data []byte) int {
+func getStoreFormatFromData(data []byte) (int, error) {
 	var v interface{}
 	if err := unmarshalJSON(data, &v); err == nil {
-		return JSON
+		return JSON, nil
 	}
 	if err := unmarshalYAML(data, &v); err == nil {
-		return YAML
+		return YAML, nil
 	}
-	log.Fatalf("Unable to determine format from content")
-	return 0
+
+	return 0, fmt.Errorf("unable to determine format from content")
 }
 
 // ReadJSON Reads json file returning GossConfig
-func ReadJSON(filePath string) GossConfig {
+func ReadJSON(filePath string) (GossConfig, error) {
 	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		fmt.Printf("File error: %v\n", err)
-		os.Exit(1)
+		return GossConfig{}, fmt.Errorf("file error: %v", err)
 	}
 
 	return ReadJSONData(file, false)
@@ -102,7 +100,10 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 	if err != nil {
 		return vars, err
 	}
-	format := getStoreFormatFromData(data)
+	format, err := getStoreFormatFromData(data)
+	if err != nil {
+		return nil, err
+	}
 	if err := unmarshal(data, &vars, format); err != nil {
 		return vars, err
 	}
@@ -115,7 +116,11 @@ func varsFromString(varsString string) (map[string]interface{}, error) {
 		return vars, nil
 	}
 	data := []byte(varsString)
-	format := getStoreFormatFromData(data)
+	format, err := getStoreFormatFromData(data)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := unmarshal(data, &vars, format); err != nil {
 		return vars, err
 	}
@@ -123,53 +128,72 @@ func varsFromString(varsString string) (map[string]interface{}, error) {
 }
 
 // ReadJSONData Reads json byte array returning GossConfig
-func ReadJSONData(data []byte, detectFormat bool) GossConfig {
+func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
+	var err error
 	if currentTemplateFilter != nil {
-		var err error
 		data, err = currentTemplateFilter(data)
 		if err != nil {
-			log.Fatalln(err)
+			return GossConfig{}, err
 		}
-
 		if debug {
 			fmt.Println("DEBUG: file after text/template render")
 			fmt.Println(string(data))
 		}
 	}
+
 	format := outStoreFormat
 	if detectFormat == true {
-		format = getStoreFormatFromData(data)
+		format, err = getStoreFormatFromData(data)
+		if err != nil {
+			return GossConfig{}, err
+		}
 	}
+
 	gossConfig := NewGossConfig()
 	// Horrible, but will do for now
 	if err := unmarshal(data, gossConfig, format); err != nil {
-		// FIXME: really dude.. this is so ugly
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
+		return *gossConfig, err
 	}
-	return *gossConfig
+
+	return *gossConfig, nil
 }
 
-// RenderJSON reads json file recursively returning string
+// Reads json file recursively returning string
 func RenderJSON(c *RuntimeConfig) (string, error) {
+	var err error
 	debug = c.Debug
-	currentTemplateFilter = NewTemplateFilter(c.Vars, c.VarsInline)
-	outStoreFormat = getStoreFormatFromFileName(c.Spec)
-	gossConfig := mergeJSONData(ReadJSON(c.Spec), 0, filepath.Dir(c.Spec))
-
-	b, err := marshal(gossConfig)
+	currentTemplateFilter, err = NewTemplateFilter(c.Vars, c.VarsInline)
 	if err != nil {
 		return "", err
 	}
 
-	return string(b), err
+	outStoreFormat, err = getStoreFormatFromFileName(c.Spec)
+	if err != nil {
+		return "", err
+	}
+
+	j, err := ReadJSON(c.Spec)
+	if err != nil {
+		return "", err
+	}
+
+	gossConfig, err := mergeJSONData(j, 0, filepath.Dir(c.Spec))
+	if err != nil {
+		return "", err
+	}
+
+	b, err := marshal(gossConfig)
+	if err != nil {
+		log.Fatalf("Error rendering: %v\n", err)
+	}
+
+	return string(b), nil
 }
 
-func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
+func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, error) {
 	depth++
 	if depth >= 50 {
-		fmt.Println("Error: Max depth of 50 reached, possibly due to dependency loop in goss file")
-		os.Exit(1)
+		return GossConfig{}, fmt.Errorf("max depth of 50 reached, possibly due to dependency loop in goss file")
 	}
 	// Our return gossConfig
 	ret := *NewGossConfig()
@@ -193,20 +217,25 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 		}
 		matches, err := filepath.Glob(fpath)
 		if err != nil {
-			fmt.Printf("Error in expanding glob pattern: \"%s\"\n", err.Error())
-			os.Exit(1)
+			return ret, fmt.Errorf("error in expanding glob pattern: %q", err)
 		}
 		if matches == nil {
-			fmt.Printf("No matched files were found: \"%s\"\n", fpath)
-			os.Exit(1)
+			return ret, fmt.Errorf("no matched files were found: %q", fpath)
 		}
 		for _, match := range matches {
 			fdir := filepath.Dir(match)
-			j := mergeJSONData(ReadJSON(match), depth, fdir)
+			j, err := ReadJSON(match)
+			if err != nil {
+				return GossConfig{}, fmt.Errorf("could not read json data in %s: %s", match, err)
+			}
+			j, err = mergeJSONData(j, depth, fdir)
+			if err != nil {
+				return ret, fmt.Errorf("could not write json data: %s", err)
+			}
 			ret = mergeGoss(ret, j)
 		}
 	}
-	return ret
+	return ret, nil
 }
 
 func WriteJSON(filePath string, gossConfig GossConfig) error {
@@ -279,5 +308,10 @@ func marshalYAML(gossConfig interface{}) ([]byte, error) {
 }
 
 func unmarshalYAML(data []byte, v interface{}) error {
-	return yaml.Unmarshal(data, v)
+	err := yaml.Unmarshal(data, v)
+	if err != nil {
+		return fmt.Errorf("could not unmarshal %q as YAML data: %s", string(data), err)
+	}
+
+	return nil
 }
