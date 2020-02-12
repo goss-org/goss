@@ -17,6 +17,9 @@ import (
 	"github.com/aelsabbahy/goss/util"
 )
 
+// RuntimeConfig is configuration for various aspects of the goss system and
+// is modeled on the cli context used in the cli tooling.  Mainly the translation
+// into this format is there to support making the system usable as a package
 type RuntimeConfig struct {
 	FormatOptions     []string
 	Vars              string
