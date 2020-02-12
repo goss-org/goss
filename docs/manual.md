@@ -57,7 +57,7 @@ COMMANDS:
 GLOBAL OPTIONS:
    --gossfile value, -g value  Goss file to read from / write to (default: "./goss.yaml") [$GOSS_FILE]
    --vars value                json/yaml file containing variables for template [$GOSS_VARS]
-   --vars-inline value         json/yaml string containing variables for template (overwrites vars) [$GOSS_VARS-INLINE]
+   --vars-inline value         json/yaml string containing variables for template (overwrites vars) [$GOSS_VARS_INLINE]
    --package value             Package type to use [rpm, deb, apk, pacman]
    --help, -h                  show help
    --version, -v               print the version

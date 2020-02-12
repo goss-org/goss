@@ -35,7 +35,7 @@ func main() {
 		cli.StringFlag{
 			Name:   "vars-inline",
 			Usage:  "json/yaml string containing variables for template (overwrites vars)",
-			EnvVar: "GOSS_VARS-INLINE",
+			EnvVar: "GOSS_VARS_INLINE",
 		},
 		cli.StringFlag{
 			Name:  "package",
