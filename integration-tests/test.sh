@@ -4,6 +4,7 @@ set -xeu
 
 os=$1
 arch=$2
+vars_inline="{inline: bar, overwrite: bar}"
 
 seccomp_opts() {
   local docker_ver minor_ver
@@ -40,13 +41,13 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
-out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" -g "/goss/$os/goss.yaml" validate)
+out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 84, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 86, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 101, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 103, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

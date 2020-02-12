@@ -22,7 +22,9 @@ func getGossConfig(c *cli.Context) GossConfig {
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
-	TemplateFilter = NewTemplateFilter(c.GlobalString("vars"))
+	varsFile := c.GlobalString("vars")
+	varsInline := c.GlobalString("vars-inline")
+	currentTemplateFilter = NewTemplateFilter(varsFile, varsInline)
 	specFile := c.GlobalString("gossfile")
 	if specFile == "-" {
 		source = "STDIN"
@@ -32,12 +34,12 @@ func getGossConfig(c *cli.Context) GossConfig {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
 		}
-		OutStoreFormat = getStoreFormatFromData(data)
+		outStoreFormat = getStoreFormatFromData(data)
 		gossConfig = ReadJSONData(data, true)
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		OutStoreFormat = getStoreFormatFromFileName(specFile)
+		outStoreFormat = getStoreFormatFromFileName(specFile)
 		gossConfig = ReadJSON(specFile)
 	}
 
