@@ -184,7 +184,7 @@ func RenderJSON(c *RuntimeConfig) (string, error) {
 
 	b, err := marshal(gossConfig)
 	if err != nil {
-		log.Fatalf("Error rendering: %v\n", err)
+		return "", fmt.Errorf("rendering failed: %v", err)
 	}
 
 	return string(b), nil
@@ -241,14 +241,14 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 func WriteJSON(filePath string, gossConfig GossConfig) error {
 	jsonData, err := marshal(gossConfig)
 	if err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	if string(emptyData) == string(jsonData) {
@@ -257,7 +257,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	}
 
 	if err := ioutil.WriteFile(filePath, jsonData, 0644); err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	return nil
