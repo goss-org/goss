@@ -9,7 +9,6 @@ import (
 	"github.com/aelsabbahy/goss"
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/urfave/cli"
-	//"time"
 )
 
 var version string
@@ -32,6 +31,11 @@ func main() {
 			Name:   "vars",
 			Usage:  "json/yaml file containing variables for template",
 			EnvVar: "GOSS_VARS",
+		},
+		cli.StringFlag{
+			Name:   "vars-inline",
+			Usage:  "json/yaml string containing variables for template (overwrites vars)",
+			EnvVar: "GOSS_VARS_INLINE",
 		},
 		cli.StringFlag{
 			Name:  "package",

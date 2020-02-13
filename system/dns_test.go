@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestparseServerString(t *testing.T) {
+func TestParseServerString(t *testing.T) {
 
 	tables := []struct {
 		x string
