@@ -586,7 +586,7 @@ http:
     timeout: 1000
     request-headers: # Set request header values
        - "Content-Type: text/html"
-    header: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
+    headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
