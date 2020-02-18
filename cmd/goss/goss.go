@@ -46,7 +46,7 @@ func newRuntimeConfigFromCLI(c *cli.Context) *goss.RuntimeConfig {
 	}
 
 	if c.Bool("color") {
-		cfg.NoColor = bp(true)
+		cfg.NoColor = bp(false)
 	}
 
 	return cfg
