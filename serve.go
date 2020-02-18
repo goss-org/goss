@@ -16,7 +16,7 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-func Serve(c *RuntimeConfig) {
+func Serve(c *util.Config) {
 	endpoint := c.Endpoint
 	color.NoColor = true
 	cache := cache.New(c.Cache, 30*time.Second)
@@ -56,7 +56,7 @@ type res struct {
 	b        bytes.Buffer
 }
 type healthHandler struct {
-	c             *RuntimeConfig
+	c             *util.Config
 	gossConfig    GossConfig
 	sys           *system.System
 	outputer      outputs.Outputer

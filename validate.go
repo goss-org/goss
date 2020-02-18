@@ -2,6 +2,7 @@ package goss
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -16,33 +17,6 @@ import (
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
-
-// RuntimeConfig is configuration for various aspects of the goss system and
-// is modeled on the cli context used in the cli tooling.  Mainly the translation
-// into this format is there to support making the system usable as a package
-type RuntimeConfig struct {
-	FormatOptions     []string
-	Vars              string
-	VarsInline        string
-	Spec              string
-	Sleep             time.Duration
-	RetryTimeout      time.Duration
-	Cache             time.Duration
-	Timeout           time.Duration
-	MaxConcurrent     int
-	NoColor           *bool
-	OutputFormat      string
-	PackageManager    string
-	Endpoint          string
-	ListenAddress     string
-	ExcludeAttributes []string
-	Insecure          bool
-	NoFollowRedirects bool
-	Server            string
-	Username          string
-	Password          string
-	Debug             bool
-}
 
 func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
@@ -108,7 +82,24 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 	return outputs.GetOutputer(format)
 }
 
-func Validate(c *RuntimeConfig, startTime time.Time) (code int, err error) {
+// ValidateResults performs validation and provides programmatic access to validation results
+// no retries or outputs are supported
+func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
+	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	if err != nil {
+		return nil, err
+	}
+
+	sys := system.New(c.PackageManager)
+
+	return validate(sys, *gossConfig, c.MaxConcurrent), nil
+}
+
+// Validate performs validation, writes formatted output to stdout by default
+// and supports retries and more, this is the full featured Validate used
+// by the typical CLI invocation and will produce output to StdOut.  Use
+// ValidateResults for programmatic access
+func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
 	}
@@ -124,13 +115,19 @@ func Validate(c *RuntimeConfig, startTime time.Time) (code int, err error) {
 		return 1, err
 	}
 
+	var ofh io.Writer
+	ofh = os.Stdout
+	if c.OutputWriter != nil {
+		ofh = c.OutputWriter
+	}
+
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout
 	i := 1
 	for {
 		iStartTime := time.Now()
 		out := validate(sys, *gossConfig, c.MaxConcurrent)
-		exitCode := outputer.Output(os.Stdout, out, iStartTime, outputConfig)
+		exitCode := outputer.Output(ofh, out, iStartTime, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
 		}

@@ -25,7 +25,7 @@ func NewDefAddr(address string, system *System, config util.Config) Addr {
 	return &DefAddr{
 		address:      addr,
 		LocalAddress: config.LocalAddress,
-		Timeout:      config.Timeout,
+		Timeout:      config.TimeOutMilliSeconds(),
 	}
 }
 
