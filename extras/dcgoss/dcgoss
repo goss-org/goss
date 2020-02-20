@@ -42,7 +42,7 @@ run(){
         ;;
       cp)
         info "Creating docker container"
-        docker-compose run -d -T --name "$service" --rm "$service"
+        docker-compose run -d -T --name "$service" --rm "$service" > /dev/null
         info "Copy goss files into container"
         docker cp "$tmp_dir/." "$service:/goss"
         ;;
