@@ -106,7 +106,7 @@ case "$1" in
             fi
         fi
         info "Container health"
-        if ! docker top "$service"; then
+        if [ "true" != "$(docker inspect -f '{{.State.Running}}' $service)" ]; then
             error "The container failed to start"
         fi
         info "Running Tests"
