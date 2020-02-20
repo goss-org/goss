@@ -38,7 +38,7 @@ deploy:
     - release/goss-linux-386
     - release/goss-linux-arm
     - extras/dgoss/dgoss
-  cleanup: true
+  skip_cleanup: true
   on:
     repo: aelsabbahy/goss
     tags: true
