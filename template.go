@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/Masterminds/sprig"
 )
 
 // TemplateFilter is the type of the Goss Template Filter which include custom variables and functions.
@@ -23,8 +25,7 @@ func NewTemplateFilter(varsFile string, varsInline string) (func([]byte) ([]byte
 	tVars := &TmplVars{Vars: vars}
 
 	f := func(data []byte) ([]byte, error) {
-		funcMap := funcMap
-		t := template.New("test").Funcs(template.FuncMap(funcMap))
+		t := template.New("test").Funcs(sprig.TxtFuncMap()).Funcs(funcMap)
 
 		tmpl, err := t.Parse(string(data))
 		if err != nil {
