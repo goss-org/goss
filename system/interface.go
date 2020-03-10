@@ -4,6 +4,8 @@ import (
 	"net"
 
 	"github.com/aelsabbahy/goss/util"
+
+	"github.com/jaypipes/ghw"
 )
 
 type Interface interface {
@@ -11,14 +13,17 @@ type Interface interface {
 	Exists() (bool, error)
 	Addrs() ([]string, error)
 	MTU() (int, error)
+	MAC() (string, error)
+	IsVirtual() (bool, error)
 }
 
 type DefInterface struct {
-	name   string
-	loaded bool
-	exists bool
-	iface  *net.Interface
-	err    error
+	name     string
+	loaded   bool
+	exists   bool
+	iface    *net.Interface
+	ghwIface *ghw.NIC
+	err      error
 }
 
 func NewDefInterface(name string, systei *System, config util.Config) Interface {
@@ -41,11 +46,39 @@ func (i *DefInterface) setup() error {
 	}
 	i.iface = iface
 	i.exists = true
+	ghwNetwork, err := ghw.Network()
+	if err != nil {
+		i.exists = false
+		i.err = err
+		return i.err
+	}
+	for _, nic := range ghwNetwork.NICs {
+		if nic.Name == i.name {
+			i.ghwIface = nic
+			break
+		}
+	}
 	return nil
 }
 
 func (i *DefInterface) ID() string {
 	return i.name
+}
+
+// MAC to get interface's MAC address
+func (i *DefInterface) MAC() (string, error) {
+	if err := i.setup(); err != nil {
+		return "", err
+	}
+	return i.ghwIface.MacAddress, nil
+}
+
+// IsVirtual check if interface is virtual device
+func (i *DefInterface) IsVirtual() (bool, error) {
+	if err := i.setup(); err != nil {
+		return false, nil
+	}
+	return i.ghwIface.IsVirtual, nil
 }
 
 func (i *DefInterface) Name() string {

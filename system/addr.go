@@ -40,10 +40,12 @@ func (a *DefAddr) Exists() (bool, error) { return a.Reachable() }
 func (a *DefAddr) Reachable() (bool, error) {
 	network, address := splitAddress(a.address)
 
-	localAddr := &net.TCPAddr{
-		IP: net.ParseIP(a.LocalAddress),
+	var localAddr net.Addr
+	if network == "udp" {
+		localAddr = &net.UDPAddr{IP: net.ParseIP(a.LocalAddress)}
+	} else {
+		localAddr = &net.TCPAddr{IP: net.ParseIP(a.LocalAddress)}
 	}
-
 	d := net.Dialer{LocalAddr: localAddr, Timeout: time.Duration(a.Timeout) * time.Millisecond}
 	conn, err := d.Dial(network, address)
 	if err != nil {

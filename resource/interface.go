@@ -6,13 +6,15 @@ import (
 )
 
 type Interface struct {
-	Title  string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta   meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Name   string  `json:"-" yaml:"-"`
-	Exists matcher `json:"exists" yaml:"exists"`
-	Addrs  matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
-	MTU    matcher `json:"mtu,omitempty" yaml:"mtu,omitempty"`
-	Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Name      string  `json:"-" yaml:"-"`
+	Exists    matcher `json:"exists" yaml:"exists"`
+	Addrs     matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
+	MTU       matcher `json:"mtu,omitempty" yaml:"mtu,omitempty"`
+	MAC       matcher `json:"mac,omitempty" yaml:"mac,omitempty"`
+	IsVirtual matcher `json:"isvirtual,omitempty" yaml:"isvirtual,omitempty"`
+	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (i *Interface) ID() string      { return i.Name }
@@ -41,6 +43,12 @@ func (i *Interface) Validate(sys *system.System) []TestResult {
 	if i.MTU != nil {
 		results = append(results, ValidateValue(i, "mtu", i.MTU, sysInterface.MTU, skip))
 	}
+	if i.MAC != nil {
+		results = append(results, ValidateValue(i, "mac", i.MTU, sysInterface.MAC, skip))
+	}
+	if i.IsVirtual != nil {
+		results = append(results, ValidateValue(i, "isvritual", i.MTU, sysInterface.IsVirtual, skip))
+	}
 	return results
 }
 
@@ -59,6 +67,16 @@ func NewInterface(sysInterface system.Interface, config util.Config) (*Interface
 	if !contains(config.IgnoreList, "mtu") {
 		if mtu, err := sysInterface.MTU(); err == nil {
 			i.MTU = mtu
+		}
+	}
+	if !contains(config.IgnoreList, "mac") {
+		if mac, err := sysInterface.MAC(); err == nil {
+			i.MAC = mac
+		}
+	}
+	if !contains(config.IgnoreList, "isvirtual") {
+		if isvirtual, err := sysInterface.IsVirtual(); err == nil {
+			i.IsVirtual = isvirtual
 		}
 	}
 	return i, nil
