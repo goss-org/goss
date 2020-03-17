@@ -1,9 +1,6 @@
 package system
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/aelsabbahy/go-ps"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -20,11 +17,16 @@ type DefProcess struct {
 	procMap    map[string][]ps.Process
 }
 
-func NewDefProcess(executable string, system *System, config util.Config) Process {
+func NewDefProcess(executable string, system *System, config util.Config) (Process, error) {
+	pmap, err := system.ProcMap()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DefProcess{
 		executable: executable,
-		procMap:    system.ProcMap(),
-	}
+		procMap:    pmap,
+	}, nil
 }
 
 func (p *DefProcess) Executable() string {
@@ -48,16 +50,15 @@ func (p *DefProcess) Running() (bool, error) {
 	return false, nil
 }
 
-func GetProcs() map[string][]ps.Process {
+func GetProcs() (map[string][]ps.Process, error) {
 	pmap := make(map[string][]ps.Process)
 	processes, err := ps.Processes()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return pmap, err
 	}
 	for _, p := range processes {
 		pmap[p.Executable()] = append(pmap[p.Executable()], p)
 	}
 
-	return pmap
+	return pmap, nil
 }

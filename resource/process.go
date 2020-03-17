@@ -20,15 +20,24 @@ func (p *Process) GetTitle() string { return p.Title }
 func (p *Process) GetMeta() meta    { return p.Meta }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
+	var results []TestResult
 	skip := false
-	sysProcess := sys.NewProcess(p.Executable, sys, util.Config{})
+
+	runningf := func() (bool, error) {
+		sysProcess, err := sys.NewProcess(p.Executable, sys, util.Config{})
+		if err != nil {
+			return false, err
+		}
+
+		return sysProcess.Running()
+	}
 
 	if p.Skip {
 		skip = true
 	}
 
-	var results []TestResult
-	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))
+	results = append(results, ValidateValue(p, "running", p.Running, runningf, skip))
+
 	return results
 }
 

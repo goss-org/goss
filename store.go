@@ -14,7 +14,6 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/aelsabbahy/goss/resource"
-	"github.com/urfave/cli"
 )
 
 const (
@@ -23,41 +22,39 @@ const (
 	YAML
 )
 
-var OutStoreFormat = UNSET
-var TemplateFilter func(data []byte) []byte
+var outStoreFormat = UNSET
+var currentTemplateFilter TemplateFilter
 var debug = false
 
-func getStoreFormatFromFileName(f string) int {
+func getStoreFormatFromFileName(f string) (int, error) {
 	ext := filepath.Ext(f)
 	switch ext {
 	case ".json":
-		return JSON
+		return JSON, nil
 	case ".yaml", ".yml":
-		return YAML
+		return YAML, nil
 	default:
-		log.Fatalf("Unknown file extension: %v", ext)
+		return 0, fmt.Errorf("unknown file extension: %v", ext)
 	}
-	return 0
 }
 
-func getStoreFormatFromData(data []byte) int {
+func getStoreFormatFromData(data []byte) (int, error) {
 	var v interface{}
 	if err := unmarshalJSON(data, &v); err == nil {
-		return JSON
+		return JSON, nil
 	}
 	if err := unmarshalYAML(data, &v); err == nil {
-		return YAML
+		return YAML, nil
 	}
-	log.Fatalf("Unable to determine format from content")
-	return 0
+
+	return 0, fmt.Errorf("unable to determine format from content")
 }
 
-// Reads json file returning GossConfig
-func ReadJSON(filePath string) GossConfig {
+// ReadJSON Reads json file returning GossConfig
+func ReadJSON(filePath string) (GossConfig, error) {
 	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		fmt.Printf("File error: %v\n", err)
-		os.Exit(1)
+		return GossConfig{}, fmt.Errorf("file error: %v", err)
 	}
 
 	return ReadJSONData(file, false)
@@ -76,8 +73,26 @@ func (t *TmplVars) Env() map[string]string {
 	return env
 }
 
+func loadVars(varsFile string, varsInline string) (map[string]interface{}, error) {
+	vars, err := varsFromFile(varsFile)
+	if err != nil {
+		return nil, fmt.Errorf("Error: loading vars file '%s'\n%w", varsFile, err)
+	}
+
+	varsExtra, err := varsFromString(varsInline)
+	if err != nil {
+		return nil, fmt.Errorf("Error: loading inline vars\n%w", err)
+	}
+
+	for k, v := range varsExtra {
+		vars[k] = v
+	}
+
+	return vars, nil
+}
+
 func varsFromFile(varsFile string) (map[string]interface{}, error) {
-	var vars map[string]interface{}
+	vars := make(map[string]interface{})
 	if varsFile == "" {
 		return vars, nil
 	}
@@ -85,58 +100,100 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 	if err != nil {
 		return vars, err
 	}
-	format := getStoreFormatFromData(data)
+	format, err := getStoreFormatFromData(data)
+	if err != nil {
+		return nil, err
+	}
 	if err := unmarshal(data, &vars, format); err != nil {
 		return vars, err
 	}
 	return vars, nil
 }
 
-// Reads json byte array returning GossConfig
-func ReadJSONData(data []byte, detectFormat bool) GossConfig {
-	if TemplateFilter != nil {
-		data = TemplateFilter(data)
+func varsFromString(varsString string) (map[string]interface{}, error) {
+	vars := make(map[string]interface{})
+	if varsString == "" {
+		return vars, nil
+	}
+	data := []byte(varsString)
+	format, err := getStoreFormatFromData(data)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := unmarshal(data, &vars, format); err != nil {
+		return vars, err
+	}
+	return vars, nil
+}
+
+// ReadJSONData Reads json byte array returning GossConfig
+func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
+	var err error
+	if currentTemplateFilter != nil {
+		data, err = currentTemplateFilter(data)
+		if err != nil {
+			return GossConfig{}, err
+		}
 		if debug {
 			fmt.Println("DEBUG: file after text/template render")
 			fmt.Println(string(data))
 		}
 	}
-	format := OutStoreFormat
+
+	format := outStoreFormat
 	if detectFormat == true {
-		format = getStoreFormatFromData(data)
+		format, err = getStoreFormatFromData(data)
+		if err != nil {
+			return GossConfig{}, err
+		}
 	}
+
 	gossConfig := NewGossConfig()
 	// Horrible, but will do for now
 	if err := unmarshal(data, gossConfig, format); err != nil {
-		// FIXME: really dude.. this is so ugly
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
+		return *gossConfig, err
 	}
-	return *gossConfig
+
+	return *gossConfig, nil
 }
 
 // Reads json file recursively returning string
-func RenderJSON(c *cli.Context) string {
-	filePath := c.GlobalString("gossfile")
-	varsFile := c.GlobalString("vars")
-	debug = c.Bool("debug")
-	TemplateFilter = NewTemplateFilter(varsFile)
-	path := filepath.Dir(filePath)
-	OutStoreFormat = getStoreFormatFromFileName(filePath)
-	gossConfig := mergeJSONData(ReadJSON(filePath), 0, path)
+func RenderJSON(c *RuntimeConfig) (string, error) {
+	var err error
+	debug = c.Debug
+	currentTemplateFilter, err = NewTemplateFilter(c.Vars, c.VarsInline)
+	if err != nil {
+		return "", err
+	}
+
+	outStoreFormat, err = getStoreFormatFromFileName(c.Spec)
+	if err != nil {
+		return "", err
+	}
+
+	j, err := ReadJSON(c.Spec)
+	if err != nil {
+		return "", err
+	}
+
+	gossConfig, err := mergeJSONData(j, 0, filepath.Dir(c.Spec))
+	if err != nil {
+		return "", err
+	}
 
 	b, err := marshal(gossConfig)
 	if err != nil {
-		log.Fatalf("Error rendering: %v\n", err)
+		return "", fmt.Errorf("rendering failed: %v", err)
 	}
-	return string(b)
+
+	return string(b), nil
 }
 
-func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
+func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, error) {
 	depth++
 	if depth >= 50 {
-		fmt.Println("Error: Max depth of 50 reached, possibly due to dependency loop in goss file")
-		os.Exit(1)
+		return GossConfig{}, fmt.Errorf("max depth of 50 reached, possibly due to dependency loop in goss file")
 	}
 	// Our return gossConfig
 	ret := *NewGossConfig()
@@ -144,7 +201,7 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 
 	// Sort the gossfiles to ensure consistent ordering
 	var keys []string
-	for k, _ := range gossConfig.Gossfiles {
+	for k := range gossConfig.Gossfiles {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -160,33 +217,38 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) GossConfig {
 		}
 		matches, err := filepath.Glob(fpath)
 		if err != nil {
-			fmt.Printf("Error in expanding glob pattern: \"%s\"\n", err.Error())
-			os.Exit(1)
+			return ret, fmt.Errorf("error in expanding glob pattern: %q", err)
 		}
 		if matches == nil {
-			fmt.Printf("No matched files were found: \"%s\"\n", fpath)
-			os.Exit(1)
+			return ret, fmt.Errorf("no matched files were found: %q", fpath)
 		}
 		for _, match := range matches {
 			fdir := filepath.Dir(match)
-			j := mergeJSONData(ReadJSON(match), depth, fdir)
+			j, err := ReadJSON(match)
+			if err != nil {
+				return GossConfig{}, fmt.Errorf("could not read json data in %s: %s", match, err)
+			}
+			j, err = mergeJSONData(j, depth, fdir)
+			if err != nil {
+				return ret, fmt.Errorf("could not write json data: %s", err)
+			}
 			ret = mergeGoss(ret, j)
 		}
 	}
-	return ret
+	return ret, nil
 }
 
 func WriteJSON(filePath string, gossConfig GossConfig) error {
 	jsonData, err := marshal(gossConfig)
 	if err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	if string(emptyData) == string(jsonData) {
@@ -195,7 +257,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	}
 
 	if err := ioutil.WriteFile(filePath, jsonData, 0644); err != nil {
-		log.Fatalf("Error writing: %v\n", err)
+		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
 	return nil
@@ -212,7 +274,7 @@ func resourcePrint(fileName string, res resource.ResourceRead) {
 }
 
 func marshal(gossConfig interface{}) ([]byte, error) {
-	switch OutStoreFormat {
+	switch outStoreFormat {
 	case JSON:
 		return marshalJSON(gossConfig)
 	case YAML:
@@ -246,5 +308,10 @@ func marshalYAML(gossConfig interface{}) ([]byte, error) {
 }
 
 func unmarshalYAML(data []byte, v interface{}) error {
-	return yaml.Unmarshal(data, v)
+	err := yaml.Unmarshal(data, v)
+	if err != nil {
+		return fmt.Errorf("could not unmarshal %q as YAML data: %s", string(data), err)
+	}
+
+	return nil
 }
