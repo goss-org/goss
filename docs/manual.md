@@ -12,7 +12,7 @@
     * [render, r \- Render gossfile after importing all referenced gossfiles](#render-r---render-gossfile-after-importing-all-referenced-gossfiles)
     * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
     * [validate, v \- Validate the system](#validate-v---validate-the-system)
-* [Goss test script creation](#goss-test-script-creation)
+* [Goss test creation](#goss-test-creation)
 * [Important note about goss file format](#important-note-about-goss-file-format)
 * [Available tests](#available-tests)
   * [addr](#addr)
