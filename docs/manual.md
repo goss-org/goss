@@ -339,7 +339,7 @@ package:
     versions:
     - 1.17.8
 ```
-to test uninstall scenario we need to manually edit it and set it as below.
+To test uninstall scenario you would need to manually edit it and set it as below.
 ```
 package:
   nginx:
