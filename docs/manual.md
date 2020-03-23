@@ -904,7 +904,7 @@ Available variables:
 Available functions:
 * [built-in text/template functions](https://golang.org/pkg/text/template/#hdr-Functions)
 * [Sprig functions](https://masterminds.github.io/sprig/)
-* Custom functions ():
+* Custom functions:
   * `mkSlice "ARG1" "ARG2"` - Returns a slice of all the arguments. See examples below for usage.
   * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
   * `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
