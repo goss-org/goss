@@ -14,6 +14,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/aelsabbahy/goss/resource"
+	"github.com/aelsabbahy/goss/util"
 )
 
 const (
@@ -158,8 +159,8 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	return *gossConfig, nil
 }
 
-// Reads json file recursively returning string
-func RenderJSON(c *RuntimeConfig) (string, error) {
+// RenderJSON reads json file recursively returning string
+func RenderJSON(c *util.Config) (string, error) {
 	var err error
 	debug = c.Debug
 	currentTemplateFilter, err = NewTemplateFilter(c.Vars, c.VarsInline)
@@ -263,14 +264,16 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	return nil
 }
 
-func resourcePrint(fileName string, res resource.ResourceRead) {
+func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {
 	resMap := map[string]resource.ResourceRead{res.ID(): res}
 
 	oj, _ := marshal(resMap)
 	typ := reflect.TypeOf(res)
 	typs := strings.Split(typ.String(), ".")[1]
 
-	fmt.Printf("Adding %s to '%s':\n\n%s\n\n", typs, fileName, string(oj))
+	if announce {
+		fmt.Printf("Adding %s to '%s':\n\n%s\n\n", typs, fileName, string(oj))
+	}
 }
 
 func marshal(gossConfig interface{}) ([]byte, error) {

@@ -45,7 +45,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		allowInsecure:     config.AllowInsecure,
 		noFollowRedirects: config.NoFollowRedirects,
 		RequestHeader:     headers,
-		Timeout:           config.Timeout,
+		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
 	}

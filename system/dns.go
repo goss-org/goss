@@ -47,7 +47,7 @@ func NewDefDNS(host string, system *System, config util.Config) DNS {
 
 	return &DefDNS{
 		host:    h,
-		Timeout: config.Timeout,
+		Timeout: config.TimeOutMilliSeconds(),
 		server:  config.Server,
 		qtype:   t,
 	}

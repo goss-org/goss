@@ -114,6 +114,22 @@ func (sys *System) detectService() {
 	}
 }
 
+// SupportedPackageManagers is a list of package managers we support
+func SupportedPackageManagers() []string {
+	return []string{"apk", "dpkg", "pacman", "rpm"}
+}
+
+// IsSupportedPackageManager determines if p is a supported package manager
+func IsSupportedPackageManager(p string) bool {
+	for _, m := range SupportedPackageManagers() {
+		if m == p {
+			return true
+		}
+	}
+
+	return false
+}
+
 // DetectPackageManager attempts to detect whether or not the system is using
 // "dpkg", "rpm", "apk", or "pacman" package managers. It first attempts to
 // detect the distro. If that fails, it falls back to finding package manager

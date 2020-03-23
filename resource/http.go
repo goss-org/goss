@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"time"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -35,7 +37,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	}
 	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
-		Timeout: u.Timeout, Username: u.Username, Password: u.Password,
+		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
 		RequestHeader: u.RequestHeader})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
@@ -70,7 +72,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
-		Timeout:           config.Timeout,
+		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
 	}
