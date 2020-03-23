@@ -914,7 +914,7 @@ Available functions:
   * `toUpper` - Changes piped input to UPPERCASE
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
-**NOTE:** Some of Sprig functions have the same name as the older Custom Goss functions. The Sprig are been overwritten by by the custom functions for backwards compatibility.
+**NOTE:** Some of Sprig functions have the same name as the older Custom Goss functions. The Sprig functions are overwritten by the custom functions for backwards compatibility.
 
 ### Examples
 
