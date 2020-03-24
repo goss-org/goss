@@ -21,6 +21,44 @@ func checkErr(t *testing.T, err error, format string, a ...interface{}) {
 	t.Fatalf(format+": "+err.Error(), a...)
 }
 
+func TestConfigMerge(t *testing.T) {
+	var g1json = `file:
+  /etc/passwd:
+    exists: true
+    mode: "0644"
+    size: 1722
+    owner: root
+    group: root
+    filetype: file
+    contains: []`
+
+	var g2json = `service:
+  sshd:
+    enabled: true
+    running: true
+`
+
+	g1, err := ReadJSONData([]byte(g1json), true)
+	checkErr(t, err, "reading g1 failed")
+	_, ok := g1.Services["sshd"]
+	if ok {
+		t.Fatalf("did not expect sshd service")
+	}
+
+	g2, err := ReadJSONData([]byte(g2json), true)
+	checkErr(t, err, "reading g1 failed")
+
+	g1.Merge(g2)
+	_, ok = g1.Files["/etc/passwd"]
+	if !ok {
+		t.Fatalf("expected passwd file, got none")
+	}
+	_, ok = g1.Services["sshd"]
+	if !ok {
+		t.Fatalf("expected sshd service, got none")
+	}
+}
+
 func TestUseAsPackage(t *testing.T) {
 	output := &bytes.Buffer{}
 
