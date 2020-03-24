@@ -219,12 +219,12 @@ func WithVarsData(v interface{}) ConfigOption {
 	}
 }
 
-// WithVarBytes is a yaml or json byte stream to use as variables passed to the Validator
+// WithVarsBytes is a yaml or json byte stream to use as variables passed to the Validator
 func WithVarsBytes(v []byte) ConfigOption {
 	return WithVarsString(string(v))
 }
 
-// WithVarString is a yaml or json string to use as variables passed to the Validator
+// WithVarsString is a yaml or json string to use as variables passed to the Validator
 func WithVarsString(v string) ConfigOption {
 	return func(c *Config) error {
 		c.VarsInline = v
