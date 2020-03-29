@@ -1,4 +1,9 @@
 ---
+block-device:
+  {{ .Vars.blockdevice }}:
+    exists: true
+  device-not-exists:
+    exists: false
 command:
   echo 'hi':
     exit-status: 0

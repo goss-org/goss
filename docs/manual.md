@@ -23,6 +23,7 @@
   * [group](#group)
   * [http](#http)
   * [interface](#interface)
+  * [block-device](#block-device)
   * [kernel-param](#kernel-param)
   * [mount](#mount)
   * [matching](#matching)
@@ -114,6 +115,7 @@ This will add a test for a resource. Non existent resources will add a test to e
 * `group` - can validate the existence and values of a [group](#group) on the system
 * `http` - can validate the HTTP response code, headers, and content of a URI, see [http](#http)
 * `interface` - can validate the existence and values (es. the addresses) of a network interface, see [interface](#interface)
+* `block-device` - can validate the existence and values (es. the size) of a block device, see [block-device](#block-device)
 * `kernel-param` - can validate kernel parameters (sysctl values), see [kernel-param](#kernel-param)
 * `mount` - can validate the existence and options relative to a [mount](#mount) point
 * `package` - can validate the status of a [package](#package) using the package manager specified on the commandline with `--package`
@@ -153,6 +155,7 @@ Will **NOT** automatically add:
 * `dns`
 * `http`
 * `interface`
+* `block-device`
 * `kernel-param`
 * `mount`
 
@@ -430,6 +433,7 @@ If you want to keep your tests in separate files, the best way to obtain a singl
 * [group](#group)
 * [http](#http)
 * [interface](#interface)
+* [block-device](#block-device)
 * [kernel-param](#kernel-param)
 * [matching](#matching)
 * [mount](#mount)
@@ -631,6 +635,23 @@ interface:
     - 172.17.0.2/16
     - fe80::42:acff:fe11:2/64
     mtu: 1500
+```
+
+
+### block device
+Validates block device values
+
+```yaml
+block-device:
+  vda:
+    # required attributes
+    exists: true
+    # optional attributes
+    drivetype: HDD # This string will be "HDD", "FDD", "ODD", or "SSD", which correspond to a hard disk drive (rotational), floppy drive, optical (CD/DVD) drive and solid-state drive.
+    controller: virtio # This string will be "SCSI", "IDE", "virtio", "MMC", or "NVMe"
+    physicalblocksize: 512 # in bytes
+    size: 53687091200 # in bytes
+    vendor: 0x1af4 # the name of the hardware vendor for the disk drive
 ```
 
 

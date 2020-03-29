@@ -361,6 +361,13 @@ func main() {
 					},
 				},
 				{
+					Name:  "block-device",
+					Usage: "add new goss block device",
+					Action: func(c *cli.Context) error {
+						return goss.AddResources(c.GlobalString("gossfile"), "BlockDevice", c.Args(), newRuntimeConfigFromCLI(c))
+					},
+				},
+				{
 					Name:  "mount",
 					Usage: "add new mount",
 					Action: func(c *cli.Context) error {

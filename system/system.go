@@ -34,6 +34,7 @@ type System struct {
 	NewKernelParam func(string, *System, util2.Config) KernelParam
 	NewMount       func(string, *System, util2.Config) Mount
 	NewInterface   func(string, *System, util2.Config) Interface
+	NewBlockDevice func(string, *System, util2.Config) BlockDevice
 	NewHTTP        func(string, *System, util2.Config) HTTP
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
@@ -73,6 +74,7 @@ func New(packageManager string) *System {
 		NewMount:       NewDefMount,
 		NewInterface:   NewDefInterface,
 		NewHTTP:        NewDefHTTP,
+		NewBlockDevice: NewDefBlockDevice,
 	}
 
 	sys.detectService()

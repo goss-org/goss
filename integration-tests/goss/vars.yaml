@@ -15,3 +15,4 @@ wheezy:
     apache2: "2.2.22-13+deb7u13"
 
 overwrite: foo
+blockdevice: mock-block-device

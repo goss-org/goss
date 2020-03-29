@@ -14,7 +14,9 @@ seccomp_opts() {
     echo '--security-opt seccomp:unconfined'
   fi
 }
-
+# replace mock-block-device
+block_device_on_this_server=$(ls /sys/block/ | egrep -v "loop|sr" | head -1)
+sed -i "s/mock-block-device/${block_device_on_this_server}/g" ./goss/vars.yaml
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then
@@ -45,9 +47,9 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 86, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 88, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 103, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 105, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

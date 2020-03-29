@@ -75,6 +75,8 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 		res, err = gossConfig.Mounts.AppendSysResource(key, sys, config)
 	case "Interface":
 		res, err = gossConfig.Interfaces.AppendSysResource(key, sys, config)
+	case "BlockDevice":
+		res, err = gossConfig.BlockDevice.AppendSysResource(key, sys, config)
 	case "HTTP":
 		res, err = gossConfig.HTTPs.AppendSysResource(key, sys, config)
 	default:

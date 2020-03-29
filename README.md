@@ -214,6 +214,7 @@ package:
 * kernel-param - add new kernel-param
 * mount - add new mount
 * interface - add new network interface
+* block-device - add new block device
 * http - add new network http url
 * goss - add new goss file, it will be imported from this one
 * matching - test for matches in supplied content

@@ -19,6 +19,7 @@ type GossConfig struct {
 	Processes    resource.ProcessMap     `json:"process,omitempty" yaml:"process,omitempty"`
 	Gossfiles    resource.GossfileMap    `json:"gossfile,omitempty" yaml:"gossfile,omitempty"`
 	KernelParams resource.KernelParamMap `json:"kernel-param,omitempty" yaml:"kernel-param,omitempty"`
+	BlockDevice  resource.BlockDeviceMap `json:"block-device,omitempty" yaml:"block-device,omitempty"`
 	Mounts       resource.MountMap       `json:"mount,omitempty" yaml:"mount,omitempty"`
 	Interfaces   resource.InterfaceMap   `json:"interface,omitempty" yaml:"interface,omitempty"`
 	HTTPs        resource.HTTPMap        `json:"http,omitempty" yaml:"http,omitempty"`
@@ -38,6 +39,7 @@ func NewGossConfig() *GossConfig {
 		DNS:          make(resource.DNSMap),
 		Processes:    make(resource.ProcessMap),
 		Gossfiles:    make(resource.GossfileMap),
+		BlockDevice:  make(resource.BlockDeviceMap),
 		KernelParams: make(resource.KernelParamMap),
 		Mounts:       make(resource.MountMap),
 		Interfaces:   make(resource.InterfaceMap),
@@ -61,6 +63,7 @@ func (c *GossConfig) Resources() []resource.Resource {
 		c.Groups,
 		c.Ports,
 		c.KernelParams,
+		c.BlockDevice,
 		c.Mounts,
 		c.Interfaces,
 		c.Matchings,
@@ -144,6 +147,10 @@ func mergeGoss(g1, g2 GossConfig) GossConfig {
 
 	for k, v := range g2.KernelParams {
 		g1.KernelParams[k] = v
+	}
+
+	for k, v := range g2.BlockDevice {
+		g1.BlockDevice[k] = v
 	}
 
 	for k, v := range g2.Mounts {
