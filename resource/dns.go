@@ -2,6 +2,7 @@ package resource
 
 import (
 	"strings"
+	"time"
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
@@ -34,7 +35,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 		skip = true
 	}
 
-	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: d.Timeout, Server: d.Server})
+	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
 	// Backwards copatibility hack for now
@@ -65,7 +66,7 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 	d := &DNS{
 		Host:       host,
 		Resolvable: resolvable,
-		Timeout:    config.Timeout,
+		Timeout:    config.TimeOutMilliSeconds(),
 		Server:     server,
 	}
 	if !contains(config.IgnoreList, "addrs") {

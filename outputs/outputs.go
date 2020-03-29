@@ -109,6 +109,7 @@ func Outputers() []string {
 	return list
 }
 
+// FormatOptions are all the valid options formatters accept
 func FormatOptions() []string {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
@@ -122,6 +123,28 @@ func FormatOptions() []string {
 	}
 	sort.Strings(list)
 	return list
+}
+
+// IsValidFormat determines if f is a valid format name based on Outputers()
+func IsValidFormat(f string) bool {
+	for _, o := range Outputers() {
+		if o == f {
+			return true
+		}
+	}
+
+	return false
+}
+
+// IsValidFormatOption determines if o is a valid format option based on FormatOptions()
+func IsValidFormatOption(o string) bool {
+	for _, p := range FormatOptions() {
+		if p == o {
+			return true
+		}
+	}
+
+	return false
 }
 
 func GetOutputer(name string) (Outputer, error) {
