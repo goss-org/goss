@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"time"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -27,7 +29,7 @@ func (a *Addr) Validate(sys *system.System) []TestResult {
 		a.Timeout = 500
 	}
 
-	sysAddr := sys.NewAddr(a.Address, sys, util.Config{Timeout: a.Timeout, LocalAddress: a.LocalAddress})
+	sysAddr := sys.NewAddr(a.Address, sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
 
 	var results []TestResult
 	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable, skip))
@@ -40,7 +42,7 @@ func NewAddr(sysAddr system.Addr, config util.Config) (*Addr, error) {
 	a := &Addr{
 		Address:      address,
 		Reachable:    reachable,
-		Timeout:      config.Timeout,
+		Timeout:      config.TimeOutMilliSeconds(),
 		LocalAddress: config.LocalAddress,
 	}
 	return a, err

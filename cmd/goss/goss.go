@@ -4,49 +4,52 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/aelsabbahy/goss"
 	"github.com/aelsabbahy/goss/outputs"
+	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
+
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
 
 var version string
 
-// converts a cli context into a goss RuntimeConfig
-func newRuntimeConfigFromCLI(c *cli.Context) *goss.RuntimeConfig {
-	bp := func(b bool) *bool { return &b }
-
-	cfg := &goss.RuntimeConfig{
-		FormatOptions:     c.StringSlice("format-options"),
-		Vars:              c.GlobalString("vars"),
-		VarsInline:        c.GlobalString("vars-inline"),
-		Spec:              c.GlobalString("gossfile"),
-		Sleep:             c.Duration("sleep"),
-		RetryTimeout:      c.Duration("retry-timeout"),
-		Timeout:           c.Duration("timeout"),
+// converts a cli context into a goss Config
+func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
+	cfg := &util.Config{
+		AllowInsecure:     c.Bool("insecure"),
+		AnnounceToCLI:     true,
 		Cache:             c.Duration("cache"),
+		Debug:             c.Bool("debug"),
+		Endpoint:          c.String("endpoint"),
+		FormatOptions:     c.StringSlice("format-options"),
+		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
+		ListenAddress:     c.String("listen-addr"),
 		MaxConcurrent:     c.Int("max-concurrent"),
+		NoFollowRedirects: c.Bool("no-follow-redirects"),
 		OutputFormat:      c.String("format"),
 		PackageManager:    c.GlobalString("package"),
-		Endpoint:          c.String("endpoint"),
-		ListenAddress:     c.String("listen-addr"),
-		ExcludeAttributes: c.GlobalStringSlice("exclude-attr"),
-		Insecure:          c.Bool("insecure"),
-		NoFollowRedirects: c.Bool("no-follow-redirects"),
-		Server:            c.String("server"),
-		Username:          c.String("username"),
 		Password:          c.String("password"),
-		Debug:             c.Bool("debug"),
+		RetryTimeout:      c.Duration("retry-timeout"),
+		Server:            c.String("server"),
+		Sleep:             c.Duration("sleep"),
+		Spec:              c.GlobalString("gossfile"),
+		Timeout:           c.Duration("timeout"),
+		Username:          c.String("username"),
+		Vars:              c.GlobalString("vars"),
+		VarsInline:        c.GlobalString("vars-inline"),
 	}
 
 	if c.Bool("no-color") {
-		cfg.NoColor = bp(true)
+		util.WithNoColor()(cfg)
 	}
 
 	if c.Bool("color") {
-		cfg.NoColor = bp(false)
+		util.WithColor()(cfg)
 	}
 
 	return cfg
@@ -78,7 +81,7 @@ func main() {
 		},
 		cli.StringFlag{
 			Name:  "package",
-			Usage: "Package type to use [rpm, deb, apk, pacman]",
+			Usage: fmt.Sprintf("Package type to use [%s]", strings.Join(system.SupportedPackageManagers(), ", ")),
 		},
 	}
 	app.Commands = []cli.Command{

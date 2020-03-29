@@ -31,7 +31,7 @@ type DefCommand struct {
 func NewDefCommand(command string, system *System, config util.Config) Command {
 	return &DefCommand{
 		command: command,
-		Timeout: config.Timeout,
+		Timeout: config.TimeOutMilliSeconds(),
 	}
 }
 
