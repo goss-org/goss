@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -40,6 +41,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		str := strings.SplitN(r, ": ", 2)
 		headers.Add(str[0], str[1])
 	}
+	fmt.Printf("\nheaders: %v\n\n", headers)
 	return &DefHTTP{
 		http:              httpStr,
 		allowInsecure:     config.AllowInsecure,
@@ -86,6 +88,14 @@ func (u *DefHTTP) setup() error {
 		return u.err
 	}
 	req.Header = u.RequestHeader.Clone()
+
+	if host, ok := u.RequestHeader["Host"]; ok {
+		if len(host) > 1 {
+			fmt.Fprintf(os.Stderr, "multiple host headers detected, using first: (%v)", host[0])
+		}
+		req.Host = host[0]
+	}
+
 	if u.Username != "" || u.Password != "" {
 		req.SetBasicAuth(u.Username, u.Password)
 	}
