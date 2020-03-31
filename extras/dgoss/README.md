@@ -72,7 +72,7 @@ The following environment variables can be set to change the behavior of dgoss.
 ##### GOSS_PATH
 Location of the goss binary to use. (Default: `$(which goss)`)
 
-#### GOSS_FILE
+#####  GOSS_FILE
 Name of the goss file to use. (Default: `goss.yaml`)
 
 ##### GOSS_OPTS
@@ -100,4 +100,5 @@ Strategy used for copying goss files into the docker container. If set to `'moun
 (Default `'mount'`)
 
 ##### CONTAINER_LOG_OUTPUT
+**NOTE:** this only works when `GOSS_FILES_STRATEGY` is set to `'mount'`.
 Location of the file that contains tested container logs. Logs are retained only if the variable is set to a non-empty string. (Default `''`)
