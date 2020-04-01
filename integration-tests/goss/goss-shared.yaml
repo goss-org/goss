@@ -191,7 +191,7 @@ http:
   https://httpbin.org/headers?host:
     status: 200
     allow-insecure: false
-    timeout: 10000
+    timeout: 5000
     request-headers:
       - "Host: example.com"
     headers: ["Content-Type: application/json"]
@@ -200,7 +200,7 @@ http:
     status: 200
     username: username
     password: secret
-  https://httpbin.org/basic-auth/username/secret:
+  https://httpbin.org/basic-auth/username/secret?failure:
     status: 401
     username: username
     password: wrong
