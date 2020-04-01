@@ -183,19 +183,19 @@ http:
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false
-    timeout: 10000
-    request-headers:
-      - "Host: example.com"
-    headers: ["Content-Type: application/json"]
-    body: ['"Host": "example.com"']
-  https://httpbin.org/headers:
-    status: 200
-    allow-insecure: false
     timeout: 5000
     request-headers:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
+  https://httpbin.org/headers?host:
+    status: 200
+    allow-insecure: false
+    timeout: 10000
+    request-headers:
+      - "Host: example.com"
+    headers: ["Content-Type: application/json"]
+    body: ['"Host": "example.com"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
