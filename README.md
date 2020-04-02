@@ -51,7 +51,7 @@ curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-a
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
