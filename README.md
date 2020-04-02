@@ -47,16 +47,12 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 
 ```bash
 # See https://github.com/aelsabbahy/goss/releases for release versions
-curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o ./goss-linux-amd64
-curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64.sha256 -o ./goss-linux-amd64.sha256
-cat goss-linux-amd64.sha256 | sha256sum --check && rm ./goss-linux-amd64.sha256
-chmod r+x ./goss-linux-amd64 && mv ./goss-linux-amd64 /usr/local/bin/goss
+curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o /usr/local/bin/goss
+chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o ./dgoss
-curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss.sha256 -o ./dgoss.sha256
-cat dgoss.sha256 | sha256sum --check && rm ./dgoss.sha256
-chmod r+x ./dgoss && mv ./dgoss /usr/local/bin/dgoss
+curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dgoss
 ```
 
 ### Build it yourself
