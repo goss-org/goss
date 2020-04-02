@@ -9,7 +9,7 @@ GO111MODULE=on
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
-all: test-all
+all: test-all dgoss-sha256
 
 test-all: fmt lint vet test test-int-all
 
@@ -111,3 +111,6 @@ alpine3: build
 arch: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh arch amd64
+
+dgoss-sha256:
+	cd extras/dgoss/ && sha256sum dgoss > dgoss.sha256
