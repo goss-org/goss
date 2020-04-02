@@ -45,13 +45,26 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 
 ### Manual installation
 
+
+#### Latest
 ```bash
-# See https://github.com/aelsabbahy/goss/releases for release versions
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
-# (optional) dgoss docker wrapper (use 'master' for latest version)
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dgoss
+```
+
+#### Specific Version
+```bash
+# See https://github.com/aelsabbahy/goss/releases for release versions
+VERSION=v0.3.10
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
+chmod +rx /usr/local/bin/goss
+
+# (optional) dgoss docker wrapper (use 'master' for latest version)
+VERSION=v0.3.10
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/dgoss
 ```
 
