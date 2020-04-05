@@ -44,10 +44,10 @@ func (i *Interface) Validate(sys *system.System) []TestResult {
 		results = append(results, ValidateValue(i, "mtu", i.MTU, sysInterface.MTU, skip))
 	}
 	if i.MAC != nil {
-		results = append(results, ValidateValue(i, "mac", i.MTU, sysInterface.MAC, skip))
+		results = append(results, ValidateValue(i, "mac", i.MAC, sysInterface.MAC, skip))
 	}
 	if i.IsVirtual != nil {
-		results = append(results, ValidateValue(i, "isvritual", i.MTU, sysInterface.IsVirtual, skip))
+		results = append(results, ValidateValue(i, "isvritual", i.IsVirtual, sysInterface.IsVirtual, skip))
 	}
 	return results
 }

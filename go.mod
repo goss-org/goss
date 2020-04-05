@@ -11,7 +11,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/jaypipes/ghw v0.5.0
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/miekg/dns v0.0.0-20161018060808-58f52c57ce9d
@@ -27,7 +27,6 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.2.2
-	github.com/jaypipes/ghw v0.5.0
 )
 
 go 1.13
