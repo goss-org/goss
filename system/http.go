@@ -87,8 +87,8 @@ func (u *DefHTTP) setup() error {
 	}
 	req.Header = u.RequestHeader.Clone()
 
-	if host, ok := u.RequestHeader["Host"]; ok {
-		req.Host = host[0]
+	if host := req.Header.Get("Host"); host != "" {
+		req.Host = host
 	}
 
 	if u.Username != "" || u.Password != "" {
