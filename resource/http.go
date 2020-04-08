@@ -35,7 +35,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
+	sysHTTP, err := sys.NewHTTP(u.HTTP, sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
 		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
 		RequestHeader: u.RequestHeader})
@@ -47,15 +47,15 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))
+	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if len(u.Headers) > 0 {
-		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip))
+		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip, err))
 	}
 	if len(u.Body) > 0 {
-		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip))
+		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip, err))
 	}
 
 	return results

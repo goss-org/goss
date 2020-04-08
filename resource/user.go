@@ -28,33 +28,33 @@ func (u *User) GetMeta() meta    { return u.Meta }
 
 func (u *User) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysuser := sys.NewUser(u.Username, sys, util.Config{})
+	sysuser, err := sys.NewUser(u.Username, sys, util.Config{})
 
 	if u.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))
+	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if u.UID != nil {
 		uUID := deprecateAtoI(u.UID, fmt.Sprintf("%s: user.uid", u.Username))
-		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID, skip))
+		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID, skip, err))
 	}
 	if u.GID != nil {
 		uGID := deprecateAtoI(u.GID, fmt.Sprintf("%s: user.gid", u.Username))
-		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID, skip))
+		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID, skip, err))
 	}
 	if u.Home != nil {
-		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip))
+		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip, err))
 	}
 	if u.Groups != nil {
-		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip))
+		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip, err))
 	}
 	if u.Shell != nil {
-		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell, skip))
+		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell, skip, err))
 	}
 	return results
 }

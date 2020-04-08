@@ -21,10 +21,10 @@ type DefInterface struct {
 	err    error
 }
 
-func NewDefInterface(name string, systei *System, config util.Config) Interface {
+func NewDefInterface(name string, systei *System, config util.Config) (Interface, error) {
 	return &DefInterface{
 		name: name,
-	}
+	}, nil
 }
 
 func (i *DefInterface) setup() error {

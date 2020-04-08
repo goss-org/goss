@@ -16,10 +16,10 @@ type DefKernelParam struct {
 	value string
 }
 
-func NewDefKernelParam(key string, system *System, config util.Config) KernelParam {
+func NewDefKernelParam(key string, system *System, config util.Config) (KernelParam, error) {
 	return &DefKernelParam{
 		key: key,
-	}
+	}, nil
 }
 
 func (k *DefKernelParam) ID() string {

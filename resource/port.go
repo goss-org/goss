@@ -22,19 +22,19 @@ func (p *Port) GetMeta() meta    { return p.Meta }
 
 func (p *Port) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysPort := sys.NewPort(p.Port, sys, util.Config{})
+	sysPort, err := sys.NewPort(p.Port, sys, util.Config{})
 
 	if p.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))
+	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if p.IP != nil {
-		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip))
+		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip, err))
 	}
 	return results
 }

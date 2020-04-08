@@ -21,10 +21,10 @@ func (r *KernelParam) GetMeta() meta    { return r.Meta }
 
 func (a *KernelParam) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysKernelParam := sys.NewKernelParam(a.Key, sys, util.Config{})
+	sysKernelParam, err := sys.NewKernelParam(a.Key, sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "value", a.Value, sysKernelParam.Value, skip))
+	results = append(results, ValidateValue(a, "value", a.Value, sysKernelParam.Value, skip, err))
 	return results
 }
 

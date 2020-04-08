@@ -22,15 +22,15 @@ func (s *Service) GetMeta() meta    { return s.Meta }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysservice := sys.NewService(s.Service, sys, util.Config{})
+	sysservice, err := sys.NewService(s.Service, sys, util.Config{})
 
 	if s.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
-	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
+	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip, err))
+	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip, err))
 	return results
 }
 

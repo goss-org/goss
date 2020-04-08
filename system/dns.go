@@ -33,7 +33,7 @@ type DefDNS struct {
 	qtype      string
 }
 
-func NewDefDNS(host string, system *System, config util.Config) DNS {
+func NewDefDNS(host string, system *System, config util.Config) (DNS, error) {
 	var h string
 	var t string
 
@@ -50,7 +50,7 @@ func NewDefDNS(host string, system *System, config util.Config) DNS {
 		Timeout: config.TimeOutMilliSeconds(),
 		server:  config.Server,
 		qtype:   t,
-	}
+	}, nil
 }
 
 func (d *DefDNS) Host() string {

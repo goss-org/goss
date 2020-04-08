@@ -59,7 +59,7 @@ func skipResult(typeS string, testType int, id string, title string, meta meta, 
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool, err error) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -77,9 +77,22 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 			startTime,
 		)
 	}
+	if err != nil {
+		return TestResult{
+			Successful:   false,
+			Result:       FAIL,
+			ResourceType: typeS,
+			TestType:     Values,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
 
 	var foundValue interface{}
-	var err error
 	switch f := actual.(type) {
 	case func() (bool, error):
 		foundValue, err = f()
@@ -247,7 +260,7 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	return slice
 }
 
-func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error), skip bool) TestResult {
+func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error), skip bool, err error) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -265,7 +278,20 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 			startTime,
 		)
 	}
-	var err error
+	if err != nil {
+		return TestResult{
+			Successful:   false,
+			Result:       FAIL,
+			ResourceType: typeS,
+			TestType:     Contains,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
+		}
+	}
 	var fh io.Reader
 	var notfound []patternMatcher
 	notfound, err = sliceToPatterns(expectedValues)

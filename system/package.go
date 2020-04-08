@@ -19,8 +19,8 @@ type NullPackage struct {
 	name string
 }
 
-func NewNullPackage(name string, system *System, config util.Config) Package {
-	return &NullPackage{name: name}
+func NewNullPackage(name string, system *System, config util.Config) (Package, error) {
+	return &NullPackage{name: name}, nil
 }
 
 func (p *NullPackage) Name() string { return p.name }

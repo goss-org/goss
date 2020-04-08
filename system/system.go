@@ -20,21 +20,21 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage     func(string, *System, util2.Config) Package
-	NewFile        func(string, *System, util2.Config) File
-	NewAddr        func(string, *System, util2.Config) Addr
-	NewPort        func(string, *System, util2.Config) Port
-	NewService     func(string, *System, util2.Config) Service
-	NewUser        func(string, *System, util2.Config) User
-	NewGroup       func(string, *System, util2.Config) Group
-	NewCommand     func(string, *System, util2.Config) Command
-	NewDNS         func(string, *System, util2.Config) DNS
+	NewPackage     func(string, *System, util2.Config) (Package, error)
+	NewFile        func(string, *System, util2.Config) (File, error)
+	NewAddr        func(string, *System, util2.Config) (Addr, error)
+	NewPort        func(string, *System, util2.Config) (Port, error)
+	NewService     func(string, *System, util2.Config) (Service, error)
+	NewUser        func(string, *System, util2.Config) (User, error)
+	NewGroup       func(string, *System, util2.Config) (Group, error)
+	NewCommand     func(string, *System, util2.Config) (Command, error)
+	NewDNS         func(string, *System, util2.Config) (DNS, error)
 	NewProcess     func(string, *System, util2.Config) (Process, error)
-	NewGossfile    func(string, *System, util2.Config) Gossfile
-	NewKernelParam func(string, *System, util2.Config) KernelParam
-	NewMount       func(string, *System, util2.Config) Mount
-	NewInterface   func(string, *System, util2.Config) Interface
-	NewHTTP        func(string, *System, util2.Config) HTTP
+	NewGossfile    func(string, *System, util2.Config) (Gossfile, error)
+	NewKernelParam func(string, *System, util2.Config) (KernelParam, error)
+	NewMount       func(string, *System, util2.Config) (Mount, error)
+	NewInterface   func(string, *System, util2.Config) (Interface, error)
+	NewHTTP        func(string, *System, util2.Config) (HTTP, error)
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process

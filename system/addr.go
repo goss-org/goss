@@ -20,13 +20,13 @@ type DefAddr struct {
 	Timeout      int
 }
 
-func NewDefAddr(address string, system *System, config util.Config) Addr {
+func NewDefAddr(address string, system *System, config util.Config) (Addr, error) {
 	addr := normalizeAddress(address)
 	return &DefAddr{
 		address:      addr,
 		LocalAddress: config.LocalAddress,
 		Timeout:      config.TimeOutMilliSeconds(),
-	}
+	}, nil
 }
 
 func (a *DefAddr) ID() string {

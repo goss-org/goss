@@ -30,43 +30,43 @@ func (f *File) GetMeta() meta    { return f.Meta }
 
 func (f *File) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysFile := sys.NewFile(f.Path, sys, util.Config{})
+	sysFile, err := sys.NewFile(f.Path, sys, util.Config{})
 
 	if f.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))
+	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if f.Mode != nil {
-		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode, skip))
+		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode, skip, err))
 	}
 	if f.Owner != nil {
-		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner, skip))
+		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner, skip, err))
 	}
 	if f.Group != nil {
-		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group, skip))
+		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group, skip, err))
 	}
 	if f.LinkedTo != nil {
-		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo, skip))
+		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo, skip, err))
 	}
 	if f.Filetype != nil {
-		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
+		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip, err))
 	}
 	if len(f.Contains) > 0 {
-		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains, skip))
+		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains, skip, err))
 	}
 	if f.Size != nil {
-		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
+		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip, err))
 	}
 	if f.Md5 != nil {
-		results = append(results, ValidateValue(f, "md5", f.Md5, sysFile.Md5, skip))
+		results = append(results, ValidateValue(f, "md5", f.Md5, sysFile.Md5, skip, err))
 	}
 	if f.Sha256 != nil {
-		results = append(results, ValidateValue(f, "sha256", f.Sha256, sysFile.Sha256, skip))
+		results = append(results, ValidateValue(f, "sha256", f.Sha256, sysFile.Sha256, skip, err))
 	}
 	return results
 }

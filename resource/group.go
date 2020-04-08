@@ -24,20 +24,20 @@ func (g *Group) GetMeta() meta    { return g.Meta }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})
+	sysgroup, err := sys.NewGroup(g.Groupname, sys, util.Config{})
 
 	if g.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))
+	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if g.GID != nil {
 		gGID := deprecateAtoI(g.GID, fmt.Sprintf("%s: group.gid", g.Groupname))
-		results = append(results, ValidateValue(g, "gid", gGID, sysgroup.GID, skip))
+		results = append(results, ValidateValue(g, "gid", gGID, sysgroup.GID, skip, err))
 	}
 	return results
 }

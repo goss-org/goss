@@ -22,19 +22,19 @@ func (p *Package) GetMeta() meta    { return p.Meta }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
+	sysPkg, err := sys.NewPackage(p.Name, sys, util.Config{})
 
 	if p.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))
+	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if p.Versions != nil {
-		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions, skip))
+		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions, skip, err))
 	}
 	return results
 }

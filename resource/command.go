@@ -45,15 +45,15 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 	}
 
 	var results []TestResult
-	sysCommand := sys.NewCommand(c.GetExec(), sys, util.Config{Timeout: time.Duration(c.Timeout) * time.Millisecond})
+	sysCommand, err := sys.NewCommand(c.GetExec(), sys, util.Config{Timeout: time.Duration(c.Timeout) * time.Millisecond})
 
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
-	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
+	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip, err))
 	if len(c.Stdout) > 0 {
-		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
+		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout, skip, err))
 	}
 	if len(c.Stderr) > 0 {
-		results = append(results, ValidateContains(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
+		results = append(results, ValidateContains(c, "stderr", c.Stderr, sysCommand.Stderr, skip, err))
 	}
 	return results
 }

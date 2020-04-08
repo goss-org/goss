@@ -35,19 +35,19 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 		skip = true
 	}
 
-	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+	sysDNS, err := sys.NewDNS(d.Host, sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
 	// Backwards copatibility hack for now
 	if d.Resolvable == nil {
 		d.Resolvable = d.Resolveable
 	}
-	results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
+	results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if d.Addrs != nil {
-		results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs, skip))
+		results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs, skip, err))
 	}
 	return results
 }

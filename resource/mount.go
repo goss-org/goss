@@ -26,28 +26,28 @@ func (m *Mount) GetMeta() meta    { return m.Meta }
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
+	sysMount, err := sys.NewMount(m.MountPoint, sys, util.Config{})
 
 	if m.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))
+	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if m.Opts != nil {
-		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
+		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip, err))
 	}
 	if m.Source != nil {
-		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip))
+		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip, err))
 	}
 	if m.Filesystem != nil {
-		results = append(results, ValidateValue(m, "filesystem", m.Filesystem, sysMount.Filesystem, skip))
+		results = append(results, ValidateValue(m, "filesystem", m.Filesystem, sysMount.Filesystem, skip, err))
 	}
 	if m.Usage != nil {
-		results = append(results, ValidateValue(m, "usage", m.Usage, sysMount.Usage, skip))
+		results = append(results, ValidateValue(m, "usage", m.Usage, sysMount.Usage, skip, err))
 	}
 	return results
 }

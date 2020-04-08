@@ -22,7 +22,10 @@ type ResourceType generic.Type
 type ResourceTypeMap map[string]*ResourceType
 
 func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*ResourceType, error) {
-	sysres := sys.NewResourceType(sr, sys, config)
+	sysres, err := sys.NewResourceType(sr, sys, config)
+	if err != nil {
+		return nil, err
+	}
 	res, err := NewResourceType(sysres, config)
 	if err != nil {
 		return nil, err
@@ -35,19 +38,22 @@ func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config
 	return res, nil
 }
 
-func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool) {
-	sysres := sys.NewResourceType(sr, sys, util.Config{})
+func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool, error) {
+	sysres, err := sys.NewResourceType(sr, sys, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	// FIXME: Do we want to be silent about errors?
 	res, _ := NewResourceType(sysres, util.Config{})
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {

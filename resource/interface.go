@@ -24,22 +24,22 @@ func (i *Interface) GetMeta() meta    { return i.Meta }
 
 func (i *Interface) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysInterface := sys.NewInterface(i.Name, sys, util.Config{})
+	sysInterface, err := sys.NewInterface(i.Name, sys, util.Config{})
 
 	if i.Skip {
 		skip = true
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip))
+	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip, err))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if i.Addrs != nil {
-		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip))
+		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip, err))
 	}
 	if i.MTU != nil {
-		results = append(results, ValidateValue(i, "mtu", i.MTU, sysInterface.MTU, skip))
+		results = append(results, ValidateValue(i, "mtu", i.MTU, sysInterface.MTU, skip, err))
 	}
 	return results
 }

@@ -28,10 +28,10 @@ type DefMount struct {
 	err        error
 }
 
-func NewDefMount(mountPoint string, system *System, config util.Config) Mount {
+func NewDefMount(mountPoint string, system *System, config util.Config) (Mount, error) {
 	return &DefMount{
 		mountPoint: mountPoint,
-	}
+	}, nil
 }
 
 func (m *DefMount) setup() error {

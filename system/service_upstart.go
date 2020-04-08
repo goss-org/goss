@@ -17,8 +17,8 @@ type ServiceUpstart struct {
 var upstartEnabled = regexp.MustCompile(`^\s*start on`)
 var upstartDisabled = regexp.MustCompile(`^manual`)
 
-func NewServiceUpstart(service string, system *System, config util.Config) Service {
-	return &ServiceUpstart{service: service}
+func NewServiceUpstart(service string, system *System, config util.Config) (Service, error) {
+	return &ServiceUpstart{service: service}, nil
 }
 
 func (s *ServiceUpstart) Service() string {

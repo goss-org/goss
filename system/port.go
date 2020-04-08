@@ -20,12 +20,12 @@ type DefPort struct {
 	sysPorts map[string][]GOnetstat.Process
 }
 
-func NewDefPort(port string, system *System, config util.Config) Port {
+func NewDefPort(port string, system *System, config util.Config) (Port, error) {
 	p := normalizePort(port)
 	return &DefPort{
 		port:     p,
 		sysPorts: system.Ports(),
-	}
+	}, nil
 }
 
 func splitPort(fullport string) (network, port string) {

@@ -22,8 +22,8 @@ type DefUser struct {
 	username string
 }
 
-func NewDefUser(username string, system *System, config util.Config) User {
-	return &DefUser{username: username}
+func NewDefUser(username string, system *System, config util.Config) (User, error) {
+	return &DefUser{username: username}, nil
 }
 
 func (u *DefUser) Username() string {

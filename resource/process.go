@@ -23,20 +23,13 @@ func (p *Process) Validate(sys *system.System) []TestResult {
 	var results []TestResult
 	skip := false
 
-	runningf := func() (bool, error) {
-		sysProcess, err := sys.NewProcess(p.Executable, sys, util.Config{})
-		if err != nil {
-			return false, err
-		}
-
-		return sysProcess.Running()
-	}
+	sysProcess, err := sys.NewProcess(p.Executable, sys, util.Config{})
 
 	if p.Skip {
 		skip = true
 	}
 
-	results = append(results, ValidateValue(p, "running", p.Running, runningf, skip))
+	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip, err))
 
 	return results
 }

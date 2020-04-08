@@ -15,8 +15,8 @@ type DefGroup struct {
 	groupname string
 }
 
-func NewDefGroup(groupname string, system *System, config util.Config) Group {
-	return &DefGroup{groupname: groupname}
+func NewDefGroup(groupname string, system *System, config util.Config) (Group, error) {
+	return &DefGroup{groupname: groupname}, nil
 }
 
 func (u *DefGroup) Groupname() string {

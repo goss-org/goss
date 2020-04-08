@@ -36,7 +36,7 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "matches", a.Matches, stub, skip))
+	results = append(results, ValidateValue(a, "matches", a.Matches, stub, skip, nil))
 	return results
 }
 

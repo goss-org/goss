@@ -37,12 +37,14 @@ type DefFile struct {
 	err      error
 }
 
-func NewDefFile(path string, system *System, config util.Config) File {
+func NewDefFile(path string, system *System, config util.Config) (File, error) {
+	var err error
 	if !strings.HasPrefix(path, "~") {
-		// FIXME: we probably shouldn't ignore errors here
-		path, _ = filepath.Abs(path)
+		if path, err = filepath.Abs(path); err != nil {
+			return nil, err
+		}
 	}
-	return &DefFile{path: path}
+	return &DefFile{path: path}, nil
 }
 
 func (f *DefFile) setup() error {

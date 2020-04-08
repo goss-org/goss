@@ -28,11 +28,11 @@ type DefCommand struct {
 	err        error
 }
 
-func NewDefCommand(command string, system *System, config util.Config) Command {
+func NewDefCommand(command string, system *System, config util.Config) (Command, error) {
 	return &DefCommand{
 		command: command,
 		Timeout: config.TimeOutMilliSeconds(),
-	}
+	}, nil
 }
 
 func (c *DefCommand) setup() error {

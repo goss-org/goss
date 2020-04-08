@@ -29,10 +29,10 @@ func (a *Addr) Validate(sys *system.System) []TestResult {
 		a.Timeout = 500
 	}
 
-	sysAddr := sys.NewAddr(a.Address, sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
+	sysAddr, err := sys.NewAddr(a.Address, sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable, skip))
+	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable, skip, err))
 	return results
 }
 

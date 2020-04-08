@@ -12,17 +12,17 @@ type ServiceSystemd struct {
 	legacy  bool
 }
 
-func NewServiceSystemd(service string, system *System, config util.Config) Service {
+func NewServiceSystemd(service string, system *System, config util.Config) (Service, error) {
 	return &ServiceSystemd{
 		service: service,
-	}
+	}, nil
 }
 
-func NewServiceSystemdLegacy(service string, system *System, config util.Config) Service {
+func NewServiceSystemdLegacy(service string, system *System, config util.Config) (Service, error) {
 	return &ServiceSystemd{
 		service: service,
 		legacy:  true,
-	}
+	}, nil
 }
 
 func (s *ServiceSystemd) Service() string {

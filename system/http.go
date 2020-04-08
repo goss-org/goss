@@ -34,7 +34,7 @@ type DefHTTP struct {
 	Password          string
 }
 
-func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
+func NewDefHTTP(httpStr string, system *System, config util.Config) (HTTP, error) {
 	headers := http.Header{}
 	for _, r := range config.RequestHeader {
 		str := strings.SplitN(r, ": ", 2)
@@ -48,7 +48,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
-	}
+	}, nil
 }
 
 func HeaderToArray(header http.Header) (res []string) {

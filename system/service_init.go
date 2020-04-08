@@ -13,12 +13,12 @@ type ServiceInit struct {
 	alpine  bool
 }
 
-func NewServiceInit(service string, system *System, config util.Config) Service {
-	return &ServiceInit{service: service}
+func NewServiceInit(service string, system *System, config util.Config) (Service, error) {
+	return &ServiceInit{service: service}, nil
 }
 
-func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
-	return &ServiceInit{service: service, alpine: true}
+func NewAlpineServiceInit(service string, system *System, config util.Config) (Service, error) {
+	return &ServiceInit{service: service, alpine: true}, nil
 }
 
 func (s *ServiceInit) Service() string {

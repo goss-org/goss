@@ -14,8 +14,8 @@ type PacmanPackage struct {
 	installed bool
 }
 
-func NewPacmanPackage(name string, system *System, config util.Config) Package {
-	return &PacmanPackage{name: name}
+func NewPacmanPackage(name string, system *System, config util.Config) (Package, error) {
+	return &PacmanPackage{name: name}, nil
 }
 
 func (p *PacmanPackage) setup() {
