@@ -820,11 +820,7 @@ func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 type ProcessMap map[string]*Process
 
 func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Process, error) {
-	sysres, err := sys.NewProcess(sr, sys, config)
-	if err != nil {
-		return nil, err
-	}
-
+	sysres := sys.NewProcess(sr, sys, config)
 	res, err := NewProcess(sysres, config)
 	if err != nil {
 		return nil, err
@@ -837,24 +833,19 @@ func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util
 	return res, nil
 }
 
-func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool, error) {
-	sysres, err := sys.NewProcess(sr, sys, util.Config{})
-	if err != nil {
-		return nil, nil, false, err
-	}
-
+func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool) {
+	sysres := sys.NewProcess(sr, sys, util.Config{})
 	// FIXME: Do we want to be silent about errors?
 	res, _ := NewProcess(sysres, util.Config{})
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false, nil
+		return res, sysres, false
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-
-	return res, sysres, true, nil
+	return res, sysres, true
 }
 
 func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
