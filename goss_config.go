@@ -49,64 +49,15 @@ func NewGossConfig() *GossConfig {
 // Merge consumes all the resources in g2 into c, duplicate resources
 // will be overwritten with the ones in g2
 func (c *GossConfig) Merge(g2 GossConfig) {
-	for k, v := range g2.Files {
-		c.Files[k] = v
-	}
+	v1 := reflect.Indirect(reflect.ValueOf(c))
+	v2 := reflect.ValueOf(g2)
+	for i := 0; i < v1.NumField(); i++ {
+		f1 := v1.Field(i)
+		f2 := v2.Field(i)
+		for _, k := range f2.MapKeys() {
+			f1.SetMapIndex(k, f2.MapIndex(k))
 
-	for k, v := range g2.Packages {
-		c.Packages[k] = v
-	}
-
-	for k, v := range g2.Addrs {
-		c.Addrs[k] = v
-	}
-
-	for k, v := range g2.Ports {
-		c.Ports[k] = v
-	}
-
-	for k, v := range g2.Services {
-		c.Services[k] = v
-	}
-
-	for k, v := range g2.Users {
-		c.Users[k] = v
-	}
-
-	for k, v := range g2.Groups {
-		c.Groups[k] = v
-	}
-
-	for k, v := range g2.Commands {
-		c.Commands[k] = v
-	}
-
-	for k, v := range g2.DNS {
-		c.DNS[k] = v
-	}
-
-	for k, v := range g2.Processes {
-		c.Processes[k] = v
-	}
-
-	for k, v := range g2.KernelParams {
-		c.KernelParams[k] = v
-	}
-
-	for k, v := range g2.Mounts {
-		c.Mounts[k] = v
-	}
-
-	for k, v := range g2.Interfaces {
-		c.Interfaces[k] = v
-	}
-
-	for k, v := range g2.HTTPs {
-		c.HTTPs[k] = v
-	}
-
-	for k, v := range g2.Matchings {
-		c.Matchings[k] = v
+		}
 	}
 }
 
@@ -164,9 +115,6 @@ func interfaceMap(slice interface{}) map[string]interface{} {
 }
 
 func mergeGoss(g1, g2 GossConfig) GossConfig {
-	g1.Gossfiles = nil
-
 	g1.Merge(g2)
-
 	return g1
 }
