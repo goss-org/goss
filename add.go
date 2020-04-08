@@ -1,8 +1,8 @@
 package goss
 
 import (
-	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -42,50 +42,14 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 
 // AddResource adds a single resource to fileName
 func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
-	var res resource.ResourceRead
-	var err error
-
-	// Need to figure out a good way to refactor this
-	switch resourceName {
-	case "Addr":
-		res, err = gossConfig.Addrs.AppendSysResource(key, sys, config)
-	case "Command":
-		res, err = gossConfig.Commands.AppendSysResource(key, sys, config)
-	case "DNS":
-		res, err = gossConfig.DNS.AppendSysResource(key, sys, config)
-	case "File":
-		res, err = gossConfig.Files.AppendSysResource(key, sys, config)
-	case "Group":
-		res, err = gossConfig.Groups.AppendSysResource(key, sys, config)
-	case "Package":
-		res, err = gossConfig.Packages.AppendSysResource(key, sys, config)
-	case "Port":
-		res, err = gossConfig.Ports.AppendSysResource(key, sys, config)
-	case "Process":
-		res, err = gossConfig.Processes.AppendSysResource(key, sys, config)
-	case "Service":
-		res, err = gossConfig.Services.AppendSysResource(key, sys, config)
-	case "User":
-		res, err = gossConfig.Users.AppendSysResource(key, sys, config)
-	case "Gossfile":
-		res, err = gossConfig.Gossfiles.AppendSysResource(key, sys, config)
-	case "KernelParam":
-		res, err = gossConfig.KernelParams.AppendSysResource(key, sys, config)
-	case "Mount":
-		res, err = gossConfig.Mounts.AppendSysResource(key, sys, config)
-	case "Interface":
-		res, err = gossConfig.Interfaces.AppendSysResource(key, sys, config)
-	case "HTTP":
-		res, err = gossConfig.HTTPs.AppendSysResource(key, sys, config)
-	default:
-		err = fmt.Errorf("undefined resource name: %s", resourceName)
-	}
-
-	if err != nil {
+	v := reflect.ValueOf(gossConfig)
+	f := v.FieldByName(resourceName)
+	fun := f.MethodByName("AppendSysResource")
+	res := fun.Call([]reflect.Value{reflect.ValueOf(key), reflect.ValueOf(sys), reflect.ValueOf(config)})
+	if err, ok := res[1].Interface().(error); ok && err != nil {
 		return err
 	}
-
-	resourcePrint(fileName, res, config.AnnounceToCLI)
+	resourcePrint(fileName, res[0].Interface().(resource.ResourceRead), config.AnnounceToCLI)
 
 	return nil
 }

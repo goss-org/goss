@@ -230,14 +230,14 @@ func main() {
 					Name:  "package",
 					Usage: "add new package",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Package", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Packages", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "file",
 					Usage: "add new file",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "File", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Files", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
@@ -250,35 +250,35 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Addr", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Addrs", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "port",
 					Usage: "add new listening [protocol]:port - ex: 80 or udp:123",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Port", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Ports", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "service",
 					Usage: "add new service",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Service", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Services", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "user",
 					Usage: "add new user",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "User", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Users", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "group",
 					Usage: "add new group",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Group", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Groups", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
@@ -291,7 +291,7 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Command", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Commands", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
@@ -315,7 +315,7 @@ func main() {
 					Name:  "process",
 					Usage: "add new process name",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Process", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Processes", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
@@ -342,14 +342,14 @@ func main() {
 						},
 					},
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "HTTP", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "HTTPs", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "goss",
 					Usage: "add new goss file, it will be imported from this one",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Gossfile", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Gossfiles", c.Args(), newRuntimeConfigFromCLI(c))
 
 					},
 				},
@@ -357,21 +357,21 @@ func main() {
 					Name:  "kernel-param",
 					Usage: "add new goss kernel param",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "KernelParam", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "KernelParams", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "mount",
 					Usage: "add new mount",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Mount", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Mounts", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{
 					Name:  "interface",
 					Usage: "add new interface",
 					Action: func(c *cli.Context) error {
-						return goss.AddResources(c.GlobalString("gossfile"), "Interface", c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), "Interfaces", c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 			},

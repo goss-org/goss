@@ -72,7 +72,7 @@ func TestUseAsPackage(t *testing.T) {
 	checkErr(t, err, "new config failed")
 
 	// adds the os tmp dir to the goss spec file
-	err = AddResources(fh.Name(), "File", []string{os.TempDir()}, cfg)
+	err = AddResources(fh.Name(), "Files", []string{os.TempDir()}, cfg)
 	checkErr(t, err, "could not add resource %q", os.TempDir())
 
 	// validate and sanity check, compare structured vs direct results etc
