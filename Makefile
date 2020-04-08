@@ -17,7 +17,7 @@ install: release/goss-linux-amd64
 	$(info INFO: Starting build $@)
 	cp release/$(cmd)-linux-amd64 $(GOPATH)/bin/goss
 
-test:
+test: gen
 	$(info INFO: Starting build $@)
 	{ \
 set -e ;\
@@ -26,15 +26,15 @@ cat c.out | sed 's|github.com/aelsabbahy/goss/||' > c.out.tmp ;\
 mv c.out.tmp c.out ;\
 }
 
-lint:
+lint: gen
 	$(info INFO: Starting build $@)
 	golint $(pkgs) || true
 
-vet:
+vet: gen
 	$(info INFO: Starting build $@)
 	go vet $(pkgs) || true
 
-fmt:
+fmt: gen
 	$(info INFO: Starting build $@)
 	{ \
 set -e ;\
@@ -42,7 +42,7 @@ fmt=$$(gofmt -l ${GO_FILES}) ;\
 [ -z "$$fmt" ] && echo "valid gofmt" || (echo -e "invalid gofmt\n$$fmt"; exit 1)\
 }
 
-bench:
+bench: gen
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
@@ -59,7 +59,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
+build: gen release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
 
 gen:
 	$(info INFO: Starting build $@)

@@ -17,3 +17,5 @@ tmp/
 
 /c.out
 /c.out.tmp
+
+resource/resource_list.go
