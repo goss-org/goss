@@ -40,11 +40,11 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	}
 	switch matchType {
 	case "have-prefix":
-		return gomega.HavePrefix(value.(string)), nil
+		return gomega.WithTransform(matchers.ToString, gomega.HavePrefix(value.(string))), nil
 	case "have-suffix":
-		return gomega.HaveSuffix(value.(string)), nil
+		return gomega.WithTransform(matchers.ToString, gomega.HaveSuffix(value.(string))), nil
 	case "match-regexp":
-		return gomega.MatchRegexp(value.(string)), nil
+		return gomega.WithTransform(matchers.ToString, gomega.MatchRegexp(value.(string))), nil
 	case "have-len":
 		value = sanitizeExpectedValue(value)
 		return gomega.HaveLen(value.(int)), nil
@@ -107,7 +107,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			"lt": "<",
 			"le": "<=",
 		}[matchType]
-		return gomega.BeNumerically(comparator, value), nil
+		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.BeNumerically(comparator, value)), nil
 
 	case "semver-constraint":
 		return matchers.BeSemverConstraint(value.(string)), nil

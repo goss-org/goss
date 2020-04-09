@@ -11,7 +11,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/jaypipes/ghw v0.6.0
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/miekg/dns v0.0.0-20161018060808-58f52c57ce9d
