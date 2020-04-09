@@ -73,7 +73,10 @@ func (f *File) Validate(sys *system.System) []TestResult {
 
 func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	path := sysFile.Path()
-	exists, _ := sysFile.Exists()
+	exists, err := sysFile.Exists()
+	if err != nil {
+		return nil, err
+	}
 	f := &File{
 		Path:     path,
 		Exists:   exists,

@@ -33,19 +33,21 @@ func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	return res, nil
 }
 
-func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool) {
+func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool, error) {
 	sysres := sys.NewAddr(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewAddr(sysres, util.Config{})
+	res, err := NewAddr(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *AddrMap) UnmarshalJSON(data []byte) error {
@@ -133,19 +135,21 @@ func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util
 	return res, nil
 }
 
-func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool) {
+func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool, error) {
 	sysres := sys.NewCommand(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewCommand(sysres, util.Config{})
+	res, err := NewCommand(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *CommandMap) UnmarshalJSON(data []byte) error {
@@ -233,19 +237,21 @@ func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Con
 	return res, nil
 }
 
-func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool) {
+func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool, error) {
 	sysres := sys.NewDNS(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewDNS(sysres, util.Config{})
+	res, err := NewDNS(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *DNSMap) UnmarshalJSON(data []byte) error {
@@ -333,19 +339,21 @@ func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	return res, nil
 }
 
-func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool) {
+func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool, error) {
 	sysres := sys.NewFile(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewFile(sysres, util.Config{})
+	res, err := NewFile(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *FileMap) UnmarshalJSON(data []byte) error {
@@ -433,19 +441,21 @@ func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config uti
 	return res, nil
 }
 
-func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool) {
+func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool, error) {
 	sysres := sys.NewGossfile(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewGossfile(sysres, util.Config{})
+	res, err := NewGossfile(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
@@ -533,19 +543,21 @@ func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.C
 	return res, nil
 }
 
-func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool) {
+func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool, error) {
 	sysres := sys.NewGroup(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewGroup(sysres, util.Config{})
+	res, err := NewGroup(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *GroupMap) UnmarshalJSON(data []byte) error {
@@ -633,19 +645,21 @@ func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util
 	return res, nil
 }
 
-func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool) {
+func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool, error) {
 	sysres := sys.NewPackage(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewPackage(sysres, util.Config{})
+	res, err := NewPackage(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *PackageMap) UnmarshalJSON(data []byte) error {
@@ -733,19 +747,21 @@ func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	return res, nil
 }
 
-func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool) {
+func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool, error) {
 	sysres := sys.NewPort(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewPort(sysres, util.Config{})
+	res, err := NewPort(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *PortMap) UnmarshalJSON(data []byte) error {
@@ -820,11 +836,7 @@ func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 type ProcessMap map[string]*Process
 
 func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Process, error) {
-	sysres, err := sys.NewProcess(sr, sys, config)
-	if err != nil {
-		return nil, err
-	}
-
+	sysres := sys.NewProcess(sr, sys, config)
 	res, err := NewProcess(sysres, config)
 	if err != nil {
 		return nil, err
@@ -838,13 +850,11 @@ func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool, error) {
-	sysres, err := sys.NewProcess(sr, sys, util.Config{})
+	sysres := sys.NewProcess(sr, sys, util.Config{})
+	res, err := NewProcess(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
 	}
-
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewProcess(sysres, util.Config{})
 	if e, _ := sysres.Exists(); e != true {
 		return res, sysres, false, nil
 	}
@@ -853,7 +863,6 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-
 	return res, sysres, true, nil
 }
 
@@ -942,19 +951,21 @@ func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util
 	return res, nil
 }
 
-func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool) {
+func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool, error) {
 	sysres := sys.NewService(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewService(sysres, util.Config{})
+	res, err := NewService(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
@@ -1042,19 +1053,21 @@ func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	return res, nil
 }
 
-func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool) {
+func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool, error) {
 	sysres := sys.NewUser(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewUser(sysres, util.Config{})
+	res, err := NewUser(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *UserMap) UnmarshalJSON(data []byte) error {
@@ -1142,19 +1155,21 @@ func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config 
 	return res, nil
 }
 
-func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System) (*KernelParam, system.KernelParam, bool) {
+func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System) (*KernelParam, system.KernelParam, bool, error) {
 	sysres := sys.NewKernelParam(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewKernelParam(sysres, util.Config{})
+	res, err := NewKernelParam(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
@@ -1242,19 +1257,21 @@ func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.C
 	return res, nil
 }
 
-func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mount, system.Mount, bool) {
+func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mount, system.Mount, bool, error) {
 	sysres := sys.NewMount(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewMount(sysres, util.Config{})
+	res, err := NewMount(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *MountMap) UnmarshalJSON(data []byte) error {
@@ -1342,19 +1359,21 @@ func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config ut
 	return res, nil
 }
 
-func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Interface, system.Interface, bool) {
+func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Interface, system.Interface, bool, error) {
 	sysres := sys.NewInterface(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewInterface(sysres, util.Config{})
+	res, err := NewInterface(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
@@ -1442,19 +1461,21 @@ func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	return res, nil
 }
 
-func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP, system.HTTP, bool) {
+func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP, system.HTTP, bool, error) {
 	sysres := sys.NewHTTP(sr, sys, util.Config{})
-	// FIXME: Do we want to be silent about errors?
-	res, _ := NewHTTP(sysres, util.Config{})
+	res, err := NewHTTP(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
 	if e, _ := sysres.Exists(); e != true {
-		return res, sysres, false
+		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
 		res.Title = old_res.Title
 		res.Meta = old_res.Meta
 	}
 	r[res.ID()] = res
-	return res, sysres, true
+	return res, sysres, true, nil
 }
 
 func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
