@@ -123,32 +123,44 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
 	// file
 	if strings.Contains(key, "/") {
-		if res, _, ok := gossConfig.Files.AppendSysResourceIfExists(key, sys); ok {
+		res, _, ok, err := gossConfig.Files.AppendSysResourceIfExists(key, sys)
+		if err != nil {
+			return err
+		}
+		if ok {
 			resourcePrint(fileName, res, c.AnnounceToCLI)
 		}
 	}
 
 	// group
-	if res, _, ok := gossConfig.Groups.AppendSysResourceIfExists(key, sys); ok {
+	if res, _, ok, err := gossConfig.Groups.AppendSysResourceIfExists(key, sys); err != nil {
+		return err
+
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// package
-	if res, _, ok := gossConfig.Packages.AppendSysResourceIfExists(key, sys); ok {
+	if res, _, ok, err := gossConfig.Packages.AppendSysResourceIfExists(key, sys); err != nil {
+
+		return err
+
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// port
-	if res, _, ok := gossConfig.Ports.AppendSysResourceIfExists(key, sys); ok {
+	if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(key, sys); err != nil {
+		return err
+
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// process
-	res, sysres, ok, err := gossConfig.Processes.AppendSysResourceIfExists(key, sys)
-	if err != nil {
+	if res, sysres, ok, err := gossConfig.Processes.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
-	}
-	if ok {
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 		ports := system.GetPorts(true)
 		pids, _ := sysres.Pids()
@@ -158,7 +170,9 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 				for _, entry := range entries {
 					if entry.Pid == pidS {
 						// port
-						if res, _, ok := gossConfig.Ports.AppendSysResourceIfExists(port, sys); ok {
+						if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(port, sys); err != nil {
+							return err
+						} else if ok {
 							resourcePrint(fileName, res, c.AnnounceToCLI)
 						}
 					}
@@ -168,12 +182,16 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	}
 
 	// Service
-	if res, _, ok := gossConfig.Services.AppendSysResourceIfExists(key, sys); ok {
+	if res, _, ok, err := gossConfig.Services.AppendSysResourceIfExists(key, sys); err != nil {
+		return err
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// user
-	if res, _, ok := gossConfig.Users.AppendSysResourceIfExists(key, sys); ok {
+	if res, _, ok, err := gossConfig.Users.AppendSysResourceIfExists(key, sys); err != nil {
+		return err
+	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 

@@ -29,7 +29,7 @@ type System struct {
 	NewGroup       func(string, *System, util2.Config) Group
 	NewCommand     func(string, *System, util2.Config) Command
 	NewDNS         func(string, *System, util2.Config) DNS
-	NewProcess     func(string, *System, util2.Config) (Process, error)
+	NewProcess     func(string, *System, util2.Config) Process
 	NewGossfile    func(string, *System, util2.Config) Gossfile
 	NewKernelParam func(string, *System, util2.Config) KernelParam
 	NewMount       func(string, *System, util2.Config) Mount

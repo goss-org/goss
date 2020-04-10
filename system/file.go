@@ -38,15 +38,15 @@ type DefFile struct {
 }
 
 func NewDefFile(path string, system *System, config util.Config) File {
+	var err error
 	if !strings.HasPrefix(path, "~") {
-		// FIXME: we probably shouldn't ignore errors here
-		path, _ = filepath.Abs(path)
+		path, err = filepath.Abs(path)
 	}
-	return &DefFile{path: path}
+	return &DefFile{path: path, err: err}
 }
 
 func (f *DefFile) setup() error {
-	if f.loaded {
+	if f.loaded || f.err != nil {
 		return f.err
 	}
 	f.loaded = true
