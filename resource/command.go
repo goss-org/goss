@@ -12,15 +12,15 @@ import (
 )
 
 type Command struct {
-	Title      string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta       meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Command    string   `json:"-" yaml:"-"`
-	Exec       string   `json:"exec,omitempty" yaml:"exec,omitempty"`
-	ExitStatus matcher  `json:"exit-status" yaml:"exit-status"`
-	Stdout     []string `json:"stdout" yaml:"stdout"`
-	Stderr     []string `json:"stderr" yaml:"stderr"`
-	Timeout    int      `json:"timeout" yaml:"timeout"`
-	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Command    string  `json:"-" yaml:"-"`
+	Exec       string  `json:"exec,omitempty" yaml:"exec,omitempty"`
+	ExitStatus matcher `json:"exit-status" yaml:"exit-status"`
+	Stdout     matcher `json:"stdout" yaml:"stdout"`
+	Stderr     matcher `json:"stderr" yaml:"stderr"`
+	Timeout    int     `json:"timeout" yaml:"timeout"`
+	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (c *Command) ID() string      { return c.Command }
@@ -49,11 +49,11 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
 	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
-	if len(c.Stdout) > 0 {
-		results = append(results, ValidateContains(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
+	if c.Stdout != nil {
+		results = append(results, ValidateValue(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
 	}
-	if len(c.Stderr) > 0 {
-		results = append(results, ValidateContains(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
+	if c.Stderr != nil {
+		results = append(results, ValidateValue(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
 	}
 	return results
 }

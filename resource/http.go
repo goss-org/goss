@@ -17,7 +17,7 @@ type HTTP struct {
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
 	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Body              []string `json:"body" yaml:"body"`
+	Body              matcher  `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
@@ -54,8 +54,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if len(u.Headers) > 0 {
 		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if len(u.Body) > 0 {
-		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip))
+	if u.Body != nil {
+		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 
 	return results

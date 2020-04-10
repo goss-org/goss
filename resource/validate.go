@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aelsabbahy/goss/matchers"
 	"github.com/onsi/gomega/types"
 )
 
@@ -60,6 +61,29 @@ func skipResult(typeS string, testType int, id string, title string, meta meta, 
 }
 
 func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+
+	if av, ok := actual.(func() (io.Reader, error)); ok {
+		if ei, ok := expectedValue.([]interface{}); ok {
+			ev := make([]string, len(ei))
+			for i, v := range ei {
+				ev[i] = v.(string)
+			}
+			return ValidateContains(res, property, ev, av, skip)
+		} else {
+			avString := func() ([]string, error) {
+				v, err := av()
+				if err != nil {
+					return nil, err
+				}
+				return matchers.ReaderToStrings(v)
+			}
+			return ValidateGomegaValue(res, property, expectedValue, avString, skip)
+		}
+	}
+	return ValidateGomegaValue(res, property, expectedValue, actual, skip)
+}
+
+func ValidateGomegaValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -90,6 +114,8 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 	case func() ([]string, error):
 		foundValue, err = f()
 	case func() (interface{}, error):
+		foundValue, err = f()
+	case func() (io.Reader, error):
 		foundValue, err = f()
 	default:
 		err = fmt.Errorf("Unknown method signature: %t", f)

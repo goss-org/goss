@@ -12,7 +12,9 @@ import (
 
 func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	switch x := matcher.(type) {
-	case string, int, bool, float64:
+	case string:
+		return gomega.WithTransform(matchers.ToString, gomega.Equal(x)), nil
+	case int, bool, float64:
 		return gomega.Equal(x), nil
 	case []interface{}:
 		var matchers []types.GomegaMatcher
@@ -20,7 +22,11 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
 				matchers = append(matchers, subMatcher)
 			} else {
-				matchers = append(matchers, gomega.ContainElement(valueI))
+				subMatcher2, err := matcherToGomegaMatcher(valueI)
+				if err != nil {
+					return nil, err
+				}
+				matchers = append(matchers, gomega.ContainElement(subMatcher2))
 			}
 		}
 		return gomega.And(matchers...), nil
@@ -71,6 +77,16 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			return nil, err
 		}
 		return gomega.ContainElement(subMatcher), nil
+	case "contain-elements":
+		subMatchers, err := sliceToGomega(value)
+		if err != nil {
+			return nil, err
+		}
+		var interfaceSlice []interface{}
+		for _, d := range subMatchers {
+			interfaceSlice = append(interfaceSlice, d)
+		}
+		return gomega.ContainElements(interfaceSlice...), nil
 	case "not":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
