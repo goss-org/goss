@@ -1,0 +1,97 @@
+matching:
+  # Basic matchers
+  basic_string:
+    content: 'foo'
+    matches: 'foo'
+
+  basic_int:
+    content: 42
+    matches: 42
+
+  basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      - 'group1'
+      - 'group2'
+
+  basic_reader:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      - 'foo'
+      - '/^m.*w$/'
+
+
+  # Transformers
+  test_numeric:
+    content: 128
+    matches:
+      and:
+        - le: 128
+        - gt: 120
+        - have-prefix: '1'
+        - have-suffix: '8'
+        - match-regexp: '\d{3}'
+
+  test_string:
+    content: '128'
+    matches:
+      and:
+        - le: 128
+        - gt: 120
+        - have-len: 3
+        - have-prefix: '1'
+        - have-suffix: '8'
+        - match-regexp: '128[a-z]?'
+
+  test_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+      - '12'
+    matches:
+        - 'group1'
+        - le: 50
+        - gt: 10
+        - match-regexp: '\d{2}'
+
+  test_reader:
+    content: |
+      foo bar
+      moo cow
+    as-reader: true
+    matches:
+      - 'foo'
+      - '/^m.*w$/'
+
+  test_reader_using_string_matchers:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      and:
+        - |
+          foo bar
+          15
+          moo cow
+        - have-prefix: 'foo'
+        - have-suffix: "cow\n"
+        - contain-element:
+            have-prefix: 'moo'
+        - contain-elements:
+          - not: 'this_doesnt_exist'
+          - lt: 20
+
+
+  test_reader_using_string_matchers2:
+    content: 'cool'
+    as-reader: true
+    matches: 'cool'
