@@ -19,3 +19,5 @@ tmp/
 /c.out.tmp
 
 **/*.go-e
+
+cc-test-reporter
