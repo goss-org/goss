@@ -7,9 +7,12 @@ TRAVIS_TAG ?= "0.0.0"
 GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
 GO111MODULE=on
 
-.PHONY: all build install test release bench fmt lint vet test-int-all gen gen-ci centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+.PHONY: all build install test release bench fmt lint vet test-int-all gen gen-ci mod centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
-all: gen-ci test-all dgoss-sha256
+all: mod gen-ci test-all dgoss-sha256
+
+mod:
+	go mod download
 
 test-all: fmt lint vet test test-int-all
 
