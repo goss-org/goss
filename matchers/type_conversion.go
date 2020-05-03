@@ -27,6 +27,14 @@ func ToFloat64(e interface{}) (float64, error) {
 	}
 }
 
+func ToInt(e interface{}) (int, error) {
+	v, err := ToFloat64(e)
+	if err != nil {
+		return 0, err
+	}
+	return int(v), nil
+}
+
 func ToString(e interface{}) string {
 	switch v := e.(type) {
 	case []string:

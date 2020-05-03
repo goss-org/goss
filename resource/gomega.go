@@ -14,7 +14,11 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	switch x := matcher.(type) {
 	case string:
 		return gomega.WithTransform(matchers.ToString, gomega.Equal(x)), nil
-	case int, bool, float64:
+	case float64:
+		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.Equal(x)), nil
+	case int:
+		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.Equal(float64(x))), nil
+	case bool:
 		return gomega.Equal(x), nil
 	case []interface{}:
 		var matchers []types.GomegaMatcher

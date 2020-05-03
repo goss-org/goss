@@ -32,22 +32,37 @@ matching:
     content: 128
     matches:
       and:
+        - '128'
         - le: 128
         - gt: 120
         - have-prefix: '1'
         - have-suffix: '8'
         - match-regexp: '\d{3}'
 
-  test_string:
+  test_string_int:
     content: '128'
     matches:
       and:
+        - 128
+        - 128.0
         - le: 128
         - gt: 120
         - have-len: 3
         - have-prefix: '1'
         - have-suffix: '8'
         - match-regexp: '128[a-z]?'
+
+  test_string_float:
+    content: '128.3'
+    matches:
+      and:
+        - 128.3
+        - le: 129
+        - gt: 120
+        - have-len: 5
+        - have-prefix: '1'
+        - have-suffix: '3'
+        - match-regexp: '128\.[0-3]'
 
   test_array:
     content:
