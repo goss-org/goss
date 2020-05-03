@@ -617,6 +617,7 @@ http:
     skip: false
 ```
 
+**NOTE:** only the first `Host` header will be used to set the `Request.Host` value if multiple are provided.
 
 ### interface
 Validates network interface values

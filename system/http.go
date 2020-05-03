@@ -86,6 +86,11 @@ func (u *DefHTTP) setup() error {
 		return u.err
 	}
 	req.Header = u.RequestHeader.Clone()
+
+	if host := req.Header.Get("Host"); host != "" {
+		req.Host = host
+	}
+
 	if u.Username != "" || u.Password != "" {
 		req.SetBasicAuth(u.Username, u.Password)
 	}
