@@ -52,6 +52,8 @@ curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-a
 chmod +rx /usr/local/bin/goss
 
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+# Alternatively, using the latest master
+# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
