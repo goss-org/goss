@@ -100,6 +100,4 @@ Strategy used for copying goss files into the docker container. If set to `'moun
 (Default `'mount'`)
 
 ##### CONTAINER_LOG_OUTPUT
-**Note:** this only works when `GOSS_FILES_STRATEGY` is set to `'mount'`.
-
 Location of the file that contains tested container logs. Logs are retained only if the variable is set to a non-empty string. (Default `''`)
