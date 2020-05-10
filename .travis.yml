@@ -46,8 +46,8 @@ deploy:
     - release/goss-linux-386.sha256
     - release/goss-linux-arm
     - release/goss-linux-arm.sha256
-    - release/goss-windows-amd64
-    - release/goss-windows-amd64.sha256
+    - release/goss-windows-amd64.exe
+    - release/goss-windows-amd64.exe.sha256
     - extras/dgoss/dgoss
     - extras/dgoss/dgoss.sha256
   skip_cleanup: true
