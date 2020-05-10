@@ -19,7 +19,7 @@ install: release/goss-linux-amd64
 
 test:
 	$(info INFO: Starting build $@)
-	./ci/go-test.sh
+	./ci/go-test.sh $(pkgs)
 
 lint:
 	$(info INFO: Starting build $@)
