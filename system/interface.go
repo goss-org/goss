@@ -5,6 +5,8 @@ import (
 
 	"github.com/aelsabbahy/goss/util"
 
+	"errors"
+
 	"github.com/jaypipes/ghw"
 )
 
@@ -55,10 +57,10 @@ func (i *DefInterface) setup() error {
 	for _, nic := range ghwNetwork.NICs {
 		if nic.Name == i.name {
 			i.ghwIface = nic
-			break
+			return nil
 		}
 	}
-	return nil
+	return errors.New("Can't find interface")
 }
 
 func (i *DefInterface) ID() string {
