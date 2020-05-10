@@ -25,14 +25,14 @@ install:
   - ./ci-install.sh
 
 before_script:
-  - ./cc-test-reporter before-build
+  - ./ci-before-build.sh
 
 script:
 # darwin & windows do not support integration-testing approach via docker that linux does, so skip `test-int-*`
 - if [[ "${TRAVIS_OS_NAME}" == "windows" || "${TRAVIS_OS_NAME}" == "osx" ]]; then make test-short-all; else make all; fi
 
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -d
+  - ./ci-after-build.sh
 
 deploy:
   provider: releases
