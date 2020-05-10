@@ -22,17 +22,16 @@ before_install:
 - if [ "${TRAVIS_OS_NAME}" == "windows" ]; then choco install make; fi
 
 install:
-  - ./ci-install.sh
+  - ./ci-install.sh "${TRAVIS_OS_NAME}"
 
 before_script:
-  - ./ci-before-build.sh
+  - ./ci-before-build.sh "${TRAVIS_OS_NAME}"
 
 script:
-# darwin & windows do not support integration-testing approach via docker that linux does, so skip `test-int-*`
-- if [[ "${TRAVIS_OS_NAME}" == "windows" || "${TRAVIS_OS_NAME}" == "osx" ]]; then make test-short-all; else make all; fi
+  - ./ci-before-build.sh "${TRAVIS_OS_NAME}"
 
 after_script:
-  - ./ci-after-build.sh
+  - ./ci-after-build.sh "${TRAVIS_OS_NAME}"
 
 deploy:
   provider: releases
