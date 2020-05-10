@@ -9,9 +9,9 @@ GO111MODULE=on
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
-all: test-all dgoss-sha256
+all: test-short-all test-int-all dgoss-sha256
 
-test-all: fmt lint vet test test-int-all
+test-short-all: fmt lint vet test
 
 install: release/goss-linux-amd64
 	$(info INFO: Starting build $@)
@@ -59,7 +59,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm
+build: release/goss-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-windows-amd64
 
 gen:
 	$(info INFO: Starting build $@)
