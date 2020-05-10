@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
+
 platform_spec="${1:?Must supply name of release binary to build e.g. goss-linux-amd64}"
 TRAVIS_TAG="${TRAVIS_TAG:-"local"}"
 

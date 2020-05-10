@@ -22,9 +22,7 @@ before_install:
 - if [ "${TRAVIS_OS_NAME}" == "windows" ]; then choco install make; fi
 
 install:
-  - go get -u golang.org/x/lint/golint
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
+  - ./ci-install.sh
 
 before_script:
   - ./cc-test-reporter before-build

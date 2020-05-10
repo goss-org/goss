@@ -46,11 +46,6 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
-
-
-# Pattern rule for platform builds.
-# `subst` substitutes space for -, thus making an array
-# firstword, and word select indexes from said array.
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
 
