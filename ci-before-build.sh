@@ -3,9 +3,6 @@ set -euo pipefail
 set -x
 goos="${TRAVIS_OS_NAME:?"No value for TRAVIS_OS_NAME. This is meant to be run in Travis CI, see also https://docs.travis-ci.com/user/environment-variables/#convenience-variables"}"
 
-extension=""
-if [[ "${goos}" == "windows" ]]; then
-  extension=".exe"
+if [[ "${goos}" != "windows" ]]; then
+  ./cc-test-reporter before-build
 fi
-
-"./cc-test-reporter${extension}" before-build
