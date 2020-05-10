@@ -15,6 +15,13 @@ seccomp_opts() {
   fi
 }
 
+current_platform="$(uname -s)"
+echo "${current_platform}"
+if [[ "${current_platform}" == "MINGW"* || "${current_platform}" == "MSYS_NT"* || "${current_platform}" == "Darwin" ]]; then
+  echo "Skipping: Cannot run integration tests (docker) on macOS or Windows. Exiting 0."
+  exit 0
+fi
+
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then

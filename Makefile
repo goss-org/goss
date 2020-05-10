@@ -52,8 +52,7 @@ bench:
 # `subst` substitutes space for -, thus making an array
 # firstword, and word select indexes from said array.
 release/goss-%: $(GO_FILES)
-	CGO_ENABLED=0 GOOS=$(firstword $(subst -, ,$*)) GOARCH=$(word 2, $(subst -, ,$*)) go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o $@ $(exe)
-	sha256sum $@ > $@.sha256
+	./release-build.sh $*
 
 release:
 	$(MAKE) clean
