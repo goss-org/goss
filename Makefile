@@ -19,12 +19,7 @@ install: release/goss-linux-amd64
 
 test:
 	$(info INFO: Starting build $@)
-	{ \
-set -e ;\
-go test -coverprofile=c.out ${pkgs} ;\
-cat c.out | sed 's|github.com/aelsabbahy/goss/||' > c.out.tmp ;\
-mv c.out.tmp c.out ;\
-}
+	./ci/go-test.sh
 
 lint:
 	$(info INFO: Starting build $@)
@@ -36,11 +31,7 @@ vet:
 
 fmt:
 	$(info INFO: Starting build $@)
-	{ \
-set -e ;\
-fmt=$$(gofmt -l ${GO_FILES}) ;\
-[ -z "$$fmt" ] && echo "valid gofmt" || (echo -e "invalid gofmt\n$$fmt"; exit 1)\
-}
+	./ci/go-fmt.sh
 
 bench:
 	$(info INFO: Starting build $@)

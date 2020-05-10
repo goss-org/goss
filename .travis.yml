@@ -22,16 +22,16 @@ before_install:
 - if [ "${TRAVIS_OS_NAME}" == "windows" ]; then choco install make; fi
 
 install:
-  - ./ci-install.sh "${TRAVIS_OS_NAME}"
+  - ./ci/install.sh "${TRAVIS_OS_NAME}"
 
 before_script:
-  - ./ci-before-build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/before-build.sh "${TRAVIS_OS_NAME}"
 
 script:
-  - ./ci-build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/build.sh "${TRAVIS_OS_NAME}"
 
 after_script:
-  - ./ci-after-build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/after-build.sh "${TRAVIS_OS_NAME}"
 
 deploy:
   provider: releases
