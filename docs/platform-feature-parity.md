@@ -1,6 +1,6 @@
 # Platform feature-parity
 
-macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken.
+macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551))
 
 This matrix attempts to track parity across platforms.
 
