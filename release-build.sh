@@ -18,5 +18,5 @@ fi
 GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
   -ldflags "-X main.version=${TRAVIS_TAG} -s -w" \
   -o "${output}"
-
+chmod +x "${output}"
 sha256sum "${output}" > "${output}".sha256
