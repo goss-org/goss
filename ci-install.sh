@@ -9,6 +9,6 @@ fi
 go get -u golang.org/x/lint/golint
 
 if [[ "${goos}" != "windows" ]]; then
-  curl -L "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${goos}-amd64${extension}" > "./cc-test-reporter"
+  curl -L "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-${goos}-amd64" > "./cc-test-reporter"
   chmod +x "./cc-test-reporter"
 fi
