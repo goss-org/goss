@@ -4,7 +4,7 @@ set -euo pipefail
 # gofmt must be on PATH
 command -v gofmt
 
-fmt="$(gofmt -l "${GO_FILES}")"
+fmt="$(go fmt github.com/aelsabbahy/goss/...)"
 
 if [[ -z "${fmt}" ]]; then
   echo "valid gofmt"

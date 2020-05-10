@@ -37,7 +37,7 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
-release/goss-%: $(GO_FILES)
+release/goss-%:
 	./release-build.sh $*
 
 release:
