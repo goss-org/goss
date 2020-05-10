@@ -12,7 +12,7 @@ Legend:
 ## Matrix
 
 | Feature | `linux` implementation + unit-tests | `linux` integration-tests | `macOS` implementation + unit-tests | `macOS` integration-tests | `Windows` implementation + unit-tests | `Windows` integration-tests |
-|:---------------|:--------|:-----------------:|:----------------:|:-----------------:|:----------------:|:-------------------:|:------------------:|
+|:---------------|:--------|:-----------------:|:----------------:|:-----------------:|:----------------:|:-------------------:|
 | Assertion: `addr` | √ | √ | | | | |
 | Assertion: `command` | √ | √ | | | | |
 | Assertion: `dns` | √ | √ | | | | |
