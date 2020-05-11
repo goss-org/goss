@@ -3,7 +3,6 @@ export GO15VENDOREXPERIMENT=1
 exe = github.com/aelsabbahy/goss/cmd/goss
 pkgs = $(shell ./novendor.sh)
 cmd = goss
-TRAVIS_TAG ?= "0.0.0"
 GO111MODULE=on
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
