@@ -15,7 +15,7 @@ Legend:
 | Feature                   | `linux` |        `macOS`         |        `Windows`         |
 |:--------------------------|:-------:|:----------------------:|:------------------------:|
 | Assertion: `addr`         |   `f`   |                        |                          |
-| Assertion: `command`      |   `f`   |                        |                          |
+| Assertion: `command`      |   `f`   | [`p`](#command-macos)  |                          |
 | Assertion: `dns`          |   `f`   |                        |                          |
 | Assertion: `file`         |   `f`   |   [`p`](#file-macos)   |   [`p`](#file-windows)   |
 | Assertion: `gossfile`     |   `f`   |                        |                          |
@@ -34,7 +34,7 @@ Legend:
 | Command: `autoadd`        |   `f`   |                        |                          |
 | Command: `help`           |   `f`   |                        |                          |
 | Command: `render`         |   `f`   |                        |                          |
-| Command: `serve`          |   `f`   | [`p`](#serve-macos) |                          |
+| Command: `serve`          |   `f`   |  [`p`](#serve-macos)   |                          |
 | Command: `validate`       |   `f`   | [`p`](#validate-macos) | [`p`](#validate-windows) |
 
 ## Details
@@ -62,6 +62,8 @@ Not yet tested.
 ### Attribute: `command`
 
 #### `command`: macOS
+
+Manually tested via [`serve`](#serve-macos).
 
 #### `command`: Windows
 
@@ -220,8 +222,9 @@ Not yet tested.
 Manually tested.
 
 ```bash
-trap 'killall goss' EXIT
-goss -g integration-tests/goss/goss-serve.yaml serve &
+make build
+trap 'killall goss-darwin-amd64' EXIT
+release/goss-darwin-amd64 -g integration-tests/goss/goss-serve.yaml serve &
 curl http://localhost:9100/healthz | grep 'Count: 2, Failed: 0, Skipped: 0'
 ```
 
@@ -231,7 +234,10 @@ curl http://localhost:9100/healthz | grep 'Count: 2, Failed: 0, Skipped: 0'
 
 #### `validate`: macOS
 
-Manually tested `goss validate`; success.
+```bash
+make build
+release/goss-darwin-amd64 -g integration-tests/goss/goss-serve.yaml validate | grep 'Count: 2, Failed: 0, Skipped: 0'
+```
 
 #### `validate`: Windows
 
