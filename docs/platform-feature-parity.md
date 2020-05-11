@@ -219,8 +219,6 @@ Not yet tested.
 
 #### `serve`: macOS
 
-Manually tested.
-
 ```bash
 make build
 trap 'killall goss-darwin-amd64' EXIT
@@ -241,4 +239,4 @@ release/goss-darwin-amd64 -g integration-tests/goss/goss-serve.yaml validate | g
 
 #### `validate`: Windows
 
-Manually tested `goss validate`; success.
+Not yet tested.
