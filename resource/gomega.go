@@ -11,6 +11,7 @@ import (
 )
 
 func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+	// format.UseStringerRepresentation = true
 	switch x := matcher.(type) {
 	case string:
 		return gomega.WithTransform(matchers.ToString, gomega.Equal(x)), nil
@@ -21,19 +22,37 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case bool:
 		return gomega.Equal(x), nil
 	case []interface{}:
-		var matchers []types.GomegaMatcher
-		for _, valueI := range x {
-			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
-				matchers = append(matchers, subMatcher)
-			} else {
-				subMatcher2, err := matcherToGomegaMatcher(valueI)
-				if err != nil {
-					return nil, err
-				}
-				matchers = append(matchers, gomega.ContainElement(subMatcher2))
-			}
+		subMatchers, err := sliceToGomega(x)
+		if err != nil {
+			return nil, err
 		}
-		return gomega.And(matchers...), nil
+		var interfaceSlice []interface{}
+		for _, d := range subMatchers {
+			interfaceSlice = append(interfaceSlice, d)
+		}
+		return gomega.ContainElements(interfaceSlice...), nil
+		//		var gmatchers []types.GomegaMatcher
+		//		for _, valueI := range x {
+		//			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
+		//				gmatchers = append(gmatchers, subMatcher)
+		//			} else {
+		//				subMatcher2, err := matcherToGomegaMatcher(valueI)
+		//				if err != nil {
+		//					return nil, err
+		//				}
+		//				gmatchers = append(gmatchers, gomega.ContainElement(subMatcher2))
+		//				//test := gomega.ContainElement(subMatcher2)
+		//				//test2 := test.(*gmatchers.ContainElementMatcher)
+		//				//fmt.Println("wtf", format.Object(test2.Element, 1))
+		//				//fmt.Println("wtf2", test2.Element)
+		//				//test3 := test2.Element.(*gmatchers.WithTransformMatcher)
+		//				//fmt.Println("wtf3", format.Object(test3, 1))
+		//				//spew.Printf("wtf2 %v\n", test2.Element)
+		//				//fmt.Println("wtf1", subMatcher2.FailureMessage("wtf"))
+		//				//fmt.Println("wtf2", test.FailureMessage("wtf"))
+		//			}
+		//		}
+		//		return gomega.And(gmatchers...), nil
 	}
 	matcher = sanitizeExpectedValue(matcher)
 	if matcher == nil {
@@ -56,7 +75,6 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "match-regexp":
 		return gomega.WithTransform(matchers.ToString, gomega.MatchRegexp(value.(string))), nil
 	case "have-len":
-		value = sanitizeExpectedValue(value)
 		return gomega.HaveLen(value.(int)), nil
 	case "have-key-with-value":
 		subMatchers, err := mapToGomega(value)

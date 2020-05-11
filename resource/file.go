@@ -56,7 +56,7 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	if f.Filetype != nil {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
-	if f.Contains != 0 {
+	if f.Contains != nil {
 		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contains, skip))
 	}
 	if f.Size != nil {

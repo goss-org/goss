@@ -25,6 +25,8 @@ matching:
     matches:
       - 'foo'
       - '/^m.*w$/'
+      - '!wtf'
+      - '!/^ERROR:/'
 
 
   # Transformers
@@ -58,7 +60,7 @@ matching:
       and:
         - 128.3
         - le: 129
-        - gt: 120
+        - gt: 120.2
         - have-len: 5
         - have-prefix: '1'
         - have-suffix: '3'
@@ -66,24 +68,11 @@ matching:
 
   test_array:
     content:
-      - 'group1'
-      - 'group2'
-      - 'group3'
-      - '12'
+      - '46'
+      - '45'
     matches:
-        - 'group1'
-        - le: 50
-        - gt: 10
-        - match-regexp: '\d{2}'
-
-  test_reader:
-    content: |
-      foo bar
-      moo cow
-    as-reader: true
-    matches:
-      - 'foo'
-      - '/^m.*w$/'
+      - and: [{ge: 40}, {le: 50}]
+      - '46'
 
   test_reader_using_string_matchers:
     content: |
@@ -106,7 +95,27 @@ matching:
           - lt: 20
 
 
-  test_reader_using_string_matchers2:
+  test_reader_contains_elements:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      contain-elements:
+        - 'foo bar'
+        - 'moo cow'
+
+
+  test_reader_as_single_string:
     content: 'cool'
     as-reader: true
     matches: 'cool'
+
+  test_reader_using_int_matchers:
+    content: '40'
+    as-reader: true
+    matches:
+      and:
+       - le: 250
+       - ge: 20

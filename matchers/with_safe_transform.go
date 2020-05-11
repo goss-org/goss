@@ -3,6 +3,8 @@ package matchers
 import (
 	"fmt"
 	"reflect"
+	"runtime"
+	"strings"
 
 	"github.com/onsi/gomega/types"
 )
@@ -50,6 +52,8 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	fn := reflect.ValueOf(m.Transform)
 	result := fn.Call([]reflect.Value{reflect.ValueOf(actual)})
 	m.transformedValue = result[0].Interface() // expect exactly one value
+	//fmt.Printf("%v\n", m.transformedValue)
+	//fmt.Printf("%T\n", m.transformedValue)
 	if err, ok := result[1].Interface().(error); ok && err != nil {
 		return false, err
 	}
@@ -63,4 +67,24 @@ func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string
 
 func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
 	return m.Matcher.NegatedFailureMessage(m.transformedValue)
+}
+
+func (m *WithSafeTransformMatcher) transformName() string {
+	fn := reflect.ValueOf(m.Transform)
+	n := runtime.FuncForPC(fn.Pointer()).Name()
+	ss := strings.Split(n, ".")
+	s := ss[len(ss)-1]
+	return s
+}
+func (m *WithSafeTransformMatcher) String() string {
+	//return fmt.Sprintf("Matcher: %#v\nTransform: %s", m.Matcher, m.transformName())
+	//return fmt.Sprintf("%s{} | %#v", m.transformName(), m.Matcher)
+	return fmt.Sprintf("TransformMatcher{Transform:%s{}, Matcher:%s}", m.transformName(), getMatcherName(m.Matcher))
+}
+
+func getMatcherName(i interface{}) string {
+	n := fmt.Sprintf("%#v", i)
+	ss := strings.Split(n, ".")
+	s := ss[len(ss)-1]
+	return s
 }

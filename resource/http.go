@@ -16,7 +16,7 @@ type HTTP struct {
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
+	Headers           matcher  `json:"headers,omitempty" yaml:"headers,omitempty"`
 	Body              matcher  `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
@@ -51,8 +51,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if len(u.Headers) > 0 {
-		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip))
+	if u.Headers != nil {
+		results = append(results, ValidateGomegaValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
 	if u.Body != nil {
 		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
