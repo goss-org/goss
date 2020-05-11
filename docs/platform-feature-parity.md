@@ -4,11 +4,19 @@ macOS and Windows binaries are new and considered alpha-quality. Some functional
 
 This matrix attempts to track parity across platforms.
 
-Legend:
+## How to use this doc
+
+### Legend
 
 * `f` - full support
 * `p` - partial support (with page-link to heading underneath table, with details)
 * `n` - no current support (with page-link to heading underneath table, with details)
+
+### Contributing
+
+The current integration test approach is only appropriate for validating `linux` binaries against `linux` OS/arch combinations.
+
+Validating `macOS` and `Windows` binaries requires adding coverage that runs on those platforms within Travis, but since Travis does not support containerised builds for either platform, assertions are limited to assert against the state of the CI hosts, where we're relying on that to predictable.
 
 ## Matrix
 
