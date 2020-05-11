@@ -15,13 +15,6 @@ seccomp_opts() {
   fi
 }
 
-current_platform="$(uname -s)"
-echo "${current_platform}"
-if [[ "${current_platform}" == "MINGW"* || "${current_platform}" == "MSYS_NT"* || "${current_platform}" == "Darwin" ]]; then
-  echo "Skipping: Cannot run integration tests (docker) on macOS or Windows. Exiting 0."
-  exit 0
-fi
-
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then
@@ -48,9 +41,7 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
-set +e # this can fail, but if it does, no output is shown.
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)
-set -e
 echo "$out"
 
 if [[ $os == "arch" ]]; then
