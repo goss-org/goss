@@ -17,7 +17,8 @@ fi
 
 GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
   -ldflags "-X main.version=${version_stamp} -s -w" \
-  -o "${output}"
+  -o "${output}" \
+  github.com/aelsabbahy/goss/cmd/goss
 
 chmod +x "${output}"
 
