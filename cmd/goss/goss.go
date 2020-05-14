@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -378,9 +379,43 @@ func main() {
 		},
 	}
 
+	warnAlphaIfNeeded()
+	fatalAlphaIfNeeded()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
+	warnAlphaIfNeeded()
+}
 
+const msgFormat string = `WARNING: goss on %q is alpha-quality and work-in-progress.
+
+You should not expect everything to work. Treat linux as the canonical behaviour to expect.
+
+Please see https://github.com/aelsabbahy/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
+Please file issues via https://github.com/aelsabbahy/goss/issues/new/choose
+Pull requests and bug reports very welcome.`
+
+func warnAlphaIfNeeded() {
+	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
+		log.Printf(msgFormat, strings.Title(runtime.GOOS))
+	}
+}
+
+func fatalAlphaIfNeeded() {
+	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
+		howto := map[string]string{
+			"darwin":  "export GOSS_ALPHA=1",
+			"windows": "set GOSS_ALPHA=1",
+		}
+		val, found := os.LookupEnv("GOSS_ALPHA")
+		if !found || val != "1" {
+			log.Printf(`Terminating.
+
+To bypass this and use the binary anyway:
+
+%s`, howto[runtime.GOOS])
+			os.Exit(1)
+		}
+	}
 }
