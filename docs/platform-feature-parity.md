@@ -64,7 +64,7 @@ Not yet tested.
 
 #### `command`: macOS
 
-Manually tested via [`serve`](#serve-macos).
+Manually tested via [`serve`](#serve-macos) below.
 
 #### `command`: Windows
 
