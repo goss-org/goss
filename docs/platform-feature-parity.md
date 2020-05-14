@@ -11,6 +11,7 @@ This matrix attempts to track parity across platforms.
 * `f` - full support
 * `p` - partial support (with page-link to heading underneath table, with details)
 * `n` - no current support (with page-link to heading underneath table, with details)
+* `` (blank) - not yet tried
 
 ### Contributing
 
@@ -20,44 +21,36 @@ Validating `macOS` and `Windows` binaries requires adding coverage that runs on 
 
 ## Matrix
 
-| Feature                   | `linux` |        `macOS`         |        `Windows`         |
-|:--------------------------|:-------:|:----------------------:|:------------------------:|
-| Assertion: `addr`         |   `f`   |                        |                          |
-| Assertion: `command`      |   `f`   | [`p`](#command-macos)  |                          |
-| Assertion: `dns`          |   `f`   |                        |                          |
-| Assertion: `file`         |   `f`   |   [`p`](#file-macos)   |   [`p`](#file-windows)   |
-| Assertion: `gossfile`     |   `f`   |                        |                          |
-| Assertion: `group`        |   `f`   |                        |                          |
-| Assertion: `http`         |   `f`   |                        |                          |
-| Assertion: `interface`    |   `f`   |                        |                          |
-| Assertion: `kernel-param` |   `f`   |                        |                          |
-| Assertion: `mount`        |   `f`   |                        |                          |
-| Assertion: `matching`     |   `f`   |                        |                          |
-| Assertion: `package`      |   `f`   |                        |                          |
-| Assertion: `port`         |   `f`   |                        |                          |
-| Assertion: `process`      |   `f`   |                        |                          |
-| Assertion: `service`      |   `f`   |                        |                          |
-| Assertion: `user`         |   `f`   |                        |                          |
-| Command: `add`            |   `f`   |                        |                          |
-| Command: `autoadd`        |   `f`   |                        |                          |
-| Command: `help`           |   `f`   |                        |                          |
-| Command: `render`         |   `f`   |                        |                          |
-| Command: `serve`          |   `f`   |  [`p`](#serve-macos)   |                          |
-| Command: `validate`       |   `f`   | [`p`](#validate-macos) | [`p`](#validate-windows) |
+| Feature        | `linux` |        `macOS`         |        `Windows`         |
+|:---------------|:-------:|:----------------------:|:------------------------:|
+| **Assertions** |         |                        |                          |
+| `addr`         |   `f`   |                        |                          |
+| `command`      |   `f`   | [`p`](#command-macos)  |                          |
+| `dns`          |   `f`   |                        |                          |
+| `file`         |   `f`   |   [`p`](#file-macos)   |   [`p`](#file-windows)   |
+| `gossfile`     |   `f`   |                        |                          |
+| `group`        |   `f`   |                        |                          |
+| `http`         |   `f`   |                        |                          |
+| `interface`    |   `f`   |                        |                          |
+| `kernel-param` |   `f`   |                        |                          |
+| `mount`        |   `f`   |                        |                          |
+| `matching`     |   `f`   |                        |                          |
+| `package`      |   `f`   |                        |                          |
+| `port`         |   `f`   |                        |                          |
+| `process`      |   `f`   |                        |                          |
+| `service`      |   `f`   |                        |                          |
+| `user`         |   `f`   |                        |                          |
+| **Commands**   |         |                        |                          |
+| `add`          |   `f`   |                        |                          |
+| `autoadd`      |   `f`   |                        |                          |
+| `help`         |   `f`   |                        |                          |
+| `render`       |   `f`   |                        |                          |
+| `serve`        |   `f`   |  [`p`](#serve-macos)   |                          |
+| `validate`     |   `f`   | [`p`](#validate-macos) | [`p`](#validate-windows) |
 
 ## Details
 
 Please keep this section sorted for ease of navigation.
-
-Template (so that page-links are regular, and people with markdown aware editors can fold headings).
-
-```md
-### Attribute|Command `ref`
-
-#### `ref`: platform
-
-{details here}
-```
 
 ### Attribute: `addr`
 
