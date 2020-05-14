@@ -79,7 +79,8 @@ func (m *WithSafeTransformMatcher) transformName() string {
 func (m *WithSafeTransformMatcher) String() string {
 	//return fmt.Sprintf("Matcher: %#v\nTransform: %s", m.Matcher, m.transformName())
 	//return fmt.Sprintf("%s{} | %#v", m.transformName(), m.Matcher)
-	return fmt.Sprintf("TransformMatcher{Transform:%s{}, Matcher:%s}", m.transformName(), getMatcherName(m.Matcher))
+	//return fmt.Sprintf("TransformMatcher{Transform:%s{}, Matcher:%s}", m.transformName(), getMatcherName(m.Matcher))
+	return Object(m.Matcher, 1)
 }
 
 func getMatcherName(i interface{}) string {

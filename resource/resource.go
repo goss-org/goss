@@ -68,7 +68,7 @@ func shouldSkip(results []TestResult) bool {
 	if len(results[0].Found) < 1 {
 		return false
 	}
-	if results[0].Found[0] == "false" {
+	if results[0].Found == "false" {
 		return true
 	}
 	return false

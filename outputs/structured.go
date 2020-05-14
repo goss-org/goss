@@ -52,7 +52,7 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 				SummaryLine: humanizeResult(testResult),
 			}
 
-			if !testResult.Successful {
+			if testResult.Result == resource.FAIL {
 				result.Summary.Failed++
 			}
 

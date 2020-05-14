@@ -25,7 +25,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	var resultsOut []map[string]interface{}
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
-			if !testResult.Successful {
+			if testResult.Result == resource.FAIL {
 				failed++
 			}
 			m := struct2map(testResult)

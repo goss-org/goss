@@ -20,6 +20,7 @@ type HavePatternsMatcher struct {
 	missingElements []string
 }
 
+//FIXME
 //ContainElements succeeds if actual contains the passed in elements. The ordering of the elements does not matter.
 //By default ContainElements() uses Equal() to match the elements, however custom matchers can be passed in instead. Here are some examples:
 //
@@ -37,7 +38,7 @@ func HavePatterns(elements interface{}) types.GomegaMatcher {
 func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
 	t, ok := matcher.Elements.([]interface{})
 	if !ok {
-		return false, fmt.Errorf("Incorrect type")
+		return false, fmt.Errorf("HavePatterns matcher expects an io.reader.  Got:\n%s", format.Object(actual, 1))
 	}
 	elements := make([]string, len(t))
 	for i, v := range t {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -35,47 +34,48 @@ func humanizeResult(r resource.TestResult) string {
 		if r.Human != "" {
 			return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
 		}
-		return humanizeResult2(r)
+		//return humanizeResult2(r)
+		return fmt.Sprintln("Not Implemented")
 	default:
 		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}
 }
 
-func humanizeResult2(r resource.TestResult) string {
-	if r.Err != nil {
-		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
-	}
-
-	switch r.Result {
-	case resource.SUCCESS:
-		switch r.TestType {
-		case resource.Value:
-			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
-		case resource.Values:
-			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		case resource.Contains:
-			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		default:
-			return red("Unexpected type %d", r.TestType)
-		}
-	case resource.FAIL:
-		switch r.TestType {
-		case resource.Value:
-			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
-		case resource.Values:
-			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-		case resource.Contains:
-			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-		default:
-			return red("Unexpected type %d", r.TestType)
-		}
-	case resource.SKIP:
-		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
-	default:
-		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
-	}
-}
-
+//func humanizeResult2(r resource.TestResult) string {
+//	if r.Err != nil {
+//		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
+//	}
+//
+//	switch r.Result {
+//	case resource.SUCCESS:
+//		switch r.TestType {
+//		case resource.Value:
+//			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
+//		case resource.Values:
+//			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
+//		case resource.Contains:
+//			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
+//		default:
+//			return red("Unexpected type %d", r.TestType)
+//		}
+//	case resource.FAIL:
+//		switch r.TestType {
+//		case resource.Value:
+//			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
+//		case resource.Values:
+//			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
+//		case resource.Contains:
+//			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
+//		default:
+//			return red("Unexpected type %d", r.TestType)
+//		}
+//	case resource.SKIP:
+//		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
+//	default:
+//		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
+//	}
+//}
+//
 // Copied from database/sql
 var (
 	outputersMu           sync.Mutex
@@ -154,24 +154,24 @@ func GetOutputer(name string) (Outputer, error) {
 	return outputers[name], nil
 }
 
-func subtractSlice(x, y []string) []string {
-	m := make(map[string]bool)
-
-	for _, y := range y {
-		m[y] = true
-	}
-
-	var ret []string
-	for _, x := range x {
-		if m[x] {
-			continue
-		}
-		ret = append(ret, x)
-	}
-
-	return ret
-}
-
+//func subtractSlice(x, y []string) []string {
+//	m := make(map[string]bool)
+//
+//	for _, y := range y {
+//		m[y] = true
+//	}
+//
+//	var ret []string
+//	for _, x := range x {
+//		if m[x] {
+//			continue
+//		}
+//		ret = append(ret, x)
+//	}
+//
+//	return ret
+//}
+//
 func header(t resource.TestResult) string {
 	var out string
 	if t.Title != "" {
@@ -202,6 +202,7 @@ func summary(startTime time.Time, count, failed, skipped int) string {
 	s += f("Count: %d, Failed: %d, Skipped: %d\n", count, failed, skipped)
 	return s
 }
+
 func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
 	var s string
 	if len(failedOrSkipped) > 0 {

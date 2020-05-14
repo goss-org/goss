@@ -7,14 +7,16 @@ import (
 	"github.com/aelsabbahy/goss/matchers"
 
 	"github.com/onsi/gomega"
+	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/types"
 )
 
 func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
-	// format.UseStringerRepresentation = true
+	format.UseStringerRepresentation = true
 	switch x := matcher.(type) {
 	case string:
-		return gomega.WithTransform(matchers.ToString, gomega.Equal(x)), nil
+		return matchers.WithSafeTransform(matchers.ToString, gomega.Equal(x)), nil
+		//return gomega.Equal(x), nil
 	case float64:
 		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.Equal(x)), nil
 	case int:
@@ -69,11 +71,11 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	}
 	switch matchType {
 	case "have-prefix":
-		return gomega.WithTransform(matchers.ToString, gomega.HavePrefix(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString, gomega.HavePrefix(value.(string))), nil
 	case "have-suffix":
-		return gomega.WithTransform(matchers.ToString, gomega.HaveSuffix(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString, gomega.HaveSuffix(value.(string))), nil
 	case "match-regexp":
-		return gomega.WithTransform(matchers.ToString, gomega.MatchRegexp(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString, gomega.MatchRegexp(value.(string))), nil
 	case "have-len":
 		return gomega.HaveLen(value.(int)), nil
 	case "have-key-with-value":

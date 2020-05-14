@@ -19,7 +19,11 @@ func ToFloat64(e interface{}) (float64, error) {
 	case string:
 		return strconv.ParseFloat(strings.TrimSpace(v), 64)
 	case []string:
-		return strconv.ParseFloat(strings.TrimSpace(ToString(v)), 64)
+		s, err := ToString(v)
+		if err != nil {
+			return 0, err
+		}
+		return strconv.ParseFloat(strings.TrimSpace(s), 64)
 	default:
 		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
 		//return 0, fmt.Errorf("expected numeric, got: %v", e)
@@ -35,12 +39,12 @@ func ToInt(e interface{}) (int, error) {
 	return int(v), nil
 }
 
-func ToString(e interface{}) string {
+func ToString(e interface{}) (string, error) {
 	switch v := e.(type) {
 	case []string:
-		return strings.Join(v, "\n")
+		return strings.Join(v, "\n"), nil
 	default:
-		return fmt.Sprintf("%v", v)
+		return fmt.Sprintf("%v", v), nil
 	}
 }
 

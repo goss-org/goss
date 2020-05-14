@@ -19,9 +19,9 @@ const (
 )
 
 const (
-	SUCCESS = iota
-	FAIL
-	SKIP
+	SUCCESS = "SUCCESS"
+	FAIL    = "FAIL"
+	SKIP    = "SKIP"
 )
 
 const (
@@ -29,27 +29,28 @@ const (
 )
 
 type TestResult struct {
-	Successful   bool          `json:"successful" yaml:"successful"`
-	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
-	ResourceType string        `json:"resource-type" yaml:"resource-type"`
-	Title        string        `json:"title" yaml:"title"`
-	Meta         meta          `json:"meta" yaml:"meta"`
-	TestType     int           `json:"test-type" yaml:"test-type"`
-	Result       int           `json:"result" yaml:"result"`
-	Property     string        `json:"property" yaml:"property"`
-	Err          error         `json:"err" yaml:"err"`
-	Expected     []string      `json:"expected" yaml:"expected"`
-	Found        []string      `json:"found" yaml:"found"`
-	Human        string        `json:"human" yaml:"human"`
-	Duration     time.Duration `json:"duration" yaml:"duration"`
+	// Resource data
+	ResourceId   string `json:"resource-id" yaml:"resource-id"`
+	ResourceType string `json:"resource-type" yaml:"resource-type"`
+	Property     string `json:"property" yaml:"property"`
+	// User added info
+	Title string `json:"title" yaml:"title"`
+	Meta  meta   `json:"meta" yaml:"meta"`
+	// Result
+	Result string `json:"result" yaml:"result"`
+	Err    error  `json:"err" yaml:"err"`
+	// Matches expectation: ...
+	Expected string `json:"expected" yaml:"expected"`
+	// Used in skip?.. but why?
+	Found    string        `json:"found" yaml:"found"`
+	Human    string        `json:"human" yaml:"human"`
+	Duration time.Duration `json:"duration" yaml:"duration"`
 }
 
-func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
 	return TestResult{
-		Successful:   true,
 		Result:       SKIP,
 		ResourceType: typeS,
-		TestType:     testType,
 		ResourceId:   id,
 		Title:        title,
 		Meta:         meta,
@@ -83,7 +84,6 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	if skip {
 		return skipResult(
 			typeS,
-			Values,
 			id,
 			title,
 			meta,
@@ -123,10 +123,8 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	}
 	if err != nil {
 		return TestResult{
-			Successful:   false,
 			Result:       FAIL,
 			ResourceType: typeS,
-			TestType:     Values,
 			ResourceId:   id,
 			Title:        title,
 			Meta:         meta,
@@ -137,7 +135,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	}
 
 	var failMessage string
-	var result int
+	result := SUCCESS
 	if !success {
 		failMessage = gomegaMatcher.FailureMessage(foundValue)
 		result = FAIL
@@ -147,16 +145,14 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	found, _ := json.Marshal(foundValue)
 
 	return TestResult{
-		Successful:   success,
 		Result:       result,
 		ResourceType: typeS,
-		TestType:     Value,
 		ResourceId:   id,
 		Title:        title,
 		Meta:         meta,
 		Property:     property,
-		Expected:     []string{string(expected)},
-		Found:        []string{string(found)},
+		Expected:     string(expected),
+		Found:        string(found),
 		Human:        failMessage,
 		Err:          err,
 		Duration:     time.Now().Sub(startTime),
