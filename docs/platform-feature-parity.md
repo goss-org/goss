@@ -222,8 +222,8 @@ Not yet tested.
 
 ```bash
 make build
-trap 'killall goss-darwin-amd64' EXIT
-release/goss-darwin-amd64 -g integration-tests/goss/goss-serve.yaml serve &
+trap 'killall goss-alpha-darwin-amd64' EXIT
+release/goss-alpha-darwin-amd64 -g integration-tests/goss/goss-serve.yaml serve &
 curl http://localhost:9100/healthz | grep 'Count: 2, Failed: 0, Skipped: 0'
 ```
 
@@ -235,7 +235,7 @@ curl http://localhost:9100/healthz | grep 'Count: 2, Failed: 0, Skipped: 0'
 
 ```bash
 make build
-release/goss-darwin-amd64 -g integration-tests/goss/goss-serve.yaml validate | grep 'Count: 2, Failed: 0, Skipped: 0'
+release/goss-alpha-darwin-amd64 -g integration-tests/goss/goss-serve.yaml validate | grep 'Count: 2, Failed: 0, Skipped: 0'
 ```
 
 #### `validate`: Windows
