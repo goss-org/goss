@@ -8,9 +8,16 @@ import (
 	"strings"
 
 	"github.com/onsi/gomega/format"
+	"github.com/tidwall/gjson"
 )
 
-func ToFloat64(e interface{}) (float64, error) {
+type Transformer interface {
+	Transform(interface{}) (interface{}, error)
+}
+
+type ToFloat64 struct{}
+
+func (t ToFloat64) Transform(e interface{}) (interface{}, error) {
 	switch v := e.(type) {
 	case float64:
 		return v, nil
@@ -19,27 +26,21 @@ func ToFloat64(e interface{}) (float64, error) {
 	case string:
 		return strconv.ParseFloat(strings.TrimSpace(v), 64)
 	case []string:
-		s, err := ToString(v)
+		i, err := ToString{}.Transform(v)
 		if err != nil {
 			return 0, err
 		}
+		s := i.(string)
 		return strconv.ParseFloat(strings.TrimSpace(s), 64)
 	default:
 		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
-		//return 0, fmt.Errorf("expected numeric, got: %v", e)
 
 	}
 }
 
-func ToInt(e interface{}) (int, error) {
-	v, err := ToFloat64(e)
-	if err != nil {
-		return 0, err
-	}
-	return int(v), nil
-}
+type ToString struct{}
 
-func ToString(e interface{}) (string, error) {
+func (t ToString) Transform(e interface{}) (interface{}, error) {
 	switch v := e.(type) {
 	case []string:
 		return strings.Join(v, "\n"), nil
@@ -48,7 +49,51 @@ func ToString(e interface{}) (string, error) {
 	}
 }
 
-func ReaderToString(r io.Reader) (string, error) {
+type ToArray struct{}
+
+func (t ToArray) Transform(i interface{}) (interface{}, error) {
+	switch v := i.(type) {
+	case string:
+		return strings.Split(v, "\n"), nil
+	default:
+		return i, nil
+	}
+	//	if !ok {
+	//		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
+	//	}
+	//	var lines []string
+	//	i, err := ReaderToString{}.Transform(r)
+	//	if err != nil {
+	//		return lines, err
+	//	}
+	//	s := i.(string)
+	//return strings.Split(s, "\n"), nil
+}
+
+type ReaderToStrings struct{}
+
+func (t ReaderToStrings) Transform(i interface{}) (interface{}, error) {
+	r, ok := i.(io.Reader)
+	if !ok {
+		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
+	}
+	var lines []string
+	i, err := ReaderToString{}.Transform(r)
+	if err != nil {
+		return lines, err
+	}
+	s := i.(string)
+	return strings.Split(s, "\n"), nil
+}
+
+type ReaderToString struct{}
+
+func (t ReaderToString) Transform(i interface{}) (interface{}, error) {
+	r, ok := i.(io.Reader)
+	if !ok {
+		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
+	}
+
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
 		return "", err
@@ -56,19 +101,19 @@ func ReaderToString(r io.Reader) (string, error) {
 	return string(b), nil
 }
 
-//func ReaderToStrings(r io.Reader) ([]string, error) {
-//	var lines []string
-//	scanner := bufio.NewScanner(r)
-//	for scanner.Scan() {
-//		lines = append(lines, scanner.Text())
-//	}
-//	return lines, scanner.Err()
-//}
-func ReaderToStrings(r io.Reader) ([]string, error) {
-	var lines []string
-	s, err := ReaderToString(r)
-	if err != nil {
-		return lines, err
+type GJson struct {
+	Path string
+}
+
+func (g GJson) Transform(i interface{}) (interface{}, error) {
+	s, ok := i.(string)
+	if !ok {
+		return nil, fmt.Errorf("Expected string, Got:%s", format.Object(i, 1))
 	}
-	return strings.Split(s, "\n"), nil
+	r := gjson.Get(s, g.Path)
+	//if !r.Exists() {
+	//	return nil, fmt.Errorf("gjson failed to find value at %s", g.Path)
+	//}
+
+	return r.Value(), nil
 }

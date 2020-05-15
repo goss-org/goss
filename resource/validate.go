@@ -62,12 +62,16 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
 	if f, ok := actual.(func() (io.Reader, error)); ok {
 		if _, ok := expectedValue.([]interface{}); !ok {
-			actual = func() ([]string, error) {
+			actual = func() (string, error) {
 				v, err := f()
 				if err != nil {
-					return nil, err
+					return "", err
 				}
-				return matchers.ReaderToStrings(v)
+				i, err := matchers.ReaderToString{}.Transform(v)
+				if err != nil {
+					return "", err
+				}
+				return i.(string), nil
 			}
 		}
 	}

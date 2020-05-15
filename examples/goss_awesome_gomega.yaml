@@ -28,6 +28,17 @@ matching:
       - '!wtf'
       - '!/^ERROR:/'
 
+  basic_reader_as_array:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      and:
+        - contain-element: {contain-substring: 'foo'}
+        - contain-element: {match-regexp: '^m.*w$'}
+        - not: {contain-substring: 'wtf'}
+        - not: {match-regexp: '^ERROR:'}
 
   # Transformers
   test_numeric:
@@ -105,6 +116,7 @@ matching:
       contain-elements:
         - 'foo bar'
         - 'moo cow'
+        - le: 20
 
 
   test_reader_as_single_string:
@@ -119,3 +131,15 @@ matching:
       and:
        - le: 250
        - ge: 20
+
+
+  test_gjson_transform:
+    content: '{"foo": "bar", "moo" {"nested": "cow"}, "count": 15}'
+    as-reader: true
+    matches:
+      gjson:
+        moo.nested: cow
+        foo: bar
+        count: {le: 25}
+        '@this': {have-key: "foo"}
+        'moo': {have-key: "nested"}

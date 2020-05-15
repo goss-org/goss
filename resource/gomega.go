@@ -15,12 +15,12 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	format.UseStringerRepresentation = true
 	switch x := matcher.(type) {
 	case string:
-		return matchers.WithSafeTransform(matchers.ToString, gomega.Equal(x)), nil
+		return matchers.WithSafeTransform(matchers.ToString{}, gomega.Equal(x)), nil
 		//return gomega.Equal(x), nil
 	case float64:
-		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.Equal(x)), nil
+		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.Equal(x)), nil
 	case int:
-		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.Equal(float64(x))), nil
+		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.Equal(float64(x))), nil
 	case bool:
 		return gomega.Equal(x), nil
 	case []interface{}:
@@ -71,11 +71,13 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	}
 	switch matchType {
 	case "have-prefix":
-		return matchers.WithSafeTransform(matchers.ToString, gomega.HavePrefix(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString{}, gomega.HavePrefix(value.(string))), nil
 	case "have-suffix":
-		return matchers.WithSafeTransform(matchers.ToString, gomega.HaveSuffix(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString{}, gomega.HaveSuffix(value.(string))), nil
 	case "match-regexp":
-		return matchers.WithSafeTransform(matchers.ToString, gomega.MatchRegexp(value.(string))), nil
+		return matchers.WithSafeTransform(matchers.ToString{}, gomega.MatchRegexp(value.(string))), nil
+	case "contain-substring":
+		return matchers.WithSafeTransform(matchers.ToString{}, gomega.ContainSubstring(value.(string))), nil
 	case "have-len":
 		return gomega.HaveLen(value.(int)), nil
 	case "have-key-with-value":
@@ -100,7 +102,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		return gomega.ContainElement(subMatcher), nil
+		return matchers.WithSafeTransform(matchers.ToArray{}, gomega.ContainElement(subMatcher)), nil
 	case "contain-elements":
 		subMatchers, err := sliceToGomega(value)
 		if err != nil {
@@ -110,7 +112,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
-		return gomega.ContainElements(interfaceSlice...), nil
+		return matchers.WithSafeTransform(matchers.ToArray{}, gomega.ContainElements(interfaceSlice...)), nil
+		//return gomega.ContainElements(interfaceSlice...), nil
 	case "not":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -147,10 +150,25 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			"lt": "<",
 			"le": "<=",
 		}[matchType]
-		return matchers.WithSafeTransform(matchers.ToFloat64, gomega.BeNumerically(comparator, value)), nil
+		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.BeNumerically(comparator, value)), nil
 
 	case "semver-constraint":
 		return matchers.BeSemverConstraint(value.(string)), nil
+	case "gjson":
+		var subMatchers []types.GomegaMatcher
+		valueI, ok := value.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("Matcher expected map, got: %t", value)
+		}
+		for key, val := range valueI {
+			subMatcher, err := matcherToGomegaMatcher(val)
+			if err != nil {
+				return nil, err
+			}
+			subMatchers = append(subMatchers, matchers.WithSafeTransform(matchers.GJson{Path: key}, subMatcher))
+
+		}
+		return gomega.And(subMatchers...), nil
 	default:
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 
