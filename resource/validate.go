@@ -1,7 +1,6 @@
 package resource
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -9,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/matchers"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/onsi/gomega/types"
 )
 
@@ -138,15 +138,18 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		}
 	}
 
-	var failMessage string
-	result := SUCCESS
-	if !success {
-		failMessage = gomegaMatcher.FailureMessage(foundValue)
-		result = FAIL
-	}
-
+	json := jsoniter.ConfigCompatibleWithStandardLibrary
 	expected, _ := json.Marshal(expectedValue)
 	found, _ := json.Marshal(foundValue)
+
+	var human string
+	result := SUCCESS
+	if success {
+		human = fmt.Sprintf("matches expectation: %s", expected)
+	} else {
+		human = gomegaMatcher.FailureMessage(foundValue)
+		result = FAIL
+	}
 
 	return TestResult{
 		Result:       result,
@@ -157,7 +160,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		Property:     property,
 		Expected:     string(expected),
 		Found:        string(found),
-		Human:        failMessage,
+		Human:        human,
 		Err:          err,
 		Duration:     time.Now().Sub(startTime),
 	}

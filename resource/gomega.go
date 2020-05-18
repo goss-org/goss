@@ -12,15 +12,16 @@ import (
 )
 
 func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+	// Needed for contains-elements
+	// Maybe we don't use this and use custom
 	format.UseStringerRepresentation = true
+	// contain_element_matcher is needed because it's single entry to avoid
+	// transform message
 	switch x := matcher.(type) {
 	case string:
 		return matchers.WithSafeTransform(matchers.ToString{}, gomega.Equal(x)), nil
-		//return gomega.Equal(x), nil
-	case float64:
-		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.Equal(x)), nil
-	case int:
-		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.Equal(float64(x))), nil
+	case float64, int:
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, gomega.BeNumerically("==", x)), nil
 	case bool:
 		return gomega.Equal(x), nil
 	case []interface{}:
@@ -33,28 +34,6 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			interfaceSlice = append(interfaceSlice, d)
 		}
 		return gomega.ContainElements(interfaceSlice...), nil
-		//		var gmatchers []types.GomegaMatcher
-		//		for _, valueI := range x {
-		//			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
-		//				gmatchers = append(gmatchers, subMatcher)
-		//			} else {
-		//				subMatcher2, err := matcherToGomegaMatcher(valueI)
-		//				if err != nil {
-		//					return nil, err
-		//				}
-		//				gmatchers = append(gmatchers, gomega.ContainElement(subMatcher2))
-		//				//test := gomega.ContainElement(subMatcher2)
-		//				//test2 := test.(*gmatchers.ContainElementMatcher)
-		//				//fmt.Println("wtf", format.Object(test2.Element, 1))
-		//				//fmt.Println("wtf2", test2.Element)
-		//				//test3 := test2.Element.(*gmatchers.WithTransformMatcher)
-		//				//fmt.Println("wtf3", format.Object(test3, 1))
-		//				//spew.Printf("wtf2 %v\n", test2.Element)
-		//				//fmt.Println("wtf1", subMatcher2.FailureMessage("wtf"))
-		//				//fmt.Println("wtf2", test.FailureMessage("wtf"))
-		//			}
-		//		}
-		//		return gomega.And(gmatchers...), nil
 	}
 	matcher = sanitizeExpectedValue(matcher)
 	if matcher == nil {
@@ -70,6 +49,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		break
 	}
 	switch matchType {
+	case "equal":
+		return gomega.Equal(value), nil
 	case "have-prefix":
 		return matchers.WithSafeTransform(matchers.ToString{}, gomega.HavePrefix(value.(string))), nil
 	case "have-suffix":
@@ -79,7 +60,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "contain-substring":
 		return matchers.WithSafeTransform(matchers.ToString{}, gomega.ContainSubstring(value.(string))), nil
 	case "have-len":
-		return gomega.HaveLen(value.(int)), nil
+		return gomega.HaveLen(int(value.(float64))), nil
 	case "have-key-with-value":
 		subMatchers, err := mapToGomega(value)
 		if err != nil {
@@ -102,7 +83,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		return matchers.WithSafeTransform(matchers.ToArray{}, gomega.ContainElement(subMatcher)), nil
+		return matchers.WithSafeTransform(matchers.ToArray{}, matchers.ContainElement(subMatcher)), nil
 	case "contain-elements":
 		subMatchers, err := sliceToGomega(value)
 		if err != nil {
@@ -150,7 +131,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			"lt": "<",
 			"le": "<=",
 		}[matchType]
-		return matchers.WithSafeTransform(matchers.ToFloat64{}, gomega.BeNumerically(comparator, value)), nil
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, gomega.BeNumerically(comparator, value)), nil
 
 	case "semver-constraint":
 		return matchers.BeSemverConstraint(value.(string)), nil
@@ -220,8 +201,8 @@ func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
 
 // Normalize expectedValue so json and yaml are the same
 func sanitizeExpectedValue(i interface{}) interface{} {
-	if e, ok := i.(float64); ok {
-		return int(e)
+	if e, ok := i.(int); ok {
+		return float64(e)
 	}
 	if e, ok := i.(map[interface{}]interface{}); ok {
 		out := make(map[string]interface{})

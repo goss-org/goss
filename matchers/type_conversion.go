@@ -15,6 +15,27 @@ type Transformer interface {
 	Transform(interface{}) (interface{}, error)
 }
 
+type ToNumeric struct{}
+
+func (t ToNumeric) Transform(e interface{}) (interface{}, error) {
+	switch v := e.(type) {
+	case float64, int:
+		return v, nil
+	case string:
+		return strconv.ParseFloat(strings.TrimSpace(v), 64)
+	case []string:
+		i, err := ToString{}.Transform(v)
+		if err != nil {
+			return 0, err
+		}
+		s := i.(string)
+		return strconv.ParseFloat(strings.TrimSpace(s), 64)
+	default:
+		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
+
+	}
+}
+
 type ToFloat64 struct{}
 
 func (t ToFloat64) Transform(e interface{}) (interface{}, error) {

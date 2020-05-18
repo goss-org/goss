@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/types"
 )
 
@@ -14,6 +15,7 @@ type WithSafeTransformMatcher struct {
 
 	// state
 	transformedValue interface{}
+	wasTransformed   bool
 	err              error
 }
 
@@ -31,31 +33,55 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+	if actual != m.transformedValue {
+		m.wasTransformed = true
+	}
 	return m.Matcher.Match(m.transformedValue)
 }
 
 func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string) {
-	return m.Matcher.FailureMessage(m.transformedValue)
+	tchain, matcher := m.getTransformerChainAndMatcher()
+	message = matcher.FailureMessage(m.transformedValue)
+	return appendTransformMessage(message, tchain)
 }
 
 func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return m.Matcher.NegatedFailureMessage(m.transformedValue)
+	tchain, matcher := m.getTransformerChainAndMatcher()
+	message = matcher.NegatedFailureMessage(m.transformedValue)
+	return appendTransformMessage(message, tchain)
 }
 
-//func (m *WithSafeTransformMatcher) transformName() string {
-//	fn := reflect.ValueOf(m.Transform)
-//	n := runtime.FuncForPC(fn.Pointer()).Name()
-//	ss := strings.Split(n, ".")
-//	s := ss[len(ss)-1]
-//	return s
-//}
+func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher types.GomegaMatcher) {
+	matcher = m
+L:
+	for {
+		switch v := matcher.(type) {
+		case *WithSafeTransformMatcher:
+			matcher = v.Matcher
+			if v.wasTransformed {
+				tchain = append(tchain, v.Transform)
+			}
+		default:
+			break L
+
+		}
+	}
+	return tchain, matcher
+
+}
+func appendTransformMessage(message string, tchain []Transformer) string {
+	if len(tchain) == 0 {
+		return message
+	}
+	var s string
+	for _, t := range tchain {
+		s += fmt.Sprintf("%s\n", strings.TrimRight(format.Object(t, 1), " "))
+	}
+	return fmt.Sprintf("%s\nwith transform chain\n%s", message,
+		s)
+}
+
 func (m *WithSafeTransformMatcher) String() string {
-	return Object(m.Matcher, 1)
-}
-
-func getMatcherName(i interface{}) string {
-	n := fmt.Sprintf("%#v", i)
-	ss := strings.Split(n, ".")
-	s := ss[len(ss)-1]
-	return s
+	_, matcher := m.getTransformerChainAndMatcher()
+	return format.Object(matcher, 0)
 }

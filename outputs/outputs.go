@@ -27,15 +27,11 @@ func humanizeResult(r resource.TestResult) string {
 
 	switch r.Result {
 	case resource.SUCCESS:
-		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
+		return green("%s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.Human)
+	case resource.FAIL:
+		return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
-	case resource.FAIL:
-		if r.Human != "" {
-			return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
-		}
-		//return humanizeResult2(r)
-		return fmt.Sprintln("Not Implemented")
 	default:
 		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}

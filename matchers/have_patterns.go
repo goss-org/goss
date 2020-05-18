@@ -49,7 +49,6 @@ func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err
 	if len(notfound) == 0 && err == nil {
 		return true, nil
 	}
-	// verify this
 	fh, ok := actual.(io.Reader)
 	if !ok {
 		return false, fmt.Errorf("Incorrect type")
