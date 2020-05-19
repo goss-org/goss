@@ -2,6 +2,7 @@ package matchers
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/onsi/gomega/format"
@@ -33,7 +34,7 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if actual != m.transformedValue {
+	if !reflect.DeepEqual(actual, m.transformedValue) {
 		m.wasTransformed = true
 	}
 	return m.Matcher.Match(m.transformedValue)
@@ -83,5 +84,5 @@ func appendTransformMessage(message string, tchain []Transformer) string {
 
 func (m *WithSafeTransformMatcher) String() string {
 	_, matcher := m.getTransformerChainAndMatcher()
-	return format.Object(matcher, 0)
+	return Object(matcher, 0)
 }

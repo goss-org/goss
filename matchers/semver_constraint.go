@@ -47,6 +47,10 @@ func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface
 	return format.Message(actual, fmt.Sprintf("not to be %s", matcher.Constraint))
 }
 
+//func (matcher *BeSemverConstraintMatcher) String() string {
+//	return format.Object(matcher, 0)
+//}
+
 func toConstraint(in interface{}) (semver.Range, bool) {
 	str, ok := in.(string)
 	if !ok {

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/onsi/gomega/format"
 
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
@@ -100,6 +101,11 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(c *util.Config, startTime time.Time) (code int, err error) {
+	// Needed for contains-elements
+	// Maybe we don't use this and use custom
+	// contain_element_matcher is needed because it's single entry to avoid
+	// transform message
+	format.UseStringerRepresentation = true
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
 	}
