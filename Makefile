@@ -77,8 +77,8 @@ push-images:
 	$(info INFO: Starting build $@)
 	development/push_images.sh
 
-test-int-64: centos7 wheezy precise alpine3 arch
-test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+test-int-64: centos7 precise alpine3 #arch wheezy
+test-int-32: centos7-32 precise-32 alpine3-32 #arch-32 wheezy-32 
 test-int-all: test-int-32 test-int-64
 
 centos7-32: build

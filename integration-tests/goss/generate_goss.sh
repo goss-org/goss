@@ -62,6 +62,8 @@ goss a "${args[@]}" mount /dev
 
 goss a "${args[@]}" http https://www.google.com
 
+goss a "${args[@]}" http https://www.microsoft.com -x http://127.0.0.1:8888
+
 goss a "${args[@]}" http http://google.com -r
 
 # Auto-add

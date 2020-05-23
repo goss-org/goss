@@ -180,6 +180,9 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
+  https://httpbin.org/:
+    status: 200
+    proxy: "http://127.0.0.1:8888"
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false

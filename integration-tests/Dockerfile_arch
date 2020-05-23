@@ -1,4 +1,4 @@
-FROM base/archlinux
+FROM archlinux/base
 MAINTAINER @siddharthist
 
 RUN pacman -Sy --noconfirm systemd-sysvcompat

@@ -117,3 +117,10 @@ http:
     no-follow-redirects: false
     timeout: 5000
     body: []
+  https://www.microsoft.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []
+    proxy: http://127.0.0.1:8888

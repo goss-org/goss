@@ -614,6 +614,7 @@ http:
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
+    proxy: "" # proxy server to proxy traffic through
     skip: false
 ```
 
