@@ -33,7 +33,7 @@ type DefHTTP struct {
 	err               error
 	Username          string
 	Password          string
-	Proxy          string
+	Proxy             string
 }
 
 func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
@@ -50,7 +50,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
-		Proxy:			   config.Proxy,
+		Proxy:             config.Proxy,
 	}
 }
 
@@ -63,7 +63,7 @@ func HeaderToArray(header http.Header) (res []string) {
 	return
 }
 
-func (u *DefHTTP) setup() error {	
+func (u *DefHTTP) setup() error {
 	if u.loaded {
 		return u.err
 	}
@@ -72,7 +72,7 @@ func (u *DefHTTP) setup() error {
 	proxyUrl := http.ProxyFromEnvironment
 	if u.Proxy != "" {
 		parseProxy, err := url.Parse(u.Proxy)
-		
+
 		if err != nil {
 			return err
 		}
@@ -83,7 +83,7 @@ func (u *DefHTTP) setup() error {
 	tr := &http.Transport{
 		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
 		DisableKeepAlives: true,
-		Proxy: proxyUrl,
+		Proxy:             proxyUrl,
 	}
 	client := &http.Client{
 		Transport: tr,

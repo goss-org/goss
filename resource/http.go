@@ -21,7 +21,7 @@ type HTTP struct {
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
-	Proxy			  string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
+	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
 func (u *HTTP) ID() string      { return u.HTTP }
