@@ -7,10 +7,12 @@ os_name="${1:?"No value from TRAVIS_OS_NAME in 1st arg. This is meant to be run 
 # linux runs all tests; unit and integration.
 if [[ "${os_name}" == "osx" ]]; then
   make test-short-all
+  pwd
   # darwin is the GOOS value which is easier to work with
   integration-tests/run-tests-alpha.sh "darwin"
 elif [[ "${os_name}" == "windows" ]]; then
   make test-short-all
+  pwd
   integration-tests/run-tests-alpha.sh "windows"
 else
   make all
