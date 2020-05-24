@@ -1,8 +1,8 @@
 ---
 service:
-  autofs:
+  tinyproxy:
     enabled: true
-    running: false
+    running: true
 user:
   www-data:
     exists: true
