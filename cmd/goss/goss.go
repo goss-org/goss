@@ -406,7 +406,7 @@ func fatalAlphaIfNeeded() {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
 		howto := map[string]string{
 			"darwin":  "export GOSS_ALPHA=1",
-			"windows": "set GOSS_ALPHA=1",
+			"windows": "In cmd:        set GOSS_ALPHA=1\nIn powershell: $env:GOSS_ALPHA=1\nIn bash:       export GOSS_ALPHA=1",
 		}
 		val, found := os.LookupEnv("GOSS_ALPHA")
 		if !found || val != "1" {
