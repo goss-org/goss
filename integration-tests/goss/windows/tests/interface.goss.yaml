@@ -1,0 +1,13 @@
+---
+interface:
+  'Loopback Pseudo-Interface 1':
+    exists: false
+    addrs:
+      - '127.0.0.1'
+    mtu: 1500
+    skip: true
+
+# https://docs.microsoft.com/en-us/powershell/module/nettcpip/get-netipinterface?view=win10-ps
+# Get-NetIPInterface
+# https://docs.microsoft.com/en-us/powershell/module/netadapter/get-netadapter?view=win10-ps
+# Get-NetAdapter - and would then need to choose one with a name that will work in CI, and skip this test when running locally, etc

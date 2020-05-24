@@ -1,0 +1,13 @@
+---
+user:
+  Administrator:
+    exists: true
+    uid: 65534  # not applicable on Windows
+    gid: 65534  # not applicable on Windows
+    groups:
+    - nfsnobody
+    home: /var/lib/nfs
+    shell: /sbin/nologin
+
+    # needs implementation
+    skip: true

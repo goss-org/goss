@@ -10,7 +10,10 @@ This matrix attempts to track parity across platforms.
 
 * `x`    - full supported/tested
 * `w`    - full working/tested, community support
+* `wp-pt` - works partially / partially tested
+  * this is ambiguous; where you see this, check into the test coverage within `integration-tests/goss/{darwin|windows}/{test}.goss.yaml` for more detail. It might be that not all features work as on `linux`, it might be that not all features are covered by automated tests.
 * `w-nt` - works no automated tests
+* `ni`   - not implemented / needs implementation
 * `n/a`  - Not applicable for this platform
 * `#585` - Link to bug(s) for implementation, fixing
 * ` `    - (blank) - not yet tried, no data
@@ -21,110 +24,119 @@ The current integration test approach is only appropriate for validating `linux`
 
 Validating `macOS` and `Windows` binaries requires adding coverage that runs on those platforms within Travis, but since Travis does not support containerised builds for either platform, assertions are limited to assert against the state of the CI hosts, where we're relying on that to predictable.
 
+You can find goss-files that are used to populate this matrix within `integration-tests/goss/{darwin|windows}/{test}.goss.yaml`. Where a feature does note work the same as linux, it is commented. The intent is to end up with a set of running-and-passing tests.
+
 ## Matrix - tests/assertions
 
 | Test                | `linux` | `macOS` | `Windows` |
 |:--------------------|---------|---------|-----------|
-| **addr**            | x       |         |           |
-| reachable           | x       |         |           |
-| local-address       | x       |         |           |
-| timeout             | x       |         |           |
+| **addr**            | x       |         | wp-pt     |
+| reachable           | x       |         | wp-pt     |
+| local-address       | x       |         | wp-pt     |
+| timeout             | x       |         | wp-pt     |
 |                     | x       |         |           |
-| **command**         | x       |         |           |
-| exit-status         | x       |         |           |
-| stdout              | x       |         |           |
-| stderr              | x       |         |           |
-| timeout             | x       |         |           |
+| **command**         | x       |         | wp-pt     |
+| exit-status         | x       |         | wp-pt     |
+| stdout              | x       |         | wp-pt     |
+| stderr              | x       |         | wp-pt     |
+| timeout             | x       |         | wp-pt     |
 |                     | x       |         |           |
-| **dns**             | x       |         |           |
-| resolvable          | x       |         |           |
-| addrs               | x       |         |           |
-| server              | x       |         |           |
-| timeout             | x       |         |           |
-| **file**            | x       |         |           |
-| exists              | x       | w-nt    | w         |
+| **dns**             | x       |         | wp-pt     |
+| resolvable          | x       |         | wp-pt     |
+| addrs               | x       |         | wp-pt     |
+| server              | x       |         | wp-pt     |
+| timeout             | x       |         | wp-pt     |
+|                     |         |         |           |
+| **file**            | x       |         | wp-pt     |
+| exists              | x       |         | w         |
 | mode                | x       |         | n/a       |
-| size                | x       |         |           |
-| owner               | x       | #585    | n/a       |
-| group               | x       | #585    | n/a       |
-| filetype            | x       |         |           |
-| contains            | x       | w-nt    | w-nt      |
-| md5                 | x       | w-nt    | w-nt      |
-| sha256              | x       | w-nt    | w-nt      |
-| linked-to           | x       | w-nt    | w-nt      |
+| size                | x       |         | wp-pt     |
+| owner               | x       |         | n/a       |
+| group               | x       |         | n/a       |
+| filetype            | x       |         | wp-pt     |
+| contains            | x       |         | wp-pt     |
+| md5                 | x       |         | wp-pt     |
+| sha256              | x       |         | wp-pt     |
+| linked-to           | x       |         |           |
 |                     | x       |         |           |
-| **gossfile**        | x       |         |           |
+| **gossfile**        | x       |         | wp-pt     |
 |                     | x       |         |           |
-| **group**           | x       |         |           |
-| exists              | x       |         |           |
-| gid                 | x       |         |           |
+| **group**           | x       |         | ni        |
+| exists              | x       |         | ni        |
+| gid                 | x       |         | n/a       |
 |                     | x       |         |           |
-| **http**            | x       |         |           |
-| status              | x       |         |           |
-| allow-insecure      | x       |         |           |
-| no-follow-redirects | x       |         |           |
-| timeout             | x       |         |           |
-| request-headers     | x       |         |           |
-| headers             | x       |         |           |
-| body                | x       |         |           |
-| username            | x       |         |           |
-| password            | x       |         |           |
-| **interface**       | x       |         |           |
-| exists              | x       |         |           |
-| addrs               | x       |         |           |
-| mtu                 | x       |         |           |
+| **http**            | x       |         | wp-pt     |
+| status              | x       |         | wp-pt     |
+| allow-insecure      | x       |         | wp-pt     |
+| no-follow-redirects | x       |         | wp-pt     |
+| timeout             | x       |         | wp-pt     |
+| request-headers     | x       |         | wp-pt     |
+| headers             | x       |         | wp-pt     |
+| body                | x       |         | wp-pt     |
+| username            | x       |         | wp-pt     |
+| password            | x       |         | wp-pt     |
+|                     |         |         |           |
+| **interface**       | x       |         | ni        |
+| exists              | x       |         | ni        |
+| addrs               | x       |         | ni        |
+| mtu                 | x       |         | ni        |
 |                     | x       |         |           |
-| **kernel-param**    | x       |         |           |
-| value               | x       |         |           |
+| **kernel-param**    | x       |         | n/a       |
+| value               | x       |         | n/a       |
 |                     | x       |         |           |
-| **mount**           | x       |         |           |
-| exists              | x       |         |           |
-| opts                | x       |         |           |
-| source              | x       |         |           |
-| filesystem          | x       |         |           |
-| usage               | x       |         |           |
+| **mount**           | x       |         | ni        |
+| exists              | x       |         | ni        |
+| opts                | x       |         | n/a       |
+| source              | x       |         | n/a       |
+| filesystem          | x       |         | ni        |
+| usage               | x       |         | ni        |
 |                     | x       |         |           |
 | **matching**        | x       |         |           |
 |                     | x       |         |           |
-| **package**         | x       |         |           |
-| installed           | x       |         |           |
-| versions            | x       |         |           |
+| **package**         | x       |         | ni        |
+| installed           | x       |         | ni        |
+| versions            | x       |         | ni        |
 |                     | x       |         |           |
-| **port**            | x       |         |           |
-| listening           | x       |         |           |
+| **port**            | x       |         | ni        |
+| listening           | x       |         | ni        |
 | ip                  | x       |         |           |
 |                     | x       |         |           |
-| **process**         | x       |         |           |
-| running             | x       |         |           |
+| **process**         | x       |         | wp-pt     |
+| running             | x       |         | wp-pt     |
 |                     | x       |         |           |
-| **service**         | x       |         |           |
-| enabled             | x       |         |           |
-| running             | x       |         |           |
+| **service**         | x       |         | ni        |
+| enabled             | x       |         | ni        |
+| running             | x       |         | ni        |
 |                     | x       |         |           |
-| **user**            | x       |         |           |
-| exists              | x       |         |           |
-| uid                 | x       |         |           |
-| gid                 | x       |         |           |
-| groups              | x       |         |           |
-| home                | x       |         |           |
-| shell               | x       |         |           |
+| **user**            | x       |         | ni        |
+| exists              | x       |         | ni        |
+| uid                 | x       |         | n/a       |
+| gid                 | x       |         | n/a       |
+| groups              | x       |         | ni        |
+| home                | x       |         | ni        |
+| shell               | x       |         | ni        |
 
 ## Matrix - `command`s
 
 | Test       | `linux` | `macOS` | `Windows` |
 |:-----------|---------|---------|-----------|
-| `add`      | x       |         |           |
+| `add`      | x       |         | wp-pt     |
 | `autoadd`  | x       |         |           |
-| `help`     | x       |         |           |
+| `help`     | x       |         | wp-pt     |
 | `render`   | x       |         |           |
 | `serve`    | x       | w-nt    |           |
-| `validate` | x       | w-nt    | w-nt      |
+| `validate` | x       | w-nt    | wp-pt     |
 
 ### `command` testing notes
 
 ### Command: `add`
 
-Not yet tested.
+#### Windows `add`
+
+```powershell
+.\release\goss-alpha-windows-amd64.exe add command 'echo hello'
+exec: "sh": executable file not found in %PATH%
+```
 
 ### Command: `autoadd`
 

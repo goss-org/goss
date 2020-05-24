@@ -1,0 +1,8 @@
+---
+process:
+  explorer.exe:
+    running: true
+
+  # note - must use .exe suffix on Windows currently
+  explorer:
+    running: false
