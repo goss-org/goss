@@ -14,4 +14,5 @@ RUN mv /sbin/initctl /sbin/initctl.orig && \
 
 RUN chkconfig apache2 on
 RUN chkconfig tinyproxy on
+RUN chkconfig autofs off
 RUN mkfifo /pipe
