@@ -433,16 +433,18 @@ func warnAlphaIfNeeded() {
 }
 
 func fatalAlphaIfNeeded(c *cli.Context) {
-	if c.GlobalString("use-alpha") != "1" {
-		howto := map[string]string{
-			"darwin":  "export GOSS_USE_ALPHA=1",
-			"windows": "In cmd:        set GOSS_USE_ALPHA=1\nIn powershell: $env:GOSS_USE_ALPHA=1\nIn bash:       export GOSS_USE_ALPHA=1",
-		}
-		log.Printf(`Terminating.
+	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
+		if c.GlobalString("use-alpha") != "1" {
+			howto := map[string]string{
+				"darwin":  "export GOSS_USE_ALPHA=1",
+				"windows": "In cmd:        set GOSS_USE_ALPHA=1\nIn powershell: $env:GOSS_USE_ALPHA=1\nIn bash:       export GOSS_USE_ALPHA=1",
+			}
+			log.Printf(`Terminating.
 
 To bypass this and use the binary anyway:
 
 %s`, howto[runtime.GOOS])
-		os.Exit(1)
+			os.Exit(1)
+		}
 	}
 }
