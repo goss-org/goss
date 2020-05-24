@@ -19,7 +19,9 @@ services:
   - docker
 
 before_install:
-- if [ "${TRAVIS_OS_NAME}" == "windows" ]; then choco install make; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
+  # bash from macOS is too old to have readarray. Install newer version.
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
 
 install:
   - ./ci/install.sh "${TRAVIS_OS_NAME}"
