@@ -8,3 +8,4 @@ addr:
     reachable: true
     timeout: 1000
     local-address: true
+    skip: true  # TODO: needs implementation (or figure out a likely listening port on macOS/travis)
