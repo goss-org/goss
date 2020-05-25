@@ -4,8 +4,8 @@ addr:
     reachable: true
     timeout: 1000
 
-  tcp://127.0.0.1:135:
-    reachable: true
-    timeout: 1000
-    local-address: true
-    skip: true  # TODO: needs implementation (or figure out a likely listening port on macOS/travis)
+  # TODO: needs implementation (or figure out a likely listening port on macOS/travis)
+  # tcp://127.0.0.1:135:
+  #   reachable: true
+  #   timeout: 1000
+  #   local-address: true
