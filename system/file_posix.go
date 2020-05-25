@@ -10,27 +10,18 @@ import (
 )
 
 func (f *DefFile) Mode() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
+	fi, err := f.getFileInfo()
 	if err != nil {
 		return "", err
 	}
 
-	sys := fi.Sys()
-	stat := sys.(*syscall.Stat_t)
+	stat := fi.Sys().(*syscall.Stat_t)
 	mode := fmt.Sprintf("%04o", (stat.Mode & 07777))
 	return mode, nil
 }
 
 func (f *DefFile) Owner() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
+	fi, err := f.getFileInfo()
 	if err != nil {
 		return "", err
 	}
@@ -44,11 +35,7 @@ func (f *DefFile) Owner() (string, error) {
 }
 
 func (f *DefFile) Group() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
+	fi, err := f.getFileInfo()
 	if err != nil {
 		return "", err
 	}
@@ -59,4 +46,16 @@ func (f *DefFile) Group() (string, error) {
 		return "", err
 	}
 	return getGroupForGid(gid)
+}
+
+func (f *DefFile) getFileInfo() (os.FileInfo, error) {
+	if err := f.setup(); err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Lstat(f.realPath)
+	if err != nil {
+		return nil, err
+	}
+	return fi, nil
 }
