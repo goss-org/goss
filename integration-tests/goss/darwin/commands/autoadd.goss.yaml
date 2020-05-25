@@ -2,12 +2,13 @@
 command:
   "autoadd travis":
     exit-status: 0
-    exec: "release/goss-alpha-darwin-amd64 --use-alpha=1 autoadd travis"
+    exec: "release/goss-alpha-darwin-amd64 --use-alpha=1 autoadd /Users/travis"
     stdout:
-      - 'user:'
-      - '  name: travis'
+      - 'file:'
+      - '  exists: true'
+      - '  filetype: directory'
     stderr: []
     timeout: 5000
 
     # needs implementation
-    # skip: true
+    skip: true
