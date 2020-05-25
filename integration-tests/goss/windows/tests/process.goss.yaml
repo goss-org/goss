@@ -1,8 +1,8 @@
 ---
 process:
-  explorer.exe:
+  'wininit.exe':
     running: true
 
   # note - must use .exe suffix on Windows currently
-  explorer:
+  wininit:
     running: false
