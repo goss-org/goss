@@ -1,6 +1,6 @@
 ---
 command:
-  "autoadd travis":
+  "autoadd /Users/travis":
     exit-status: 0
     exec: "release/goss-alpha-darwin-amd64 --use-alpha=1 autoadd /Users/travis"
     stdout:
