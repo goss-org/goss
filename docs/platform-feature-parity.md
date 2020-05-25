@@ -1,6 +1,8 @@
 # Platform feature-parity
 
-macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551))
+macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551)).
+
+The macOS and Windows support is community driven; there is no commitment to adding features / fixing bugs for those platforms. [See thread](https://github.com/aelsabbahy/goss/pull/585#discussion_r429968540).
 
 This matrix attempts to track parity across platforms.
 

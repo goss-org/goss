@@ -418,7 +418,7 @@ func addAlphaFlagIfNeeded(app *cli.App) {
 	}
 }
 
-const msgFormat string = `WARNING: goss on %q is alpha-quality, work-in-progress, and not yet exercised within continuous integration.
+const msgFormat string = `WARNING: goss for this platform (%q) is alpha-quality, work-in-progress, and not yet exercised within continuous integration.
 
 You should not expect everything to work. Treat linux as the canonical behaviour to expect.
 
