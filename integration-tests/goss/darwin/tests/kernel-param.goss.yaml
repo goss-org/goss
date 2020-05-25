@@ -1,5 +1,4 @@
 ---
-# Not applicable on Windows
 kernel-param:
   notapplicable.on-darwin:
     value: foobar

@@ -9,5 +9,5 @@ user:
     home: /Users/travis
     shell: /sbin/nologin
 
-    # needs implementation
-    skip: false
+    # TODO: needs implementation
+    skip: true
