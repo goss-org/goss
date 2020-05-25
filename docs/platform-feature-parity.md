@@ -32,91 +32,91 @@ You can find goss-files that are used to populate this matrix within `integratio
 
 | Test                | `linux` | `macOS` | `Windows` |
 |:--------------------|---------|---------|-----------|
-| **addr**            | x       |         | wp-pt     |
-| reachable           | x       |         | wp-pt     |
+| **addr**            | x       | wp-pt   | wp-pt     |
+| reachable           | x       | wp-pt   | wp-pt     |
 | local-address       | x       |         | wp-pt     |
-| timeout             | x       |         | wp-pt     |
+| timeout             | x       | w-nt    | w-nt      |
 |                     | x       |         |           |
-| **command**         | x       |         | wp-pt     |
-| exit-status         | x       |         | wp-pt     |
-| stdout              | x       |         | wp-pt     |
-| stderr              | x       |         | wp-pt     |
-| timeout             | x       |         | wp-pt     |
+| **command**         | x       | wp-pt   | wp-pt     |
+| exit-status         | x       | wp-pt   | wp-pt     |
+| stdout              | x       | wp-pt   | wp-pt     |
+| stderr              | x       | w-nt    | w-nt      |
+| timeout             | x       | w-nt    | w-nt      |
 |                     | x       |         |           |
-| **dns**             | x       |         | wp-pt     |
-| resolvable          | x       |         | wp-pt     |
-| addrs               | x       |         | wp-pt     |
+| **dns**             | x       | wp-pt   | wp-pt     |
+| resolvable          | x       | wp-pt   | wp-pt     |
+| addrs               | x       | wp-pt   | wp-pt     |
 | server              | x       |         | wp-pt     |
-| timeout             | x       |         | wp-pt     |
+| timeout             | x       | w-nt    | wp-pt     |
 |                     |         |         |           |
-| **file**            | x       |         | wp-pt     |
-| exists              | x       |         | w         |
-| mode                | x       |         | n/a       |
-| size                | x       |         | wp-pt     |
-| owner               | x       |         | n/a       |
-| group               | x       |         | n/a       |
-| filetype            | x       |         | wp-pt     |
-| contains            | x       |         | wp-pt     |
-| md5                 | x       |         | wp-pt     |
-| sha256              | x       |         | wp-pt     |
+| **file**            | x       | wp-pt   | wp-pt     |
+| exists              | x       | wp-pt   | w         |
+| mode                | x       | wp-pt   | n/a       |
+| size                | x       | wp-pt   | wp-pt     |
+| owner               | x       | broken  | n/a       |
+| group               | x       | broken  | n/a       |
+| filetype            | x       | wp-pt   | wp-pt     |
+| contains            | x       | wp-pt   | wp-pt     |
+| md5                 | x       | wp-pt   | wp-pt     |
+| sha256              | x       | wp-pt   | wp-pt     |
 | linked-to           | x       |         |           |
 |                     | x       |         |           |
-| **gossfile**        | x       |         | wp-pt     |
+| **gossfile**        | x       | wp-pt   | wp-pt     |
 |                     | x       |         |           |
-| **group**           | x       |         | ni        |
-| exists              | x       |         | ni        |
-| gid                 | x       |         | n/a       |
+| **group**           | x       | ni      | ni        |
+| exists              | x       | ni      | ni        |
+| gid                 | x       | ni      | n/a       |
 |                     | x       |         |           |
-| **http**            | x       |         | wp-pt     |
-| status              | x       |         | wp-pt     |
-| allow-insecure      | x       |         | wp-pt     |
-| no-follow-redirects | x       |         | wp-pt     |
-| timeout             | x       |         | wp-pt     |
-| request-headers     | x       |         | wp-pt     |
-| headers             | x       |         | wp-pt     |
-| body                | x       |         | wp-pt     |
-| username            | x       |         | wp-pt     |
-| password            | x       |         | wp-pt     |
+| **http**            | x       | wp-pt   | wp-pt     |
+| status              | x       | wp-pt   | wp-pt     |
+| allow-insecure      | x       | wp-pt   | wp-pt     |
+| no-follow-redirects | x       | wp-pt   | wp-pt     |
+| timeout             | x       | w-nt    | wp-pt     |
+| request-headers     | x       | wp-pt   | wp-pt     |
+| headers             | x       | wp-pt   | wp-pt     |
+| body                | x       | wp-pt   | wp-pt     |
+| username            | x       | w-nt    | wp-pt     |
+| password            | x       | w-nt    | wp-pt     |
 |                     |         |         |           |
-| **interface**       | x       |         | ni        |
-| exists              | x       |         | ni        |
-| addrs               | x       |         | ni        |
-| mtu                 | x       |         | ni        |
+| **interface**       | x       | ni      | ni        |
+| exists              | x       | ni      | ni        |
+| addrs               | x       | ni      | ni        |
+| mtu                 | x       | ni      | ni        |
 |                     | x       |         |           |
-| **kernel-param**    | x       |         | n/a       |
-| value               | x       |         | n/a       |
+| **kernel-param**    | x       | n/a     | n/a       |
+| value               | x       | n/a     | n/a       |
 |                     | x       |         |           |
-| **mount**           | x       |         | ni        |
-| exists              | x       |         | ni        |
-| opts                | x       |         | n/a       |
-| source              | x       |         | n/a       |
-| filesystem          | x       |         | ni        |
-| usage               | x       |         | ni        |
+| **mount**           | x       | ni      | ni        |
+| exists              | x       | ni      | ni        |
+| opts                | x       | ni      | n/a       |
+| source              | x       | ni      | n/a       |
+| filesystem          | x       | ni      | ni        |
+| usage               | x       | ni      | ni        |
 |                     | x       |         |           |
 | **matching**        | x       |         |           |
 |                     | x       |         |           |
-| **package**         | x       |         | ni        |
-| installed           | x       |         | ni        |
-| versions            | x       |         | ni        |
+| **package**         | x       | ni      | ni        |
+| installed           | x       | ni      | ni        |
+| versions            | x       | ni      | ni        |
 |                     | x       |         |           |
-| **port**            | x       |         | ni        |
-| listening           | x       |         | ni        |
+| **port**            | x       | ni      | ni        |
+| listening           | x       | ni      | ni        |
 | ip                  | x       |         |           |
 |                     | x       |         |           |
-| **process**         | x       |         | wp-pt     |
-| running             | x       |         | wp-pt     |
+| **process**         | x       | wp-pt   | wp-pt     |
+| running             | x       | wp-pt   | wp-pt     |
 |                     | x       |         |           |
-| **service**         | x       |         | ni        |
-| enabled             | x       |         | ni        |
-| running             | x       |         | ni        |
+| **service**         | x       | ni      | ni        |
+| enabled             | x       | ni      | ni        |
+| running             | x       | ni      | ni        |
 |                     | x       |         |           |
-| **user**            | x       |         | ni        |
-| exists              | x       |         | ni        |
-| uid                 | x       |         | n/a       |
-| gid                 | x       |         | n/a       |
-| groups              | x       |         | ni        |
-| home                | x       |         | ni        |
-| shell               | x       |         | ni        |
+| **user**            | x       | ni      | ni        |
+| exists              | x       | ni      | ni        |
+| uid                 | x       | ni      | n/a       |
+| gid                 | x       | ni      | n/a       |
+| groups              | x       | ni      | ni        |
+| home                | x       | ni      | ni        |
+| shell               | x       | ni      | ni        |
 
 ## Matrix - `command`s
 
