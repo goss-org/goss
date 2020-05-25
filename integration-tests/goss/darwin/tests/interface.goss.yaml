@@ -1,0 +1,8 @@
+---
+interface:
+  eth0:
+    exists: true
+    addrs:
+      - '127.0.0.1'
+    mtu: 1500
+    # skip: true

@@ -1,0 +1,11 @@
+---
+# TODO: coverage for the add {test} permutations
+command:
+  "add addr 127.0.0.1":
+    exit-status: 0
+    exec: release/goss-alpha-darwin-amd64 --use-alpha=1 add addr 127.0.0.1
+    stdout:
+    - "timeout: 500"
+    stderr: []
+    timeout: 5000
+

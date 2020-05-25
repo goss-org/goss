@@ -1,10 +1,10 @@
 ---
 file:
-  integration-tests\goss\testdata\static-file.txt:
+  integration-tests/goss/testdata/static-file.txt:
     exists: true
-    # mode: "0000"  # not applicable on Windows
-    # user: ""  # not applicable on Windows
-    # group: ""  # not applicable on Windows
+    mode: "0644"
+    # user: ""  # TODO: not working on Darwin
+    # group: ""  # TODO: not working on Darwin
     size: 21
     filetype: file
     md5: dc9a07ca9789f866d21d544fe5651954

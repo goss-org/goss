@@ -1,0 +1,12 @@
+---
+# TODO: coverage for the add {test} permutations
+command:
+  "validate":
+    exit-status: 0
+    exec: "release/goss-alpha-darwin-amd64 --use-alpha=1 -g integration-tests/goss/darwin/commands/validate-input.yaml validate"
+    stdout:
+      - 'Count: 1'
+      - 'Failed: 0'
+      - 'Skipped: 0'
+    stderr: []
+    timeout: 5000

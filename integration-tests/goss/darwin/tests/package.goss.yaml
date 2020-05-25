@@ -1,0 +1,15 @@
+---
+package:
+  golang:
+    # required attributes
+    installed: true
+    # optional attributes
+    versions:
+    - 1.14.1
+
+    # needs implementation
+    # needs discussion + design
+    # support question for:
+    # * homebrew
+    # * macports
+    skip: true

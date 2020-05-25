@@ -1,0 +1,12 @@
+---
+mount:
+  '/':
+    exists: true
+    filesystem: hdfs
+
+    opts: []
+    source: ''
+    usage:
+      lt: 95
+
+    # skip: true  # needs implementation
