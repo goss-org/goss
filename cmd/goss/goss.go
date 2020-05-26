@@ -56,6 +56,13 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 	return cfg
 }
 
+func timeoutFlag(value time.Duration) cli.DurationFlag {
+	return cli.DurationFlag{
+		Name:  "timeout",
+		Value: value,
+	}
+}
+
 func main() {
 	startTime := time.Now()
 	app := cli.NewApp()
@@ -251,10 +258,7 @@ func main() {
 					Name:  "addr",
 					Usage: "add new remote address:port - ex: google.com:80",
 					Flags: []cli.Flag{
-						cli.DurationFlag{
-							Name:  "timeout",
-							Value: 500 * time.Millisecond,
-						},
+						timeoutFlag(500 * time.Millisecond),
 					},
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
@@ -297,10 +301,7 @@ func main() {
 					Name:  "command",
 					Usage: "add new command",
 					Flags: []cli.Flag{
-						cli.DurationFlag{
-							Name:  "timeout",
-							Value: 10 * time.Second,
-						},
+						timeoutFlag(10 * time.Second),
 					},
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
@@ -311,10 +312,7 @@ func main() {
 					Name:  "dns",
 					Usage: "add new dns",
 					Flags: []cli.Flag{
-						cli.DurationFlag{
-							Name:  "timeout",
-							Value: 500 * time.Millisecond,
-						},
+						timeoutFlag(500 * time.Millisecond),
 						cli.StringFlag{
 							Name:  "server",
 							Usage: "The IP address of a DNS server to query",
@@ -343,10 +341,7 @@ func main() {
 						cli.BoolFlag{
 							Name: "no-follow-redirects, r",
 						},
-						cli.DurationFlag{
-							Name:  "timeout",
-							Value: 5 * time.Second,
-						},
+						timeoutFlag(5 * time.Second),
 						cli.StringFlag{
 							Name:  "username, u",
 							Usage: "Username for basic auth",
