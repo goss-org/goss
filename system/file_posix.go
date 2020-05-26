@@ -10,23 +10,25 @@ import (
 )
 
 func (f *DefFile) Mode() (string, error) {
-	fi, err := f.getFileInfo()
+	mode, err := f.getFileInfo(func(fi os.FileInfo) string {
+		stat := fi.Sys().(*syscall.Stat_t)
+		return fmt.Sprintf("%04o", (stat.Mode & 07777))
+	})
 	if err != nil {
 		return "", err
 	}
 
-	stat := fi.Sys().(*syscall.Stat_t)
-	mode := fmt.Sprintf("%04o", (stat.Mode & 07777))
 	return mode, nil
 }
 
 func (f *DefFile) Owner() (string, error) {
-	fi, err := f.getFileInfo()
+	uidS, err := f.getFileInfo(func(fi os.FileInfo) string {
+		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
+	})
 	if err != nil {
 		return "", err
 	}
 
-	uidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
 	uid, err := strconv.Atoi(uidS)
 	if err != nil {
 		return "", err
@@ -35,12 +37,13 @@ func (f *DefFile) Owner() (string, error) {
 }
 
 func (f *DefFile) Group() (string, error) {
-	fi, err := f.getFileInfo()
+	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
+		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
+	})
 	if err != nil {
 		return "", err
 	}
 
-	gidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
 	gid, err := strconv.Atoi(gidS)
 	if err != nil {
 		return "", err
@@ -48,14 +51,14 @@ func (f *DefFile) Group() (string, error) {
 	return getGroupForGid(gid)
 }
 
-func (f *DefFile) getFileInfo() (os.FileInfo, error) {
+func (f *DefFile) getFileInfo(selectorFunc func(os.FileInfo) string) (string, error) {
 	if err := f.setup(); err != nil {
-		return nil, err
+		return "", err
 	}
 
 	fi, err := os.Lstat(f.realPath)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return fi, nil
+	return selectorFunc(fi), nil
 }
