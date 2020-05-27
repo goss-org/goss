@@ -53,7 +53,7 @@ bench:
 # firstword, and word select indexes from said array.
 release/goss-%: $(GO_FILES)
 	CGO_ENABLED=0 GOOS=$(firstword $(subst -, ,$*)) GOARCH=$(word 2, $(subst -, ,$*)) go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o $@ $(exe)
-	sha256sum $@ > $@.sha256
+	sha256sum $@ | sed 's/release\/goss/goss/g' > $@.sha256
 
 release:
 	$(MAKE) clean
