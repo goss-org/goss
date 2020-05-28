@@ -46,14 +46,12 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
-
-
 # Pattern rule for platform builds.
 # `subst` substitutes space for -, thus making an array
 # firstword, and word select indexes from said array.
 release/goss-%: $(GO_FILES)
 	CGO_ENABLED=0 GOOS=$(firstword $(subst -, ,$*)) GOARCH=$(word 2, $(subst -, ,$*)) go build -ldflags "-X main.version=$(TRAVIS_TAG) -s -w" -o $@ $(exe)
-	sha256sum $@ | sed 's/release\/goss/goss/g' > $@.sha256
+	cd $(@D) && sha256sum $(@F) > $(@F).sha256sum
 
 release:
 	$(MAKE) clean
