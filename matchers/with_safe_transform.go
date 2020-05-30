@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/types"
+	"github.com/sanity-io/litter"
 )
 
 type WithSafeTransformMatcher struct {
@@ -75,14 +75,30 @@ func appendTransformMessage(message string, tchain []Transformer) string {
 		return message
 	}
 	var s string
+	//for _, t := range tchain {
+	//	s += fmt.Sprintf("%s\n", strings.TrimRight(format.Object(t, 1), " "))
+	//}
+	//s = litter.Sdump(tchain)
+	sq := litter.Options{Compact: true, StripPackageNames: true}
+	s += Indent
 	for _, t := range tchain {
-		s += fmt.Sprintf("%s\n", strings.TrimRight(format.Object(t, 1), " "))
+		s += " | " + sq.Sdump(t)
 	}
 	return fmt.Sprintf("%s\nwith transform chain\n%s", message,
 		s)
 }
 
 func (m *WithSafeTransformMatcher) String() string {
-	_, matcher := m.getTransformerChainAndMatcher()
-	return Object(matcher, 0)
+	tchain, matcher := m.getTransformerChainAndMatcher()
+	if len(tchain) == 0 {
+		return fmt.Sprintf("%v", matcher)
+	}
+	sq := litter.Options{Compact: true}
+	ss := make([]string, len(tchain))
+	for i, v := range tchain {
+		ss[i] = sq.Sdump(v)
+	}
+	ss = append(ss, fmt.Sprintf("%#v", matcher))
+	return strings.Join(ss, "|")
+	//return Object(matcher, 0)
 }

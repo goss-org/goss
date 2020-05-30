@@ -5,6 +5,7 @@ import (
 
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
+	"github.com/sanity-io/litter"
 )
 
 type EqualMatcher struct {
@@ -19,6 +20,13 @@ func Equal(element interface{}) types.GomegaMatcher {
 	}
 }
 
+func (matcher *EqualMatcher) GoString() string {
+	sq := litter.Options{Compact: true, StripPackageNames: true}
+	return sq.Sdump(matcher.EqualMatcher)
+}
 func (matcher *EqualMatcher) String() string {
-	return fmt.Sprint(matcher.Expected)
+	//sq := litter.Options{Compact: true, StripPackageNames: true}
+	//return sq.Sdump(matcher.EqualMatcher)
+	//return fmt.Sprintf("EqualMatcher{Expected:\"%s\"}", matcher.Expected)
+	return fmt.Sprintf("%q", matcher.Expected)
 }

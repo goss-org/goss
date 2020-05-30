@@ -48,7 +48,7 @@ func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface
 }
 
 //func (matcher *BeSemverConstraintMatcher) String() string {
-//	return format.Object(matcher, 0)
+//	return Object(matcher, 0)
 //}
 
 func toConstraint(in interface{}) (semver.Range, bool) {

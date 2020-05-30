@@ -138,7 +138,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 			if err != nil {
 				return nil, err
 			}
-			subMatchers = append(subMatchers, matchers.WithSafeTransform(matchers.GJson{Path: key}, subMatcher))
+			subMatchers = append(subMatchers, matchers.WithSafeTransform(matchers.Gjson{Path: key}, subMatcher))
 
 		}
 		return matchers.And(subMatchers...), nil

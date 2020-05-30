@@ -122,11 +122,11 @@ func (t ReaderToString) Transform(i interface{}) (interface{}, error) {
 	return string(b), nil
 }
 
-type GJson struct {
+type Gjson struct {
 	Path string
 }
 
-func (g GJson) Transform(i interface{}) (interface{}, error) {
+func (g Gjson) Transform(i interface{}) (interface{}, error) {
 	s, ok := i.(string)
 	if !ok {
 		return nil, fmt.Errorf("Expected string, Got:%s", format.Object(i, 1))

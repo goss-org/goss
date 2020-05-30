@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"fmt"
+
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )
@@ -18,7 +20,7 @@ func HaveLen(count int) types.GomegaMatcher {
 }
 
 func (matcher *HaveLenMatcher) String() string {
-	return Object(matcher.HaveLenMatcher, 0)
+	return fmt.Sprintf("HaveLen{Count:%d}", matcher.Count)
 }
 
 //func (matcher *HaveLenMatcher) String() string {

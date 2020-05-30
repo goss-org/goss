@@ -12,6 +12,10 @@ import (
 //The default indentation string emitted by the format package
 var Indent = "    "
 
+//func Object(object interface{}, indentation uint) string {
+//	//return "wtf"
+//}
+
 func Object(object interface{}, indentation uint) string {
 	indent := strings.Repeat(Indent, int(indentation))
 	switch v := object.(type) {

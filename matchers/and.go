@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"fmt"
+
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
 )
@@ -15,5 +17,5 @@ func And(ms ...types.GomegaMatcher) types.GomegaMatcher {
 
 //FIXME: Indentation is wrong
 func (matcher *AndMatcher) String() string {
-	return Object(matcher.AndMatcher, 0)
+	return fmt.Sprintf("AndMatcher{Matchers:%v}", matcher.Matchers)
 }
