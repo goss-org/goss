@@ -5,11 +5,9 @@ import (
 	"sort"
 
 	"github.com/aelsabbahy/goss/matchers"
-
-	"github.com/onsi/gomega/types"
 )
 
-func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 	switch x := matcher.(type) {
 	case string:
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal(x)), nil
@@ -128,7 +126,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	case "semver-constraint":
 		return matchers.BeSemverConstraint(value.(string)), nil
 	case "gjson":
-		var subMatchers []types.GomegaMatcher
+		var subMatchers []matchers.GossMatcher
 		valueI, ok := value.(map[string]interface{})
 		if !ok {
 			return nil, fmt.Errorf("Matcher expected map, got: %t", value)
@@ -148,7 +146,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	}
 }
 
-func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err error) {
+func mapToGomega(value interface{}) (subMatchers []matchers.GossMatcher, err error) {
 	valueI, ok := value.(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
@@ -175,12 +173,12 @@ func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err erro
 	return
 }
 
-func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
+func sliceToGomega(value interface{}) ([]matchers.GossMatcher, error) {
 	valueI, ok := value.([]interface{})
 	if !ok {
 		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
 	}
-	var subMatchers []types.GomegaMatcher
+	var subMatchers []matchers.GossMatcher
 	for _, v := range valueI {
 		subMatcher, err := matcherToGomegaMatcher(v)
 		if err != nil {

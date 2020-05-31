@@ -9,7 +9,6 @@ import (
 
 	"github.com/aelsabbahy/goss/matchers"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/onsi/gomega/types"
 )
 
 const (
@@ -42,9 +41,10 @@ type TestResult struct {
 	// Matches expectation: ...
 	Expected string `json:"expected" yaml:"expected"`
 	// Used in skip?.. but why?
-	Found    string        `json:"found" yaml:"found"`
-	Human    string        `json:"human" yaml:"human"`
-	Duration time.Duration `json:"duration" yaml:"duration"`
+	Found string `json:"found" yaml:"found"`
+	//Human         string                 `json:"human" yaml:"human"`
+	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
+	Duration      time.Duration          `json:"duration" yaml:"duration"`
 }
 
 func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
@@ -97,7 +97,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	}
 
 	var foundValue interface{}
-	var gomegaMatcher types.GomegaMatcher
+	var gomegaMatcher matchers.GossMatcher
 	var err error
 	switch f := actual.(type) {
 	case func() (bool, error):
@@ -142,26 +142,30 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	expected, _ := json.Marshal(expectedValue)
 	found, _ := json.Marshal(foundValue)
 
-	var human string
+	var matcherResult matchers.MatcherResult
 	result := SUCCESS
 	if success {
-		human = fmt.Sprintf("matches expectation: %s", expected)
+		matcherResult = matchers.MatcherResult{
+			//Successful: true,
+			Message:  "matches expectation",
+			Expected: expected,
+		}
 	} else {
-		human = gomegaMatcher.FailureMessage(foundValue)
+		matcherResult = gomegaMatcher.FailureResult(foundValue)
 		result = FAIL
 	}
 
 	return TestResult{
-		Result:       result,
-		ResourceType: typeS,
-		ResourceId:   id,
-		Title:        title,
-		Meta:         meta,
-		Property:     property,
-		Expected:     string(expected),
-		Found:        string(found),
-		Human:        human,
-		Err:          err,
-		Duration:     time.Now().Sub(startTime),
+		Result:        result,
+		ResourceType:  typeS,
+		ResourceId:    id,
+		Title:         title,
+		Meta:          meta,
+		Property:      property,
+		Expected:      string(expected),
+		Found:         string(found),
+		MatcherResult: matcherResult,
+		Err:           err,
+		Duration:      time.Now().Sub(startTime),
 	}
 }

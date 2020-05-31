@@ -6,10 +6,9 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/onsi/gomega/format"
-	"github.com/onsi/gomega/types"
 )
 
-func BeSemverConstraint(constraint interface{}) types.GomegaMatcher {
+func BeSemverConstraint(constraint interface{}) GossMatcher {
 	return &BeSemverConstraintMatcher{
 		Constraint: constraint,
 	}
@@ -37,6 +36,22 @@ func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success boo
 	}
 
 	return true, nil
+}
+
+func (matcher *BeSemverConstraintMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to satisfy constraint",
+		Expected: matcher.Constraint,
+	}
+}
+
+func (matcher *BeSemverConstraintMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to satisfy constraint",
+		Expected: matcher.Constraint,
+	}
 }
 
 func (matcher *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
@@ -105,4 +120,8 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 	}
 
 	return out, len(out) > 0
+}
+
+func (matcher *BeSemverConstraintMatcher) String() string {
+	return format.Object(matcher, 0)
 }

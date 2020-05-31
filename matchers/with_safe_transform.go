@@ -5,14 +5,13 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/onsi/gomega/types"
 	"github.com/sanity-io/litter"
 )
 
 type WithSafeTransformMatcher struct {
 	// input
 	Transform Transformer // must be a function of one parameter that returns one value
-	Matcher   types.GomegaMatcher
+	Matcher   GossMatcher
 
 	// state
 	transformedValue interface{}
@@ -20,7 +19,7 @@ type WithSafeTransformMatcher struct {
 	err              error
 }
 
-func WithSafeTransform(transform Transformer, matcher types.GomegaMatcher) *WithSafeTransformMatcher {
+func WithSafeTransform(transform Transformer, matcher GossMatcher) *WithSafeTransformMatcher {
 
 	return &WithSafeTransformMatcher{
 		Transform: transform,
@@ -40,19 +39,32 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	return m.Matcher.Match(m.transformedValue)
 }
 
-func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string) {
+func (m *WithSafeTransformMatcher) FailureResult(_ interface{}) MatcherResult {
 	tchain, matcher := m.getTransformerChainAndMatcher()
-	message = matcher.FailureMessage(m.transformedValue)
-	return appendTransformMessage(message, tchain)
+	result := matcher.FailureResult(m.transformedValue)
+	result.TransformerChain = tchain
+	return result
+}
+func (m *WithSafeTransformMatcher) NegatedFailureResult(_ interface{}) MatcherResult {
+	tchain, matcher := m.getTransformerChainAndMatcher()
+	result := matcher.NegatedFailureResult(m.transformedValue)
+	result.TransformerChain = tchain
+	return result
 }
 
-func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	tchain, matcher := m.getTransformerChainAndMatcher()
-	message = matcher.NegatedFailureMessage(m.transformedValue)
-	return appendTransformMessage(message, tchain)
-}
+// func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string) {
+// 	tchain, matcher := m.getTransformerChainAndMatcher()
+// 	message = matcher.FailureMessage(m.transformedValue)
+// 	return appendTransformMessage(message, tchain)
+// }
+//
+// func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+// 	tchain, matcher := m.getTransformerChainAndMatcher()
+// 	message = matcher.NegatedFailureMessage(m.transformedValue)
+// 	return appendTransformMessage(message, tchain)
+// }
 
-func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher types.GomegaMatcher) {
+func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher) {
 	matcher = m
 L:
 	for {

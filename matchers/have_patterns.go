@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/onsi/gomega/format"
-	"github.com/onsi/gomega/types"
 )
 
 const (
@@ -30,7 +29,7 @@ type HavePatternsMatcher struct {
 //
 //Actual must be an array, slice or map.
 //For maps, ContainElements searches through the map's values.
-func HavePatterns(elements interface{}) types.GomegaMatcher {
+func HavePatterns(elements interface{}) GossMatcher {
 	return &HavePatternsMatcher{
 		Elements: elements,
 	}
@@ -103,6 +102,24 @@ func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err
 	}
 	return true, nil
 }
+
+func (matcher *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:          actual,
+		Message:         "to contain patterns",
+		Expected:        matcher.Elements,
+		MissingElements: matcher.missingElements,
+	}
+}
+
+func (matcher *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to contain patterns",
+		Expected: matcher.Elements,
+	}
+}
+
 func (matcher *HavePatternsMatcher) FailureMessage(actual interface{}) (message string) {
 	message = format.Message(reflect.TypeOf(actual), "to contain elements", matcher.Elements)
 	return appendMissingStrings(message, matcher.missingElements)
@@ -119,14 +136,6 @@ func appendMissingStrings(message string, missingElements []string) string {
 	return fmt.Sprintf("%s\nthe missing elements were\n%s", message,
 		format.Object(missingElements, 1))
 }
-
-//func appendMissingElements(message string, missingElements []interface{}) string {
-//	if len(missingElements) == 0 {
-//		return message
-//	}
-//	return fmt.Sprintf("%s\nthe missing elements were\n%s", message,
-//		format.Object(missingElements, 1))
-//}
 
 type patternMatcher interface {
 	Match(string) bool
@@ -244,4 +253,8 @@ func subtractSlice(x, y []string) []string {
 	}
 
 	return ret
+}
+
+func (matcher *HavePatternsMatcher) String() string {
+	return format.Object(matcher, 0)
 }

@@ -27,9 +27,9 @@ func humanizeResult(r resource.TestResult) string {
 
 	switch r.Result {
 	case resource.SUCCESS:
-		return green("%s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.Human)
+		return green("%s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult)
 	case resource.FAIL:
-		return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
+		return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
 	default:

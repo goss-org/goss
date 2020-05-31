@@ -3,19 +3,34 @@ package matchers
 import (
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
-	"github.com/onsi/gomega/types"
 )
 
 type ContainSubstringMatcher struct {
 	matchers.ContainSubstringMatcher
 }
 
-func ContainSubstring(substr string, args ...interface{}) types.GomegaMatcher {
+func ContainSubstring(substr string, args ...interface{}) GossMatcher {
 	return &ContainSubstringMatcher{
 		matchers.ContainSubstringMatcher{
 			Substr: substr,
 			Args:   args,
 		},
+	}
+}
+
+func (matcher *ContainSubstringMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to contain substring",
+		Expected: matcher.Substr,
+	}
+}
+
+func (matcher *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to contain substring",
+		Expected: matcher.Substr,
 	}
 }
 

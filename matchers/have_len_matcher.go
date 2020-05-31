@@ -4,18 +4,33 @@ import (
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
-	"github.com/onsi/gomega/types"
 )
 
 type HaveLenMatcher struct {
 	matchers.HaveLenMatcher
 }
 
-func HaveLen(count int) types.GomegaMatcher {
+func HaveLen(count int) GossMatcher {
 	return &HaveLenMatcher{
 		matchers.HaveLenMatcher{
 			Count: count,
 		},
+	}
+}
+
+func (matcher *HaveLenMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to have length",
+		Expected: matcher.Count,
+	}
+}
+
+func (matcher *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to have length",
+		Expected: matcher.Count,
 	}
 }
 

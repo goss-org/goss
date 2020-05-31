@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
-	"github.com/onsi/gomega/types"
 	"github.com/sanity-io/litter"
 )
 
@@ -12,11 +11,27 @@ type EqualMatcher struct {
 	matchers.EqualMatcher
 }
 
-func Equal(element interface{}) types.GomegaMatcher {
+func Equal(element interface{}) GossMatcher {
 	return &EqualMatcher{
 		matchers.EqualMatcher{
 			Expected: element,
 		},
+	}
+}
+
+func (matcher *EqualMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to equal",
+		Expected: matcher.Expected,
+	}
+}
+
+func (matcher *EqualMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to equal",
+		Expected: matcher.Expected,
 	}
 }
 

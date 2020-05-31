@@ -1,21 +1,41 @@
 package matchers
 
 import (
-	"github.com/onsi/gomega/types"
+	"github.com/onsi/gomega/matchers"
 )
 
 type ConsistOfMatcher struct {
-	GomegaConsistOfMatcher
+	matchers.ConsistOfMatcher
 }
 
-func ConsistOf(elements ...interface{}) types.GomegaMatcher {
+func ConsistOf(elements ...interface{}) GossMatcher {
 	return &ConsistOfMatcher{
-		GomegaConsistOfMatcher{
+		matchers.ConsistOfMatcher{
 			Elements: elements,
 		},
 	}
 }
 
+func (matcher *ConsistOfMatcher) FailureResult(actual interface{}) MatcherResult {
+	missingElements := getUnexported(matcher, "missingElements")
+	extraElements := getUnexported(matcher, "extraElements")
+	return MatcherResult{
+		Actual:          actual,
+		Message:         "to consist of",
+		Expected:        matcher.Elements,
+		MissingElements: missingElements,
+		ExtraElements:   extraElements,
+	}
+}
+
+func (matcher *ConsistOfMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to consist of",
+		Expected: matcher.Elements,
+	}
+}
+
 func (matcher *ConsistOfMatcher) String() string {
-	return Object(matcher.GomegaConsistOfMatcher, 0)
+	return Object(matcher.ConsistOfMatcher, 0)
 }

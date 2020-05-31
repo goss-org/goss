@@ -2,19 +2,34 @@ package matchers
 
 import (
 	"github.com/onsi/gomega/matchers"
-	"github.com/onsi/gomega/types"
 )
 
 type HavePrefixMatcher struct {
 	matchers.HavePrefixMatcher
 }
 
-func HavePrefix(prefix string, args ...interface{}) types.GomegaMatcher {
+func HavePrefix(prefix string, args ...interface{}) GossMatcher {
 	return &HavePrefixMatcher{
 		matchers.HavePrefixMatcher{
 			Prefix: prefix,
 			Args:   args,
 		},
+	}
+}
+
+func (matcher *HavePrefixMatcher) FailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to have prefix",
+		Expected: matcher.Prefix,
+	}
+}
+
+func (matcher *HavePrefixMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to have prefix",
+		Expected: matcher.Prefix,
 	}
 }
 
