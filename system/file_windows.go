@@ -3,13 +3,13 @@
 package system
 
 func (f *DefFile) Mode() (string, error) {
-	return "0000", nil // TODO implement
+	return "-1", nil // not applicable on Windows
 }
 
 func (f *DefFile) Owner() (string, error) {
-	return getUserForUid(1000)
+	return "-1", nil // not applicable on Windows
 }
 
 func (f *DefFile) Group() (string, error) {
-	return getGroupForGid(1000)
+	return "-1", nil // not applicable on Windows
 }
