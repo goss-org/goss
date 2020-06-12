@@ -27,13 +27,13 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				fmt.Fprintln(w, humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult, false))
 			case resource.SKIP:
-				fmt.Fprintln(w, humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult, false))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				fmt.Fprintln(w, humanizeResult(testResult))
+				fmt.Fprintln(w, humanizeResult(testResult, false))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
 			}

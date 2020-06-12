@@ -3,6 +3,7 @@ package matchers
 import (
 	"encoding/json"
 
+	"github.com/icza/dyno"
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -44,9 +45,7 @@ func (matcher *HaveKeyWithValueMatcher) MarshalJSON() ([]byte, error) {
 	expect[matcher.Key] = matcher.Value
 	j := make(map[string]interface{})
 	j["have-key-with-value"] = expect
-	//json := jsoniter.ConfigCompatibleWithStandardLibrary
-	//b, err := json.Marshal(i)
-	return json.Marshal(ConvertMapI2MapS(j))
+	return json.Marshal(dyno.ConvertMapI2MapS(j))
 }
 
 func (matcher *HaveKeyWithValueMatcher) String() string {

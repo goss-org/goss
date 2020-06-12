@@ -25,12 +25,12 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult(testResult) + "\n"
+				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult(testResult, true) + "\n"
 			case resource.FAIL:
-				summary[testCount] = "not ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult(testResult) + "\n"
+				summary[testCount] = "not ok " + strconv.Itoa(testCount+1) + " - " + humanizeResult(testResult, true) + "\n"
 				failed++
 			case resource.SKIP:
-				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - # SKIP " + humanizeResult(testResult) + "\n"
+				summary[testCount] = "ok " + strconv.Itoa(testCount+1) + " - # SKIP " + humanizeResult(testResult, true) + "\n"
 			default:
 				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}

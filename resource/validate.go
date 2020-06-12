@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/matchers"
+	"github.com/icza/dyno"
 )
 
 const (
@@ -139,16 +140,15 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	}
 
 	//json := jsoniter.ConfigCompatibleWithStandardLibrary
-	expected, _ := json.Marshal(expectedValue)
+	expected, _ := json.Marshal(dyno.ConvertMapI2MapS(expectedValue))
 	found, _ := json.Marshal(foundValue)
 
 	var matcherResult matchers.MatcherResult
 	result := SUCCESS
 	if success {
 		matcherResult = matchers.MatcherResult{
-			Successful: true,
-			Message:    "matches expectation",
-			Expected:   expectedValue,
+			Message:  "matches expectation",
+			Expected: expectedValue,
 		}
 	} else {
 		matcherResult = gomegaMatcher.FailureResult(foundValue)

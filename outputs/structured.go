@@ -16,7 +16,8 @@ type Structured struct{}
 // StructuredTestResult is an individual test result with additional human friendly summary
 type StructuredTestResult struct {
 	resource.TestResult
-	SummaryLine string `json:"summary-line"`
+	SummaryLine        string `json:"summary-line"`
+	SummaryLineCompact string `json:"summary-line-compact"`
 }
 
 // StructureTestSummary holds summary information about a test run
@@ -48,8 +49,9 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			r := StructuredTestResult{
-				TestResult:  testResult,
-				SummaryLine: humanizeResult(testResult),
+				TestResult:         testResult,
+				SummaryLine:        humanizeResult(testResult, false),
+				SummaryLineCompact: humanizeResult(testResult, true),
 			}
 
 			if testResult.Result == resource.FAIL {

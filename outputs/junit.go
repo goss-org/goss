@@ -38,10 +38,10 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 				"time=\"" + duration + "\">\n"
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
-					escapeString(humanizeResult(testResult)) +
+					escapeString(humanizeResult(testResult, true)) +
 					"</system-err>\n"
 				summary[testCount] += "<failure>" +
-					escapeString(humanizeResult(testResult)) +
+					escapeString(humanizeResult(testResult, true)) +
 					"</failure>\n</testcase>\n"
 
 				failed++
@@ -51,7 +51,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 					skipped++
 				}
 				summary[testCount] += "<system-out>" +
-					escapeString(humanizeResult(testResult)) +
+					escapeString(humanizeResult(testResult, true)) +
 					"</system-out>\n</testcase>\n"
 			}
 			testCount++

@@ -1,12 +1,15 @@
 package outputs
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/aelsabbahy/goss/matchers"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
@@ -20,21 +23,73 @@ var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
 var yellow = color.New(color.FgYellow).SprintfFunc()
 
-func humanizeResult(r resource.TestResult) string {
+func humanizeResult(r resource.TestResult, compact bool) string {
+	sep := "\n"
+	if compact {
+		sep = " "
+	}
 	if r.Err != nil {
 		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
 	}
 
 	switch r.Result {
 	case resource.SUCCESS:
-		return green("%s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult)
+		return green("%s: %s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult.Message, prettyPrint(r.MatcherResult.Expected, false))
 	case resource.FAIL:
-		return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult)
+		matcherResult := prettyPrintMatcherResult(r.MatcherResult, compact)
+		return red("%s: %s: %s:%s%s", r.ResourceType, r.ResourceId, r.Property, sep, matcherResult)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
 	default:
 		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}
+}
+
+func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool) string {
+	sep := "\n"
+	if compact {
+		sep = " "
+	}
+	var ss []string
+	//var s string
+	ss = append(ss, "Expected")
+	ss = append(ss, prettyPrint(m.Actual, !compact))
+	ss = append(ss, m.Message)
+	ss = append(ss, prettyPrint(m.Expected, !compact))
+
+	if m.MissingElements != nil {
+		ss = append(ss, "the missing elements were")
+		ss = append(ss, prettyPrint(m.MissingElements, !compact))
+	}
+	if m.ExtraElements != nil {
+		ss = append(ss, "the extra elements were")
+		ss = append(ss, prettyPrint(m.MissingElements, !compact))
+	}
+	return strings.Join(ss, sep)
+	//return s
+}
+
+func prettyPrint(i interface{}, indent bool) string {
+	// fixme: error handling
+	b, err := json.Marshal(i)
+	if err != nil {
+		b = []byte(fmt.Sprint(err))
+	}
+	if indent {
+		return indentLines(string(b))
+	} else {
+		return string(b)
+	}
+}
+
+// indents a block of text with an indent string
+func indentLines(text string) string {
+	indent := "    "
+	result := ""
+	for _, j := range strings.Split(strings.TrimRight(text, "\n"), "\n") {
+		result += indent + j + "\n"
+	}
+	return result[:len(result)-1]
 }
 
 //func humanizeResult2(r resource.TestResult) string {
@@ -210,7 +265,7 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
 				s += fmt.Sprint(header)
 			}
 			for _, testResult := range failedGroup {
-				s += fmt.Sprintln(humanizeResult(testResult))
+				s += fmt.Sprintln(humanizeResult(testResult, false))
 			}
 			s += fmt.Sprint("\n")
 		}

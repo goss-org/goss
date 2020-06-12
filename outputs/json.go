@@ -29,7 +29,8 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 				failed++
 			}
 			m := struct2map(testResult)
-			m["summary-line"] = humanizeResult(testResult)
+			m["summary-line"] = humanizeResult(testResult, false)
+			m["summary-line-compact"] = humanizeResult(testResult, true)
 			m["duration"] = int64(m["duration"].(float64))
 			resultsOut = append(resultsOut, m)
 			testCount++

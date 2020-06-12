@@ -29,7 +29,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 			switch testResult.Result {
 			case resource.FAIL:
 				if util.IsValueInList("verbose", outConfig.FormatOptions) {
-					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult(testResult) + "\n"
+					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult(testResult, true) + "\n"
 				}
 				failed++
 			case resource.SKIP:

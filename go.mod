@@ -10,6 +10,7 @@ require (
 	github.com/docker/docker v0.0.0-20161109014415-383a2f046b16
 	github.com/fatih/color v0.0.0-20161025120501-bf82308e8c85
 	github.com/golang/protobuf v1.3.2 // indirect
+	github.com/icza/dyno v0.0.0-20200205103839-49cb13720835
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
