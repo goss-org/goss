@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
@@ -22,7 +23,7 @@ func BeNumerically(comparator string, compareTo ...interface{}) GossMatcher {
 func (matcher *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("to be %s", matcher.Comparator),
+		Message:  fmt.Sprintf("to be %s", numericSymbolToStr[matcher.Comparator]),
 		Expected: matcher.CompareTo[0],
 	}
 }
@@ -30,11 +31,24 @@ func (matcher *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherRe
 func (matcher *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("not to be %s", matcher.Comparator),
+		Message:  fmt.Sprintf("not to be %s", numericSymbolToStr[matcher.Comparator]),
 		Expected: matcher.CompareTo[0],
 	}
 }
 
+func (matcher *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j[numericSymbolToStr[matcher.Comparator]] = matcher.CompareTo[0]
+	return json.Marshal(j)
+}
+
 func (matcher *BeNumericallyMatcher) String() string {
 	return Object(matcher.BeNumericallyMatcher, 0)
+}
+
+var numericSymbolToStr = map[string]string{
+	">":  "gt",
+	">=": "ge",
+	"<":  "lt",
+	"<=": "le",
 }

@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
@@ -44,4 +45,8 @@ func (matcher *EqualMatcher) String() string {
 	//return sq.Sdump(matcher.EqualMatcher)
 	//return fmt.Sprintf("EqualMatcher{Expected:\"%s\"}", matcher.Expected)
 	return fmt.Sprintf("%q", matcher.Expected)
+}
+
+func (matcher *EqualMatcher) MarshalJSON() ([]byte, error) {
+	return json.Marshal(matcher.Expected)
 }

@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
@@ -51,6 +52,12 @@ func (matcher *ContainElementsMatcher) FailureMessage(actual interface{}) (messa
 
 func (matcher *ContainElementsMatcher) NegatedFailureMessage(actual interface{}) (message string) {
 	return Message(actual, "not to contain elements", matcher.Elements)
+}
+
+func (matcher *ContainElementsMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["contain-elements"] = matcher.Elements
+	return json.Marshal(j)
 }
 
 func (matcher *ContainElementsMatcher) String() string {

@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -52,17 +53,15 @@ func (m *WithSafeTransformMatcher) NegatedFailureResult(_ interface{}) MatcherRe
 	return result
 }
 
-// func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string) {
-// 	tchain, matcher := m.getTransformerChainAndMatcher()
-// 	message = matcher.FailureMessage(m.transformedValue)
-// 	return appendTransformMessage(message, tchain)
-// }
-//
-// func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-// 	tchain, matcher := m.getTransformerChainAndMatcher()
-// 	message = matcher.NegatedFailureMessage(m.transformedValue)
-// 	return appendTransformMessage(message, tchain)
-// }
+// Stubs to match omegaMatcher
+func (m *WithSafeTransformMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// Stubs to match omegaMatcher
+func (m *WithSafeTransformMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
+}
 
 func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher) {
 	matcher = m
@@ -100,6 +99,28 @@ func appendTransformMessage(message string, tchain []Transformer) string {
 		s)
 }
 
+func (m *WithSafeTransformMatcher) MarshalJSON() ([]byte, error) {
+	tchain, matcher := m.getTransformerChainAndMatcher()
+	//if len(tchain) == 0 {
+	//	return json.Marshal(matcher)
+	//}
+	if len(tchain) == 0 || true {
+		return json.Marshal(matcher)
+	}
+	j := make(map[string]interface{})
+	j["matcher"] = matcher
+	//j["transform-chain"] = tchain
+	sq := litter.Options{Compact: true, StripPackageNames: true}
+	ss := make([]string, len(tchain))
+	for i, v := range tchain {
+		ss[i] = sq.Sdump(v)
+	}
+	j["transform-chain"] = ss
+	return json.Marshal(j)
+	////fmt.Println("wtf5", m.String())
+	//return json.Marshal(m)
+	//return []byte(m.String()), nil
+}
 func (m *WithSafeTransformMatcher) String() string {
 	tchain, matcher := m.getTransformerChainAndMatcher()
 	if len(tchain) == 0 {

@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"encoding/json"
+
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -38,4 +40,9 @@ func (matcher *ConsistOfMatcher) NegatedFailureResult(actual interface{}) Matche
 
 func (matcher *ConsistOfMatcher) String() string {
 	return Object(matcher.ConsistOfMatcher, 0)
+}
+func (matcher *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["consist-of"] = matcher.Elements
+	return json.Marshal(j)
 }

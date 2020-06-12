@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"encoding/json"
+
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -31,6 +33,12 @@ func (matcher *HaveSuffixMatcher) NegatedFailureResult(actual interface{}) Match
 		Message:  "not to have suffix",
 		Expected: matcher.Suffix,
 	}
+}
+
+func (matcher *HaveSuffixMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["have-prefix"] = matcher.Suffix
+	return json.Marshal(j)
 }
 
 func (matcher *HaveSuffixMatcher) String() string {

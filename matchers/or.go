@@ -1,6 +1,10 @@
 package matchers
 
-import "github.com/onsi/gomega/format"
+import (
+	"encoding/json"
+
+	"github.com/onsi/gomega/format"
+)
 
 type OrMatcher struct {
 	Matchers []GossMatcher
@@ -39,6 +43,12 @@ func (matcher *OrMatcher) FailureResult(actual interface{}) MatcherResult {
 func (matcher *OrMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	firstSuccessfulMatcher := getUnexported(matcher, "firstSuccessfulMatcher")
 	return firstSuccessfulMatcher.(GossMatcher).NegatedFailureResult(actual)
+}
+
+func (matcher *OrMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["or"] = matcher.Matchers
+	return json.Marshal(j)
 }
 
 func (matcher *OrMatcher) String() string {

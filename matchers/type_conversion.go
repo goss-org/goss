@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -89,6 +90,11 @@ func (t ToArray) Transform(i interface{}) (interface{}, error) {
 	//	}
 	//	s := i.(string)
 	//return strings.Split(s, "\n"), nil
+}
+func (matcher ToArray) MarshalJSON() ([]byte, error) {
+	//j := make(map[string]interface{})
+	//j["to-array"] = nil
+	return json.Marshal("to-array{}")
 }
 
 type ReaderToStrings struct{}

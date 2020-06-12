@@ -6,16 +6,14 @@ require (
 	github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v0.0.0-20160824153601-e8e29e67948b
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/docker v0.0.0-20161109014415-383a2f046b16
 	github.com/fatih/color v0.0.0-20161025120501-bf82308e8c85
 	github.com/golang/protobuf v1.3.2 // indirect
-	github.com/json-iterator/go v1.1.9
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/miekg/dns v0.0.0-20161018060808-58f52c57ce9d
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
 	github.com/onsi/ginkgo v1.10.2 // indirect
 	github.com/onsi/gomega v1.9.0

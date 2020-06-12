@@ -2,6 +2,7 @@ package matchers
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -253,6 +254,12 @@ func subtractSlice(x, y []string) []string {
 	}
 
 	return ret
+}
+
+func (matcher *HavePatternsMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["have-patterns"] = matcher.Elements
+	return json.Marshal(j)
 }
 
 func (matcher *HavePatternsMatcher) String() string {

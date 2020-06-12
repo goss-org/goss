@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"encoding/json"
+
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
 )
@@ -36,4 +38,10 @@ func (matcher *ContainSubstringMatcher) NegatedFailureResult(actual interface{})
 
 func (matcher *ContainSubstringMatcher) String() string {
 	return format.Object(matcher.ContainSubstringMatcher, 0)
+}
+
+func (matcher *ContainSubstringMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["contain-substring"] = matcher.Substr
+	return json.Marshal(j)
 }

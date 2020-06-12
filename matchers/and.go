@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -36,6 +37,15 @@ func (matcher *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResul
 		Actual:  actual,
 		Message: fmt.Sprintf("To not satisfy all of these matchers: %s", matcher.Matchers),
 	}
+}
+
+func (matcher *AndMatcher) MarshalJSON() ([]byte, error) {
+	if len(matcher.Matchers) == 1 {
+		return json.Marshal(matcher.Matchers[0])
+	}
+	j := make(map[string]interface{})
+	j["and"] = matcher.Matchers
+	return json.Marshal(j)
 }
 
 //FIXME: Indentation is wrong

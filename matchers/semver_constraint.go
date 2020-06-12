@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -120,6 +121,12 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 	}
 
 	return out, len(out) > 0
+}
+
+func (matcher *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["semver-constraint"] = matcher.Constraint
+	return json.Marshal(j)
 }
 
 func (matcher *BeSemverConstraintMatcher) String() string {

@@ -1,6 +1,7 @@
 package matchers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/onsi/gomega/matchers"
@@ -32,6 +33,12 @@ func (matcher *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherR
 		Message:  "not to have length",
 		Expected: matcher.Count,
 	}
+}
+
+func (matcher *HaveLenMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["have-len"] = matcher.Count
+	return json.Marshal(j)
 }
 
 func (matcher *HaveLenMatcher) String() string {

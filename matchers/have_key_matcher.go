@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"encoding/json"
+
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -30,6 +32,12 @@ func (matcher *HaveKeyMatcher) NegatedFailureResult(actual interface{}) MatcherR
 		Message:  "not to have key matching",
 		Expected: matcher.Key,
 	}
+}
+
+func (matcher *HaveKeyMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["have-key"] = matcher.Key
+	return json.Marshal(j)
 }
 
 func (matcher *HaveKeyMatcher) String() string {

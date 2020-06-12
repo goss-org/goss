@@ -1,6 +1,8 @@
 package matchers
 
 import (
+	"encoding/json"
+
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -31,6 +33,12 @@ func (matcher *MatchRegexpMatcher) NegatedFailureResult(actual interface{}) Matc
 		Message:  "not to match regular expression",
 		Expected: matcher.Regexp,
 	}
+}
+
+func (matcher *MatchRegexpMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]interface{})
+	j["match-regexp"] = matcher.Regexp
+	return json.Marshal(j)
 }
 
 func (matcher *MatchRegexpMatcher) String() string {
