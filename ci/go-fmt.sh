@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-os_name="${TRAVIS_OS_NAME:?"No value from TRAVIS_OS_NAME. This is meant to be run in Travis CI, see also https://docs.travis-ci.com/user/environment-variables/#convenience-variables"}"
+os_name="$(go env GOOS)"
 
 # gofmt must be on PATH
 command -v gofmt
