@@ -24,16 +24,16 @@ before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
 
 install:
-  - ./ci/install.sh "${TRAVIS_OS_NAME}"
+  - ./ci/install.sh
 
 before_script:
-  - ./ci/before-build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/before-build.sh
 
 script:
-  - ./ci/build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/build.sh
 
 after_script:
-  - ./ci/after-build.sh "${TRAVIS_OS_NAME}"
+  - ./ci/after-build.sh
 
 deploy:
   provider: releases
