@@ -43,7 +43,12 @@ func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err
 	}
 	elements := make([]string, len(t))
 	for i, v := range t {
-		elements[i] = fmt.Sprint(v)
+		switch v := v.(type) {
+		case string:
+			elements[i] = v
+		default:
+			return false, fmt.Errorf("HavePatterns matcher expects patterns to be a string. got: \n%s", format.Object(v, 1))
+		}
 	}
 	notfound, err := sliceToPatterns(elements)
 	// short circuit
@@ -106,7 +111,7 @@ func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err
 
 func (matcher *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
-		Actual:          actual,
+		Actual:          fmt.Sprintf("object: %T", actual),
 		Message:         "to contain patterns",
 		Expected:        matcher.Elements,
 		MissingElements: matcher.missingElements,
@@ -115,7 +120,7 @@ func (matcher *HavePatternsMatcher) FailureResult(actual interface{}) MatcherRes
 
 func (matcher *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
-		Actual:   actual,
+		Actual:   fmt.Sprintf("object: %T", actual),
 		Message:  "not to contain patterns",
 		Expected: matcher.Elements,
 	}

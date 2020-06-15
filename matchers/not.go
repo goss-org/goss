@@ -1,6 +1,8 @@
 package matchers
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type NotMatcher struct {
 	Matcher GossMatcher
@@ -24,6 +26,16 @@ func (matcher *NotMatcher) FailureResult(actual interface{}) MatcherResult {
 
 func (matcher *NotMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return matcher.Matcher.FailureResult(actual)
+}
+
+// Stubs to match omegaMatcher
+func (m *NotMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// Stubs to match omegaMatcher
+func (m *NotMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
 }
 
 func (matcher *NotMatcher) MarshalJSON() ([]byte, error) {
