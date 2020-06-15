@@ -23,7 +23,7 @@ func BeNumerically(comparator string, compareTo ...interface{}) GossMatcher {
 func (matcher *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("to be %s", numericSymbolToStr[matcher.Comparator]),
+		Message:  fmt.Sprintf("to be %s", matcher.Comparator),
 		Expected: matcher.CompareTo[0],
 	}
 }
@@ -31,7 +31,7 @@ func (matcher *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherRe
 func (matcher *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("not to be %s", numericSymbolToStr[matcher.Comparator]),
+		Message:  fmt.Sprintf("not to be %s", matcher.Comparator),
 		Expected: matcher.CompareTo[0],
 	}
 }

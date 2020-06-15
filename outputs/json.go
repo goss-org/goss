@@ -18,6 +18,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var pretty bool
 	pretty = util.IsValueInList("pretty", outConfig.FormatOptions)
+	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
 
 	color.NoColor = true
 	testCount := 0
@@ -29,8 +30,8 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 				failed++
 			}
 			m := struct2map(testResult)
-			m["summary-line"] = humanizeResult(testResult, false)
-			m["summary-line-compact"] = humanizeResult(testResult, true)
+			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
+			m["summary-line-compact"] = humanizeResult(testResult, true, includeRaw)
 			m["duration"] = int64(m["duration"].(float64))
 			resultsOut = append(resultsOut, m)
 			testCount++

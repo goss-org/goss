@@ -36,28 +36,11 @@ func (t ToNumeric) Transform(e interface{}) (interface{}, error) {
 
 	}
 }
-
-type ToFloat64 struct{}
-
-func (t ToFloat64) Transform(e interface{}) (interface{}, error) {
-	switch v := e.(type) {
-	case float64:
-		return v, nil
-	case int:
-		return float64(v), nil
-	case string:
-		return strconv.ParseFloat(strings.TrimSpace(v), 64)
-	case []string:
-		i, err := ToString{}.Transform(v)
-		if err != nil {
-			return 0, err
-		}
-		s := i.(string)
-		return strconv.ParseFloat(strings.TrimSpace(s), 64)
-	default:
-		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
-
+func (t ToNumeric) MarshalJSON() ([]byte, error) {
+	j := map[string]interface{}{
+		"to-numeric": map[string]string{},
 	}
+	return json.Marshal(j)
 }
 
 type ToString struct{}
@@ -71,6 +54,13 @@ func (t ToString) Transform(e interface{}) (interface{}, error) {
 	}
 }
 
+func (t ToString) MarshalJSON() ([]byte, error) {
+	j := map[string]interface{}{
+		"to-string": map[string]string{},
+	}
+	return json.Marshal(j)
+}
+
 type ToArray struct{}
 
 func (t ToArray) Transform(i interface{}) (interface{}, error) {
@@ -80,21 +70,12 @@ func (t ToArray) Transform(i interface{}) (interface{}, error) {
 	default:
 		return i, nil
 	}
-	//	if !ok {
-	//		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
-	//	}
-	//	var lines []string
-	//	i, err := ReaderToString{}.Transform(r)
-	//	if err != nil {
-	//		return lines, err
-	//	}
-	//	s := i.(string)
-	//return strings.Split(s, "\n"), nil
 }
 func (matcher ToArray) MarshalJSON() ([]byte, error) {
-	//j := make(map[string]interface{})
-	//j["to-array"] = nil
-	return json.Marshal("to-array{}")
+	j := map[string]interface{}{
+		"to-array": map[string]string{},
+	}
+	return json.Marshal(j)
 }
 
 type ReaderToStrings struct{}
@@ -143,4 +124,12 @@ func (g Gjson) Transform(i interface{}) (interface{}, error) {
 	//}
 
 	return r.Value(), nil
+}
+func (g Gjson) MarshalJSON() ([]byte, error) {
+	j := map[string]interface{}{
+		"gjson": map[string]string{
+			"Path": g.Path,
+		},
+	}
+	return json.Marshal(j)
 }

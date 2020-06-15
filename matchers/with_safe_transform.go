@@ -40,16 +40,18 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	return m.Matcher.Match(m.transformedValue)
 }
 
-func (m *WithSafeTransformMatcher) FailureResult(_ interface{}) MatcherResult {
+func (m *WithSafeTransformMatcher) FailureResult(actual interface{}) MatcherResult {
 	tchain, matcher := m.getTransformerChainAndMatcher()
 	result := matcher.FailureResult(m.transformedValue)
 	result.TransformerChain = tchain
+	result.UntransformedValue = actual
 	return result
 }
-func (m *WithSafeTransformMatcher) NegatedFailureResult(_ interface{}) MatcherResult {
+func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	tchain, matcher := m.getTransformerChainAndMatcher()
 	result := matcher.NegatedFailureResult(m.transformedValue)
 	result.TransformerChain = tchain
+	result.UntransformedValue = actual
 	return result
 }
 

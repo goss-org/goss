@@ -40,7 +40,9 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	fmt.Fprint(w, "\n\n")
-	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped))
+	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
+
+	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
 
 	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
 	if failed > 0 {
@@ -50,5 +52,5 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 }
 
 func init() {
-	RegisterOutputer("rspecish", &Rspecish{}, []string{})
+	RegisterOutputer("rspecish", &Rspecish{}, []string{"include_raw"})
 }

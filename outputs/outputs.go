@@ -23,7 +23,7 @@ var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
 var yellow = color.New(color.FgYellow).SprintfFunc()
 
-func humanizeResult(r resource.TestResult, compact bool) string {
+func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
 	sep := "\n"
 	if compact {
 		sep = " "
@@ -36,7 +36,7 @@ func humanizeResult(r resource.TestResult, compact bool) string {
 	case resource.SUCCESS:
 		return green("%s: %s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult.Message, prettyPrint(r.MatcherResult.Expected, false))
 	case resource.FAIL:
-		matcherResult := prettyPrintMatcherResult(r.MatcherResult, compact)
+		matcherResult := prettyPrintMatcherResult(r.MatcherResult, compact, includeRaw)
 		return red("%s: %s: %s:%s%s", r.ResourceType, r.ResourceId, r.Property, sep, matcherResult)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
@@ -45,7 +45,7 @@ func humanizeResult(r resource.TestResult, compact bool) string {
 	}
 }
 
-func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool) string {
+func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw bool) string {
 	sep := "\n"
 	if compact {
 		sep = " "
@@ -64,6 +64,14 @@ func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool) string {
 	if m.ExtraElements != nil {
 		ss = append(ss, "the extra elements were")
 		ss = append(ss, prettyPrint(m.MissingElements, !compact))
+	}
+	if len(m.TransformerChain) != 0 {
+		ss = append(ss, "the transform chain was")
+		ss = append(ss, prettyPrint(m.TransformerChain, !compact))
+		if includeRaw {
+			ss = append(ss, "the raw value was")
+			ss = append(ss, prettyPrint(m.UntransformedValue, !compact))
+		}
 	}
 	return strings.Join(ss, sep)
 	//return s
@@ -254,7 +262,7 @@ func summary(startTime time.Time, count, failed, skipped int) string {
 	return s
 }
 
-func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
+func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw bool) string {
 	var s string
 	if len(failedOrSkipped) > 0 {
 		s += fmt.Sprint("Failures/Skipped:\n\n")
@@ -265,7 +273,7 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
 				s += fmt.Sprint(header)
 			}
 			for _, testResult := range failedGroup {
-				s += fmt.Sprintln(humanizeResult(testResult, false))
+				s += fmt.Sprintln(humanizeResult(testResult, false, includeRaw))
 			}
 			s += fmt.Sprint("\n")
 		}
