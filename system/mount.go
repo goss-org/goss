@@ -2,9 +2,7 @@ package system
 
 import (
 	"fmt"
-	"math"
 	"strings"
-	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/docker/docker/pkg/mount"
@@ -120,17 +118,4 @@ func getMount(mountpoint string) (*mount.Info, error) {
 		}
 	}
 	return nil, fmt.Errorf("Mountpoint not found")
-}
-
-func getUsage(mountpoint string) (int, error) {
-	statfsOut := &syscall.Statfs_t{}
-	err := syscall.Statfs(mountpoint, statfsOut)
-	if err != nil {
-		return -1, err
-	}
-
-	percentageFree := float64(statfsOut.Bfree) / float64(statfsOut.Blocks)
-	usage := math.Round((1 - percentageFree) * 100)
-
-	return int(usage), nil
 }

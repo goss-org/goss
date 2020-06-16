@@ -1,0 +1,8 @@
+---
+command:
+  hello world:
+    exec: echo 'hi'
+    exit-status: 0
+    stdout:
+      - hi
+    stderr: []

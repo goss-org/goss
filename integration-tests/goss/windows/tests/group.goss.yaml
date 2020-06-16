@@ -1,0 +1,6 @@
+---
+group:
+  'Local Users':
+    exists: true
+    gid: 0  # not applicable on Windows
+    skip: true  # TODO: implement on Windows
