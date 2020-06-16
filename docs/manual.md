@@ -898,22 +898,26 @@ For more information see:
 
 ## Templates
 
-Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests.
+Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests. 
 
 Available variables:
 * `{{.Env}}`  - Containing environment variables
 * `{{.Vars}}` - Containing the values defined in [--vars](#global-options) file
 
-Available functions beyond text/template [built-in functions](https://golang.org/pkg/text/template/#hdr-Functions):
-* `mkSlice "ARG1" "ARG2"` - Retuns a slice of all the arguments. See examples below for usage.
-* `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
-* `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
-  * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
-* `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
-* `toLower` - Changes piped input to lowercase
-* `toUpper` - Changes piped input to UPPERCASE
+Available functions:
+* [built-in text/template functions](https://golang.org/pkg/text/template/#hdr-Functions)
+* [Sprig functions](https://masterminds.github.io/sprig/)
+* Custom functions:
+  * `mkSlice "ARG1" "ARG2"` - Returns a slice of all the arguments. See examples below for usage.
+  * `getEnv "var" ["default"]` - A more forgiving env var lookup. If key is missing either "" or default (if provided) is returned.
+  * `readFile "fileName"` - Reads file content into a string, trims whitespace. Useful when a file contains a token.
+    * **NOTE:** Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
+  * `regexMatch "(some)?reg[eE]xp"` - Tests the piped input against the regular expression argument.
+  * `toLower` - Changes piped input to lowercase
+  * `toUpper` - Changes piped input to UPPERCASE
 
 **NOTE:** gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`. One way to get around this is to split your template and static goss files and use [gossfile](#gossfile) to import.
+**NOTE:** Some of Sprig functions have the same name as the older Custom Goss functions. The Sprig functions are overwritten by the custom functions for backwards compatibility.
 
 ### Examples
 
@@ -934,6 +938,15 @@ file:
     group: root
     filetype: file
 {{end}}
+```
+
+Using `upper` function from Sprig.
+```yaml
+matching:
+  sping_basic:
+    content: {{ "hello!" | upper | repeat 5 }}
+    matches:
+      match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
 ```
 
 Using Env variables and a vars file:

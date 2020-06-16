@@ -249,3 +249,7 @@ matching:
     content: {{ .Vars.overwrite }}
     matches:
       match-regexp: bar
+  sping_basic:
+    content: {{ "hello!" | upper | repeat 5 }}
+    matches:
+      match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
