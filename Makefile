@@ -4,7 +4,7 @@ exe = github.com/aelsabbahy/goss/cmd/goss
 pkgs = $(shell ./novendor.sh)
 cmd = goss
 GO111MODULE=on
-GO_FILES = $(shell find . \( -path ./vendor -o -name '_test.go' \) -prune -o -name '*.go' -print)
+GO_FILES = $(shell git ls-files -- '*.go' ':!:*vendor*_test.go')
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
