@@ -14,10 +14,12 @@ if [[ "${segments[0]}" == "alpha" ]]; then
   arch="${segments[2]}"
 fi
 
-output="release/goss-${platform_spec}"
+output_dir="release/"
+output_fname="goss-${platform_spec}"
 if [[ "${os}" == "windows" ]]; then
-  output="${output}.exe"
+  output_fname="${output_fname}.exe"
 fi
+output="${output_dir}/${output_fname}"
 
 GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
   -ldflags "-X main.version=${version_stamp} -s -w" \
@@ -26,4 +28,4 @@ GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
 
 chmod +x "${output}"
 
-sha256sum "${output}" > "${output}".sha256
+(cd "$output_dir" && sha256sum "${output_fname}" > "${output_fname}.sha256")
