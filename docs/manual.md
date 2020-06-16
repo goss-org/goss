@@ -1,6 +1,6 @@
 # goss manual
 
-Note: macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. Refer to <platform-feature-parity.md> (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551))
+Note: macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. Refer to [platform-feature-parity](https://github.com/aelsabbahy/goss/blob/master/docs/platform-feature-parity.md). macOS and Windows support is community driven; there is no commitment to adding features / fixing bugs for those platforms. see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551).
 
 ## Table of Contents
 
