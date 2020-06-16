@@ -1,0 +1,6 @@
+---
+# Not applicable on Windows
+kernel-param:
+  notapplicable.on-windows:
+    value: foobar
+    skip: true

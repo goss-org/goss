@@ -15,18 +15,16 @@ type Process interface {
 type DefProcess struct {
 	executable string
 	procMap    map[string][]ps.Process
+	err        error
 }
 
-func NewDefProcess(executable string, system *System, config util.Config) (Process, error) {
+func NewDefProcess(executable string, system *System, config util.Config) Process {
 	pmap, err := system.ProcMap()
-	if err != nil {
-		return nil, err
-	}
-
 	return &DefProcess{
 		executable: executable,
 		procMap:    pmap,
-	}, nil
+		err:        err,
+	}
 }
 
 func (p *DefProcess) Executable() string {
@@ -37,6 +35,9 @@ func (p *DefProcess) Exists() (bool, error) { return p.Running() }
 
 func (p *DefProcess) Pids() ([]int, error) {
 	var pids []int
+	if p.err != nil {
+		return pids, p.err
+	}
 	for _, proc := range p.procMap[p.executable] {
 		pids = append(pids, proc.Pid())
 	}
@@ -44,6 +45,9 @@ func (p *DefProcess) Pids() ([]int, error) {
 }
 
 func (p *DefProcess) Running() (bool, error) {
+	if p.err != nil {
+		return false, p.err
+	}
 	if _, ok := p.procMap[p.executable]; ok {
 		return true, nil
 	}

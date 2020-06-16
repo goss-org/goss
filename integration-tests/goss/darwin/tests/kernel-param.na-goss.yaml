@@ -1,0 +1,7 @@
+---
+kernel-param:
+  notapplicable.on-darwin:
+    value: foobar
+
+    # TODO: need implementation or signal no support on Darwin
+    skip: true

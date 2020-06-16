@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/opencontainers/runc/libcontainer/user"
@@ -38,15 +37,15 @@ type DefFile struct {
 }
 
 func NewDefFile(path string, system *System, config util.Config) File {
+	var err error
 	if !strings.HasPrefix(path, "~") {
-		// FIXME: we probably shouldn't ignore errors here
-		path, _ = filepath.Abs(path)
+		path, err = filepath.Abs(path)
 	}
-	return &DefFile{path: path}
+	return &DefFile{path: path, err: err}
 }
 
 func (f *DefFile) setup() error {
-	if f.loaded {
+	if f.loaded || f.err != nil {
 		return f.err
 	}
 	f.loaded = true
@@ -83,22 +82,6 @@ func (f *DefFile) Contains() (io.Reader, error) {
 		return nil, err
 	}
 	return fh, nil
-}
-
-func (f *DefFile) Mode() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
-	if err != nil {
-		return "", err
-	}
-
-	sys := fi.Sys()
-	stat := sys.(*syscall.Stat_t)
-	mode := fmt.Sprintf("%04o", (stat.Mode & 07777))
-	return mode, nil
 }
 
 func (f *DefFile) Size() (int, error) {
@@ -144,42 +127,6 @@ func (f *DefFile) Filetype() (string, error) {
 	}
 	// FIXME: file as a catchall?
 	return "file", nil
-}
-
-func (f *DefFile) Owner() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
-	if err != nil {
-		return "", err
-	}
-
-	uidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
-	uid, err := strconv.Atoi(uidS)
-	if err != nil {
-		return "", err
-	}
-	return getUserForUid(uid)
-}
-
-func (f *DefFile) Group() (string, error) {
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fi, err := os.Lstat(f.realPath)
-	if err != nil {
-		return "", err
-	}
-
-	gidS := fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
-	gid, err := strconv.Atoi(gidS)
-	if err != nil {
-		return "", err
-	}
-	return getGroupForGid(gid)
 }
 
 func (f *DefFile) LinkedTo() (string, error) {

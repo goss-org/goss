@@ -46,6 +46,70 @@ func NewGossConfig() *GossConfig {
 	}
 }
 
+// Merge consumes all the resources in g2 into c, duplicate resources
+// will be overwritten with the ones in g2
+func (c *GossConfig) Merge(g2 GossConfig) {
+	for k, v := range g2.Files {
+		c.Files[k] = v
+	}
+
+	for k, v := range g2.Packages {
+		c.Packages[k] = v
+	}
+
+	for k, v := range g2.Addrs {
+		c.Addrs[k] = v
+	}
+
+	for k, v := range g2.Ports {
+		c.Ports[k] = v
+	}
+
+	for k, v := range g2.Services {
+		c.Services[k] = v
+	}
+
+	for k, v := range g2.Users {
+		c.Users[k] = v
+	}
+
+	for k, v := range g2.Groups {
+		c.Groups[k] = v
+	}
+
+	for k, v := range g2.Commands {
+		c.Commands[k] = v
+	}
+
+	for k, v := range g2.DNS {
+		c.DNS[k] = v
+	}
+
+	for k, v := range g2.Processes {
+		c.Processes[k] = v
+	}
+
+	for k, v := range g2.KernelParams {
+		c.KernelParams[k] = v
+	}
+
+	for k, v := range g2.Mounts {
+		c.Mounts[k] = v
+	}
+
+	for k, v := range g2.Interfaces {
+		c.Interfaces[k] = v
+	}
+
+	for k, v := range g2.HTTPs {
+		c.HTTPs[k] = v
+	}
+
+	for k, v := range g2.Matchings {
+		c.Matchings[k] = v
+	}
+}
+
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
@@ -102,65 +166,7 @@ func interfaceMap(slice interface{}) map[string]interface{} {
 func mergeGoss(g1, g2 GossConfig) GossConfig {
 	g1.Gossfiles = nil
 
-	for k, v := range g2.Files {
-		g1.Files[k] = v
-	}
-
-	for k, v := range g2.Packages {
-		g1.Packages[k] = v
-	}
-
-	for k, v := range g2.Addrs {
-		g1.Addrs[k] = v
-	}
-
-	for k, v := range g2.Ports {
-		g1.Ports[k] = v
-	}
-
-	for k, v := range g2.Services {
-		g1.Services[k] = v
-	}
-
-	for k, v := range g2.Users {
-		g1.Users[k] = v
-	}
-
-	for k, v := range g2.Groups {
-		g1.Groups[k] = v
-	}
-
-	for k, v := range g2.Commands {
-		g1.Commands[k] = v
-	}
-
-	for k, v := range g2.DNS {
-		g1.DNS[k] = v
-	}
-
-	for k, v := range g2.Processes {
-		g1.Processes[k] = v
-	}
-
-	for k, v := range g2.KernelParams {
-		g1.KernelParams[k] = v
-	}
-
-	for k, v := range g2.Mounts {
-		g1.Mounts[k] = v
-	}
-
-	for k, v := range g2.Interfaces {
-		g1.Interfaces[k] = v
-	}
-
-	for k, v := range g2.HTTPs {
-		g1.HTTPs[k] = v
-	}
-
-	for k, v := range g2.Matchings {
-		g1.Matchings[k] = v
-	}
+	g1.Merge(g2)
 
 	return g1
 }

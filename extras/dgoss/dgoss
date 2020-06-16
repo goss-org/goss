@@ -40,7 +40,6 @@ run(){
       mount)
         info "Starting docker container"
         id=$(docker run -d -v "$tmp_dir:/goss:z" "${@:2}")
-        docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
         ;;
       cp)
         info "Creating docker container"
@@ -53,6 +52,7 @@ run(){
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
 
+    docker logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
     log_pid=$!
     info "Container ID: ${id:0:8}"
 }
@@ -60,8 +60,8 @@ run(){
 get_docker_file() {
     if docker exec "$id" sh -c "test -e $1" > /dev/null;then
         mkdir -p "${GOSS_FILES_PATH}"
-        info "Copied '$1' from container to '${GOSS_FILES_PATH}'"
-        docker cp "$id:$1" "${GOSS_FILES_PATH}"
+        info "Copied '$1' from container to '${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}'"
+        docker cp "$id:$1" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
     fi
 }
 

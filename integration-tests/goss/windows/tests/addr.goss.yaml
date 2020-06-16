@@ -1,0 +1,10 @@
+---
+addr:
+  tcp://google.com:443:
+    reachable: true
+    timeout: 1000
+
+  tcp://127.0.0.1:135:
+    reachable: true
+    timeout: 1000
+    local-address: true

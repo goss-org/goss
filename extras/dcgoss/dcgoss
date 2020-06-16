@@ -21,7 +21,6 @@ cleanup() {
     [ "$DEBUG" ] || rm -rf "$tmp_dir"
     if [[ -n "$service" ]]; then
         info "Stopping container"
-        echo "Deleting $(docker rm -f "$service")"
         docker-compose stop > /dev/null
     fi
 }
@@ -39,11 +38,11 @@ run(){
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" "$service"
+        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" --rm "$service"
         ;;
       cp)
         info "Creating docker container"
-        docker-compose run -d -T --name "$service" "$service"
+        docker-compose run -d -T --name "$service" --rm "$service" > /dev/null
         info "Copy goss files into container"
         docker cp "$tmp_dir/." "$service:/goss"
         ;;
@@ -107,7 +106,7 @@ case "$1" in
             fi
         fi
         info "Container health"
-        if ! docker top "$service"; then
+        if [ "true" != "$(docker inspect -f '{{.State.Running}}' $service)" ]; then
             error "The container failed to start"
         fi
         info "Running Tests"

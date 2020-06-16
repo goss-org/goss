@@ -1,0 +1,9 @@
+---
+port:
+  tcp:135:
+    listening: true
+    ip:
+    - 0.0.0.0
+
+    # TODO: needs implementation
+    skip: true

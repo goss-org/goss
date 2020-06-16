@@ -1,0 +1,13 @@
+---
+mount:
+  '/':
+    exists: true
+    filesystem: hdfs
+
+    opts: []
+    source: ''
+    usage:
+      lt: 95
+
+    # TODO: needs implementation
+    skip: true

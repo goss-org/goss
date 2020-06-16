@@ -72,7 +72,7 @@ The following environment variables can be set to change the behavior of dgoss.
 ##### GOSS_PATH
 Location of the goss binary to use. (Default: `$(which goss)`)
 
-#### GOSS_FILE
+#####  GOSS_FILE
 Name of the goss file to use. (Default: `goss.yaml`)
 
 ##### GOSS_OPTS

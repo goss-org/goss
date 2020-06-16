@@ -31,6 +31,8 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 ## Installation
 
+Note: macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. Refer to <platform-feature-parity.md> (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551))
+
 This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
 
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
@@ -45,13 +47,29 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 
 ### Manual installation
 
+#### Latest
+
+```bash
+curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
+chmod +rx /usr/local/bin/goss
+
+curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+# Alternatively, using the latest master
+# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dgoss
+```
+
+#### Specific Version
+
 ```bash
 # See https://github.com/aelsabbahy/goss/releases for release versions
-curl -L https://github.com/aelsabbahy/goss/releases/download/_VERSION_/goss-linux-amd64 -o /usr/local/bin/goss
+VERSION=v0.3.10
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-curl -L https://raw.githubusercontent.com/aelsabbahy/goss/_VERSION_/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+VERSION=v0.3.10
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/dgoss
 ```
 
@@ -73,7 +91,7 @@ An initial set of tests can be derived from the system state by using the [add](
 
 Let's write a simple sshd test using autoadd.
 
-```
+```txt
 # Running it as root will allow it to also detect ports
 $ sudo goss autoadd sshd
 ```
@@ -117,7 +135,7 @@ Now that we have a test suite, we can:
 
 * Run it once
 
-```
+```txt
 goss validate
 ...............
 
@@ -127,19 +145,19 @@ Count: 15, Failed: 0
 
 * Edit it to use [templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates), and run with a vars file
 
-```
+```txt
 goss --vars vars.yaml validate
 ```
 
 * keep running it until the system enters a valid state or we timeout
 
-```
+```txt
 goss validate --retry-timeout 30s --sleep 1s
 ```
 
 * serve the tests as a health endpoint
 
-```
+```txt
 goss serve &
 curl localhost:8080/healthz
 

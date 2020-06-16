@@ -188,11 +188,23 @@ http:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
+  https://httpbin.org/headers?host:
+    status: 200
+    allow-insecure: false
+    timeout: 5000
+    request-headers:
+      # This is causing intermittent errors depending on the httpbin server hit
+      # need to see if there's a good way around this, maybe local httpbin?
+      #- "Host: example.com"
+      - "Host: httpbin.org"
+    headers: ["Content-Type: application/json"]
+    # body: ['"Host": "example.com"']
+    body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
     password: secret
-  https://httpbin.org/basic-auth/username/secret:
+  https://httpbin.org/basic-auth/username/secret?failure:
     status: 401
     username: username
     password: wrong
