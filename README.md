@@ -70,7 +70,7 @@ chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 VERSION=v0.3.10
-curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/goss
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
