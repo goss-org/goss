@@ -24,9 +24,9 @@ func (matcher *HaveKeyWithValueMatcher) FailureResult(actual interface{}) Matche
 	expect := make(map[interface{}]interface{}, 1)
 	expect[matcher.Key] = matcher.Value
 	return MatcherResult{
-		Actual:   actual,
+		Actual:   dyno.ConvertMapI2MapS(actual),
 		Message:  "to have {key: value} matching",
-		Expected: expect,
+		Expected: dyno.ConvertMapI2MapS(expect),
 	}
 }
 
@@ -34,9 +34,9 @@ func (matcher *HaveKeyWithValueMatcher) NegatedFailureResult(actual interface{})
 	expect := make(map[interface{}]interface{}, 1)
 	expect[matcher.Key] = matcher.Value
 	return MatcherResult{
-		Actual:   actual,
+		Actual:   dyno.ConvertMapI2MapS(actual),
 		Message:  "not to have {key: value} matching",
-		Expected: matcher.Key,
+		Expected: dyno.ConvertMapI2MapS(expect),
 	}
 }
 
