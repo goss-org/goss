@@ -1,6 +1,7 @@
 package outputs
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -74,15 +75,19 @@ func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw
 		}
 	}
 	return strings.Join(ss, sep)
-	//return s
 }
 
 func prettyPrint(i interface{}, indent bool) string {
 	// fixme: error handling
-	b, err := json.Marshal(i)
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	var b []byte
+	err := encoder.Encode(i)
 	if err != nil {
 		b = []byte(fmt.Sprint(err))
 	}
+	b = buffer.Bytes()
 	if indent {
 		return indentLines(string(b))
 	} else {
