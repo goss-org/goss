@@ -2,7 +2,6 @@ package resource
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/aelsabbahy/goss/matchers"
 )
@@ -52,17 +51,6 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(value.(string))), nil
 	case "have-len":
 		return matchers.HaveLen(int(value.(float64))), nil
-	case "have-key-with-value":
-		subMatchers, err := mapToGomega(value)
-		if err != nil {
-			return nil, err
-		}
-		for key, val := range subMatchers {
-			if val == nil {
-				fmt.Printf("%d is nil", key)
-			}
-		}
-		return matchers.And(subMatchers...), nil
 	case "have-key":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -144,33 +132,6 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
 
 	}
-}
-
-func mapToGomega(value interface{}) (subMatchers []matchers.GossMatcher, err error) {
-	valueI, ok := value.(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
-	}
-
-	// Get keys
-	keys := []string{}
-	for key, _ := range valueI {
-		keys = append(keys, key)
-	}
-	// Iterate through keys in a deterministic way, since ranging over a map
-	// does not guarantee order
-	sort.Strings(keys)
-	for _, key := range keys {
-		val := valueI[key]
-		val, err = matcherToGomegaMatcher(val)
-		if err != nil {
-			return
-		}
-
-		subMatcher := matchers.HaveKeyWithValue(key, val)
-		subMatchers = append(subMatchers, subMatcher)
-	}
-	return
 }
 
 func sliceToGomega(value interface{}) ([]matchers.GossMatcher, error) {

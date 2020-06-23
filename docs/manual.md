@@ -718,8 +718,6 @@ matching:
       baz: bing
     matches:
       and:
-        - have-key-with-value:
-            foo: bar
         - have-key: baz
 ```
 
