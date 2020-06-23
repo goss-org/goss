@@ -56,3 +56,4 @@ deploy:
   on:
     repo: aelsabbahy/goss
     tags: true
+    os: linux
