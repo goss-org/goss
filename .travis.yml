@@ -56,4 +56,4 @@ deploy:
   on:
     repo: aelsabbahy/goss
     tags: true
-    os: linux
+    condition: $TRAVIS_OS_NAME = linux
