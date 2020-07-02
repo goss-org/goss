@@ -225,24 +225,6 @@ func GetOutputer(name string) (Outputer, error) {
 	return outputers[name], nil
 }
 
-//func subtractSlice(x, y []string) []string {
-//	m := make(map[string]bool)
-//
-//	for _, y := range y {
-//		m[y] = true
-//	}
-//
-//	var ret []string
-//	for _, x := range x {
-//		if m[x] {
-//			continue
-//		}
-//		ret = append(ret, x)
-//	}
-//
-//	return ret
-//}
-//
 func header(t resource.TestResult) string {
 	var out string
 	if t.Title != "" {

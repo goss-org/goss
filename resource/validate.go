@@ -1,7 +1,6 @@
 package resource
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -9,7 +8,6 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/matchers"
-	"github.com/icza/dyno"
 )
 
 const (
@@ -33,17 +31,14 @@ type TestResult struct {
 	ResourceId   string `json:"resource-id" yaml:"resource-id"`
 	ResourceType string `json:"resource-type" yaml:"resource-type"`
 	Property     string `json:"property" yaml:"property"`
+
 	// User added info
 	Title string `json:"title" yaml:"title"`
 	Meta  meta   `json:"meta" yaml:"meta"`
+
 	// Result
-	Result string `json:"result" yaml:"result"`
-	Err    error  `json:"err" yaml:"err"`
-	// Matches expectation: ...
-	Expected string `json:"expected" yaml:"expected"`
-	// Used in skip?.. but why?
-	Found string `json:"found" yaml:"found"`
-	//Human         string                 `json:"human" yaml:"human"`
+	Result        string                 `json:"result" yaml:"result"`
+	Err           error                  `json:"err" yaml:"err"`
 	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
 	Duration      time.Duration          `json:"duration" yaml:"duration"`
 }
@@ -139,10 +134,6 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		}
 	}
 
-	//json := jsoniter.ConfigCompatibleWithStandardLibrary
-	expected, _ := json.Marshal(dyno.ConvertMapI2MapS(expectedValue))
-	found, _ := json.Marshal(foundValue)
-
 	var matcherResult matchers.MatcherResult
 	result := SUCCESS
 	if success {
@@ -162,8 +153,6 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		Title:         title,
 		Meta:          meta,
 		Property:      property,
-		Expected:      string(expected),
-		Found:         string(found),
 		MatcherResult: matcherResult,
 		Err:           err,
 		Duration:      time.Now().Sub(startTime),

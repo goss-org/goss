@@ -62,13 +62,7 @@ func shouldSkip(results []TestResult) bool {
 	if len(results) < 1 {
 		return false
 	}
-	if results[0].Err != nil {
-		return true
-	}
-	if len(results[0].Found) < 1 {
-		return false
-	}
-	if results[0].Found == "false" {
+	if results[0].Err != nil || results[0].Result != SUCCESS {
 		return true
 	}
 	return false
