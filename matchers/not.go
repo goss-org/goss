@@ -5,6 +5,7 @@ import (
 )
 
 type NotMatcher struct {
+	fakeOmegaMatcher
 	Matcher GossMatcher
 }
 
@@ -28,23 +29,8 @@ func (m *NotMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return m.Matcher.FailureResult(actual)
 }
 
-// Stubs to match omegaMatcher
-func (m *NotMatcher) FailureMessage(_ interface{}) (message string) {
-	return ""
-}
-
-// Stubs to match omegaMatcher
-func (m *NotMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return ""
-}
-
 func (m *NotMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
 	j["not"] = m.Matcher
 	return json.Marshal(j)
-}
-
-// FIXME: wtf
-func (m *NotMatcher) String() string {
-	return Object(m, 0)
 }

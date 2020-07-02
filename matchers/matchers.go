@@ -33,3 +33,15 @@ func getUnexported(i interface{}, field string) interface{} {
 	rf = reflect.NewAt(rf.Type(), unsafe.Pointer(rf.UnsafeAddr())).Elem()
 	return rf.Interface()
 }
+
+type fakeOmegaMatcher struct{}
+
+// FailureMessage is a stub to honor omegaMatcher interface
+func (m *fakeOmegaMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// NegatedFailureMessage is a stub to honor omegaMatcher interface
+func (m *fakeOmegaMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
+}

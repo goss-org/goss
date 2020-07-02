@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/onsi/gomega/matchers"
 )
@@ -41,17 +40,3 @@ func (m *HavePrefixMatcher) MarshalJSON() ([]byte, error) {
 	j["have-prefix"] = m.Prefix
 	return json.Marshal(j)
 }
-
-func (m *HavePrefixMatcher) String() string {
-	//return fmt.Sprintf("HavePrefix{Prefix:%s}", matcher.Prefix)
-	return fmt.Sprintf("{\"have-prefix\": %q}", m.Prefix)
-}
-
-//func (m *HavePrefixMatcher) String() string {
-//	return fmt.Sprintf("%s{Prefix: %s}", getObjectTypeName(m), m.Prefix)
-//}
-//
-//func getObjectTypeName(m interface{}) string {
-//	return strings.Split(reflect.TypeOf(m).String(), ".")[1]
-//
-//}

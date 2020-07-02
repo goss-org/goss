@@ -2,11 +2,11 @@ package matchers
 
 import (
 	"encoding/json"
-
-	"github.com/onsi/gomega/format"
 )
 
 type OrMatcher struct {
+	fakeOmegaMatcher
+
 	Matchers []GossMatcher
 
 	// state
@@ -49,18 +49,4 @@ func (m *OrMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
 	j["or"] = m.Matchers
 	return json.Marshal(j)
-}
-
-func (m *OrMatcher) String() string {
-	return format.Object(m, 0)
-}
-
-// FailureMessage is a stub to honor omegaMatcher interface
-func (m *OrMatcher) FailureMessage(_ interface{}) (message string) {
-	return ""
-}
-
-// NegatedFailureMessage is a stub to honor omegaMatcher interface
-func (m *OrMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return ""
 }

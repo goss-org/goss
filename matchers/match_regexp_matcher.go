@@ -40,7 +40,3 @@ func (m *MatchRegexpMatcher) MarshalJSON() ([]byte, error) {
 	j["match-regexp"] = m.Regexp
 	return json.Marshal(j)
 }
-
-func (m *MatchRegexpMatcher) String() string {
-	return Object(m.MatchRegexpMatcher, 0)
-}

@@ -39,8 +39,3 @@ func (m *ContainElementMatcher) MarshalJSON() ([]byte, error) {
 	j["contain-element"] = m.Element
 	return json.Marshal(j)
 }
-
-func (m *ContainElementMatcher) String() string {
-	return ""
-	//return Object(matcher.ContainElementMatcher, 0)
-}

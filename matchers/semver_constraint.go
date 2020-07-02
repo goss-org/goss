@@ -10,16 +10,17 @@ import (
 	"github.com/onsi/gomega/format"
 )
 
+type BeSemverConstraintMatcher struct {
+	fakeOmegaMatcher
+
+	Constraint interface{}
+}
+
 func BeSemverConstraint(constraint interface{}) GossMatcher {
 	return &BeSemverConstraintMatcher{
 		Constraint: constraint,
 	}
 }
-
-type BeSemverConstraintMatcher struct {
-	Constraint interface{}
-}
-
 func (m *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err error) {
 	constraint, ok := toConstraint(m.Constraint)
 	if !ok {
@@ -55,18 +56,6 @@ func (m *BeSemverConstraintMatcher) NegatedFailureResult(actual interface{}) Mat
 		Expected: m.Constraint,
 	}
 }
-
-func (m *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("to be %s", m.Constraint))
-}
-
-func (m *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("not to be %s", m.Constraint))
-}
-
-//func (m *BeSemverConstraintMatcher) String() string {
-//	return Object(m, 0)
-//}
 
 func toConstraint(in interface{}) (semver.Range, bool) {
 	str, ok := in.(string)
@@ -136,8 +125,4 @@ func (m *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
 	}
 	b := buffer.Bytes()
 	return b, nil
-}
-
-func (m *BeSemverConstraintMatcher) String() string {
-	return format.Object(m, 0)
 }

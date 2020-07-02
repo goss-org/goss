@@ -39,7 +39,3 @@ func (m *HaveKeyMatcher) MarshalJSON() ([]byte, error) {
 	j["have-key"] = m.Key
 	return json.Marshal(j)
 }
-
-func (m *HaveKeyMatcher) String() string {
-	return Object(m.HaveKeyMatcher, 0)
-}

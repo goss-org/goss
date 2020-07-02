@@ -37,19 +37,6 @@ func (m *HaveSuffixMatcher) NegatedFailureResult(actual interface{}) MatcherResu
 
 func (m *HaveSuffixMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["have-prefix"] = m.Suffix
+	j["have-suffix"] = m.Suffix
 	return json.Marshal(j)
 }
-
-func (m *HaveSuffixMatcher) String() string {
-	return Object(m.HaveSuffixMatcher, 0)
-}
-
-//func (m *HaveSuffixMatcher) String() string {
-//	return fmt.Sprintf("%s{Suffix: %s}", getObjectTypeName(m), m.Prefix)
-//}
-//
-//func getObjectTypeName(m interface{}) string {
-//	return strings.Split(reflect.TypeOf(m).String(), ".")[1]
-//
-//}

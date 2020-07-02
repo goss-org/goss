@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"reflect"
 	"regexp"
 	"strings"
 
@@ -17,19 +16,12 @@ const (
 )
 
 type HavePatternsMatcher struct {
+	fakeOmegaMatcher
+
 	Elements        interface{}
 	missingElements []string
 }
 
-//FIXME
-//ContainElements succeeds if actual contains the passed in elements. The ordering of the elements does not matter.
-//By default ContainElements() uses Equal() to match the elements, however custom matchers can be passed in instead. Here are some examples:
-//
-//    Expect([]string{"Foo", "FooBar"}).Should(ContainElements("FooBar"))
-//    Expect([]string{"Foo", "FooBar"}).Should(ContainElements(ContainSubstring("Bar"), "Foo"))
-//
-//Actual must be an array, slice or map.
-//For maps, ContainElements searches through the map's values.
 func HavePatterns(elements interface{}) GossMatcher {
 	return &HavePatternsMatcher{
 		Elements: elements,
@@ -124,15 +116,6 @@ func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherRe
 		Message:  "not to contain patterns",
 		Expected: m.Elements,
 	}
-}
-
-func (m *HavePatternsMatcher) FailureMessage(actual interface{}) (message string) {
-	message = format.Message(reflect.TypeOf(actual), "to contain elements", m.Elements)
-	return appendMissingStrings(message, m.missingElements)
-}
-
-func (m *HavePatternsMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "not to contain elements", m.Elements)
 }
 
 func appendMissingStrings(message string, missingElements []string) string {
@@ -265,8 +248,4 @@ func (matcher *HavePatternsMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
 	j["have-patterns"] = matcher.Elements
 	return json.Marshal(j)
-}
-
-func (matcher *HavePatternsMatcher) String() string {
-	return format.Object(matcher, 0)
 }

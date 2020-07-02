@@ -3,7 +3,6 @@ package matchers
 import (
 	"encoding/json"
 
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
 )
 
@@ -34,10 +33,6 @@ func (m *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) Match
 		Message:  "not to contain substring",
 		Expected: m.Substr,
 	}
-}
-
-func (m *ContainSubstringMatcher) String() string {
-	return format.Object(m.ContainSubstringMatcher, 0)
 }
 
 func (m *ContainSubstringMatcher) MarshalJSON() ([]byte, error) {

@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/onsi/gomega/matchers"
 )
@@ -40,14 +39,3 @@ func (m *HaveLenMatcher) MarshalJSON() ([]byte, error) {
 	j["have-len"] = m.Count
 	return json.Marshal(j)
 }
-
-func (m *HaveLenMatcher) String() string {
-	return fmt.Sprintf("HaveLen{Count:%d}", m.Count)
-}
-
-//func (m *HaveLenMatcher) String() string {
-//	n := fmt.Sprintf("%#v", m.HaveLenMatcher)
-//	ss := strings.Split(n, ".")
-//	s := ss[len(ss)-1]
-//	return s
-//}

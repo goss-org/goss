@@ -6,6 +6,7 @@ import (
 )
 
 type AndMatcher struct {
+	fakeOmegaMatcher
 	Matchers []GossMatcher
 
 	// state
@@ -46,19 +47,4 @@ func (m *AndMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
 	j["and"] = m.Matchers
 	return json.Marshal(j)
-}
-
-//FIXME: Indentation is wrong
-func (m *AndMatcher) String() string {
-	return fmt.Sprintf("AndMatcher{Matchers:%v}", m.Matchers)
-}
-
-// FailureMessage is a stub to honor omegaMatcher interface
-func (m *AndMatcher) FailureMessage(_ interface{}) (message string) {
-	return ""
-}
-
-// NegatedFailureMessage is a stub to honor omegaMatcher interface
-func (m *AndMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return ""
 }

@@ -38,9 +38,6 @@ func (m *ConsistOfMatcher) NegatedFailureResult(actual interface{}) MatcherResul
 	}
 }
 
-func (m *ConsistOfMatcher) String() string {
-	return Object(m.ConsistOfMatcher, 0)
-}
 func (m *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
 	j["consist-of"] = m.Elements

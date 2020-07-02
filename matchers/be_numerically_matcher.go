@@ -42,23 +42,9 @@ func (m *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j)
 }
 
-func (m *BeNumericallyMatcher) String() string {
-	return Object(m.BeNumericallyMatcher, 0)
-}
-
 var numericSymbolToStr = map[string]string{
 	">":  "gt",
 	">=": "ge",
 	"<":  "lt",
 	"<=": "le",
-}
-
-// Stubs to match omegaMatcher
-func (m *BeNumericallyMatcher) FailureMessage(_ interface{}) (message string) {
-	return ""
-}
-
-// Stubs to match omegaMatcher
-func (m *BeNumericallyMatcher) NegatedFailureMessage(_ interface{}) (message string) {
-	return ""
 }
