@@ -18,31 +18,31 @@ func ConsistOf(elements ...interface{}) GossMatcher {
 	}
 }
 
-func (matcher *ConsistOfMatcher) FailureResult(actual interface{}) MatcherResult {
-	missingElements := getUnexported(matcher, "missingElements")
-	extraElements := getUnexported(matcher, "extraElements")
+func (m *ConsistOfMatcher) FailureResult(actual interface{}) MatcherResult {
+	missingElements := getUnexported(m, "missingElements")
+	extraElements := getUnexported(m, "extraElements")
 	return MatcherResult{
 		Actual:          actual,
 		Message:         "to consist of",
-		Expected:        matcher.Elements,
+		Expected:        m.Elements,
 		MissingElements: missingElements,
 		ExtraElements:   extraElements,
 	}
 }
 
-func (matcher *ConsistOfMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ConsistOfMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to consist of",
-		Expected: matcher.Elements,
+		Expected: m.Elements,
 	}
 }
 
-func (matcher *ConsistOfMatcher) String() string {
-	return Object(matcher.ConsistOfMatcher, 0)
+func (m *ConsistOfMatcher) String() string {
+	return Object(m.ConsistOfMatcher, 0)
 }
-func (matcher *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
+func (m *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["consist-of"] = matcher.Elements
+	j["consist-of"] = m.Elements
 	return json.Marshal(j)
 }

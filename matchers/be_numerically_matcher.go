@@ -20,30 +20,30 @@ func BeNumerically(comparator string, compareTo ...interface{}) GossMatcher {
 	}
 }
 
-func (matcher *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("to be %s", matcher.Comparator),
-		Expected: matcher.CompareTo[0],
+		Message:  fmt.Sprintf("to be %s", m.Comparator),
+		Expected: m.CompareTo[0],
 	}
 }
 
-func (matcher *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("not to be %s", matcher.Comparator),
-		Expected: matcher.CompareTo[0],
+		Message:  fmt.Sprintf("not to be %s", m.Comparator),
+		Expected: m.CompareTo[0],
 	}
 }
 
-func (matcher *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
+func (m *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j[numericSymbolToStr[matcher.Comparator]] = matcher.CompareTo[0]
+	j[numericSymbolToStr[m.Comparator]] = m.CompareTo[0]
 	return json.Marshal(j)
 }
 
-func (matcher *BeNumericallyMatcher) String() string {
-	return Object(matcher.BeNumericallyMatcher, 0)
+func (m *BeNumericallyMatcher) String() string {
+	return Object(m.BeNumericallyMatcher, 0)
 }
 
 var numericSymbolToStr = map[string]string{
@@ -51,4 +51,14 @@ var numericSymbolToStr = map[string]string{
 	">=": "ge",
 	"<":  "lt",
 	"<=": "le",
+}
+
+// Stubs to match omegaMatcher
+func (m *BeNumericallyMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// Stubs to match omegaMatcher
+func (m *BeNumericallyMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
 }

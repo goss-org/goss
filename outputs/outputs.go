@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
 	"github.com/aelsabbahy/goss/matchers"
 	"github.com/aelsabbahy/goss/resource"
@@ -23,6 +25,7 @@ type Outputer interface {
 var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
 var yellow = color.New(color.FgYellow).SprintfFunc()
+var multiple_space = regexp.MustCompile(`\s+`)
 
 func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
 	sep := "\n"
@@ -30,7 +33,11 @@ func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string
 		sep = " "
 	}
 	if r.Err != nil {
-		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
+		e := fmt.Sprint(r.Err)
+		if compact {
+			e = multiple_space.ReplaceAllString(e, " ")
+		}
+		return red("%s: %s: Error: %s", r.ResourceId, r.Property, e)
 	}
 
 	switch r.Result {
@@ -87,7 +94,7 @@ func prettyPrint(i interface{}, indent bool) string {
 	if err != nil {
 		b = []byte(fmt.Sprint(err))
 	}
-	b = buffer.Bytes()
+	b = bytes.TrimRightFunc(buffer.Bytes(), unicode.IsSpace)
 	if indent {
 		return indentLines(string(b))
 	} else {

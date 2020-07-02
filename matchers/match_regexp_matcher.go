@@ -19,28 +19,28 @@ func MatchRegexp(regexp string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (matcher *MatchRegexpMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *MatchRegexpMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to match regular expression",
-		Expected: matcher.Regexp,
+		Expected: m.Regexp,
 	}
 }
 
-func (matcher *MatchRegexpMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *MatchRegexpMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to match regular expression",
-		Expected: matcher.Regexp,
+		Expected: m.Regexp,
 	}
 }
 
-func (matcher *MatchRegexpMatcher) MarshalJSON() ([]byte, error) {
+func (m *MatchRegexpMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["match-regexp"] = matcher.Regexp
+	j["match-regexp"] = m.Regexp
 	return json.Marshal(j)
 }
 
-func (matcher *MatchRegexpMatcher) String() string {
-	return Object(matcher.MatchRegexpMatcher, 0)
+func (m *MatchRegexpMatcher) String() string {
+	return Object(m.MatchRegexpMatcher, 0)
 }

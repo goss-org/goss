@@ -20,35 +20,35 @@ func HavePrefix(prefix string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (matcher *HavePrefixMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HavePrefixMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to have prefix",
-		Expected: matcher.Prefix,
+		Expected: m.Prefix,
 	}
 }
 
-func (matcher *HavePrefixMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HavePrefixMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to have prefix",
-		Expected: matcher.Prefix,
+		Expected: m.Prefix,
 	}
 }
 
-func (matcher *HavePrefixMatcher) MarshalJSON() ([]byte, error) {
+func (m *HavePrefixMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["have-prefix"] = matcher.Prefix
+	j["have-prefix"] = m.Prefix
 	return json.Marshal(j)
 }
 
-func (matcher *HavePrefixMatcher) String() string {
+func (m *HavePrefixMatcher) String() string {
 	//return fmt.Sprintf("HavePrefix{Prefix:%s}", matcher.Prefix)
-	return fmt.Sprintf("{\"have-prefix\": %q}", matcher.Prefix)
+	return fmt.Sprintf("{\"have-prefix\": %q}", m.Prefix)
 }
 
-//func (matcher *HavePrefixMatcher) String() string {
-//	return fmt.Sprintf("%s{Prefix: %s}", getObjectTypeName(matcher), matcher.Prefix)
+//func (m *HavePrefixMatcher) String() string {
+//	return fmt.Sprintf("%s{Prefix: %s}", getObjectTypeName(m), m.Prefix)
 //}
 //
 //func getObjectTypeName(m interface{}) string {

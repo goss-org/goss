@@ -32,25 +32,35 @@ func (m *OrMatcher) Match(actual interface{}) (success bool, err error) {
 	return false, nil
 }
 
-func (matcher *OrMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *OrMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "To satisfy at least one of these matchers",
-		Expected: matcher.Matchers,
+		Expected: m.Matchers,
 	}
 }
 
-func (matcher *OrMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	firstSuccessfulMatcher := getUnexported(matcher, "firstSuccessfulMatcher")
+func (m *OrMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	firstSuccessfulMatcher := getUnexported(m, "firstSuccessfulMatcher")
 	return firstSuccessfulMatcher.(GossMatcher).NegatedFailureResult(actual)
 }
 
-func (matcher *OrMatcher) MarshalJSON() ([]byte, error) {
+func (m *OrMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["or"] = matcher.Matchers
+	j["or"] = m.Matchers
 	return json.Marshal(j)
 }
 
-func (matcher *OrMatcher) String() string {
-	return format.Object(matcher, 0)
+func (m *OrMatcher) String() string {
+	return format.Object(m, 0)
+}
+
+// FailureMessage is a stub to honor omegaMatcher interface
+func (m *OrMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// NegatedFailureMessage is a stub to honor omegaMatcher interface
+func (m *OrMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
 }

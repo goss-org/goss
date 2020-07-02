@@ -19,34 +19,34 @@ func HaveLen(count int) GossMatcher {
 	}
 }
 
-func (matcher *HaveLenMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HaveLenMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to have length",
-		Expected: matcher.Count,
+		Expected: m.Count,
 	}
 }
 
-func (matcher *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to have length",
-		Expected: matcher.Count,
+		Expected: m.Count,
 	}
 }
 
-func (matcher *HaveLenMatcher) MarshalJSON() ([]byte, error) {
+func (m *HaveLenMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["have-len"] = matcher.Count
+	j["have-len"] = m.Count
 	return json.Marshal(j)
 }
 
-func (matcher *HaveLenMatcher) String() string {
-	return fmt.Sprintf("HaveLen{Count:%d}", matcher.Count)
+func (m *HaveLenMatcher) String() string {
+	return fmt.Sprintf("HaveLen{Count:%d}", m.Count)
 }
 
-//func (matcher *HaveLenMatcher) String() string {
-//	n := fmt.Sprintf("%#v", matcher.HaveLenMatcher)
+//func (m *HaveLenMatcher) String() string {
+//	n := fmt.Sprintf("%#v", m.HaveLenMatcher)
 //	ss := strings.Split(n, ".")
 //	s := ss[len(ss)-1]
 //	return s

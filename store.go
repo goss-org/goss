@@ -311,10 +311,5 @@ func marshalYAML(gossConfig interface{}) ([]byte, error) {
 }
 
 func unmarshalYAML(data []byte, v interface{}) error {
-	err := yaml.Unmarshal(data, v)
-	if err != nil {
-		return fmt.Errorf("could not unmarshal %q as YAML data: %s", string(data), err)
-	}
-
-	return nil
+	return yaml.Unmarshal(data, v)
 }

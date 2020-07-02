@@ -36,8 +36,8 @@ func HavePatterns(elements interface{}) GossMatcher {
 	}
 }
 
-func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
-	t, ok := matcher.Elements.([]interface{})
+func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
+	t, ok := m.Elements.([]interface{})
 	if !ok {
 		return false, fmt.Errorf("HavePatterns matcher expects an io.reader.  Got:\n%s", format.Object(actual, 1))
 	}
@@ -103,36 +103,36 @@ func (matcher *HavePatternsMatcher) Match(actual interface{}) (success bool, err
 
 	if len(elements) != len(found) {
 		found := patternsToSlice(found)
-		matcher.missingElements = subtractSlice(elements, found)
+		m.missingElements = subtractSlice(elements, found)
 		return false, nil
 	}
 	return true, nil
 }
 
-func (matcher *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:          fmt.Sprintf("object: %T", actual),
 		Message:         "to contain patterns",
-		Expected:        matcher.Elements,
-		MissingElements: matcher.missingElements,
+		Expected:        m.Elements,
+		MissingElements: m.missingElements,
 	}
 }
 
-func (matcher *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   fmt.Sprintf("object: %T", actual),
 		Message:  "not to contain patterns",
-		Expected: matcher.Elements,
+		Expected: m.Elements,
 	}
 }
 
-func (matcher *HavePatternsMatcher) FailureMessage(actual interface{}) (message string) {
-	message = format.Message(reflect.TypeOf(actual), "to contain elements", matcher.Elements)
-	return appendMissingStrings(message, matcher.missingElements)
+func (m *HavePatternsMatcher) FailureMessage(actual interface{}) (message string) {
+	message = format.Message(reflect.TypeOf(actual), "to contain elements", m.Elements)
+	return appendMissingStrings(message, m.missingElements)
 }
 
-func (matcher *HavePatternsMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "not to contain elements", matcher.Elements)
+func (m *HavePatternsMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	return format.Message(actual, "not to contain elements", m.Elements)
 }
 
 func appendMissingStrings(message string, missingElements []string) string {

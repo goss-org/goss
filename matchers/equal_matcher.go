@@ -20,33 +20,33 @@ func Equal(element interface{}) GossMatcher {
 	}
 }
 
-func (matcher *EqualMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *EqualMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to equal",
-		Expected: matcher.Expected,
+		Expected: m.Expected,
 	}
 }
 
-func (matcher *EqualMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *EqualMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to equal",
-		Expected: matcher.Expected,
+		Expected: m.Expected,
 	}
 }
 
-func (matcher *EqualMatcher) GoString() string {
+func (m *EqualMatcher) GoString() string {
 	sq := litter.Options{Compact: true, StripPackageNames: true}
-	return sq.Sdump(matcher.EqualMatcher)
+	return sq.Sdump(m.EqualMatcher)
 }
-func (matcher *EqualMatcher) String() string {
+func (m *EqualMatcher) String() string {
 	//sq := litter.Options{Compact: true, StripPackageNames: true}
-	//return sq.Sdump(matcher.EqualMatcher)
-	//return fmt.Sprintf("EqualMatcher{Expected:\"%s\"}", matcher.Expected)
-	return fmt.Sprintf("%q", matcher.Expected)
+	//return sq.Sdump(m.EqualMatcher)
+	//return fmt.Sprintf("EqualMatcher{Expected:\"%s\"}", m.Expected)
+	return fmt.Sprintf("%q", m.Expected)
 }
 
-func (matcher *EqualMatcher) MarshalJSON() ([]byte, error) {
-	return json.Marshal(matcher.Expected)
+func (m *EqualMatcher) MarshalJSON() ([]byte, error) {
+	return json.Marshal(m.Expected)
 }

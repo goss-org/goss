@@ -4,10 +4,14 @@ import (
 	"encoding/json"
 	"reflect"
 	"unsafe"
+
+	"github.com/onsi/gomega/types"
 )
 
 type GossMatcher interface {
-	Match(actual interface{}) (success bool, err error)
+	// This is needed due to oMegaMatcher test in some of the GomegaMatcher logic
+	types.GomegaMatcher
+	//Match(actual interface{}) (success bool, err error)
 	FailureResult(actual interface{}) MatcherResult
 	NegatedFailureResult(actual interface{}) MatcherResult
 	json.Marshaler

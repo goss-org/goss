@@ -28,27 +28,37 @@ func (m *AndMatcher) Match(actual interface{}) (success bool, err error) {
 	return true, nil
 }
 
-func (matcher *AndMatcher) FailureResult(actual interface{}) MatcherResult {
-	return matcher.firstFailedMatcher.FailureResult(actual)
+func (m *AndMatcher) FailureResult(actual interface{}) MatcherResult {
+	return m.firstFailedMatcher.FailureResult(actual)
 }
 
-func (matcher *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:  actual,
-		Message: fmt.Sprintf("To not satisfy all of these matchers: %s", matcher.Matchers),
+		Message: fmt.Sprintf("To not satisfy all of these matchers: %s", m.Matchers),
 	}
 }
 
-func (matcher *AndMatcher) MarshalJSON() ([]byte, error) {
-	if len(matcher.Matchers) == 1 {
-		return json.Marshal(matcher.Matchers[0])
+func (m *AndMatcher) MarshalJSON() ([]byte, error) {
+	if len(m.Matchers) == 1 {
+		return json.Marshal(m.Matchers[0])
 	}
 	j := make(map[string]interface{})
-	j["and"] = matcher.Matchers
+	j["and"] = m.Matchers
 	return json.Marshal(j)
 }
 
 //FIXME: Indentation is wrong
-func (matcher *AndMatcher) String() string {
-	return fmt.Sprintf("AndMatcher{Matchers:%v}", matcher.Matchers)
+func (m *AndMatcher) String() string {
+	return fmt.Sprintf("AndMatcher{Matchers:%v}", m.Matchers)
+}
+
+// FailureMessage is a stub to honor omegaMatcher interface
+func (m *AndMatcher) FailureMessage(_ interface{}) (message string) {
+	return ""
+}
+
+// NegatedFailureMessage is a stub to honor omegaMatcher interface
+func (m *AndMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+	return ""
 }

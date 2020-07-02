@@ -20,12 +20,12 @@ func (m *NotMatcher) Match(actual interface{}) (bool, error) {
 	return !success, nil
 }
 
-func (matcher *NotMatcher) FailureResult(actual interface{}) MatcherResult {
-	return matcher.Matcher.NegatedFailureResult(actual)
+func (m *NotMatcher) FailureResult(actual interface{}) MatcherResult {
+	return m.Matcher.NegatedFailureResult(actual)
 }
 
-func (matcher *NotMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	return matcher.Matcher.FailureResult(actual)
+func (m *NotMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	return m.Matcher.FailureResult(actual)
 }
 
 // Stubs to match omegaMatcher
@@ -38,13 +38,13 @@ func (m *NotMatcher) NegatedFailureMessage(_ interface{}) (message string) {
 	return ""
 }
 
-func (matcher *NotMatcher) MarshalJSON() ([]byte, error) {
+func (m *NotMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["not"] = matcher.Matcher
+	j["not"] = m.Matcher
 	return json.Marshal(j)
 }
 
 // FIXME: wtf
-func (matcher *NotMatcher) String() string {
-	return Object(matcher, 0)
+func (m *NotMatcher) String() string {
+	return Object(m, 0)
 }

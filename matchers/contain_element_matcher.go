@@ -18,29 +18,29 @@ func ContainElement(element interface{}) GossMatcher {
 	}
 }
 
-func (matcher *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to contain element matching",
-		Expected: matcher.Element,
+		Expected: m.Element,
 	}
 }
 
-func (matcher *ContainElementMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to contain element matching",
-		Expected: matcher.Element,
+		Expected: m.Element,
 	}
 }
 
-func (matcher *ContainElementMatcher) MarshalJSON() ([]byte, error) {
+func (m *ContainElementMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["contain-element"] = matcher.Element
+	j["contain-element"] = m.Element
 	return json.Marshal(j)
 }
 
-func (matcher *ContainElementMatcher) String() string {
+func (m *ContainElementMatcher) String() string {
 	return ""
 	//return Object(matcher.ContainElementMatcher, 0)
 }

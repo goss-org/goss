@@ -20,28 +20,28 @@ func ContainSubstring(substr string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (matcher *ContainSubstringMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *ContainSubstringMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to contain substring",
-		Expected: matcher.Substr,
+		Expected: m.Substr,
 	}
 }
 
-func (matcher *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to contain substring",
-		Expected: matcher.Substr,
+		Expected: m.Substr,
 	}
 }
 
-func (matcher *ContainSubstringMatcher) String() string {
-	return format.Object(matcher.ContainSubstringMatcher, 0)
+func (m *ContainSubstringMatcher) String() string {
+	return format.Object(m.ContainSubstringMatcher, 0)
 }
 
-func (matcher *ContainSubstringMatcher) MarshalJSON() ([]byte, error) {
+func (m *ContainSubstringMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["contain-substring"] = matcher.Substr
+	j["contain-substring"] = m.Substr
 	return json.Marshal(j)
 }

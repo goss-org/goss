@@ -18,28 +18,28 @@ func HaveKey(key interface{}) GossMatcher {
 	}
 }
 
-func (matcher *HaveKeyMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HaveKeyMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to have key matching",
-		Expected: matcher.Key,
+		Expected: m.Key,
 	}
 }
 
-func (matcher *HaveKeyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HaveKeyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to have key matching",
-		Expected: matcher.Key,
+		Expected: m.Key,
 	}
 }
 
-func (matcher *HaveKeyMatcher) MarshalJSON() ([]byte, error) {
+func (m *HaveKeyMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["have-key"] = matcher.Key
+	j["have-key"] = m.Key
 	return json.Marshal(j)
 }
 
-func (matcher *HaveKeyMatcher) String() string {
-	return Object(matcher.HaveKeyMatcher, 0)
+func (m *HaveKeyMatcher) String() string {
+	return Object(m.HaveKeyMatcher, 0)
 }

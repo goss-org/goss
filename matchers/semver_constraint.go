@@ -20,10 +20,10 @@ type BeSemverConstraintMatcher struct {
 	Constraint interface{}
 }
 
-func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err error) {
-	constraint, ok := toConstraint(matcher.Constraint)
+func (m *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err error) {
+	constraint, ok := toConstraint(m.Constraint)
 	if !ok {
-		return false, fmt.Errorf("Expected a valid semver constraint.  Got:\n%s", format.Object(matcher.Constraint, 1))
+		return false, fmt.Errorf("Expected a valid semver constraint.  Got:\n%s", format.Object(m.Constraint, 1))
 	}
 
 	actualSlice, ok := toVersions(actual)
@@ -40,32 +40,32 @@ func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success boo
 	return true, nil
 }
 
-func (matcher *BeSemverConstraintMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *BeSemverConstraintMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to satisfy constraint",
-		Expected: matcher.Constraint,
+		Expected: m.Constraint,
 	}
 }
 
-func (matcher *BeSemverConstraintMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *BeSemverConstraintMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to satisfy constraint",
-		Expected: matcher.Constraint,
+		Expected: m.Constraint,
 	}
 }
 
-func (matcher *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("to be %s", matcher.Constraint))
+func (m *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
+	return format.Message(actual, fmt.Sprintf("to be %s", m.Constraint))
 }
 
-func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("not to be %s", matcher.Constraint))
+func (m *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	return format.Message(actual, fmt.Sprintf("not to be %s", m.Constraint))
 }
 
-//func (matcher *BeSemverConstraintMatcher) String() string {
-//	return Object(matcher, 0)
+//func (m *BeSemverConstraintMatcher) String() string {
+//	return Object(m, 0)
 //}
 
 func toConstraint(in interface{}) (semver.Range, bool) {
@@ -124,9 +124,9 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 	return out, len(out) > 0
 }
 
-func (matcher *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
+func (m *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j["semver-constraint"] = matcher.Constraint
+	j["semver-constraint"] = m.Constraint
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
@@ -138,6 +138,6 @@ func (matcher *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
 	return b, nil
 }
 
-func (matcher *BeSemverConstraintMatcher) String() string {
-	return format.Object(matcher, 0)
+func (m *BeSemverConstraintMatcher) String() string {
+	return format.Object(m, 0)
 }
