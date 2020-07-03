@@ -9,8 +9,9 @@ import (
 	"sync"
 
 	"github.com/aelsabbahy/GOnetstat"
+	"github.com/shirou/gopsutil/process"
+
 	// This needs a better name
-	"github.com/aelsabbahy/go-ps"
 
 	util2 "github.com/aelsabbahy/goss/util"
 )
@@ -37,7 +38,7 @@ type System struct {
 	NewHTTP        func(string, *System, util2.Config) HTTP
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
-	procMap        map[string][]ps.Process
+	procMap        map[string][]*process.Process
 	procOnce       sync.Once
 }
 
@@ -48,7 +49,7 @@ func (s *System) Ports() map[string][]GOnetstat.Process {
 	return s.ports
 }
 
-func (s *System) ProcMap() (map[string][]ps.Process, error) {
+func (s *System) ProcMap() (map[string][]*process.Process, error) {
 	var err error
 
 	s.procOnce.Do(func() {

@@ -772,8 +772,6 @@ process:
     skip: false
 ```
 
-**NOTE:** This check is inspecting the name of the binary, not the name of the process. For example, a process with the name `nginx: master process /usr/sbin/nginx` would be checked with the process `nginx`. To discover the binary of a pid run `ps -p <PID> -o comm`.
-
 ### service
 Validates the state of a service.
 
