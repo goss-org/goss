@@ -13,17 +13,22 @@ type Bench struct{}
 
 func (r Bench) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
-	failed := false
+	var testCount, skipped, failed int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			fmt.Fprintf(w, "%v %s\n", testResult.Duration, humanizeResult(testResult, true, includeRaw))
-			if testResult.Result == resource.SUCCESS {
-				failed = true
+			switch testResult.Result {
+			case resource.SKIP:
+				skipped++
+			case resource.FAIL:
+				failed++
 			}
+			testCount++
 		}
 	}
 
-	if failed {
+	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
+	if failed > 0 {
 		return 1
 	}
 	return 0
