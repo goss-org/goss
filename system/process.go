@@ -1,8 +1,6 @@
 package system
 
 import (
-	"fmt"
-
 	"github.com/aelsabbahy/goss/util"
 	"github.com/shirou/gopsutil/process"
 )
@@ -63,9 +61,6 @@ func GetProcs() (map[string][]*process.Process, error) {
 		return pmap, err
 	}
 	for _, p := range processes {
-		if p.Pid == 14657 {
-			fmt.Println(p.Name())
-		}
 		if pExe, err := p.Name(); err == nil {
 			pmap[pExe] = append(pmap[pExe], p)
 		}
