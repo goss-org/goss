@@ -5,7 +5,8 @@ import (
 	"strings"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/docker/docker/pkg/mount"
+	"github.com/moby/sys/mountinfo"
+	"github.com/thoas/go-funk"
 )
 
 type Mount interface {
@@ -21,7 +22,7 @@ type DefMount struct {
 	mountPoint string
 	loaded     bool
 	exists     bool
-	mountInfo  *mount.Info
+	mountInfo  *mountinfo.Info
 	usage      int
 	err        error
 }
@@ -77,8 +78,9 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
+	allOpts := strings.Split(strings.Join([]string{m.mountInfo.Opts, m.mountInfo.VfsOpts}, ","), ",")
 
-	return strings.Split(m.mountInfo.Opts, ","), nil
+	return funk.UniqString(allOpts), nil
 }
 
 func (m *DefMount) Source() (string, error) {
@@ -105,8 +107,8 @@ func (m *DefMount) Usage() (int, error) {
 	return m.usage, nil
 }
 
-func getMount(mountpoint string) (*mount.Info, error) {
-	entries, err := mount.GetMounts()
+func getMount(mountpoint string) (*mountinfo.Info, error) {
+	entries, err := mountinfo.GetMounts(nil)
 	if err != nil {
 		return nil, err
 	}
