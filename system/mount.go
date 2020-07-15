@@ -108,16 +108,12 @@ func (m *DefMount) Usage() (int, error) {
 }
 
 func getMount(mountpoint string) (*mountinfo.Info, error) {
-	entries, err := mountinfo.GetMounts(nil)
+	entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
 	if err != nil {
 		return nil, err
 	}
-
-	// Search the table for the mountpoint
-	for _, e := range entries {
-		if e.Mountpoint == mountpoint {
-			return e, nil
-		}
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("Mountpoint not found")
 	}
-	return nil, fmt.Errorf("Mountpoint not found")
+	return entries[0], nil
 }
