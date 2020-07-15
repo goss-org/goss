@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -65,13 +66,13 @@ func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw
 	ss = append(ss, m.Message)
 	ss = append(ss, prettyPrint(m.Expected, !compact))
 
-	if m.MissingElements != nil {
+	if !reflect.ValueOf(m.MissingElements).IsNil() {
 		ss = append(ss, "the missing elements were")
 		ss = append(ss, prettyPrint(m.MissingElements, !compact))
 	}
-	if m.ExtraElements != nil {
+	if !reflect.ValueOf(m.ExtraElements).IsNil() {
 		ss = append(ss, "the extra elements were")
-		ss = append(ss, prettyPrint(m.MissingElements, !compact))
+		ss = append(ss, prettyPrint(m.ExtraElements, !compact))
 	}
 	if len(m.TransformerChain) != 0 {
 		ss = append(ss, "the transform chain was")
@@ -112,41 +113,6 @@ func indentLines(text string) string {
 	return result[:len(result)-1]
 }
 
-//func humanizeResult2(r resource.TestResult) string {
-//	if r.Err != nil {
-//		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
-//	}
-//
-//	switch r.Result {
-//	case resource.SUCCESS:
-//		switch r.TestType {
-//		case resource.Value:
-//			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
-//		case resource.Values:
-//			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-//		case resource.Contains:
-//			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-//		default:
-//			return red("Unexpected type %d", r.TestType)
-//		}
-//	case resource.FAIL:
-//		switch r.TestType {
-//		case resource.Value:
-//			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
-//		case resource.Values:
-//			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-//		case resource.Contains:
-//			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-//		default:
-//			return red("Unexpected type %d", r.TestType)
-//		}
-//	case resource.SKIP:
-//		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
-//	default:
-//		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
-//	}
-//}
-//
 // Copied from database/sql
 var (
 	outputersMu           sync.Mutex
