@@ -66,11 +66,11 @@ func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw
 	ss = append(ss, m.Message)
 	ss = append(ss, prettyPrint(m.Expected, !compact))
 
-	if !reflect.ValueOf(m.MissingElements).IsNil() {
+	if reflect.ValueOf(m.MissingElements).IsValid() && !reflect.ValueOf(m.MissingElements).IsNil() {
 		ss = append(ss, "the missing elements were")
 		ss = append(ss, prettyPrint(m.MissingElements, !compact))
 	}
-	if !reflect.ValueOf(m.ExtraElements).IsNil() {
+	if reflect.ValueOf(m.ExtraElements).IsValid() && !reflect.ValueOf(m.ExtraElements).IsNil() {
 		ss = append(ss, "the extra elements were")
 		ss = append(ss, prettyPrint(m.ExtraElements, !compact))
 	}
