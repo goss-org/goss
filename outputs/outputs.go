@@ -17,6 +17,7 @@ import (
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/icza/dyno"
 )
 
 type Outputer interface {
@@ -86,16 +87,21 @@ func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw
 }
 
 func prettyPrint(i interface{}, indent bool) string {
+	// JSON doesn't like non-string keys
+	i = dyno.ConvertMapI2MapS(i)
 	// fixme: error handling
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
 	var b []byte
 	err := encoder.Encode(i)
-	if err != nil {
-		b = []byte(fmt.Sprint(err))
+	if err == nil {
+		b = buffer.Bytes()
+	} else {
+		//b = []byte(fmt.Sprint(err))
+		b = []byte(fmt.Sprint(i))
 	}
-	b = bytes.TrimRightFunc(buffer.Bytes(), unicode.IsSpace)
+	b = bytes.TrimRightFunc(b, unicode.IsSpace)
 	if indent {
 		return indentLines(string(b))
 	} else {
