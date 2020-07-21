@@ -30,9 +30,7 @@ run(){
     # Copy in goss
     cp "${GOSS_PATH}" "$tmp_dir/goss"
     chmod 755 "$tmp_dir/goss"
-    [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" "$tmp_dir/goss.yaml" && chmod 644 "$tmp_dir/goss.yaml"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && cp "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir" && chmod 644 "$tmp_dir/goss_wait.yaml"
-    [[ ! -z "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && cp "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir" && chmod 644 "$tmp_dir/${GOSS_VARS}"
+    cp -r "${GOSS_FILES_PATH}" "$tmp_dir/test_files"
 
     # Switch between mount or cp files strategy
     GOSS_FILES_STRATEGY=${GOSS_FILES_STRATEGY:="mount"}
@@ -82,12 +80,12 @@ case "$1" in
         if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
             if [[ -z "${GOSS_VARS}" ]]; then
-                if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                if ! docker exec "$id" sh -c "/goss/goss -g /goss/test_files/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
                     docker logs $id >&2
                     error "goss_wait.yaml never passed"
                 fi
             else
-                if ! docker exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
+                if ! docker exec "$id" sh -c "/goss/goss -g /goss/test_files/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
                     docker logs $id >&2
                     error "goss_wait.yaml never passed"
                 fi
@@ -101,18 +99,18 @@ case "$1" in
         fi
         info "Running Tests"
         if [[ -z "${GOSS_VARS}" ]]; then
-            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml validate $GOSS_OPTS"
+            docker exec "$id" sh -c "/goss/goss -g /goss/test_files/goss.yaml validate $GOSS_OPTS"
         else
-            docker exec "$id" sh -c "/goss/goss -g /goss/goss.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_OPTS"
+            docker exec "$id" sh -c "/goss/goss -g /goss/test_files/goss.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_OPTS"
         fi
         ;;
     edit)
         run "$@"
         info "Run goss add/autoadd to add resources"
         docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
-        get_docker_file "/goss/goss.yaml"
-        get_docker_file "/goss/goss_wait.yaml"
-        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
+        get_docker_file "/goss/test_files/goss.yaml"
+        get_docker_file "/goss/test_files/goss_wait.yaml"
+        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/test_files/${GOSS_VARS}"
         ;;
     *)
         error "$USAGE"
