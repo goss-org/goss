@@ -41,22 +41,20 @@ func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 		actual interface{}
 	}
 	tests := []struct {
-		name        string
-		fields      fields
-		args        args
-		wantMessage string
+		name       string
+		fields     fields
+		args       args
+		wantResult MatcherResult
 	}{
 		{
-			name:        "string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: "1.0.0"},
-			wantMessage: "Expected\n    <string>: 1.0.0\nto be > 1.1.0",
-		},
-		{
-			name:        "slice_string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: []string{"1.0.0"}},
-			wantMessage: "Expected\n    <[]string | len:1, cap:1>: [\"1.0.0\"]\nto be > 1.1.0",
+			name:   "string",
+			fields: fields{Constraint: "> 1.1.0"},
+			args:   args{actual: "1.0.0"},
+			wantResult: MatcherResult{
+				Actual:   "1.0.0",
+				Message:  "to satisfy constraint",
+				Expected: "> 1.1.0",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -64,8 +62,8 @@ func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 			matcher := &BeSemverConstraintMatcher{
 				Constraint: tt.fields.Constraint,
 			}
-			gotMessage := matcher.FailureMessage(tt.args.actual)
-			assert.Equal(t, tt.wantMessage, gotMessage)
+			gotResult := matcher.FailureResult(tt.args.actual)
+			assert.Equal(t, tt.wantResult, gotResult)
 		})
 	}
 }
@@ -170,22 +168,20 @@ func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 		actual interface{}
 	}
 	tests := []struct {
-		name        string
-		fields      fields
-		args        args
-		wantMessage string
+		name       string
+		fields     fields
+		args       args
+		wantResult MatcherResult
 	}{
 		{
-			name:        "string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: "1.0.0"},
-			wantMessage: "Expected\n    <string>: 1.0.0\nnot to be > 1.1.0",
-		},
-		{
-			name:        "slice_string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: []string{"1.0.0"}},
-			wantMessage: "Expected\n    <[]string | len:1, cap:1>: [\"1.0.0\"]\nnot to be > 1.1.0",
+			name:   "string",
+			fields: fields{Constraint: "> 1.1.0"},
+			args:   args{actual: "1.0.0"},
+			wantResult: MatcherResult{
+				Actual:   "1.0.0",
+				Message:  "not to satisfy constraint",
+				Expected: "> 1.1.0",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -194,8 +190,8 @@ func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 				Constraint: tt.fields.Constraint,
 			}
 
-			gotMessage := matcher.NegatedFailureMessage(tt.args.actual)
-			assert.Equal(t, tt.wantMessage, gotMessage)
+			gotResult := matcher.NegatedFailureResult(tt.args.actual)
+			assert.Equal(t, tt.wantResult, gotResult)
 		})
 	}
 }

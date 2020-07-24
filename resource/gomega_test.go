@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/aelsabbahy/goss/matchers"
-	"github.com/sanity-io/litter"
+	"github.com/stretchr/testify/assert"
 )
 
 var gomegaTests = []struct {
@@ -160,9 +160,5 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 }
 
 func gomegaTestEqual(t *testing.T, got, want interface{}, useNegateTester bool, in string) {
-	g := litter.Sdump(got)
-	w := litter.Sdump(want)
-	if g != w {
-		t.Errorf("For input '%s': got %v, want %v", in, g, w)
-	}
+	assert.Equal(t, got, want)
 }

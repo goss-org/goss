@@ -17,7 +17,6 @@ require (
 	github.com/onsi/gomega v1.10.1
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/sanity-io/litter v1.2.0
 	github.com/stretchr/testify v1.4.0
 	github.com/tidwall/gjson v1.6.0
 	github.com/tidwall/pretty v1.0.1 // indirect
