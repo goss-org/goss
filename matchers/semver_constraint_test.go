@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/blang/semver"
-	"github.com/onsi/gomega/types"
 )
 
 func TestBeSemverConstraint(t *testing.T) {

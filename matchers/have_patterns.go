@@ -43,8 +43,11 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 		}
 	}
 	notfound, err := sliceToPatterns(elements)
+	if err != nil {
+		return false, err
+	}
 	// short circuit
-	if len(notfound) == 0 && err == nil {
+	if len(notfound) == 0 {
 		return true, nil
 	}
 	fh, ok := actual.(io.Reader)
