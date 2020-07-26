@@ -51,10 +51,10 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if u.Headers != nil {
+	if isSet(u.Headers) {
 		results = append(results, ValidateGomegaValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if u.Body != nil {
+	if isSet(u.Body) {
 		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 
@@ -68,7 +68,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		HTTP:              http,
 		Status:            status,
 		RequestHeader:     []string{},
-		Headers:           []string{},
+		Headers:           nil,
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,

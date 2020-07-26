@@ -139,6 +139,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	result := SUCCESS
 	if success {
 		matcherResult = matchers.MatcherResult{
+			Actual:   foundValue,
 			Message:  "matches expectation",
 			Expected: expectedValue,
 		}

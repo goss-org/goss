@@ -49,10 +49,10 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.Command))
 	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
-	if c.Stdout != nil {
+	if isSet(c.Stdout) {
 		results = append(results, ValidateValue(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
 	}
-	if c.Stderr != nil {
+	if isSet(c.Stderr) {
 		results = append(results, ValidateValue(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
 	}
 	return results
