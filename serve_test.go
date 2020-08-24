@@ -16,16 +16,28 @@ import (
 func TestServe(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
-		specFile           string
-		expectedHTTPStatus int
+		outputFormat        string
+		specFile            string
+		expectedHTTPStatus  int
+		expectedContentType string
 	}{
-		"passing": {
-			specFile:           filepath.Join("testdata", "passing.goss.yaml"),
-			expectedHTTPStatus: http.StatusOK,
+		"passing-json": {
+			outputFormat:        "json",
+			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
+			expectedHTTPStatus:  http.StatusOK,
+			expectedContentType: "application/json",
 		},
-		"failing": {
-			specFile:           filepath.Join("testdata", "failing.goss.yaml"),
-			expectedHTTPStatus: http.StatusServiceUnavailable,
+		"failing-json": {
+			outputFormat:        "json",
+			specFile:            filepath.Join("testdata", "failing.goss.yaml"),
+			expectedHTTPStatus:  http.StatusServiceUnavailable,
+			expectedContentType: "application/json",
+		},
+		"failing-default-output": {
+			outputFormat:        "structured",
+			specFile:            filepath.Join("testdata", "failing.goss.yaml"),
+			expectedHTTPStatus:  http.StatusServiceUnavailable,
+			expectedContentType: "",
 		},
 	}
 	for testName := range tests {
@@ -34,7 +46,7 @@ func TestServe(t *testing.T) {
 			var logOutput bytes.Buffer
 			log.SetOutput(&logOutput)
 
-			config, err := util.NewConfig(util.WithSpecFile(tc.specFile))
+			config, err := util.NewConfig(util.WithSpecFile(tc.specFile), util.WithOutputFormat(tc.outputFormat))
 			require.NoError(t, err)
 			t.Logf("Config: %v", config)
 
@@ -53,6 +65,9 @@ func TestServe(t *testing.T) {
 
 			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
+			if tc.expectedContentType != "" {
+				assert.Equal(t, []string{tc.expectedContentType}, rr.HeaderMap["Content-Type"])
+			}
 		})
 	}
 }
