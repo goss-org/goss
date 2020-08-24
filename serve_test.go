@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/aelsabbahy/goss/util"
 	"github.com/stretchr/testify/assert"
@@ -70,4 +71,46 @@ func TestServe(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestServeCache(t *testing.T) {
+	var logOutput bytes.Buffer
+	log.SetOutput(&logOutput)
+	const cache = time.Duration(time.Millisecond * 100)
+	config, err := util.NewConfig(
+		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
+		util.WithCache(cache),
+	)
+	require.NoError(t, err)
+	t.Logf("Config: %v", config)
+
+	hh, err := newHealthHandler(config)
+	require.NoError(t, err)
+
+	req, err := http.NewRequest("GET", config.Endpoint, nil)
+	if err != nil {
+		require.NoError(t, err)
+	}
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(hh.ServeHTTP)
+
+	t.Run("fresh cache", func(t *testing.T) {
+		handler.ServeHTTP(rr, req)
+		assert.Contains(t, logOutput.String(), "Stale cache")
+		logOutput.Reset()
+	})
+
+	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
+		handler.ServeHTTP(rr, req)
+		assert.NotContains(t, logOutput.String(), "Stale cache")
+		logOutput.Reset()
+	})
+
+	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
+		time.Sleep(cache + 5*time.Millisecond)
+		handler.ServeHTTP(rr, req)
+		assert.Contains(t, logOutput.String(), "Stale cache")
+		logOutput.Reset()
+	})
 }
