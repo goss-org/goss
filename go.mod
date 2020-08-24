@@ -20,9 +20,11 @@ require (
 	github.com/onsi/gomega v1.9.0
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/common v0.13.0
 	github.com/stretchr/testify v1.4.0
-	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
-	gopkg.in/yaml.v2 v2.2.8
+	github.com/urfave/cli v1.22.1
+	gopkg.in/yaml.v2 v2.3.0
 )
 
 go 1.13

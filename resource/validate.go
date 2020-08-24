@@ -45,6 +45,19 @@ type TestResult struct {
 	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
+func (tr TestResult) ToOutcome() string {
+	switch tr.Result {
+	case SUCCESS:
+		return "pass"
+	case FAIL:
+		return "fail"
+	case SKIP:
+		return "skip"
+	default:
+		return "unknown"
+	}
+}
+
 func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {
 	return TestResult{
 		Successful:   true,

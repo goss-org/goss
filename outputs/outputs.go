@@ -30,6 +30,7 @@ var (
 		"json":          &Json{},
 		"junit":         &JUnit{},
 		"nagios":        &Nagios{},
+		"prometheus":    &Prometheus{},
 		"rspecish":      &Rspecish{},
 		"structured":    &Structured{},
 		"tap":           &Tap{},
