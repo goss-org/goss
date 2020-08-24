@@ -45,6 +45,7 @@ type TestResult struct {
 	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
+// ToOutcome converts the enum to a human-friendly string.
 func (tr TestResult) ToOutcome() string {
 	switch tr.Result {
 	case SUCCESS:

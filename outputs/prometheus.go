@@ -34,12 +34,15 @@ var (
 	})
 )
 
+// Prometheus renders metrics in prometheus.io text-format https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format
 type Prometheus struct{}
 
+// ValidOptions is a list of valid format options for prometheus
 func (r Prometheus) ValidOptions() []*formatOption {
 	return []*formatOption{}
 }
 
+// Output converts the results into the prometheus text-format.
 func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	for resultGroup := range results {
