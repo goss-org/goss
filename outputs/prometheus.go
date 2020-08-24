@@ -23,13 +23,13 @@ var (
 	testDurations = promauto.With(registry).NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
-		Name:      "outcomes_duration_milliseconds",
+		Name:      "outcomes_duration_seconds",
 		Help:      "The duration of tests from this run. Note; tests run concurrently.",
 	}, []string{"type", "outcome"})
 	runDuration = promauto.With(registry).NewCounter(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
-		Name:      "run_duration_milliseconds",
+		Name:      "run_duration_seconds",
 		Help:      "The end-to-end duration of this run.",
 	})
 )
@@ -47,11 +47,11 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 			resType := strings.ToLower(tr.ResourceType)
 			outcome := tr.ToOutcome()
 			testOutcomes.WithLabelValues(resType, outcome).Inc()
-			testDurations.WithLabelValues(resType, outcome).Add(float64(tr.Duration.Milliseconds()))
+			testDurations.WithLabelValues(resType, outcome).Add(tr.Duration.Seconds())
 		}
 	}
 
-	runDuration.Add(float64(time.Since(startTime).Milliseconds()))
+	runDuration.Add(time.Since(startTime).Seconds())
 
 	metricsFamilies, err := registry.Gather()
 	if err != nil {
