@@ -36,6 +36,7 @@ func TestServe(t *testing.T) {
 
 			config, err := util.NewConfig(util.WithSpecFile(tc.specFile))
 			require.NoError(t, err)
+			t.Logf("Config: %v", config)
 
 			hh, err := newHealthHandler(config)
 			require.NoError(t, err)
