@@ -21,11 +21,11 @@ func TestServe(t *testing.T) {
 	}{
 		"passing": {
 			specFile:           filepath.Join("testdata", "passing.goss.yaml"),
-			expectedHTTPStatus: 200,
+			expectedHTTPStatus: http.StatusOK,
 		},
 		"failing": {
 			specFile:           filepath.Join("testdata", "failing.goss.yaml"),
-			expectedHTTPStatus: 503,
+			expectedHTTPStatus: http.StatusServiceUnavailable,
 		},
 	}
 	for testName := range tests {
