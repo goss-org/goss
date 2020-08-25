@@ -52,7 +52,6 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 				util.WithOutputFormat(tc.outputFormat),
 			)
 			require.NoError(t, err)
-			t.Logf("Config: %v", config)
 
 			hh, err := newHealthHandler(config)
 			require.NoError(t, err)
@@ -143,7 +142,6 @@ func TestServeNegotiatingContent(t *testing.T) {
 				util.WithOutputFormat(tc.outputFormat),
 			)
 			require.NoError(t, err)
-			t.Logf("Config: %v", config)
 
 			hh, err := newHealthHandler(config)
 			require.NoError(t, err)
@@ -175,7 +173,6 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 		util.WithCache(cache),
 	)
 	require.NoError(t, err)
-	t.Logf("Config: %v", config)
 
 	hh, err := newHealthHandler(config)
 	require.NoError(t, err)
@@ -224,7 +221,6 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		util.WithOutputFormat("structured"),
 	)
 	require.NoError(t, err)
-	t.Logf("Config: %v", config)
 
 	hh, err := newHealthHandler(config)
 	require.NoError(t, err)
