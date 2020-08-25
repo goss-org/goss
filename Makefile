@@ -36,6 +36,14 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
+alpha-test-%: release/goss-%
+	$(info INFO: Starting build $@)
+	./integration-tests/run-tests-alpha.sh $*
+
+test-serve-%: release/goss-%
+	$(info INFO: Starting build $@)
+	./integration-tests/run-serve-tests.sh $*
+
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
 
