@@ -14,15 +14,15 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-func Serve(c *util.Config) {
+func Serve(c *util.Config) error {
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
-		log.Fatalf("Error: %v", err)
+		return err
 	}
 	http.Handle(endpoint, health)
 	log.Printf("Starting to listen on: %s", c.ListenAddress)
-	log.Fatal(http.ListenAndServe(c.ListenAddress, nil))
+	return http.ListenAndServe(c.ListenAddress, nil)
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
