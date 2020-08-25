@@ -55,8 +55,8 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 }
 
 type res struct {
-	exitCode int
-	b        bytes.Buffer
+	body       bytes.Buffer
+	statusCode int
 }
 type healthHandler struct {
 	c             *util.Config
@@ -76,40 +76,53 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
-	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
 
 	log.Printf("%v: requesting health probe", r.RemoteAddr)
-	var resp res
+	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
+	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
+	w.WriteHeader(resp.statusCode)
+	resp.body.WriteTo(w)
+}
+
+func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
+	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		resp = tmp.(res)
-	} else {
-		h.gossMu.Lock()
-		defer h.gossMu.Unlock()
-		tmp, found := h.cache.Get(cacheKey)
-		if found {
-			resp = tmp.(res)
-		} else {
-			h.sys = system.New(h.c.PackageManager)
-			log.Printf("%v: Stale cache[%s], running tests", r.RemoteAddr, cacheKey)
-			iStartTime := time.Now()
-			out := validate(h.sys, h.gossConfig, h.maxConcurrent)
-			var b bytes.Buffer
-			outputConfig := util.OutputConfig{
-				FormatOptions: h.c.FormatOptions,
-			}
-			exitCode := outputer.Output(&b, out, iStartTime, outputConfig)
-			resp = res{exitCode: exitCode, b: b}
-			h.cache.SetDefault(cacheKey, resp)
-		}
+		return tmp.(res)
 	}
-	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
-	if resp.exitCode == 0 {
-		resp.b.WriteTo(w)
-	} else {
-		w.WriteHeader(http.StatusServiceUnavailable)
-		resp.b.WriteTo(w)
+
+	h.gossMu.Lock()
+	defer h.gossMu.Unlock()
+	tmp, found = h.cache.Get(cacheKey)
+	if found {
+		return tmp.(res)
 	}
+
+	log.Printf("Stale cache[%s], running tests", cacheKey)
+	resp := h.runValidate(outputer)
+	h.cache.SetDefault(cacheKey, resp)
+	return resp
+}
+
+func (h healthHandler) runValidate(outputer outputs.Outputer) res {
+	h.sys = system.New(h.c.PackageManager)
+	iStartTime := time.Now()
+	out := validate(h.sys, h.gossConfig, h.maxConcurrent)
+	var b bytes.Buffer
+	outputConfig := util.OutputConfig{
+		FormatOptions: h.c.FormatOptions,
+	}
+	exitCode := outputer.Output(&b, out, iStartTime, outputConfig)
+	resp := res{
+		body: b,
+	}
+	log.Printf("exitCode: %d", exitCode)
+	if exitCode == 0 {
+		resp.statusCode = http.StatusOK
+	} else {
+		resp.statusCode = http.StatusServiceUnavailable
+	}
+	return resp
 }
 
 const (
@@ -124,8 +137,8 @@ func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, ou
 	for _, header := range found {
 		candidates := strings.Split(header, ",")
 		for _, acceptCandidate := range candidates {
-			log.Printf("candidate %q", acceptCandidate)
 			acceptCandidate = strings.TrimSpace(acceptCandidate)
+			log.Printf("candidate %q", acceptCandidate)
 			if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
 				outputName = strings.TrimLeft(acceptCandidate, mediaTypePrefix)
 			} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
