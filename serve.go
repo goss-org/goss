@@ -2,12 +2,15 @@ package goss
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/aelsabbahy/goss/outputs"
+	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
@@ -70,39 +73,94 @@ type healthHandler struct {
 }
 
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	outputConfig := util.OutputConfig{
-		FormatOptions: h.c.FormatOptions,
+	outputFormat, outputer, err := h.negotiateResponseContentType(r)
+	if err != nil {
+		log.Printf("Warn: Using process-level output-format. %s", err)
+		outputFormat = h.c.OutputFormat
+		outputer = h.outputer
 	}
+	negotiatedContentType := h.responseContentType(outputFormat)
+	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
 
 	log.Printf("%v: requesting health probe", r.RemoteAddr)
 	var resp res
-	tmp, found := h.cache.Get("res")
+	tmp, found := h.cache.Get(cacheKey)
 	if found {
 		resp = tmp.(res)
 	} else {
 		h.gossMu.Lock()
 		defer h.gossMu.Unlock()
-		tmp, found := h.cache.Get("res")
+		tmp, found := h.cache.Get(cacheKey)
 		if found {
 			resp = tmp.(res)
 		} else {
 			h.sys = system.New(h.c.PackageManager)
-			log.Printf("%v: Stale cache, running tests", r.RemoteAddr)
+			log.Printf("%v: Stale cache[%s], running tests", r.RemoteAddr, cacheKey)
 			iStartTime := time.Now()
 			out := validate(h.sys, h.gossConfig, h.maxConcurrent)
 			var b bytes.Buffer
-			exitCode := h.outputer.Output(&b, out, iStartTime, outputConfig)
+			outputConfig := util.OutputConfig{
+				FormatOptions: h.c.FormatOptions,
+			}
+			exitCode := outputer.Output(&b, out, iStartTime, outputConfig)
 			resp = res{exitCode: exitCode, b: b}
-			h.cache.Set("res", resp, cache.DefaultExpiration)
+			h.cache.SetDefault(cacheKey, resp)
 		}
 	}
-	if h.contentType != "" {
-		w.Header().Set("Content-Type", h.contentType)
-	}
+	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
 	if resp.exitCode == 0 {
 		resp.b.WriteTo(w)
 	} else {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		resp.b.WriteTo(w)
 	}
+}
+
+const (
+	// https://en.wikipedia.org/wiki/Media_type
+	mediaTypePrefix = "application/vnd.goss-"
+)
+
+func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, outputs.Outputer, error) {
+	found := r.Header[http.CanonicalHeaderKey("Accept")]
+	var outputer outputs.Outputer
+	outputName := ""
+	for _, header := range found {
+		candidates := strings.Split(header, ",")
+		for _, acceptCandidate := range candidates {
+			log.Printf("candidate %q", acceptCandidate)
+			acceptCandidate = strings.TrimSpace(acceptCandidate)
+			if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
+				outputName = strings.TrimLeft(acceptCandidate, mediaTypePrefix)
+			} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
+				outputName = "json"
+			}
+			var err error
+			outputer, err = outputs.GetOutputer(outputName)
+			if err != nil {
+				continue
+			}
+		}
+	}
+	if outputer == nil {
+		return "", nil, fmt.Errorf("Accept header on request missing or invalid. Accept header: %v", found)
+	}
+
+	return outputName, outputer, nil
+}
+
+func (h healthHandler) responseContentType(outputName string) string {
+	if outputName == "json" {
+		return "application/json"
+	}
+	return fmt.Sprintf("%s%s", mediaTypePrefix, outputName)
+}
+
+func (h healthHandler) renderBody(results <-chan []resource.TestResult, outputer outputs.Outputer) (int, bytes.Buffer) {
+	outputConfig := util.OutputConfig{
+		FormatOptions: h.c.FormatOptions,
+	}
+	var b bytes.Buffer
+	exitCode := outputer.Output(&b, results, time.Now(), outputConfig)
+	return exitCode, b
 }
