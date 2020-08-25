@@ -454,7 +454,7 @@ addr:
 
 
 ### command
-Validates the exit-status and output of a command
+Validates the exit-status and output of a command. This can be used in combination with the [gjson](#gjson) matcher to create more powerful goss custom tests.
 
 ```yaml
 command:
@@ -829,7 +829,7 @@ user:
 
 #### Arrays
 
-Arrays are treated as a `contains-elements`(fixme, link) by default, this validates that the expected test is a subset of the returned system state.
+Arrays are treated as a [contains-elements](#array-matchers) by default, this validates that the expected test is a subset of the returned system state.
 
 ```yaml
 matching:
@@ -1040,11 +1040,59 @@ These matchers don't really fall into any of the above categories, or span multi
 * `not: matcher` - Checks that a matcher does not match
 * `and: [matcher, ..]` - Checks that all matchers match
 * `or: [matcher, ..]` - Checks that any matchers match
-* `semver-constraint: ">1.0.0 <2.0.0"` - Checks that all versions match [semver](https://github.com/blang/semver#ranges) constraint (or range) syntax fixme (custom range)
     * when system returns a string it is converted into a one element array and matched
-* `gjson: {gjson_path: matcher, gjson_path2: matcher2}` - Checks extracted [gjson](https://gjson.dev/) passes the matcher
 
 See the following for examples: [link..]fixme
+
+##### semver-constraint
+
+Checks that all versions match semver constraint or range syntax. This uses [semver](https://github.com/blang/semver) under the hood, however, wildcards (e.g. `1.X` are not officially supported and may go away in a future release.
+
+Example:
+```yaml
+matching:
+  semver:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver2:
+    content:
+      - 1.0.1
+      - 1.5.0
+      - 1.9.9
+    matches:
+      not:
+        semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver3:
+    content: 1.0.1
+    matches:
+      semver-constraint: ">5.0.0 || < 1.5.0"
+```
+
+
+##### gjson
+
+Checks extracted [gjson](https://gjson.dev/) passes the matcher
+
+Example:
+```yaml
+matching:
+  example:
+    content: '{"foo": "bar", "moo" {"nested": "cow"}, "count": "15"}'
+    matches:
+      gjson:
+        moo.nested: cow
+        foo: {have-prefix: b}
+        count: {le: 25}
+        '@this': {have-key: "foo"}
+        moo:
+          and:
+            - {have-key: "nested"}
+            - {not: {have-key: "nested2"}}
+```
+
 
 ## Templates
 
