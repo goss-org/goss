@@ -35,7 +35,7 @@ func TestServe(t *testing.T) {
 			expectedContentType: "application/json",
 		},
 		"failing-default-output": {
-			outputFormat:        "structured",
+			outputFormat:        "rspecish",
 			specFile:            filepath.Join("testdata", "failing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusServiceUnavailable,
 			expectedContentType: "",
