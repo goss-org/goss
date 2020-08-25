@@ -28,11 +28,17 @@ find_open_port() {
 }
 
 cleanup() {
-  # Can't use killall, doesn't exist on Windows. Also would interfere with concurrent runs.
   binary_name="$(basename "${GOSS_BINARY}")"
-  ps -W |
-    awk "/${binary_name}/,NF=1" |
-    xargs kill
+  if [[ "${os}" == "darwin" ]]; then
+    killall "${binary_name}"
+  elif [[ "${os}" == "linux" ]]; then
+    killall "${binary_name}"
+  elif [[ "${os}" == "windows" ]]; then
+    # Can't use killall, doesn't exist on Windows. Also would interfere with concurrent runs.
+    ps -W |
+      awk "/${binary_name}/,NF=1" |
+      xargs kill
+  fi
 }
 trap cleanup EXIT
 
