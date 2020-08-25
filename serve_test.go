@@ -187,6 +187,8 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 
 	t.Run("fresh cache", func(t *testing.T) {
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.Contains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -194,6 +196,8 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.NotContains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -202,6 +206,8 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
 		time.Sleep(cache + 5*time.Millisecond)
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.Contains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -232,6 +238,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 			"accept": "application/json",
 		})
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.Contains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -242,6 +250,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 			"accept": "application/json",
 		})
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.NotContains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -252,6 +262,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 			"accept": "application/vnd.goss-rspecish",
 		})
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.Contains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
@@ -263,6 +275,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 			"accept": "application/json",
 		})
 		handler.ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
 		assert.Contains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
