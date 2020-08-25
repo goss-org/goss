@@ -51,9 +51,6 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 		gossMu:        &sync.Mutex{},
 		maxConcurrent: c.MaxConcurrent,
 	}
-	if c.OutputFormat == "json" {
-		health.contentType = "application/json"
-	}
 	return health, nil
 }
 
@@ -68,7 +65,6 @@ type healthHandler struct {
 	outputer      outputs.Outputer
 	cache         *cache.Cache
 	gossMu        *sync.Mutex
-	contentType   string
 	maxConcurrent int
 }
 
