@@ -25,6 +25,37 @@ const (
 	SKIP
 )
 
+var humanOutcomes map[int]string = map[int]string{
+	SUCCESS: "pass",
+	FAIL:    "fail",
+	SKIP:    "skip",
+}
+
+func HumanOutcomes() map[int]string {
+	return humanOutcomes
+}
+
+func Resources() []string {
+	return []string{
+		"addr",
+		"command",
+		"dns",
+		"file",
+		"gossfile",
+		"group",
+		"http",
+		"interface",
+		"kernel_param",
+		"matching",
+		"mount",
+		"package",
+		"port",
+		"process",
+		"service",
+		"user",
+	}
+}
+
 const (
 	maxScanTokenSize = 10 * 1024 * 1024
 )

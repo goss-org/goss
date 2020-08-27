@@ -37,6 +37,24 @@ var (
 // Prometheus renders metrics in prometheus.io text-format https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format
 type Prometheus struct{}
 
+// NewPrometheus creates and initialises a new Prometheus Outputer (to avoid missing metrics)
+func NewPrometheus() *Prometheus {
+	outputer := &Prometheus{}
+	outputer.init()
+	return outputer
+}
+
+func (r *Prometheus) init() {
+	// Avoid missing metrics: https://prometheus.io/docs/practices/instrumentation/#avoid-missing-metrics
+	for _, resourceType := range resource.Resources() {
+		for _, outcome := range resource.HumanOutcomes() {
+			testOutcomes.WithLabelValues(resourceType, outcome).Add(0)
+			testDurations.WithLabelValues(resourceType, outcome).Add(0)
+		}
+	}
+	runDuration.WithLabelValues("outcome").Add(0)
+}
+
 // ValidOptions is a list of valid format options for prometheus
 func (r Prometheus) ValidOptions() []*formatOption {
 	return []*formatOption{}
