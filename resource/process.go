@@ -13,6 +13,10 @@ type Process struct {
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(Process{})
+}
+
 func (p *Process) ID() string      { return p.Executable }
 func (p *Process) SetID(id string) { p.Executable = id }
 

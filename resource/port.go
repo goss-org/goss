@@ -14,6 +14,10 @@ type Port struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(Port{})
+}
+
 func (p *Port) ID() string      { return p.Port }
 func (p *Port) SetID(id string) { p.Port = id }
 

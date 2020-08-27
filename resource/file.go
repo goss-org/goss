@@ -22,6 +22,10 @@ type File struct {
 	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(File{})
+}
+
 func (f *File) ID() string      { return f.Path }
 func (f *File) SetID(id string) { f.Path = id }
 

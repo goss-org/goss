@@ -15,6 +15,10 @@ type Interface struct {
 	Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(Interface{})
+}
+
 func (i *Interface) ID() string      { return i.Name }
 func (i *Interface) SetID(id string) { i.Name = id }
 

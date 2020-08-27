@@ -20,6 +20,10 @@ type DNS struct {
 	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(DNS{})
+}
+
 func (d *DNS) ID() string      { return d.Host }
 func (d *DNS) SetID(id string) { d.Host = id }
 

@@ -17,6 +17,10 @@ type Mount struct {
 	Usage      matcher `json:"usage,omitempty" yaml:"usage,omitempty"`
 }
 
+func init() {
+	RegisterResource(Mount{})
+}
+
 func (m *Mount) ID() string      { return m.MountPoint }
 func (m *Mount) SetID(id string) { m.MountPoint = id }
 

@@ -23,6 +23,10 @@ type HTTP struct {
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(HTTP{})
+}
+
 func (u *HTTP) ID() string      { return u.HTTP }
 func (u *HTTP) SetID(id string) { u.HTTP = id }
 

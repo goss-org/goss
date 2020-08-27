@@ -5,14 +5,39 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/aelsabbahy/goss/system"
+	"github.com/aelsabbahy/goss/util"
 	"github.com/oleiade/reflections"
 )
 
 type Resource interface {
 	Validate(*system.System) []TestResult
 	SetID(string)
+}
+
+var (
+	resourcesMu sync.Mutex
+	resources   = make(map[string]struct{})
+)
+
+func RegisterResource(r interface{}) {
+	resourcesMu.Lock()
+	defer resourcesMu.Unlock()
+
+	if r == nil {
+		panic("goss: Register resource is nil")
+	}
+	typeName := strings.ToLower(util.GetType(r))
+	if _, dup := resources[typeName]; dup {
+		panic("goss: Register called twice for resource type " + typeName)
+	}
+	resources[typeName] = struct{}{}
+}
+
+func Resources() map[string]struct{} {
+	return resources
 }
 
 type ResourceRead interface {

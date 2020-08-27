@@ -14,6 +14,10 @@ type Service struct {
 	Skip    bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(Service{})
+}
+
 func (s *Service) ID() string      { return s.Service }
 func (s *Service) SetID(id string) { s.Service = id }
 

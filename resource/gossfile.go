@@ -11,6 +11,10 @@ type Gossfile struct {
 	Path  string `json:"-" yaml:"-"`
 }
 
+func init() {
+	RegisterResource(Gossfile{})
+}
+
 func (g *Gossfile) ID() string      { return g.Path }
 func (g *Gossfile) SetID(id string) { g.Path = id }
 

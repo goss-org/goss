@@ -12,6 +12,10 @@ type KernelParam struct {
 	Value matcher `json:"value" yaml:"value"`
 }
 
+func init() {
+	RegisterResource(KernelParam{})
+}
+
 func (a *KernelParam) ID() string      { return a.Key }
 func (a *KernelParam) SetID(id string) { a.Key = id }
 

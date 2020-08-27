@@ -20,6 +20,10 @@ type User struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+func init() {
+	RegisterResource(User{})
+}
+
 func (u *User) ID() string      { return u.Username }
 func (u *User) SetID(id string) { u.Username = id }
 

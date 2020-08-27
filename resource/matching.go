@@ -18,6 +18,10 @@ type Matching struct {
 	Matches matcher     `json:"matches" yaml:"matches"`
 }
 
+func init() {
+	RegisterResource(Matching{})
+}
+
 type MatchingMap map[string]*Matching
 
 func (a *Matching) ID() string      { return a.Id }
