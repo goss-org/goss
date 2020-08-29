@@ -69,7 +69,7 @@ func (u *DefHTTP) setup() error {
 	}
 	u.loaded = true
 
-	proxyUrl := http.ProxyFromEnvironment
+	proxyURL := http.ProxyFromEnvironment
 	if u.Proxy != "" {
 		parseProxy, err := url.Parse(u.Proxy)
 
@@ -77,13 +77,13 @@ func (u *DefHTTP) setup() error {
 			return err
 		}
 
-		proxyUrl = http.ProxyURL(parseProxy)
+		proxyURL = http.ProxyURL(parseProxy)
 	}
 
 	tr := &http.Transport{
 		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
 		DisableKeepAlives: true,
-		Proxy:             proxyUrl,
+		Proxy:             proxyURL,
 	}
 	client := &http.Client{
 		Transport: tr,
