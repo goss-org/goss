@@ -1,0 +1,12 @@
+---
+mount:
+  'c:':
+    exists: true
+    filesystem: ntfs
+
+    opts: []  #  not applicable on Windows
+    source: ''  #  not applicable on Windows
+    usage:
+      lt: 95
+
+    skip: true  # needs implementation

@@ -196,9 +196,13 @@ http:
     allow-insecure: false
     timeout: 5000
     request-headers:
-      - "Host: example.com"
+      # This is causing intermittent errors depending on the httpbin server hit
+      # need to see if there's a good way around this, maybe local httpbin?
+      #- "Host: example.com"
+      - "Host: httpbin.org"
     headers: ["Content-Type: application/json"]
-    body: ['"Host": "example.com"']
+    # body: ['"Host": "example.com"']
+    body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
@@ -248,3 +252,7 @@ matching:
     content: {{ .Vars.overwrite }}
     matches:
       match-regexp: bar
+  sping_basic:
+    content: {{ "hello!" | upper | repeat 5 }}
+    matches:
+      match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
