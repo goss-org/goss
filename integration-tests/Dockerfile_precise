@@ -10,10 +10,11 @@ RUN mv /sbin/initctl /sbin/initctl.orig && \
     apt-get clean && \
     rm -f /sbin/initctl && \
     mv /sbin/initctl.orig /sbin/initctl && \
-    echo manual > /etc/init/apache2.override && \
-    sed -i 's/reload|force-reload)/status)/g' /etc/init.d/tinyproxy && \
-    sed -i 's/Reloading $DESC configuration files./tinyproxy is running (pid 1234)./g' /etc/init.d/tinyproxy && \
-    sed -i 's/start-stop-daemon --stop --signal 1 --quiet -o --exec $DAEMON//g' /etc/init.d/tinyproxy
+    echo manual > /etc/init/apache2.override
+
+RUN sed -i 's/reload|force-reload)/status)/g' /etc/init.d/tinyproxy
+RUN sed -i 's/Reloading $DESC configuration files./tinyproxy is running (pid 1234)./g' /etc/init.d/tinyproxy
+RUN sed -i 's/start-stop-daemon --stop --signal 1 --quiet -o --exec $DAEMON//g' /etc/init.d/tinyproxy
 
 
 RUN chkconfig apache2 on
