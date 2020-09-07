@@ -883,7 +883,7 @@ file:
     - "/[Gg]oss/"
 ```
 
-The above is roughly similar to:
+The above can be expressed as:
 
 ```yaml
 file:
