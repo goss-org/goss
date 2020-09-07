@@ -4,13 +4,14 @@ require (
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
+	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/achanda/go-sysctl v0.0.0-20160222034550-6be7678c45d2
 	github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08
-	github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v1.0.0
 	github.com/docker/docker v1.13.1
 	github.com/fatih/color v1.9.0
+	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
@@ -20,8 +21,10 @@ require (
 	github.com/onsi/gomega v1.9.0
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/shirou/gopsutil v2.20.6+incompatible
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
+	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	gopkg.in/yaml.v2 v2.2.8
 )
 
