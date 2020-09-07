@@ -910,7 +910,7 @@ kernel-param:
       value: "128"
 ```
 
-Kernel-param (failing) test with transform:
+Example (failing) kernel-param test with transform:
 ```yaml
 kernel-param:
   net.core.somaxconn:
