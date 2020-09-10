@@ -15,6 +15,10 @@ import (
 
 type JUnit struct{}
 
+func (r JUnit) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -75,10 +79,6 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("junit", &JUnit{}, []string{})
 }
 
 func escapeString(str string) string {
