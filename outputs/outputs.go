@@ -127,7 +127,7 @@ func Outputers() []string {
 func FormatOptions() []string {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
-	var found map[string]*formatOption
+	found := map[string]*formatOption{}
 	for _, o := range outputers {
 		for _, opt := range o.ValidOptions() {
 			found[opt.name] = opt
