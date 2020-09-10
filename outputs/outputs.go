@@ -29,7 +29,7 @@ var (
 		"json_oneline":  &JsonOneline{},
 		"json":          &Json{},
 		"junit":         &JUnit{},
-		"nagios":        Nagios{},
+		"nagios":        &Nagios{},
 		"rspecish":      &Rspecish{},
 		"structured":    &Structured{},
 		"tap":           &Tap{},
