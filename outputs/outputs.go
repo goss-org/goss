@@ -17,18 +17,6 @@ type formatOption struct {
 	name string
 }
 
-type formatOptions struct {
-	possible map[string]*formatOption
-}
-
-func (fo formatOptions) valid(o string) bool {
-	result := fo.possible[o]
-	if result == nil {
-		return false
-	}
-	return true
-}
-
 type Outputer interface {
 	Output(io.Writer, <-chan []resource.TestResult, time.Time, util.OutputConfig) int
 	ValidOptions() []*formatOption
