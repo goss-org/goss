@@ -284,10 +284,3 @@ func IsValueInList(value string, list []string) bool {
 	}
 	return false
 }
-
-func GetType(myvar interface{}) string {
-	if t := reflect.TypeOf(myvar); t.Kind() == reflect.Ptr {
-		return "*" + t.Elem().Name()
-	}
-	return t.Name()
-}
