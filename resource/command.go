@@ -23,10 +23,6 @@ type Command struct {
 	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func init() {
-	RegisterResource(Command{})
-}
-
 func (c *Command) ID() string      { return c.Command }
 func (c *Command) SetID(id string) { c.Command = id }
 

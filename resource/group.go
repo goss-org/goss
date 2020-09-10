@@ -16,10 +16,6 @@ type Group struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func init() {
-	RegisterResource(Group{})
-}
-
 func (g *Group) ID() string      { return g.Groupname }
 func (g *Group) SetID(id string) { g.Groupname = id }
 

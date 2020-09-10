@@ -14,10 +14,6 @@ type Package struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func init() {
-	RegisterResource(Package{})
-}
-
 func (p *Package) ID() string      { return p.Name }
 func (p *Package) SetID(id string) { p.Name = id }
 

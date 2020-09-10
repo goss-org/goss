@@ -16,10 +16,6 @@ type Addr struct {
 	Timeout      int     `json:"timeout" yaml:"timeout"`
 }
 
-func init() {
-	RegisterResource(Addr{})
-}
-
 func (a *Addr) ID() string      { return a.Address }
 func (a *Addr) SetID(id string) { a.Address = id }
 

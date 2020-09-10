@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/oleiade/reflections"
 )
 
@@ -19,24 +18,26 @@ type Resource interface {
 
 var (
 	resourcesMu sync.Mutex
-	resources   = make(map[string]struct{})
+	resources   = map[string]Resource{
+		"addr":         &Addr{},
+		"command":      &Command{},
+		"dns":          &DNS{},
+		"file":         &File{},
+		"gossfile":     &Gossfile{},
+		"group":        &Group{},
+		"http":         &HTTP{},
+		"interface":    &Interface{},
+		"kernel-param": &KernelParam{},
+		"mount":        &Mount{},
+		"package":      &Package{},
+		"port":         &Port{},
+		"process":      &Process{},
+		"service":      &Service{},
+		"user":         &User{},
+	}
 )
 
-func RegisterResource(r interface{}) {
-	resourcesMu.Lock()
-	defer resourcesMu.Unlock()
-
-	if r == nil {
-		panic("goss: Register resource is nil")
-	}
-	typeName := strings.ToLower(util.GetType(r))
-	if _, dup := resources[typeName]; dup {
-		panic("goss: Register called twice for resource type " + typeName)
-	}
-	resources[typeName] = struct{}{}
-}
-
-func Resources() map[string]struct{} {
+func Resources() map[string]Resource {
 	return resources
 }
 
