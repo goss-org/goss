@@ -41,11 +41,11 @@ alpha-test-%: release/goss-%
 	$(info INFO: Starting build $@)
 	./integration-tests/run-tests-alpha.sh $*
 
-test-serve-%: release/goss-%
+test-int-serve-%: release/goss-%
 	$(info INFO: Starting build $@)
 	./integration-tests/run-serve-tests.sh $*
 # shim to account for linux being not in alpha
-test-int-serve-linux-amd64: test-serve-alpha-linux-amd64
+test-int-serve-linux-amd64: test-int-serve-alpha-linux-amd64
 
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
