@@ -5,7 +5,7 @@ os_name="$(go env GOOS)"
 
 # darwin & windows do not support integration-testing approach via docker, so on those, just run fast tests.
 if [[ "${os_name}" == "darwin" || "${os_name}" == "windows" ]]; then
-  make "test-short-all" "test-serve-alpha-${os_name}-amd64" "release/goss-alpha-${os_name}-amd64"
+  make "test-short-all" "test-int-serve-alpha-${os_name}-amd64" "release/goss-alpha-${os_name}-amd64"
   make "alpha-test-alpha-${os_name}-amd64"
 else
   # linux runs all tests; unit and integration.
