@@ -5,6 +5,7 @@ pkgs = $(shell ./novendor.sh)
 cmd = goss
 GO111MODULE=on
 GO_FILES = $(shell git ls-files -- '*.go' ':!:*vendor*_test.go')
+CURRENT_OS = $(shell go env GOOS)
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
 
@@ -43,6 +44,8 @@ alpha-test-%: release/goss-%
 test-serve-%: release/goss-%
 	$(info INFO: Starting build $@)
 	./integration-tests/run-serve-tests.sh $*
+# shim to account for linux being not in alpha
+test-int-serve-linux-amd64: test-serve-alpha-linux-amd64
 
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
@@ -71,7 +74,7 @@ push-images:
 
 test-int-64: centos7 wheezy precise alpine3 arch
 test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
-test-int-all: test-int-32 test-int-64
+test-int-all: test-int-32 test-int-64 test-int-serve-$(CURRENT_OS)-amd64
 
 centos7-32: build
 	$(info INFO: Starting build $@)

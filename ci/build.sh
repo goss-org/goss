@@ -7,9 +7,7 @@ os_name="$(go env GOOS)"
 if [[ "${os_name}" == "darwin" || "${os_name}" == "windows" ]]; then
   make "test-short-all" "release/goss-alpha-${os_name}-amd64"
   make "alpha-test-alpha-${os_name}-amd64"
-  make "test-serve-alpha-${os_name}-amd64"
 else
   # linux runs all tests; unit and integration.
   make all
-  make "test-serve-${os_name}-amd64"
 fi
