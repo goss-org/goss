@@ -494,7 +494,7 @@ dns:
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
 ```
 
-With the server attribute set, it is possible to validate the following types of DNS record:
+It is possible to validate the following types of DNS records, but requires the ```server``` attribute be set:
 
 - A
 - AAAA
