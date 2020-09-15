@@ -39,6 +39,7 @@ cleanup() {
       awk "/${binary_name}/,NF=1" |
       xargs kill
   fi
+  exit "${ret:-0}"
 }
 trap cleanup EXIT
 
@@ -60,4 +61,5 @@ if curl --silent "http://127.0.0.1:${open_port}/healthz" | grep 'Count: 2, Faile
   echo "passed"
 else
   echo "failed, exit code $?"
+  ret=1
 fi
