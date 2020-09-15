@@ -2,10 +2,8 @@ package goss
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"sync"
 	"time"
 
@@ -16,24 +14,32 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-func Serve(c *util.Config) {
+func Serve(c *util.Config) error {
 	endpoint := c.Endpoint
+	health, err := newHealthHandler(c)
+	if err != nil {
+		return err
+	}
+	http.Handle(endpoint, health)
+	log.Printf("Starting to listen on: %s", c.ListenAddress)
+	return http.ListenAndServe(c.ListenAddress, nil)
+}
+
+func newHealthHandler(c *util.Config) (*healthHandler, error) {
 	color.NoColor = true
 	cache := cache.New(c.Cache, 30*time.Second)
 
 	cfg, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	output, err := getOutputer(c.NoColor, c.OutputFormat)
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
+		return nil, err
 	}
 
-	health := healthHandler{
+	health := &healthHandler{
 		c:             c,
 		gossConfig:    *cfg,
 		sys:           system.New(c.PackageManager),
@@ -45,10 +51,7 @@ func Serve(c *util.Config) {
 	if c.OutputFormat == "json" {
 		health.contentType = "application/json"
 	}
-	http.Handle(endpoint, health)
-	listenAddr := c.ListenAddress
-	log.Printf("Starting to listen on: %s", listenAddr)
-	log.Fatal(http.ListenAndServe(c.ListenAddress, nil))
+	return health, nil
 }
 
 type res struct {
@@ -67,7 +70,6 @@ type healthHandler struct {
 }
 
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
 	}
