@@ -22,7 +22,7 @@ find_open_port() {
   # ss doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
   comm -23 \
     <(seq "${from}" "${to}" | sort) \
-    <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) |
+    <(ss -tan | tail -n +2 | awk '{print $4}' | cut -d':' -f2 | sort -u) |
     shuf -n "${how_many}" ||
     shuf -i "${from}-${to}" -n "${how_many}"
 }
