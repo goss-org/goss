@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# shellcheck source=../ci/lib/setup.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 
 platform_spec="${1:?"Must supply name of release binary to build e.g. goss-linux-amd64"}"
 # Split platform_spec into platform/arch segments
@@ -14,7 +15,7 @@ fi
 
 repo_root="$(git rev-parse --show-toplevel)"
 export GOSS_BINARY="${repo_root}/release/goss-${platform_spec}"
-echo "Using: '${GOSS_BINARY}', cwd: '$(pwd)', os: ${os}"
+log_info "Using: '${GOSS_BINARY}', cwd: '$(pwd)', os: ${os}"
 readarray -t goss_test_files < <(find integration-tests -type f -name "*.goss.yaml" | grep "${os}" | sort | uniq)
 
 export GOSS_USE_ALPHA=1
@@ -23,6 +24,6 @@ for file in "${goss_test_files[@]}"; do
     "-g=${file}"
     "validate"
   )
-  echo -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
+  log_action -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
   "${GOSS_BINARY}" "${args[@]}"
 done

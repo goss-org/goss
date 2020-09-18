@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# shellcheck source=../ci/lib/setup.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 
 platform_spec="${1:?Must supply name of release binary to build e.g. goss-linux-amd64}"
 
@@ -45,7 +46,7 @@ trap cleanup EXIT
 
 repo_root="$(git rev-parse --show-toplevel)"
 export GOSS_BINARY="${repo_root}/release/goss-${platform_spec}"
-echo "Using: '${GOSS_BINARY}', cwd: '$(pwd)'"
+log_info "Using: '${GOSS_BINARY}', cwd: '$(pwd)'"
 
 export GOSS_USE_ALPHA=1
 open_port="$(find_open_port 1025 65335)"
@@ -54,12 +55,11 @@ args=(
   "serve"
   "--listen-addr=127.0.0.1:${open_port}"
 )
-echo -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
+log_action -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
 
 "${GOSS_BINARY}" "${args[@]}" &
 if curl --silent "http://127.0.0.1:${open_port}/healthz" | grep 'Count: 2, Failed: 0, Skipped: 0' ; then
-  echo "passed"
+  log_success "passed"
 else
-  echo "failed, exit code $?"
-  ret=1
+  log_fatal "failed, exit code $?"
 fi
