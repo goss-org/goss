@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
+# shellcheck source=../ci/lib/setup.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
+# preserve current behaviour
+set -x
 
-set -xeu
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 precise wheezy"}"
+arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
-os=$1
-arch=$2
 vars_inline="{inline: bar, overwrite: bar}"
 
 seccomp_opts() {
@@ -14,6 +17,9 @@ seccomp_opts() {
     echo '--security-opt seccomp:unconfined'
   fi
 }
+
+# setup places us inside repo-root; this preserves current behaviour with least change.
+cd integration-tests
 
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
