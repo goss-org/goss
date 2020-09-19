@@ -82,6 +82,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
 	resp.body.WriteTo(w)
+	log.Printf("%v: status %d", r.RemoteAddr, resp.statusCode)
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
