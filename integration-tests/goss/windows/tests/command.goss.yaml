@@ -4,6 +4,6 @@ command:
     exit-status: 0
     exec: "echo hello world"
     stdout:
-    - hello world
+    - hello wsdfsforld
     stderr: []
     timeout: 10000
