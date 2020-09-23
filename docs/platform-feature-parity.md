@@ -2,6 +2,12 @@
 
 macOS and Windows binaries are new and considered alpha-quality. Some functionality may be missing, some may be broken. (Enhancements and bug-reports welcome, please see [#551: Multi-OS support](https://github.com/aelsabbahy/goss/issues/551)).
 
+To clearly signal that, goss emits a log message on every invocation saying so, linking here, then exits with a clear error.
+
+To try out the alpha functionality, you must do one of
+* pass `--use-alpha=1` to the root command - e.g. `goss --use-alpha=1 validate`.
+* set an environment variable `GOSS_USE_ALPHA=1`.
+
 The macOS and Windows support is community driven; there is no commitment to adding features / fixing bugs for those platforms. [See thread](https://github.com/aelsabbahy/goss/pull/585#discussion_r429968540).
 
 This matrix attempts to track parity across platforms.
