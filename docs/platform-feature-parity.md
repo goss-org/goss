@@ -131,43 +131,27 @@ You can find goss-files that are used to populate this matrix within `integratio
 
 ### `command` testing notes
 
-### Command: `add`
+Run all of the `darwin`/`windows` integration tests:
 
-#### Windows `add`
-
-```powershell
-.\release\goss-alpha-windows-amd64.exe add command 'echo hello'
-exec: "sh": executable file not found in %PATH%
+```bash
+make alpha-test-alpha-darwin-amd64
+make alpha-test-alpha-windows-amd64
 ```
 
-### Command: `autoadd`
-
-Not yet tested.
-
-### Command: `help`
-
-Not yet tested.
-
-### Command: `render`
-
-Not yet tested.
+The script finds all goss spec files within `integration-tests` then filters to just ones matching the passed OS-name, then runs `validate` against them.
 
 ### Command: `serve`
 
-macOS:
+This is a special-case test since it requires a persistent process, then to make the http request, then to tear down the process.
+
+#### macOS `serve`
 
 ```bash
-make build
-trap 'killall goss-alpha-darwin-amd64' EXIT
-release/goss-alpha-darwin-amd64 -g integration-tests/goss/goss-serve.yaml serve &
-curl http://localhost:9100/healthz | grep 'Count: 2, Failed: 0, Skipped: 0'
+make "test-serve-alpha-darwin-amd64"
 ```
 
-### Command: `validate`
-
-macOS:
+#### Windows `serve`
 
 ```bash
-make build
-release/goss-alpha-darwin-amd64 -g integration-tests/goss/goss-serve.yaml validate | grep 'Count: 2, Failed: 0, Skipped: 0'
+make "test-serve-alpha-windows-amd64"
 ```

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-platform_spec="${1:?Must supply name of release binary to build e.g. goss-linux-amd64}"
+platform_spec="${1:?"Must supply name of release binary to build e.g. goss-linux-amd64"}"
 version_stamp="${TRAVIS_TAG:-"0.0.0"}"
 
 # Split platform_spec into platform/arch segments
