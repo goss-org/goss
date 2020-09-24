@@ -192,8 +192,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
-				goss.Serve(newRuntimeConfigFromCLI(c))
-				return nil
+				return goss.Serve(newRuntimeConfigFromCLI(c))
 			},
 		},
 		{
