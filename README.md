@@ -26,7 +26,7 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 ### Why use Goss?
 
 * Goss is EASY! - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST! - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
+* Goss is FAST! - small-medium test suites are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
