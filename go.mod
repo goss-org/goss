@@ -17,12 +17,12 @@ require (
 	github.com/miekg/dns v1.1.27
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
-	github.com/onsi/gomega v1.9.0
+	github.com/onsi/gomega v1.10.2
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
 
 go 1.13
