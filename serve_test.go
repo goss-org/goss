@@ -75,56 +75,71 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 func TestServeNegotiatingContent(t *testing.T) {
 	t.Parallel()
 	tests := map[string]struct {
-		acceptHeader        string
+		acceptHeader        []string
 		outputFormat        string
 		specFile            string
 		expectedHTTPStatus  int
 		expectedContentType string
 	}{
 		"accept {blank} returns process-level format-option": {
-			acceptHeader:        "",
+			acceptHeader: []string{
+				"",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/vnd.goss-structured",
 		},
 		"accept application/json": {
-			acceptHeader:        "application/json",
+			acceptHeader: []string{
+				"application/json",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/json",
 		},
 		"accept text/json translates to application/json": {
-			acceptHeader:        "text/json",
+			acceptHeader: []string{
+				"text/json",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/json",
 		},
 		"when accept is application/vnd.goss-json, return more widely known application/json": {
-			acceptHeader:        "application/vnd.goss-json",
+			acceptHeader: []string{
+				"application/vnd.goss-json",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/json",
 		},
 		"accept header contains vendor-specific output format different from process-level": {
-			acceptHeader:        "application/vnd.goss-rspecish",
+			acceptHeader: []string{
+				"application/vnd.goss-rspecish",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/vnd.goss-rspecish",
 		},
 		"accept header contains nonsense": {
-			acceptHeader:        "application/vnd.goss-nonexistent",
+			acceptHeader: []string{
+				"application/vnd.goss-nonexistent",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
 			expectedContentType: "application/vnd.goss-structured",
 		},
 		"accept header contains nonsense then valid": {
-			acceptHeader:        "application/vnd.goss-nonexistent, application/json",
+			acceptHeader: []string{
+				"application/vnd.goss-nonexistent",
+				"application/json",
+			},
 			outputFormat:        "structured",
 			specFile:            filepath.Join("testdata", "passing.goss.yaml"),
 			expectedHTTPStatus:  http.StatusOK,
@@ -146,7 +161,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 			hh, err := newHealthHandler(config)
 			require.NoError(t, err)
 
-			req := makeRequest(t, config, map[string]string{
+			req := makeRequest(t, config, map[string][]string{
 				"accept": tc.acceptHeader,
 			})
 			rr := httptest.NewRecorder()
@@ -230,8 +245,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 	handler := http.HandlerFunc(hh.ServeHTTP)
 
 	t.Run("fresh cache", func(t *testing.T) {
-		req := makeRequest(t, config, map[string]string{
-			"accept": "application/json",
+		req := makeRequest(t, config, map[string][]string{
+			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
@@ -242,8 +257,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 	})
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
-		req := makeRequest(t, config, map[string]string{
-			"accept": "application/json",
+		req := makeRequest(t, config, map[string][]string{
+			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
@@ -254,8 +269,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 	})
 
 	t.Run("immediately re-request but different accept header, cache should be cold", func(t *testing.T) {
-		req := makeRequest(t, config, map[string]string{
-			"accept": "application/vnd.goss-rspecish",
+		req := makeRequest(t, config, map[string][]string{
+			"accept": {"application/vnd.goss-rspecish"},
 		})
 		handler.ServeHTTP(rr, req)
 
@@ -267,8 +282,8 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
 		time.Sleep(cache + 5*time.Millisecond)
-		req := makeRequest(t, config, map[string]string{
-			"accept": "application/json",
+		req := makeRequest(t, config, map[string][]string{
+			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
@@ -279,12 +294,14 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 	})
 }
 
-func makeRequest(t *testing.T, config *util.Config, headers map[string]string) *http.Request {
+func makeRequest(t *testing.T, config *util.Config, headers map[string][]string) *http.Request {
 	req, err := http.NewRequest("GET", config.Endpoint, nil)
 	require.NoError(t, err)
 	if headers != nil {
-		for h, val := range headers {
-			req.Header.Add(http.CanonicalHeaderKey(h), val)
+		for header, vals := range headers {
+			for _, v := range vals {
+				req.Header.Add(header, v)
+			}
 		}
 	}
 	return req

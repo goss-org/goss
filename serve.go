@@ -136,28 +136,32 @@ const (
 )
 
 func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, outputs.Outputer, error) {
-	found := r.Header[http.CanonicalHeaderKey("Accept")]
+	acceptHeader := r.Header[http.CanonicalHeaderKey("Accept")]
 	var outputer outputs.Outputer
 	outputName := ""
-	for _, header := range found {
-		candidates := strings.Split(header, ",")
-		for _, acceptCandidate := range candidates {
-			acceptCandidate = strings.TrimSpace(acceptCandidate)
-			log.Printf("candidate %q", acceptCandidate)
-			if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
-				outputName = strings.TrimLeft(acceptCandidate, mediaTypePrefix)
-			} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
-				outputName = "json"
-			}
-			var err error
-			outputer, err = outputs.GetOutputer(outputName)
-			if err != nil {
-				continue
-			}
+	log.Printf("acceptHeader: %v", acceptHeader)
+	for _, acceptCandidate := range acceptHeader {
+		acceptCandidate = strings.TrimSpace(acceptCandidate)
+		log.Printf("candidate %q", acceptCandidate)
+		if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
+			log.Printf("has-pref")
+			outputName = strings.TrimPrefix(acceptCandidate, mediaTypePrefix)
+		} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
+			log.Printf("json")
+			outputName = "json"
+		} else {
+			log.Printf("else")
+			outputName = ""
+		}
+		log.Printf("output name from %q: %q", acceptCandidate, outputName)
+		var err error
+		outputer, err = outputs.GetOutputer(outputName)
+		if err != nil {
+			continue
 		}
 	}
 	if outputer == nil {
-		return "", nil, fmt.Errorf("Accept header on request missing or invalid. Accept header: %v", found)
+		return "", nil, fmt.Errorf("Accept header on request missing or invalid. Accept header: %v", acceptHeader)
 	}
 
 	return outputName, outputer, nil
