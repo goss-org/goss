@@ -13,20 +13,19 @@ import (
 )
 
 var (
-	registry     = prometheus.NewRegistry()
-	testOutcomes = promauto.With(registry).NewCounterVec(prometheus.CounterOpts{
+	testOutcomes = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
 		Name:      "outcomes_total",
 		Help:      "The number of test-outcomes from this run.",
 	}, []string{"type", "outcome"})
-	testDurations = promauto.With(registry).NewCounterVec(prometheus.CounterOpts{
+	testDurations = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
 		Name:      "outcomes_duration_seconds",
 		Help:      "The duration of tests from this run. Note; tests run concurrently.",
 	}, []string{"type", "outcome"})
-	runDuration = promauto.With(registry).NewCounter(prometheus.CounterOpts{
+	runDuration = promauto.NewCounter(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
 		Name:      "run_duration_seconds",
@@ -74,7 +73,7 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	runDuration.Add(time.Since(startTime).Seconds())
 
-	metricsFamilies, err := registry.Gather()
+	metricsFamilies, err := prometheus.DefaultGatherer.Gather()
 	if err != nil {
 		return -1
 	}

@@ -64,7 +64,7 @@ args=(
 )
 log_action -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
 "${GOSS_BINARY}" "${args[@]}" &
-url="http://127.0.0.1:${open_port}/healthz"
+base_url="http://127.0.0.1:${open_port}"
 
 assert_response_contains() {
   local url="${1:?"1st arg: url"}"
@@ -92,8 +92,14 @@ failure="false"
 on_test_failure() {
   failure="true"
 }
-assert_response_contains "${url}" "no accept header" "Count: 2, Failed: 0, Skipped: 0" "" || on_test_failure
-assert_response_contains "${url}" "tap accept header" "Count: 2, Failed: 0, Skipped: 0" "application/vnd.goss-documentation" || on_test_failure
-assert_response_contains "${url}" "json accept header" "\"failed-count\":0" "application/json" || on_test_failure
+
+# /healthz endpoint
+assert_response_contains "${base_url}/healthz" "no accept header" "Count: 2, Failed: 0, Skipped: 0" "" || on_test_failure
+assert_response_contains "${base_url}/healthz" "tap accept header" "Count: 2, Failed: 0, Skipped: 0" "application/vnd.goss-documentation" || on_test_failure
+assert_response_contains "${base_url}/healthz" "json accept header" "\"failed-count\":0" "application/json" || on_test_failure
+assert_response_contains "${base_url}/healthz" "prometheus accept header" "goss_tests_outcomes_total" "application/vnd.goss-prometheus" || on_test_failure
+
+# /metrics - specific prometheus metrics endpoint
+assert_response_contains "${base_url}/metrics" "prometheus accept header" "goss_tests_outcomes_total" "" || on_test_failure
 
 [[ "${failure}" == "true" ]] && log_fatal "Test(s) failed, check output above."
