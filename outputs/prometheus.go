@@ -12,25 +12,36 @@ import (
 	"github.com/prometheus/common/expfmt"
 )
 
+const (
+	labelType    = "type"
+	labelOutcome = "outcome"
+)
+
 var (
 	testOutcomes = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
 		Name:      "outcomes_total",
 		Help:      "The number of test-outcomes from this run.",
-	}, []string{"type", "outcome"})
+	}, []string{labelType, labelOutcome})
 	testDurations = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
-		Name:      "outcomes_duration_seconds",
+		Name:      "outcomes_duration_milliseconds",
 		Help:      "The duration of tests from this run. Note; tests run concurrently.",
-	}, []string{"type", "outcome"})
-	runDuration = promauto.NewCounter(prometheus.CounterOpts{
+	}, []string{labelType, labelOutcome})
+	runOutcomes = promauto.NewCounterVec(prometheus.CounterOpts{
 		Namespace: "goss",
 		Subsystem: "tests",
-		Name:      "run_duration_seconds",
+		Name:      "run_outcomes_total",
+		Help:      "The outcomes of this run as a whole.",
+	}, []string{labelOutcome})
+	runDuration = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "goss",
+		Subsystem: "tests",
+		Name:      "run_duration_milliseconds",
 		Help:      "The end-to-end duration of this run.",
-	})
+	}, []string{labelOutcome})
 )
 
 // Prometheus renders metrics in prometheus.io text-format https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format
@@ -62,16 +73,21 @@ func (r Prometheus) ValidOptions() []*formatOption {
 // Output converts the results into the prometheus text-format.
 func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	overallOutcome := resource.OutcomeUnknown
 	for resultGroup := range results {
 		for _, tr := range resultGroup {
 			resType := strings.ToLower(tr.ResourceType)
 			outcome := tr.ToOutcome()
 			testOutcomes.WithLabelValues(resType, outcome).Inc()
-			testDurations.WithLabelValues(resType, outcome).Add(tr.Duration.Seconds())
+			testDurations.WithLabelValues(resType, outcome).Add(float64(tr.Duration.Milliseconds()))
+			if tr.Result != resource.SUCCESS {
+				overallOutcome = tr.ToOutcome()
+			}
 		}
 	}
 
-	runDuration.Add(time.Since(startTime).Seconds())
+	runOutcomes.WithLabelValues(overallOutcome).Inc()
+	runDuration.WithLabelValues(overallOutcome).Add(float64(time.Since(startTime).Milliseconds()))
 
 	metricsFamilies, err := prometheus.DefaultGatherer.Gather()
 	if err != nil {

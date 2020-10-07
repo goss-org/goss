@@ -23,12 +23,21 @@ const (
 	SUCCESS = iota
 	FAIL
 	SKIP
+	UNKNOWN
+)
+
+const (
+	OutcomePass    = "pass"
+	OutcomeFail    = "fail"
+	OutcomeSkip    = "skip"
+	OutcomeUnknown = "unknown"
 )
 
 var humanOutcomes map[int]string = map[int]string{
-	SUCCESS: "pass",
-	FAIL:    "fail",
-	SKIP:    "skip",
+	UNKNOWN: OutcomeUnknown,
+	SUCCESS: OutcomePass,
+	FAIL:    OutcomeFail,
+	SKIP:    OutcomeSkip,
 }
 
 func HumanOutcomes() map[int]string {
@@ -80,13 +89,13 @@ type TestResult struct {
 func (tr TestResult) ToOutcome() string {
 	switch tr.Result {
 	case SUCCESS:
-		return "pass"
+		return OutcomePass
 	case FAIL:
-		return "fail"
+		return OutcomeFail
 	case SKIP:
-		return "skip"
+		return OutcomeSkip
 	default:
-		return "unknown"
+		return OutcomeUnknown
 	}
 }
 
