@@ -393,12 +393,10 @@ func main() {
 	}
 
 	addAlphaFlagIfNeeded(app)
-	warnAlphaIfNeeded()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
-	warnAlphaIfNeeded()
 }
 
 func addAlphaFlagIfNeeded(app *cli.App) {
@@ -419,12 +417,6 @@ You should not expect everything to work. Treat linux as the canonical behaviour
 Please see https://github.com/aelsabbahy/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
 Please file issues via https://github.com/aelsabbahy/goss/issues/new/choose
 Pull requests and bug reports very welcome.`
-
-func warnAlphaIfNeeded() {
-	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
-		log.Printf(msgFormat, strings.Title(runtime.GOOS))
-	}
-}
 
 func fatalAlphaIfNeeded(c *cli.Context) {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
