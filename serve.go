@@ -100,6 +100,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	defer h.gossMu.Unlock()
 	tmp, found = h.cache.Get(cacheKey)
 	if found {
+		log.Printf("Returning cached[%s].", cacheKey)
 		return tmp.(res)
 	}
 
@@ -121,7 +122,6 @@ func (h healthHandler) runValidate(outputer outputs.Outputer) res {
 	resp := res{
 		body: b,
 	}
-	log.Printf("exitCode: %d", exitCode)
 	if exitCode == 0 {
 		resp.statusCode = http.StatusOK
 	} else {
@@ -139,21 +139,15 @@ func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, ou
 	acceptHeader := r.Header[http.CanonicalHeaderKey("Accept")]
 	var outputer outputs.Outputer
 	outputName := ""
-	log.Printf("acceptHeader: %v", acceptHeader)
 	for _, acceptCandidate := range acceptHeader {
 		acceptCandidate = strings.TrimSpace(acceptCandidate)
-		log.Printf("candidate %q", acceptCandidate)
 		if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
-			log.Printf("has-pref")
 			outputName = strings.TrimPrefix(acceptCandidate, mediaTypePrefix)
 		} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
-			log.Printf("json")
 			outputName = "json"
 		} else {
-			log.Printf("else")
 			outputName = ""
 		}
-		log.Printf("output name from %q: %q", acceptCandidate, outputName)
 		var err error
 		outputer, err = outputs.GetOutputer(outputName)
 		if err != nil {

@@ -69,7 +69,9 @@ assert_response_contains() {
   [[ -n "${accept_header:-}" ]] && curl_args+=("-H" "Accept: ${accept_header}")
   curl_args+=("${url}")
   log_info "curl ${curl_args[*]}"
-  response="$(curl.exe "${curl_args[@]}")"
+  curl="curl"
+  [[ "$(go env GOOS)" == "windows" ]] && curl="curl.exe"
+  response="$(${curl} "${curl_args[@]}")"
   if grep --quiet "${expectation}" <<<"${response}"; then
     log_success "Passed: ${test_name}"
     return 0
