@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
-	github.com/miekg/dns v1.1.27
+	github.com/miekg/dns v1.1.33
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
 	github.com/onsi/gomega v1.9.0
@@ -22,7 +22,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
-	golang.org/x/tools v0.0.0-20191216052735-49a3e744a425
 	gopkg.in/yaml.v2 v2.2.8
 )
 
