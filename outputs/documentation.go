@@ -11,6 +11,10 @@ import (
 
 type Documentation struct{}
 
+func (r Documentation) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -52,8 +56,4 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 		return 1
 	}
 	return 0
-}
-
-func init() {
-	RegisterOutputer("documentation", &Documentation{}, []string{})
 }

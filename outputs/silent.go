@@ -28,7 +28,3 @@ func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 	return 0
 }
-
-func init() {
-	RegisterOutputer("silent", &Silent{}, []string{})
-}

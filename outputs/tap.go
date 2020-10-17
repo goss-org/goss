@@ -12,6 +12,10 @@ import (
 
 type Tap struct{}
 
+func (r Tap) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -49,8 +53,4 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("tap", &Tap{}, []string{})
 }

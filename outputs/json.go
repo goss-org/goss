@@ -13,11 +13,17 @@ import (
 
 type Json struct{}
 
+func (r Json) ValidOptions() []*formatOption {
+	return []*formatOption{
+		{name: foPretty},
+	}
+}
+
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
 	var pretty bool
-	pretty = util.IsValueInList("pretty", outConfig.FormatOptions)
+	pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
 
 	color.NoColor = true
 	testCount := 0
@@ -61,10 +67,6 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("json", &Json{}, []string{"pretty"})
 }
 
 func struct2map(i interface{}) map[string]interface{} {
