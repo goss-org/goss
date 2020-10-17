@@ -56,10 +56,37 @@ args=(
   "--listen-addr=127.0.0.1:${open_port}"
 )
 log_action -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
-
 "${GOSS_BINARY}" "${args[@]}" &
-if curl --silent "http://127.0.0.1:${open_port}/healthz" | grep 'Count: 2, Failed: 0, Skipped: 0' ; then
-  log_success "passed"
-else
-  log_fatal "failed, exit code $?"
-fi
+url="http://127.0.0.1:${open_port}/healthz"
+
+assert_response_contains() {
+  local url="${1:?"1st arg: url"}"
+  local test_name="${2:?"2nd arg: test name"}"
+  local expectation="${3:?"3rd arg: response body match"}"
+  local accept_header="${4:-""}"
+
+  curl_args=("--silent")
+  [[ -n "${accept_header:-}" ]] && curl_args+=("-H" "Accept: ${accept_header}")
+  curl_args+=("${url}")
+  log_info "curl ${curl_args[*]}"
+  curl="curl"
+  [[ "$(go env GOOS)" == "windows" ]] && curl="curl.exe"
+  response="$(${curl} "${curl_args[@]}")"
+  if grep --quiet "${expectation}" <<<"${response}"; then
+    log_success "Passed: ${test_name}"
+    return 0
+  fi
+  log_error "Failed: ${test_name}"
+  log_error "  Expected: ${expectation}"
+  log_error "  Response: ${response}"
+  return 1
+}
+failure="false"
+on_test_failure() {
+  failure="true"
+}
+assert_response_contains "${url}" "no accept header" "Count: 2, Failed: 0, Skipped: 0" "" || on_test_failure
+assert_response_contains "${url}" "tap accept header" "Count: 2, Failed: 0, Skipped: 0" "application/vnd.goss-documentation" || on_test_failure
+assert_response_contains "${url}" "json accept header" "\"failed-count\":0" "application/json" || on_test_failure
+
+[[ "${failure}" == "true" ]] && log_fatal "Test(s) failed, check output above."
