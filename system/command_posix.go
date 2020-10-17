@@ -4,6 +4,8 @@ package system
 
 import "github.com/aelsabbahy/goss/util"
 
+const linuxShell string = "sh"
+
 func commandWrapper(cmd string) *util.Command {
-	return util.NewCommand("sh", "-c", cmd)
+	return util.NewCommand(linuxShell, "-c", cmd)
 }
