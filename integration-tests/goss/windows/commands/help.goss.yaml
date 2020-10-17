@@ -2,7 +2,7 @@
 command:
   help:
     exit-status: 0
-    exec: "release/goss-alpha-windows-amd64 help"
+    exec: release\goss-alpha-windows-amd64 help
     stdout:
       - alpha
     stderr: []

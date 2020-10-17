@@ -41,7 +41,7 @@ func (c *DefCommand) setup() error {
 	}
 	c.loaded = true
 
-	cmd := util.NewCommand("sh", "-c", c.command)
+	cmd := commandWrapper(c.command)
 	err := runCommand(cmd, c.Timeout)
 
 	// We don't care about ExitError since it's covered by status
