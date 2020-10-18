@@ -20,10 +20,11 @@ find_open_port() {
   local how_many="${3:-"1"}"
 
   if [[ "$(go env GOOS)" == "windows" ]]; then
-    powershell -noprofile -noninteractive -command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
+    # ss (see unix implementation below) doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
+    # Thanks also to https://blog.netspi.com/15-ways-to-bypass-the-powershell-execution-policy/
+    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
   else
     # Thanks to https://unix.stackexchange.com/questions/55913/whats-the-easiest-way-to-find-an-unused-local-port
-    # ss doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
     comm -23 \
       <(seq "${startAt}" "${endAt}" | sort) \
       <(ss -tan | tail -n +2 | awk '{print $4}' | cut -d':' -f2 | sort -u) |
