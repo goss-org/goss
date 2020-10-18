@@ -56,13 +56,14 @@ func NewPrometheus() *Prometheus {
 
 func (r *Prometheus) init() {
 	// Avoid missing metrics: https://prometheus.io/docs/practices/instrumentation/#avoid-missing-metrics
-	for _, resourceType := range resource.Resources() {
+	for resourceType := range resource.Resources() {
 		for _, outcome := range resource.HumanOutcomes() {
 			testOutcomes.WithLabelValues(resourceType, outcome).Add(0)
 			testDurations.WithLabelValues(resourceType, outcome).Add(0)
 		}
 	}
-	runDuration.WithLabelValues("outcome").Add(0)
+	runOutcomes.WithLabelValues(labelOutcome).Add(0)
+	runDuration.WithLabelValues(labelOutcome).Add(0)
 }
 
 // ValidOptions is a list of valid format options for prometheus
