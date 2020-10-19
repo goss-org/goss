@@ -15,21 +15,27 @@ if [[ "${segments[0]}" == "alpha" ]]; then
 fi
 
 find_open_port() {
-  local from="${1:?"Supply start of port range"}"
-  local to="${2:?"Supply end of port range"}"
+  local startAt="${1:?"Supply start of port range"}"
+  local endAt="${2:?"Supply end of port range"}"
   local how_many="${3:-"1"}"
 
-  # Thanks to https://unix.stackexchange.com/questions/55913/whats-the-easiest-way-to-find-an-unused-local-port
-  # ss doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
-  comm -23 \
-    <(seq "${from}" "${to}" | sort) \
-    <(ss -tan | tail -n +2 | awk '{print $4}' | cut -d':' -f2 | sort -u) |
-    shuf -n "${how_many}" ||
-    shuf -i "${from}-${to}" -n "${how_many}"
+  if [[ "$(go env GOOS)" == "windows" ]]; then
+    # ss (see unix implementation below) doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
+    # Thanks also to https://blog.netspi.com/15-ways-to-bypass-the-powershell-execution-policy/
+    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
+  else
+    # Thanks to https://unix.stackexchange.com/questions/55913/whats-the-easiest-way-to-find-an-unused-local-port
+    comm -23 \
+      <(seq "${startAt}" "${endAt}" | sort) \
+      <(ss -tan | tail -n +2 | awk '{print $4}' | cut -d':' -f2 | sort -u) |
+      shuf -n "${how_many}" ||
+      shuf -i "${startAt}-${endAt}" -n "${how_many}"
+  fi
 }
 
 cleanup() {
   binary_name="$(basename "${GOSS_BINARY}")"
+  log_info "Killing goss serve process to clean up, exit code for tests was ${?}..."
   if [[ "${os}" == "darwin" ]]; then
     killall "${binary_name}"
   elif [[ "${os}" == "linux" ]]; then
@@ -50,6 +56,7 @@ log_info "Using: '${GOSS_BINARY}', cwd: '$(pwd)'"
 
 export GOSS_USE_ALPHA=1
 open_port="$(find_open_port 1025 65335)"
+echo "${open_port}"
 args=(
   "-g=${repo_root}/integration-tests/goss/goss-serve.yaml"
   "serve"
