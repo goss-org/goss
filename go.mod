@@ -22,7 +22,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
 
 go 1.13
