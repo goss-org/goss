@@ -8,8 +8,8 @@ github.com/achanda/go-sysctl v0.0.0-20160222034550-6be7678c45d2 h1:NYoPVh1XuUB5V
 github.com/achanda/go-sysctl v0.0.0-20160222034550-6be7678c45d2/go.mod h1:DCNKSpXhum14Y258jSbRmJvcesbzEdBPincz7yJUx3k=
 github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08 h1:oD15ssIOuFLi64zhkPRsaIDvhx4PeZb2QdQoR/wKY2g=
 github.com/aelsabbahy/GOnetstat v0.0.0-20160428114218-edf89f784e08/go.mod h1:FETZSu2VGNDJbGfeRExaz/SNbX0TTaqJEMo1yvsKoZ8=
-github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1 h1:s4dvLggvQOov0YFdv8XQvX+72TAFzfJg+6SgoXiIaq4=
-github.com/aelsabbahy/go-ps v0.0.0-20170721000941-443386855ca1/go.mod h1:70tSBushy/POz6cCR294bKno4BNAC7XWVdkkxWQ1N6E=
+github.com/aelsabbahy/go-ps v0.0.0-20201009164808-61c449472dcf h1:KyjxaqJO0pHF7Clre644OiJ5s235JVRsz6ioDkoQ96s=
+github.com/aelsabbahy/go-ps v0.0.0-20201009164808-61c449472dcf/go.mod h1:70tSBushy/POz6cCR294bKno4BNAC7XWVdkkxWQ1N6E=
 github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdnnjpJbkM4JQ=
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/cheekybits/genny v1.0.0 h1:uGGa4nei+j20rOSeDeP5Of12XVm7TGUd4dJA9RDitfE=
