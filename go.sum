@@ -39,6 +39,8 @@ github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d h1:50mlZKtg8BUv
 github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d/go.mod h1:MBdRlloGIbpQVDuH5Gxg3hjqwZBCZsmFqbYPaeR6r0M=
 github.com/goss-org/go-ps v0.0.0-20230101144351-953ade48a71b h1:IVeeIVrdgyMG817dquwmYwcB9TFwphQAhLOiJ5lt8Nc=
 github.com/goss-org/go-ps v0.0.0-20230101144351-953ade48a71b/go.mod h1:5oH/hhdJNuFnJTAoXErJ2Jr8LOkbkzosMZT93MrlMOc=
+github.com/hashicorp/logutils v1.0.0 h1:dLEQVugN8vlakKOUE3ihGLTZJRB4j+M2cdTm/ORI65Y=
+github.com/hashicorp/logutils v1.0.0/go.mod h1:QIAnNjmIWmVIIkWDTG1z5v++HQmx9WQRO+LraFDTW64=
 github.com/huandu/xstrings v1.3.3/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/huandu/xstrings v1.4.0 h1:D17IlohoQq4UcpqD7fDk80P7l+lwAmlFaBHgOipl2FU=
 github.com/huandu/xstrings v1.4.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
