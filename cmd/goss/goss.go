@@ -26,6 +26,7 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		AnnounceToCLI:     true,
 		Cache:             c.Duration("cache"),
 		Debug:             c.Bool("debug"),
+		LogLevel:          c.GlobalString("loglevel"),
 		Endpoint:          c.String("endpoint"),
 		FormatOptions:     c.StringSlice("format-options"),
 		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
@@ -72,6 +73,12 @@ func main() {
 	app.Name = "goss"
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "loglevel, L",
+			Value:  "INFO",
+			Usage:  "Goss log verbosity level",
+			EnvVar: "GOSS_LOGLEVEL",
+		},
 		cli.StringFlag{
 			Name:   "gossfile, g",
 			Value:  "./goss.yaml",
@@ -167,19 +174,19 @@ func main() {
 					EnvVar: "GOSS_FMT_OPTIONS",
 				},
 				cli.DurationFlag{
-					Name:   "cache,c",
+					Name:   "cache, c",
 					Usage:  "Time to cache the results",
 					Value:  5 * time.Second,
 					EnvVar: "GOSS_CACHE",
 				},
 				cli.StringFlag{
-					Name:   "listen-addr,l",
+					Name:   "listen-addr, l",
 					Value:  ":8080",
 					Usage:  "Address to listen on [ip]:port",
 					EnvVar: "GOSS_LISTEN",
 				},
 				cli.StringFlag{
-					Name:   "endpoint,e",
+					Name:   "endpoint, e",
 					Value:  "/healthz",
 					Usage:  "Endpoint to expose",
 					EnvVar: "GOSS_ENDPOINT",

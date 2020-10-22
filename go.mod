@@ -13,6 +13,7 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/fatih/color v1.10.0
 	github.com/google/uuid v1.1.2 // indirect
+	github.com/hashicorp/logutils v1.0.0
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/miekg/dns v1.1.35
