@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"time"
 
 	"github.com/aelsabbahy/goss/resource"
@@ -33,6 +34,25 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			if !testResult.Successful {
 				failed++
+				log.Printf("[WARN] FAIL: %s => %s (%s %+v %+v) [%.02f] [%d]",
+					testResult.ResourceType,
+					testResult.ResourceId,
+					testResult.Property,
+					testResult.Expected,
+					testResult.Found,
+					testResult.Duration.Seconds(),
+					testResult.Result,
+				)
+			} else {
+				log.Printf("[TRACE] SUCCESS: %s => %s (%s %+v %+v) [%.02f] [%d]",
+					testResult.ResourceType,
+					testResult.ResourceId,
+					testResult.Property,
+					testResult.Expected,
+					testResult.Found,
+					testResult.Duration.Seconds(),
+					testResult.Result,
+				)
 			}
 			m := struct2map(testResult)
 			m["summary-line"] = humanizeResult(testResult)
@@ -60,12 +80,15 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 		j, _ = json.Marshal(out)
 	}
 
-	fmt.Fprintln(w, string(j))
+	resstr := string(j)
+	fmt.Fprintln(w, resstr)
 
 	if failed > 0 {
+		log.Printf("[WARN] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
 
+	log.Printf("[INFO] OK SUMMARY: %s", resstr)
 	return 0
 }
 
