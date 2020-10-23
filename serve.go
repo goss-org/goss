@@ -2,7 +2,6 @@ package goss
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -34,7 +33,7 @@ func Serve(c *util.Config) error {
 		}
 	}
 	if !logLevelFound {
-		return errors.New(fmt.Sprintf("Unsupported log level: %s", c.LogLevel))
+		return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
 	}
 	filter.MinLevel = logutils.LogLevel(c.LogLevel)
 	log.Printf("Setting log level to %v", c.LogLevel)
