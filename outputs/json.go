@@ -34,25 +34,9 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			if !testResult.Successful {
 				failed++
-				log.Printf("[WARN] FAIL: %s => %s (%s %+v %+v) [%.02f] [%d]",
-					testResult.ResourceType,
-					testResult.ResourceId,
-					testResult.Property,
-					testResult.Expected,
-					testResult.Found,
-					testResult.Duration.Seconds(),
-					testResult.Result,
-				)
+				logTrace("WARN", "FAIL", testResult, true)
 			} else {
-				log.Printf("[TRACE] SUCCESS: %s => %s (%s %+v %+v) [%.02f] [%d]",
-					testResult.ResourceType,
-					testResult.ResourceId,
-					testResult.Property,
-					testResult.Expected,
-					testResult.Found,
-					testResult.Duration.Seconds(),
-					testResult.Result,
-				)
+				logTrace("TRACE", "SUCCESS", testResult, true)
 			}
 			m := struct2map(testResult)
 			m["summary-line"] = humanizeResult(testResult)
