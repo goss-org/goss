@@ -28,36 +28,15 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.SUCCESS:
-				log.Printf("[TRACE] SUCCESS: %s => %s (%s %+v %+v) [%.02f]",
-					testResult.ResourceType,
-					testResult.ResourceId,
-					testResult.Property,
-					testResult.Expected,
-					testResult.Found,
-					testResult.Duration.Seconds(),
-				)
+				logTrace("TRACE", "SUCCESS", testResult)
 				fmt.Fprintf(w, green("."))
 			case resource.SKIP:
-				log.Printf("[TRACE] SKIP: %s => %s (%s %+v %+v) [%.02f]",
-					testResult.ResourceType,
-					testResult.ResourceId,
-					testResult.Property,
-					testResult.Expected,
-					testResult.Found,
-					testResult.Duration.Seconds(),
-				)
+				logTrace("TRACE", "SKIP", testResult)
 				fmt.Fprintf(w, yellow("S"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				log.Printf("[WARN] FAIL: %s => %s (%s %+v %+v) [%.02f]",
-					testResult.ResourceType,
-					testResult.ResourceId,
-					testResult.Property,
-					testResult.Expected,
-					testResult.Found,
-					testResult.Duration.Seconds(),
-				)
+				logTrace("WARN", "FAIL", testResult)
 				fmt.Fprintf(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
