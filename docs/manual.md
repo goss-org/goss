@@ -259,6 +259,7 @@ service:
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
 * `--listen-addr [ip]:port`, `-l [ip]:port` - Address to listen on (default: `:8080`)
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`
 * `--max-concurrent` - Max number of tests to run concurrently
 
 #### Example:
