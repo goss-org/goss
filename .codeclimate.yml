@@ -11,6 +11,11 @@ plugins:
   govet:
     enabled: true
 
+checks:
+  return-statements:
+    config:
+      threshold: 6
+
 exclude_patterns:
   - "!**/**.go"
   - "**/*_test.go"
