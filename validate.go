@@ -3,6 +3,7 @@ package goss
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -15,6 +16,7 @@ import (
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
+	"github.com/hashicorp/logutils"
 )
 
 func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
@@ -99,6 +101,24 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(c *util.Config, startTime time.Time) (code int, err error) {
+	filter := &logutils.LevelFilter{
+		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"},
+		MinLevel: logutils.LogLevel("WARN"),
+		Writer:   os.Stderr,
+	}
+	logLevelFound := false
+	for _, lvl := range filter.Levels {
+		if string(lvl) == c.LogLevel {
+			logLevelFound = true
+			break
+		}
+	}
+	if !logLevelFound {
+		return 1, fmt.Errorf("Unsupported log level: %s", c.LogLevel)
+	}
+	filter.MinLevel = logutils.LogLevel(c.LogLevel)
+	log.Printf("Setting log level to %v", c.LogLevel)
+	log.SetOutput(filter)
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
 	}
