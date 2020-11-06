@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"sync"
 	"time"
@@ -15,29 +14,14 @@ import (
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
-	"github.com/hashicorp/logutils"
 	"github.com/patrickmn/go-cache"
 )
 
 func Serve(c *util.Config) error {
-	filter := &logutils.LevelFilter{
-		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"},
-		MinLevel: logutils.LogLevel("WARN"),
-		Writer:   os.Stderr,
+	err := setLogLevel(c)
+	if err != nil {
+		return err
 	}
-	logLevelFound := false
-	for _, lvl := range filter.Levels {
-		if string(lvl) == c.LogLevel {
-			logLevelFound = true
-			break
-		}
-	}
-	if !logLevelFound {
-		return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
-	}
-	filter.MinLevel = logutils.LogLevel(c.LogLevel)
-	log.Printf("Setting log level to %v", c.LogLevel)
-	log.SetOutput(filter)
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
