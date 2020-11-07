@@ -8,7 +8,7 @@
   - [Table of Contents](#table-of-contents)
   - [Usage](#usage)
   - [global options](#global-options)
-    - [-g gossfile](#-g-gossfile)
+    - [--gossfile gossfile | -g gossfile](#--gossfile-gossfile-or--g-gossfile)
     - [--vars](#--vars)
     - [--package <type>](#--package-type)
   - [commands](#commands)
@@ -89,8 +89,8 @@ GLOBAL OPTIONS:
 
 
 ## global options
-### -g gossfile
-The file to use when reading/writing tests. Use `-g -` to read from `STDIN`.
+### --gossfile gossfile or -g gossfile
+The file to use when reading/writing tests. Use `--gossfile -` or `-g -` to read from `STDIN`.
 
 Valid formats:
 * **YAML** (default)
