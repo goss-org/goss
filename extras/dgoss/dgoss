@@ -58,9 +58,9 @@ run(){
 }
 
 get_docker_file() {
-    local cid=$1; shift  # Docker container ID
-    local src=$1; shift  # Source file path (in the container)
-    local dst=$1; shift  # Destination file path
+    local cid=$1  # Docker container ID
+    local src=$2  # Source file path (in the container)
+    local dst=$3  # Destination file path
 
     if docker exec "${cid}" sh -c "test -e ${src}" > /dev/null; then
         mkdir -p "${GOSS_FILES_PATH}"
@@ -116,7 +116,7 @@ case "$1" in
         docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
         get_docker_file "$id" "/goss/goss.yaml" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
         get_docker_file "$id" "/goss/goss_wait.yaml" "${GOSS_FILES_PATH}/goss_wait.yaml"
-        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
+        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "$id" "/goss/${GOSS_VARS}" "${GOSS_FILES_PATH}/${GOSS_VARS}"
         ;;
     *)
         error "$USAGE"
