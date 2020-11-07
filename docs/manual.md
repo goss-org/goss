@@ -7,7 +7,7 @@
 * [Table of Contents](#table-of-contents)
 * [Usage](#usage)
   * [global options](#global-options)
-    * [\-g gossfile](#-g-gossfile)
+    * [\--gossfile gossfile | -g gossfile](#--gossfile-gossfile-or--g-gossfile)
   * [commands](#commands)
     * [add, a \- Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
     * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
@@ -69,8 +69,8 @@ GLOBAL OPTIONS:
 
 
 ## global options
-### -g gossfile
-The file to use when reading/writing tests. Use `-g -` to read from `STDIN`.
+### --gossfile gossfile or -g gossfile
+The file to use when reading/writing tests. Use `--gossfile -` or `-g -` to read from `STDIN`.
 
 Valid formats:
 * **YAML** (default)
