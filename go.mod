@@ -20,7 +20,7 @@ require (
 	github.com/onsi/gomega v1.9.0
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
 	gopkg.in/yaml.v2 v2.3.0
 )
