@@ -101,31 +101,43 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) runResult {
-	cacheKey := fmt.Sprintf("runResult:%s", negotiatedContentType)
-	tmp, found := h.cache.Get(cacheKey)
-	if found {
-		return tmp.(runResult)
-	}
-
-	h.gossMu.Lock()
-	defer h.gossMu.Unlock()
-	tmp, found = h.cache.Get(cacheKey)
-	if found {
-		log.Printf("Returning cached[%s].", cacheKey)
-		return tmp.(runResult)
-	}
-
-	log.Printf("Stale cache[%s], running tests", cacheKey)
-	rr := h.runValidate(outputer)
-	h.cache.SetDefault(cacheKey, rr)
-	return rr
+	result := h.runValidate(outputer)
+	// Converted back to channel
+	ch := make(chan []resource.TestResult)
+	go func() {
+		defer close(ch)
+		for _, v := range result.testResults {
+			ch <- v
+		}
+	}()
+	return h.renderBody(ch, outputer, result.iStartTime)
 }
 
-func (h healthHandler) runValidate(outputer outputs.Outputer) runResult {
-	h.sys = system.New(h.c.PackageManager)
+// results is needed to track starttime and other metadata
+type results struct {
+	testResults [][]resource.TestResult
+	iStartTime  time.Time
+}
+
+func (h healthHandler) runValidate(outputer outputs.Outputer) results {
 	iStartTime := time.Now()
+	tmp, found := h.cache.Get("res")
+	if found {
+		log.Printf("Returning cached.")
+		return tmp.(results)
+	}
+	h.gossMu.Lock()
+	defer h.gossMu.Unlock()
+	log.Printf("Stale cache, running tests")
+	h.sys = system.New(h.c.PackageManager)
 	validateResult := validate(h.sys, h.gossConfig, h.maxConcurrent)
-	return h.renderBody(validateResult, outputer, iStartTime)
+	var testResult [][]resource.TestResult // Cached as a slice
+	for r := range validateResult {
+		testResult = append(testResult, r)
+	}
+	res := results{testResults: testResult, iStartTime: iStartTime}
+	h.cache.SetDefault("res", res)
+	return res
 }
 
 const (
