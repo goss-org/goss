@@ -259,7 +259,13 @@ service:
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
 * `--listen-addr [ip]:port`, `-l [ip]:port` - Address to listen on (default: `:8080`)
-* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
+  * `TRACE` - Print details for each check, successful or not and all incoming healthchecks
+  * `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
+  * `INFO` - Print summary when all checks run OK
+  * `WARN` - Print summary and corresponding checks when encountering some failures
+  * `ERROR` - Not used for now (will not print anything)
+  * `FATAL` - Not used for now (will not print anything)
 * `--max-concurrent` - Max number of tests to run concurrently
 
 #### Example:
@@ -296,7 +302,13 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
   * `verbose` - Gives verbose output. Applies to `nagios` output
   * `pretty` - Pretty printing for the `json` output
-* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
+  * `TRACE` - Print details for each check, successful or not and all incoming healthchecks
+  * `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
+  * `INFO` - Print summary when all checks run OK
+  * `WARN` - Print summary and corresponding checks when encountering some failures
+  * `ERROR` - Not used for now (will not print anything)
+  * `FATAL` - Not used for now (will not print anything)
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
