@@ -317,6 +317,7 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
   * `verbose` - Gives verbose output. Applies to `nagios` output
   * `pretty` - Pretty printing for the `json` output
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
