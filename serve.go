@@ -97,6 +97,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
+		log.Printf("[TRACE] Returning cached[%s] (1).", cacheKey)
 		return tmp.(res)
 	}
 
@@ -104,7 +105,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	defer h.gossMu.Unlock()
 	tmp, found = h.cache.Get(cacheKey)
 	if found {
-		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+		log.Printf("[TRACE] Returning cached[%s] (2).", cacheKey)
 		return tmp.(res)
 	}
 
