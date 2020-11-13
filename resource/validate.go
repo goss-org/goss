@@ -119,9 +119,20 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 	if gomegaMatcher == nil && err == nil {
 		gomegaMatcher, err = matcherToGomegaMatcher(expectedValue)
 	}
-	if err == nil {
-		success, err = gomegaMatcher.Match(foundValue)
+	if err != nil {
+		return TestResult{
+			Result:       FAIL,
+			ResourceType: typeS,
+			ResourceId:   id,
+			Title:        title,
+			Meta:         meta,
+			Property:     property,
+			Err:          err,
+			Duration:     time.Now().Sub(startTime),
+		}
 	}
+
+	success, err = gomegaMatcher.Match(foundValue)
 
 	var matcherResult matchers.MatcherResult
 	result := SUCCESS
