@@ -454,7 +454,7 @@ addr:
 
 
 ### command
-Validates the exit-status and output of a command. This can be used in combination with the [gjson](#gjson) matcher to create more powerful goss custom tests.
+Validates the exit-status and output of a command. This can be used in combination with the [gjson](#gjson) matcher to create powerful goss custom tests.
 
 ```yaml
 command:
