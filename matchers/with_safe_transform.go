@@ -16,7 +16,6 @@ type WithSafeTransformMatcher struct {
 	// state
 	transformedValue interface{}
 	wasTransformed   bool
-	err              error
 }
 
 func WithSafeTransform(transform Transformer, matcher GossMatcher) GossMatcher {
