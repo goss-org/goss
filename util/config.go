@@ -31,12 +31,14 @@ type Config struct {
 	ListenAddress     string
 	LocalAddress      string
 	MaxConcurrent     int
+	Method            string
 	NoColor           *bool
 	NoFollowRedirects bool
 	OutputFormat      string
 	OutputWriter      io.Writer
 	PackageManager    string
 	Password          string
+	RequestBody       string
 	RequestHeader     []string
 	RetryTimeout      time.Duration
 	Server            string

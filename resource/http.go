@@ -11,11 +11,13 @@ type HTTP struct {
 	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	HTTP              string   `json:"-" yaml:"-"`
+	Method            string   `json:"method" yaml:"method"`
 	Status            matcher  `json:"status" yaml:"status"`
 	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
+	RequestBody       string   `json:"request-body" yaml:"request-body"`
 	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
@@ -38,7 +40,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
 		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
-		RequestHeader: u.RequestHeader})
+		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 

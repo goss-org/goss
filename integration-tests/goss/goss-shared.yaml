@@ -208,6 +208,12 @@ http:
     status: 401
     username: username
     password: wrong
+  https://httpbin.org/put:
+    status: 200
+    method: PUT
+    request-body: '{"key": "value"}'
+    body: 
+      - '"key": "value"'
 matching:
   has_substr:
     content: some string
