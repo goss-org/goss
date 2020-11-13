@@ -13,7 +13,6 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/aelsabbahy/goss/matchers"
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
@@ -34,19 +33,12 @@ func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string
 	if compact {
 		sep = " "
 	}
-	if r.Err != nil {
-		e := fmt.Sprint(r.Err)
-		if compact {
-			e = multiple_space.ReplaceAllString(e, " ")
-		}
-		return red("%s: %s: Error: %s", r.ResourceId, r.Property, e)
-	}
 
 	switch r.Result {
 	case resource.SUCCESS:
 		return green("%s: %s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult.Message, prettyPrint(r.MatcherResult.Expected, false))
 	case resource.FAIL:
-		matcherResult := prettyPrintMatcherResult(r.MatcherResult, compact, includeRaw)
+		matcherResult := prettyPrintTestResult(r, compact, includeRaw)
 		return red("%s: %s: %s:%s%s", r.ResourceType, r.ResourceId, r.Property, sep, matcherResult)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
@@ -55,17 +47,29 @@ func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string
 	}
 }
 
-func prettyPrintMatcherResult(m matchers.MatcherResult, compact bool, includeRaw bool) string {
+func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool) string {
 	sep := "\n"
 	if compact {
 		sep = " "
 	}
+	m := t.MatcherResult
 	var ss []string
 	//var s string
-	ss = append(ss, "Expected")
-	ss = append(ss, prettyPrint(m.Actual, !compact))
-	ss = append(ss, m.Message)
-	ss = append(ss, prettyPrint(m.Expected, !compact))
+	if t.Err != nil {
+		e := fmt.Sprint(t.Err)
+		if compact {
+			e = multiple_space.ReplaceAllString(e, " ")
+		} else {
+			e = indentLines(e)
+		}
+		ss = append(ss, "Error")
+		ss = append(ss, e)
+	} else {
+		ss = append(ss, "Expected")
+		ss = append(ss, prettyPrint(m.Actual, !compact))
+		ss = append(ss, m.Message)
+		ss = append(ss, prettyPrint(m.Expected, !compact))
+	}
 
 	if reflect.ValueOf(m.MissingElements).IsValid() && !reflect.ValueOf(m.MissingElements).IsNil() {
 		ss = append(ss, "the missing elements were")
