@@ -11,13 +11,13 @@ type HTTP struct {
 	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	HTTP              string   `json:"-" yaml:"-"`
-	Method            string   `json:"method" yaml:"method"`
+	Method            string   `json:"method,omitempty" yaml:"method,omitempty"`
 	Status            matcher  `json:"status" yaml:"status"`
 	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	RequestBody       string   `json:"request-body" yaml:"request-body"`
+	RequestBody       string   `json:"request-bod,omitemptyy" yaml:"request-body,omitempty"`
 	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
