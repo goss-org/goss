@@ -107,10 +107,5 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 			f.Filetype = filetype
 		}
 	}
-	if !contains(config.IgnoreList, "size") {
-		if size, err := sysFile.Size(); err == nil {
-			f.Size = size
-		}
-	}
 	return f, nil
 }

@@ -2,7 +2,6 @@ file:
   /etc/passwd:
     exists: true
     mode: "0644"
-    size: 745
     owner: root
     group: root
     filetype: file
