@@ -40,7 +40,7 @@ func (u *HTTP) SetID(id string) { u.HTTP = id }
 func (r *HTTP) GetTitle() string { return r.Title }
 func (r *HTTP) GetMeta() meta    { return r.Meta }
 
-func (r *HTTP) GetUrl() string {
+func (r *HTTP) getURL() string {
 	if r.URL != "" {
 		return r.URL
 	}
@@ -52,7 +52,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(u.GetUrl(), sys, util.Config{
+	sysHTTP := sys.NewHTTP(u.getURL(), sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
 		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
