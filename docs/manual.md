@@ -618,7 +618,7 @@ http:
     request-headers: # Set request header values
        - "Content-Type: text/html"
     headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
-    request-body: '{"key": "value"' # request body
+    request-body: '{"key": "value"}' # request body
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
