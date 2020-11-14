@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aelsabbahy/goss/system"
@@ -9,6 +10,7 @@ import (
 
 type HTTP struct {
 	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
+	URL               string   `json:"url,omitempty" yaml:"url,omitempty"`
 	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
 	HTTP              string   `json:"-" yaml:"-"`
 	Method            string   `json:"method,omitempty" yaml:"method,omitempty"`
@@ -25,19 +27,32 @@ type HTTP struct {
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (u *HTTP) ID() string      { return u.HTTP }
+func (u *HTTP) ID() string {
+	if u.URL != "" && u.URL != u.HTTP {
+		return fmt.Sprintf("%s: %s", u.HTTP, u.URL)
+	}
+
+	return u.HTTP
+}
 func (u *HTTP) SetID(id string) { u.HTTP = id }
 
 // FIXME: Can this be refactored?
 func (r *HTTP) GetTitle() string { return r.Title }
 func (r *HTTP) GetMeta() meta    { return r.Meta }
 
+func (r *HTTP) GetUrl() string {
+	if r.URL != "" {
+		return r.URL
+	}
+	return r.HTTP
+}
+
 func (u *HTTP) Validate(sys *system.System) []TestResult {
 	skip := false
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
+	sysHTTP := sys.NewHTTP(u.GetUrl(), sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
 		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
