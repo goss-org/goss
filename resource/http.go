@@ -1,7 +1,6 @@
 package resource
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/aelsabbahy/goss/system"
@@ -27,13 +26,8 @@ type HTTP struct {
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (u *HTTP) ID() string {
-	if u.URL != "" && u.URL != u.HTTP {
-		return fmt.Sprintf("%s: %s", u.HTTP, u.URL)
-	}
+func (u *HTTP) ID() string { return u.HTTP }
 
-	return u.HTTP
-}
 func (u *HTTP) SetID(id string) { u.HTTP = id }
 
 // FIXME: Can this be refactored?
