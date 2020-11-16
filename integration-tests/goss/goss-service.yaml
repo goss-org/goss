@@ -8,7 +8,7 @@ service:
 {{else}}
   apache2:
 {{end}}
-{{ if .Env.OS | regexMatch "precise" }}
+{{ if .Env.OS | regexMatch "trusty" }}
     enabled: false
 {{else}}
     enabled: true

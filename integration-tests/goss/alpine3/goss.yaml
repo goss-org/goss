@@ -6,23 +6,23 @@ service:
 user:
   apache:
     exists: true
-    uid: 1000
-    gid: 1000
+    uid: 100
+    gid: 101
     groups:
     - apache
     home: "/var/www"
 group:
   apache:
     exists: true
-    gid: 1000
+    gid: 101
 process:
   httpd:
     running: true
 port:
-  tcp6:80:
+  tcp:80:
     listening: true
     ip:
-    - "::"
+    - "0.0.0.0"
 addr:
   tcp://127.0.0.1:80:
     reachable: true
