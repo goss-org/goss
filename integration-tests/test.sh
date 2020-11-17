@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 precise wheezy"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty wheezy"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
@@ -44,7 +44,8 @@ id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
-[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
+[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 5
+docker_exec cat /var/log/tinyproxy/tinyproxy.log
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)

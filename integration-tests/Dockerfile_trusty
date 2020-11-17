@@ -2,14 +2,10 @@ FROM ubuntu-upstart:trusty
 MAINTAINER Ahmed
 
 # dpkg-divert - https://github.com/docker/docker/issues/1024#issuecomment-20018600
-RUN mv /sbin/initctl /sbin/initctl.orig && \
-    ln -s /bin/true /sbin/initctl && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y apache2=2.4.7-1ubuntu4.22 tinyproxy && \
     apt-get remove -y vim-tiny && \
     apt-get clean && \
-    rm -f /sbin/initctl && \
-    mv /sbin/initctl.orig /sbin/initctl && \
     echo manual > /etc/init/apache2.override
 
 RUN sed -i '/reload|force-reload)/i  status) pidof tinyproxy > /dev/null && echo "tinyproxy is running";;' /etc/init.d/tinyproxy
