@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 
 	"github.com/aelsabbahy/goss/util"
 )
@@ -22,9 +21,7 @@ func NewServiceInit(service string, system *System, config util.Config) Service 
 func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
 	runlevel := config.RunLevel
 	if runlevel == "" {
-		typ := reflect.TypeOf(config)
-		f, _ := typ.FieldByName("RunLevel")
-		runlevel = f.Tag.Get("default")
+		runlevel = "sysinit"
 	}
 	return &ServiceInit{service: service, alpine: true, runlevel: runlevel}
 }
