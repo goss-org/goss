@@ -7,9 +7,9 @@ arch:
 centos7:
   packages:
     httpd: "2.4.6"
-precise:
+trusty:
   packages:
-    apache2: "2.2.22-1ubuntu1.11"
+    apache2: "2.4.7-1ubuntu4.22"
 wheezy:
   packages:
     apache2: "2.2.22-13+deb7u13"

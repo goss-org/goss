@@ -2,7 +2,7 @@ file:
   /etc/passwd:
     exists: true
     mode: "0644"
-    size: 811
+    size: 1006
     owner: root
     group: root
     filetype: file
@@ -14,7 +14,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.2.22-1ubuntu1.11
+    - 2.4.7-1ubuntu4.22
   foobar:
     installed: false
   vim-tiny:
@@ -57,7 +57,7 @@ user:
     groups:
     - www-data
     home: /var/www
-    shell: /bin/sh
+    shell: /usr/sbin/nologin
 group:
   foobar:
     exists: false
