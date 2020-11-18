@@ -8,14 +8,14 @@ command:
     stderr: []
     timeout: 10000
   wrap a powershell - expect 1:
-    exec: powershell -noprofile -noninteractive -command "(get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous"
+    exec: powershell -noprofile -noninteractive -command (get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous
     exit-status: 0
     stdout:
     - 1
     stderr: []
     timeout: 10000
   wrap a powershell - expect 0:
-    exec: powershell -noprofile -noninteractive -command "(get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous"
+    exec: powershell -noprofile -noninteractive -command (get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous
     exit-status: 0
     stdout:
     - 0
