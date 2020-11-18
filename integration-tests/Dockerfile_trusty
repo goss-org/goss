@@ -11,5 +11,5 @@ RUN sed -i '/reload|force-reload)/i  status) pidof tinyproxy > /dev/null && echo
 RUN echo "Listen 127.0.0.1" >> /etc/tinyproxy.conf
 
 RUN update-rc.d apache2 defaults
-RUN update-rc.d tinyproxy defaults
+RUN update-rc.d tinyproxy disable
 RUN mkfifo /pipe
