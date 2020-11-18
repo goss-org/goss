@@ -18,6 +18,9 @@ export GOSS_BINARY="${repo_root}/release/goss-${platform_spec}"
 log_info "Using: '${GOSS_BINARY}', cwd: '$(pwd)', os: ${os}"
 readarray -t goss_test_files < <(find integration-tests -type f -name "*.goss.yaml" | grep "${os}" | sort | uniq)
 
+log_action "powershell reconnaisance inside CI:"
+powershell.exe -noprofile -noninteractive -command "(get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous"
+
 export GOSS_USE_ALPHA=1
 for file in "${goss_test_files[@]}"; do
   args=(
