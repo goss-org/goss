@@ -45,7 +45,12 @@ ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 5
-docker_exec cat /var/log/tinyproxy/tinyproxy.log
+if [[ $os == "trusty" ]];then
+  docker_exec cat /var/log/tinyproxy/tinyproxy.log
+  docker_exec netstat -lntp
+  docker_exec ps -ef
+  docker_exec service tinyproxy status
+fi
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)
