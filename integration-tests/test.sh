@@ -46,7 +46,7 @@ trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 5
 if [[ $os == "trusty" ]];then
-  docker_exec bash -c "tinyproxy -d & sleep 2; netstat -lntp; kill %1"
+  docker_exec bash -c "touch /var/log/tinyproxy/tinyproxy.log /var/run/tinyproxy/tinyproxy.pid;tinyproxy -d & sleep 2; netstat -lntp; kill %1"
   docker_exec cat /var/log/tinyproxy/tinyproxy.log
   docker_exec netstat -lntp
   docker_exec ps -ef
