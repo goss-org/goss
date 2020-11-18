@@ -3,13 +3,6 @@ service:
   autofs:
     enabled: false
     running: false
-  apache2:
-    enabled: true
-    running: true
-  sshd:
-    enabled: true
-    running: true
-    runlevel: default
 user:
   apache:
     exists: true

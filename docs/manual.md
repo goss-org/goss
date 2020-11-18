@@ -785,16 +785,14 @@ Validates the state of a service.
 ```yaml
 service:
   sshd:
-    # required attributes
+    # Optional attributes
     enabled: true
     running: true
-    # Optional attributes - Alpine systems
-    runlevel: default
-    # Optional attributes
+    runlevels: ["3", "4", "5"]  # Alpine example, runlevels: ["default"]
     skip: false
 ```
 
-`runlevel` will default to `sysinit` if omitted.
+`runlevels` is only supported on Alpine init, sysv init, and upstart
 
 **NOTE:** this will **not** automatically check if the process is alive, it will check the status from `systemd`/`upstart`/`init`.
 

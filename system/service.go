@@ -7,6 +7,7 @@ type Service interface {
 	Exists() (bool, error)
 	Enabled() (bool, error)
 	Running() (bool, error)
+	RunLevels() ([]string, error)
 }
 
 func invalidService(s string) bool {

@@ -9,8 +9,7 @@ RUN mv /sbin/initctl /sbin/initctl.orig && \
     apt-get remove -y vim-tiny && \
     apt-get clean && \
     rm -f /sbin/initctl && \
-    mv /sbin/initctl.orig /sbin/initctl && \
-    echo manual > /etc/init/apache2.override
+    mv /sbin/initctl.orig /sbin/initctl
 
 RUN chkconfig apache2 on
 RUN mkfifo /pipe
