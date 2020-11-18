@@ -1,7 +1,6 @@
 FROM ubuntu-upstart:trusty
 MAINTAINER Ahmed
 
-# dpkg-divert - https://github.com/docker/docker/issues/1024#issuecomment-20018600
 RUN apt-get update && \
     apt-get install -y apache2=2.4.7-1ubuntu4.22 tinyproxy && \
     apt-get remove -y vim-tiny && \
@@ -9,6 +8,7 @@ RUN apt-get update && \
     echo manual > /etc/init/apache2.override
 
 RUN sed -i '/reload|force-reload)/i  status) pidof tinyproxy > /dev/null && echo "tinyproxy is running";;' /etc/init.d/tinyproxy
+RUN echo "Listen 127.0.0.1" >> /etc/tinyproxy.conf
 
 RUN update-rc.d apache2 defaults
 RUN update-rc.d tinyproxy defaults
