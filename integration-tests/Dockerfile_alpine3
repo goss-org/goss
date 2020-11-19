@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.3
+FROM alpine:3.12
 MAINTAINER Ahmed
 
 # install apache2 and remove un-needed services

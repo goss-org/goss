@@ -1,7 +1,7 @@
 ---
 alpine3:
   packages:
-    apache2: "2.4.27-r1"
+    apache2: "2.4.46-r0"
 arch:
   packages:
 centos7:
