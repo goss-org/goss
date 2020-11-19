@@ -24,8 +24,8 @@ before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
 
 install:
-  - cat /etc/docker/daemon.json
-  - docker info
+  - cat /etc/docker/daemon.json || true
+  - docker info || true
   - for net in $(docker network ls -q); do echo $net;docker network inspect $net;done
   - ./ci/install.sh
 
