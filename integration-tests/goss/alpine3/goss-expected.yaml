@@ -129,6 +129,7 @@ dns:
     resolvable: true
     addrs:
     - 127.0.0.1
+    - ::1
     timeout: 1000
 process:
   apache2:
