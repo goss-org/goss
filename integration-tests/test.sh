@@ -51,7 +51,7 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 92, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 91, Failed: 0, Skipped: 3' <<<"$out"
 else
     egrep -q 'Count: 111, Failed: 0, Skipped: 5' <<<"$out"
 fi

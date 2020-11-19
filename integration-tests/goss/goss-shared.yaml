@@ -179,8 +179,11 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
-  https://httpbin.org/:
+  {{ if index .Vars .Env.OS "proxy" }}
+  https://httpbin.org/anything:
     status: 200
+    proxy: {{ index .Vars .Env.OS "proxy" }}
+  {{ end }}
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false
