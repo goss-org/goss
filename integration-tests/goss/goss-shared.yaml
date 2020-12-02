@@ -212,6 +212,22 @@ http:
     status: 401
     username: username
     password: wrong
+  https://httpbin.org/put:
+    status: 200
+    method: PUT
+    request-body: '{"key": "value"}'
+    body: 
+      - '"key": "value"'
+  anything-with-get:
+    url: https://httpbin.org/anything
+    status: 200
+    body: []
+  anything-with-put:
+    url: https://httpbin.org/anything
+    status: 200
+    method: PUT
+    request-body: "request-body"
+    body: ["request-body"]
 matching:
   has_substr:
     content: some string

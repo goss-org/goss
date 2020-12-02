@@ -28,11 +28,13 @@ type DefHTTP struct {
 	noFollowRedirects bool
 	resp              *http.Response
 	RequestHeader     http.Header
+	RequestBody       string
 	Timeout           int
 	loaded            bool
 	err               error
 	Username          string
 	Password          string
+	Method            string
 	Proxy             string
 }
 
@@ -45,8 +47,10 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 	return &DefHTTP{
 		http:              httpStr,
 		allowInsecure:     config.AllowInsecure,
+		Method:            config.Method,
 		noFollowRedirects: config.NoFollowRedirects,
 		RequestHeader:     headers,
+		RequestBody:       config.RequestBody,
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
@@ -96,7 +100,7 @@ func (u *DefHTTP) setup() error {
 		}
 	}
 
-	req, err := http.NewRequest("GET", u.http, nil)
+	req, err := http.NewRequest(u.Method, u.http, strings.NewReader(u.RequestBody))
 	if err != nil {
 		return u.err
 	}
@@ -132,6 +136,7 @@ func (u *DefHTTP) SetAllowInsecure(t bool) {
 func (u *DefHTTP) ID() string {
 	return u.http
 }
+
 func (u *DefHTTP) HTTP() string {
 	return u.http
 }
