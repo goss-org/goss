@@ -26,13 +26,12 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 ### Why use Goss?
 
 * Goss is EASY! - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST! - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
+* Goss is FAST! - small-medium test suites are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
 
-**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/aelsabbahy/goss/blob/master/docs/platform-feature-parity.md)
-
+**Note:** For macOS and Windows, see: [platform-feature-parity].
 
 This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
 
@@ -165,6 +164,10 @@ curl localhost:8080/healthz
 # JSON endpoint
 goss serve --format json &
 curl localhost:8080/healthz
+
+# rspecish response via content negotiation
+goss serve --format json &
+curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
 ### Manually editing Goss files
@@ -258,7 +261,7 @@ package:
 
 ## Limitations
 
-Currently goss only runs on Linux.
+`goss` works well on Linux, but support on Windows & macOS is alpha. See [platform-feature-parity].
 
 The following tests have limitations.
 
@@ -277,3 +280,4 @@ Service:
 * Upstart
 
 [kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
+[platform-feature-parity]: docs/platform-feature-parity.md

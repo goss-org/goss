@@ -10,6 +10,10 @@ import (
 
 type Silent struct{}
 
+func (r Silent) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -27,8 +31,4 @@ func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
 		return 1
 	}
 	return 0
-}
-
-func init() {
-	RegisterOutputer("silent", &Silent{}, []string{})
 }

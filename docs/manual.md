@@ -247,7 +247,6 @@ service:
     running: false
 ```
 
-
 ### serve, s - Serve a health endpoint
 
 `serve` exposes the goss test suite as a health endpoint on your server. The end-point will return the stest results in the format requested and an http status of 200 or 503.
@@ -255,6 +254,7 @@ service:
 `serve` will look for a test suite in the same order as [validate](#validate-v---validate-the-system)
 
 #### Flags
+
 * `--cache <value>`, `-c <value>` - Time to cache the results (default: 5s)
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
@@ -270,8 +270,13 @@ $ curl http://localhost:8080/healthz
 # JSON endpoint
 $ goss serve --format json &
 $ curl localhost:8080/healthz
+
+# rspecish output format in response via content negotiation
+goss serve --format json &
+curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
+The `application/vnd.goss-{output format}` media type can be used in the `Accept` request header to determine the response's content-type. You can also `Accept: application/json` to get back `application/json`.
 
 ### validate, v - Validate the system
 
@@ -899,7 +904,7 @@ For more information see:
 
 ## Templates
 
-Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests. 
+Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests.
 
 Available variables:
 * `{{.Env}}`  - Containing environment variables

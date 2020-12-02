@@ -13,6 +13,12 @@ import (
 // Structured is a output formatter that logs into a StructuredOutput structure
 type Structured struct{}
 
+func (r Structured) ValidOptions() []*formatOption {
+	return []*formatOption{
+		{name: foPretty},
+	}
+}
+
 // StructuredTestResult is an individual test result with additional human friendly summary
 type StructuredTestResult struct {
 	resource.TestResult
@@ -67,7 +73,7 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 
 	var j []byte
 
-	if util.IsValueInList("pretty", outConfig.FormatOptions) {
+	if util.IsValueInList(foPretty, outConfig.FormatOptions) {
 		j, _ = json.MarshalIndent(result, "", "  ")
 	} else {
 		j, _ = json.Marshal(result)
@@ -76,8 +82,4 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 	fmt.Fprintln(w, string(j))
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("structured", &Structured{}, []string{})
 }

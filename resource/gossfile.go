@@ -17,6 +17,10 @@ func (g *Gossfile) SetID(id string) { g.Path = id }
 func (g *Gossfile) GetTitle() string { return g.Title }
 func (g *Gossfile) GetMeta() meta    { return g.Meta }
 
+func (g *Gossfile) Validate(sys *system.System) []TestResult {
+	return []TestResult{}
+}
+
 func NewGossfile(sysGossfile system.Gossfile, config util.Config) (*Gossfile, error) {
 	path := sysGossfile.Path()
 	return &Gossfile{
