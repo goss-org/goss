@@ -35,6 +35,7 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		OutputFormat:      c.String("format"),
 		PackageManager:    c.GlobalString("package"),
 		Password:          c.String("password"),
+		Proxy:             c.String("proxy"),
 		RetryTimeout:      c.Duration("retry-timeout"),
 		Server:            c.String("server"),
 		Sleep:             c.Duration("sleep"),
@@ -348,6 +349,10 @@ func main() {
 						cli.StringFlag{
 							Name:  "password, p",
 							Usage: "Password for basic auth",
+						},
+						cli.StringFlag{
+							Name:  "proxy, x",
+							Usage: "Proxy server to use. e.g. http://10.0.0.2:8080",
 						},
 					},
 					Action: func(c *cli.Context) error {

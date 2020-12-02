@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -34,6 +35,7 @@ type DefHTTP struct {
 	Username          string
 	Password          string
 	Method            string
+	Proxy             string
 }
 
 func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
@@ -52,6 +54,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
+		Proxy:             config.Proxy,
 	}
 }
 
@@ -70,9 +73,21 @@ func (u *DefHTTP) setup() error {
 	}
 	u.loaded = true
 
+	proxyURL := http.ProxyFromEnvironment
+	if u.Proxy != "" {
+		parseProxy, err := url.Parse(u.Proxy)
+
+		if err != nil {
+			return err
+		}
+
+		proxyURL = http.ProxyURL(parseProxy)
+	}
+
 	tr := &http.Transport{
 		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
 		DisableKeepAlives: true,
+		Proxy:             proxyURL,
 	}
 	client := &http.Client{
 		Transport: tr,

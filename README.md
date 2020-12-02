@@ -236,7 +236,7 @@ package:
 * kernel-param - add new kernel-param
 * mount - add new mount
 * interface - add new network interface
-* http - add new network http url
+* http - add new network http url with proxy support
 * goss - add new goss file, it will be imported from this one
 * matching - test for matches in supplied content
 
