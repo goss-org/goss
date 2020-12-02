@@ -37,6 +37,7 @@ type Config struct {
 	OutputWriter      io.Writer
 	PackageManager    string
 	Password          string
+	Proxy             string
 	RequestHeader     []string
 	RetryTimeout      time.Duration
 	Server            string
@@ -71,6 +72,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		OutputFormat:      "structured", // most appropriate for package usage
 		PackageManager:    "",
 		Password:          "",
+		Proxy:             "",
 		RequestHeader:     nil,
 		RetryTimeout:      0,
 		Server:            "",

@@ -21,6 +21,7 @@ type HTTP struct {
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
 func (u *HTTP) ID() string      { return u.HTTP }
@@ -37,7 +38,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	}
 	sysHTTP := sys.NewHTTP(u.HTTP, sys, util.Config{
 		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
-		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password,
+		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
 		RequestHeader: u.RequestHeader})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
@@ -75,6 +76,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
+		Proxy:             config.Proxy,
 	}
 	return u, err
 }

@@ -621,6 +621,7 @@ http:
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
+    proxy: "" # proxy server to proxy traffic through. Proxy can also be set with environment variables http_proxy.
     skip: false
 ```
 

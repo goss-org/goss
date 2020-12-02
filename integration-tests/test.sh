@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 precise wheezy"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty wheezy"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
@@ -53,7 +53,7 @@ echo "$out"
 if [[ $os == "arch" ]]; then
     egrep -q 'Count: 91, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 110, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 111, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
