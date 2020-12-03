@@ -216,7 +216,7 @@ http:
     status: 200
     method: PUT
     request-body: '{"key": "value"}'
-    body: 
+    body:
       - '"key": "value"'
   anything-with-get:
     url: https://httpbin.org/anything
@@ -225,7 +225,7 @@ http:
   anything-with-put:
     url: https://httpbin.org/anything
     status: 200
-    method: PUT
+    method: GET
     request-body: "request-body"
     body: ["request-body"]
 matching:

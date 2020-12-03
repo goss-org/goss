@@ -14,7 +14,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.4.46-r0
+    - 2.4.46-r1
   foobar:
     installed: false
   vim-tiny:
