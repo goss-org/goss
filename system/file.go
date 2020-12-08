@@ -3,7 +3,9 @@ package system
 import (
 	"crypto/md5"
 	"crypto/sha256"
+	"crypto/sha512"
 	"fmt"
+	"hash"
 	"io"
 	"os"
 	"path/filepath"
@@ -26,7 +28,16 @@ type File interface {
 	LinkedTo() (string, error)
 	Md5() (string, error)
 	Sha256() (string, error)
+	Sha512() (string, error)
 }
+
+type hashFuncType string
+
+const (
+	md5Hash    hashFuncType = "md5"
+	sha256Hash              = "sha256"
+	sha512Hash              = "sha512"
+)
 
 type DefFile struct {
 	path     string
@@ -166,7 +177,7 @@ func realPath(path string) (string, error) {
 	return realPath, err
 }
 
-func (f *DefFile) Md5() (string, error) {
+func (f *DefFile) hash(hashFunc hashFuncType) (string, error) {
 
 	if err := f.setup(); err != nil {
 		return "", err
@@ -178,7 +189,19 @@ func (f *DefFile) Md5() (string, error) {
 	}
 	defer fh.Close()
 
-	hash := md5.New()
+	var hash hash.Hash
+
+	switch hashFunc {
+	case md5Hash:
+		hash = md5.New()
+	case sha256Hash:
+		hash = sha256.New()
+	case sha512Hash:
+		hash = sha512.New()
+	default:
+		return "", fmt.Errorf("Unsupported hash function %s", hashFunc)
+	}
+
 	if _, err := io.Copy(hash, fh); err != nil {
 		return "", err
 	}
@@ -186,24 +209,16 @@ func (f *DefFile) Md5() (string, error) {
 	return fmt.Sprintf("%x", hash.Sum(nil)), nil
 }
 
+func (f *DefFile) Md5() (string, error) {
+	return f.hash(md5Hash)
+}
+
 func (f *DefFile) Sha256() (string, error) {
+	return f.hash(sha256Hash)
+}
 
-	if err := f.setup(); err != nil {
-		return "", err
-	}
-
-	fh, err := os.Open(f.realPath)
-	if err != nil {
-		return "", err
-	}
-	defer fh.Close()
-
-	hash := sha256.New()
-	if _, err := io.Copy(hash, fh); err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+func (f *DefFile) Sha512() (string, error) {
+	return f.hash(sha512Hash)
 }
 
 func getUserForUid(uid int) (string, error) {
