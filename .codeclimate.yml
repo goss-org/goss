@@ -1,5 +1,8 @@
 version: "2"
-
+checks:
+  return-statements:
+    config:
+      threshold: 5
 plugins:
   gofmt:
     enabled: true
