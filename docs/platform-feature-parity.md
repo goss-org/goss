@@ -140,8 +140,8 @@ You can find goss-files that are used to populate this matrix within `integratio
 Run all of the `darwin`/`windows` integration tests:
 
 ```bash
-make alpha-test-alpha-darwin-amd64
-make alpha-test-alpha-windows-amd64
+make community-test-community-darwin-amd64
+make community-test-community-windows-amd64
 ```
 
 The script finds all goss spec files within `integration-tests` then filters to just ones matching the passed OS-name, then runs `validate` against them.
@@ -153,11 +153,11 @@ This is a special-case test since it requires a persistent process, then to make
 #### macOS `serve`
 
 ```bash
-make "test-serve-alpha-darwin-amd64"
+make "test-serve-community-darwin-amd64"
 ```
 
 #### Windows `serve`
 
 ```bash
-make "test-serve-alpha-windows-amd64"
+make "test-serve-community-windows-amd64"
 ```

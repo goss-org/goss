@@ -9,7 +9,7 @@ IFS='- ' read -r -a segments <<< "${platform_spec}"
 
 os="${segments[0]}"
 arch="${segments[1]}"
-if [[ "${segments[0]}" == "alpha" ]]; then
+if [[ "${segments[0]}" == "community" ]]; then
   os="${segments[1]}"
   arch="${segments[2]}"
 fi

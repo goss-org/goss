@@ -261,7 +261,7 @@ package:
 
 ## Limitations
 
-`goss` works well on Linux, but support on Windows & macOS is alpha. See [platform-feature-parity].
+`goss` is supported on Linux, but Windows & macOS support has been submitted and is maintained by the community. See [platform-feature-parity].
 
 The following tests have limitations.
 

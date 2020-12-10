@@ -2,8 +2,8 @@
 command:
   help:
     exit-status: 0
-    exec: "release/goss-alpha-darwin-amd64 help"
+    exec: "release/goss-community-darwin-amd64 help"
     stdout:
-      - alpha
+      - community
     stderr: []
     timeout: 5000
