@@ -1,0 +1,9 @@
+---
+command:
+  hello world:
+    exit-status: 1
+    exec: "echo hello world"
+    stdout:
+    - did not echo this
+    stderr: []
+    timeout: 10000

@@ -32,6 +32,7 @@ file:
     exists: true
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd
     sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+    sha512: 372864ab83187de41ca57c5c77cd4a99220ccadc8b8ddb18367893fd3e58764193a599edbf63a48c0c44f1e923606a00929b46de3bda1744fd722b9d42829206
   "/tmp/goss/foobar":
     exists: false
     contains: []
@@ -147,7 +148,6 @@ dns:
     resolvable: true
     addrs:
     - 127.0.0.1
-    - "::1"
     timeout: 2000
   dnstest.io:
     resolvable: true
@@ -180,6 +180,11 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
+  {{ if index .Vars .Env.OS "proxy" }}
+  https://httpbin.org/anything:
+    status: 200
+    proxy: {{ index .Vars .Env.OS "proxy" }}
+  {{ end }}
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false
@@ -208,6 +213,22 @@ http:
     status: 401
     username: username
     password: wrong
+  https://httpbin.org/put:
+    status: 200
+    method: PUT
+    request-body: '{"key": "value"}'
+    body:
+      - '"key": "value"'
+  anything-with-get:
+    url: https://httpbin.org/anything
+    status: 200
+    body: []
+  anything-with-put:
+    url: https://httpbin.org/anything
+    status: 200
+    method: GET
+    request-body: "request-body"
+    body: ["request-body"]
 matching:
   has_substr:
     content: some string

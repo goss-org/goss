@@ -13,6 +13,10 @@ import (
 
 type JsonOneline struct{}
 
+func (r JsonOneline) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -52,8 +56,4 @@ func (r JsonOneline) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("json_oneline", &JsonOneline{}, []string{})
 }

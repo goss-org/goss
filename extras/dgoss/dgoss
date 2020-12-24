@@ -58,10 +58,14 @@ run(){
 }
 
 get_docker_file() {
-    if docker exec "$id" sh -c "test -e $1" > /dev/null;then
+    local cid=$1  # Docker container ID
+    local src=$2  # Source file path (in the container)
+    local dst=$3  # Destination file path
+
+    if docker exec "${cid}" sh -c "test -e ${src}" > /dev/null; then
         mkdir -p "${GOSS_FILES_PATH}"
-        info "Copied '$1' from container to '${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}'"
-        docker cp "$id:$1" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
+        docker cp "${cid}:${src}" "${dst}"
+        info "Copied '${src}' from container to '${dst}'"
     fi
 }
 
@@ -110,9 +114,9 @@ case "$1" in
         run "$@"
         info "Run goss add/autoadd to add resources"
         docker exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
-        get_docker_file "/goss/goss.yaml"
-        get_docker_file "/goss/goss_wait.yaml"
-        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "/goss/${GOSS_VARS}"
+        get_docker_file "$id" "/goss/goss.yaml" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
+        get_docker_file "$id" "/goss/goss_wait.yaml" "${GOSS_FILES_PATH}/goss_wait.yaml"
+        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "$id" "/goss/${GOSS_VARS}" "${GOSS_FILES_PATH}/${GOSS_VARS}"
         ;;
     *)
         error "$USAGE"

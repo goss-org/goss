@@ -247,7 +247,6 @@ service:
     running: false
 ```
 
-
 ### serve, s - Serve a health endpoint
 
 `serve` exposes the goss test suite as a health endpoint on your server. The end-point will return the stest results in the format requested and an http status of 200 or 503.
@@ -255,6 +254,7 @@ service:
 `serve` will look for a test suite in the same order as [validate](#validate-v---validate-the-system)
 
 #### Flags
+
 * `--cache <value>`, `-c <value>` - Time to cache the results (default: 5s)
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
@@ -270,8 +270,13 @@ $ curl http://localhost:8080/healthz
 # JSON endpoint
 $ goss serve --format json &
 $ curl localhost:8080/healthz
+
+# rspecish output format in response via content negotiation
+goss serve --format json &
+curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
+The `application/vnd.goss-{output format}` media type can be used in the `Accept` request header to determine the response's content-type. You can also `Accept: application/json` to get back `application/json`.
 
 ### validate, v - Validate the system
 
@@ -494,7 +499,7 @@ dns:
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
 ```
 
-With the server attribute set, it is possible to validate the following types of DNS record:
+It is possible to validate the following types of DNS records, but requires the ```server``` attribute be set:
 
 - A
 - AAAA
@@ -560,8 +565,9 @@ file:
     filetype: file # file, symlink, directory
     contains: [] # Check file content for these patterns
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
-    # A stronger checksum alternative to md5 (recommended)
+    # A stronger checksum alternatives to md5 (recommended)
     sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+    sha512: cb71b1940dc879a3688bd502846bff6316dd537bbe917484964fe0f098e9245d80958258dc3bd6297bf42d5bd978cbe2c03d077d4ed45b2b1ed9cd831ceb1bd0
   /etc/alternatives/mta:
     # required attributes
     exists: true
@@ -613,10 +619,13 @@ http:
     request-headers: # Set request header values
        - "Content-Type: text/html"
     headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
+    request-body: '{"key": "value"}' # request body
     body: [] # Check http response content for these patterns
     username: "" # username for basic auth
     password: "" # password for basic auth
+    proxy: "" # proxy server to proxy traffic through. Proxy can also be set with environment variables http_proxy.
     skip: false
+    method: PUT # http method
 ```
 
 **NOTE:** only the first `Host` header will be used to set the `Request.Host` value if multiple are provided.
@@ -896,7 +905,7 @@ For more information see:
 
 ## Templates
 
-Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests. 
+Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/) to allow for dynamic or conditional tests.
 
 Available variables:
 * `{{.Env}}`  - Containing environment variables

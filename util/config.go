@@ -31,12 +31,15 @@ type Config struct {
 	ListenAddress     string
 	LocalAddress      string
 	MaxConcurrent     int
+	Method            string
 	NoColor           *bool
 	NoFollowRedirects bool
 	OutputFormat      string
 	OutputWriter      io.Writer
 	PackageManager    string
 	Password          string
+	RequestBody       string
+	Proxy             string
 	RequestHeader     []string
 	RetryTimeout      time.Duration
 	Server            string
@@ -71,6 +74,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		OutputFormat:      "structured", // most appropriate for package usage
 		PackageManager:    "",
 		Password:          "",
+		Proxy:             "",
 		RequestHeader:     nil,
 		RetryTimeout:      0,
 		Server:            "",

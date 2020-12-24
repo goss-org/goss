@@ -35,6 +35,7 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		OutputFormat:      c.String("format"),
 		PackageManager:    c.GlobalString("package"),
 		Password:          c.String("password"),
+		Proxy:             c.String("proxy"),
 		RetryTimeout:      c.Duration("retry-timeout"),
 		Server:            c.String("server"),
 		Sleep:             c.Duration("sleep"),
@@ -192,8 +193,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
-				goss.Serve(newRuntimeConfigFromCLI(c))
-				return nil
+				return goss.Serve(newRuntimeConfigFromCLI(c))
 			},
 		},
 		{
@@ -350,6 +350,10 @@ func main() {
 							Name:  "password, p",
 							Usage: "Password for basic auth",
 						},
+						cli.StringFlag{
+							Name:  "proxy, x",
+							Usage: "Proxy server to use. e.g. http://10.0.0.2:8080",
+						},
 					},
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
@@ -394,12 +398,10 @@ func main() {
 	}
 
 	addAlphaFlagIfNeeded(app)
-	warnAlphaIfNeeded()
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
-	warnAlphaIfNeeded()
 }
 
 func addAlphaFlagIfNeeded(app *cli.App) {
@@ -420,12 +422,6 @@ You should not expect everything to work. Treat linux as the canonical behaviour
 Please see https://github.com/aelsabbahy/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
 Please file issues via https://github.com/aelsabbahy/goss/issues/new/choose
 Pull requests and bug reports very welcome.`
-
-func warnAlphaIfNeeded() {
-	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
-		log.Printf(msgFormat, strings.Title(runtime.GOOS))
-	}
-}
 
 func fatalAlphaIfNeeded(c *cli.Context) {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {

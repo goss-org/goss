@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/aelsabbahy/goss/system"
 	"github.com/oleiade/reflections"
@@ -13,6 +14,31 @@ import (
 type Resource interface {
 	Validate(*system.System) []TestResult
 	SetID(string)
+}
+
+var (
+	resourcesMu sync.Mutex
+	resources   = map[string]Resource{
+		"addr":         &Addr{},
+		"command":      &Command{},
+		"dns":          &DNS{},
+		"file":         &File{},
+		"gossfile":     &Gossfile{},
+		"group":        &Group{},
+		"http":         &HTTP{},
+		"interface":    &Interface{},
+		"kernel-param": &KernelParam{},
+		"mount":        &Mount{},
+		"package":      &Package{},
+		"port":         &Port{},
+		"process":      &Process{},
+		"service":      &Service{},
+		"user":         &User{},
+	}
+)
+
+func Resources() map[string]Resource {
+	return resources
 }
 
 type ResourceRead interface {

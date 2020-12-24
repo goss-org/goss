@@ -38,11 +38,11 @@ run(){
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" --rm "$service"
+        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" --rm "${@:2}"
         ;;
       cp)
         info "Creating docker container"
-        docker-compose run -d -T --name "$service" --rm "$service" > /dev/null
+        docker-compose run -d -T --name "$service" --rm "${@:2}" > /dev/null
         info "Copy goss files into container"
         docker cp "$tmp_dir/." "$service:/goss"
         ;;

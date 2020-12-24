@@ -12,14 +12,21 @@ import (
 
 type Nagios struct{}
 
+func (r Nagios) ValidOptions() []*formatOption {
+	return []*formatOption{
+		{name: foPerfData},
+		{name: foVerbose},
+	}
+}
+
 func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
 	var testCount, failed, skipped int
 
 	var perfdata, verbose bool
-	perfdata = util.IsValueInList("perfdata", outConfig.FormatOptions)
-	verbose = util.IsValueInList("verbose", outConfig.FormatOptions)
+	perfdata = util.IsValueInList(foPerfData, outConfig.FormatOptions)
+	verbose = util.IsValueInList(foVerbose, outConfig.FormatOptions)
 
 	var summary map[int]string
 	summary = make(map[int]string)
@@ -28,7 +35,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 		for _, testResult := range resultGroup {
 			switch testResult.Result {
 			case resource.FAIL:
-				if util.IsValueInList("verbose", outConfig.FormatOptions) {
+				if util.IsValueInList(foVerbose, outConfig.FormatOptions) {
 					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult) + "\n"
 				}
 				failed++
@@ -59,8 +66,4 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 	fmt.Fprint(w, "\n")
 	return 0
-}
-
-func init() {
-	RegisterOutputer("nagios", &Nagios{}, []string{"perfdata", "verbose"})
 }
