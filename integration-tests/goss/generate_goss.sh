@@ -59,6 +59,8 @@ goss a "${args[@]}" process $package foobar
 goss a "${args[@]}" kernel-param kernel.ostype
 
 goss a "${args[@]}" mount /dev
+# Make SELinux test consistent
+sed -i '/- seclabel/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
 
 goss a "${args[@]}" http https://www.google.com
 
@@ -78,6 +80,7 @@ $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.ya
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa $package
 # Validate that we can aa none existent resources without destroying the file
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa nosuchresource
+
 if [[ ! -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml ]]
 then
   echo "Error! Config file removed by aa!" && exit 1

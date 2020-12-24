@@ -151,7 +151,6 @@ mount:
     opts:
     - rw
     - nosuid
-    - seclabel
     - size=65536k
     - mode=755
     source: tmpfs
