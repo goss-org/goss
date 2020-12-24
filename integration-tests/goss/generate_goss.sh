@@ -59,8 +59,10 @@ goss a "${args[@]}" process $package foobar
 goss a "${args[@]}" kernel-param kernel.ostype
 
 goss a "${args[@]}" mount /dev
-# Make SELinux test consistent
+# Make tests consistent across different docker setups
 sed -i '/- seclabel/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
+sed -i '/- size=/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
+sed -i '/- mode=/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
 
 goss a "${args[@]}" http https://www.google.com
 
