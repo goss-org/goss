@@ -16,7 +16,7 @@ require (
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/miekg/dns v1.1.35
 	github.com/mitchellh/copystructure v1.0.0 // indirect
-	github.com/moby/sys/mountinfo v0.1.3
+	github.com/moby/sys/mountinfo v0.4.0
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
 	github.com/onsi/gomega v1.10.4
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
