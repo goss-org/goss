@@ -14,6 +14,7 @@ os:
   - windows
 
 dist: trusty
+osx_image: xcode12.2
 
 services:
   - docker
@@ -21,7 +22,7 @@ services:
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
   # bash from macOS is too old to have readarray. Install newer version.
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew update && brew install bash; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
 
 install:
   - ./ci/install.sh
