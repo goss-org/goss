@@ -13,8 +13,10 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == system
 VOLUME [ "/sys/fs/cgroup" ]
 CMD ["/usr/sbin/init"]
 
-RUN yum -y --disablerepo='*' --enablerepo=base install httpd && yum clean all
+RUN yum -y --disablerepo='*' --enablerepo=base,extras install httpd epel-release && yum clean all
+RUN yum -y --disablerepo='*' --enablerepo=base,epel install tinyproxy && yum clean all
 
 RUN systemctl enable httpd
+RUN systemctl enable tinyproxy
 RUN chmod 700 ~root
 RUN mkfifo /pipe

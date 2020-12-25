@@ -1,0 +1,1 @@
+5117819dc7907aa1100e2ff0f2edb68f  Dockerfile_trusty

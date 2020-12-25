@@ -3,3 +3,6 @@ addr:
   tcp://localhost:80:
     reachable: true
     timeout: 500
+  tcp://localhost:8888:
+    reachable: true
+    timeout: 500

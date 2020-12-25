@@ -6,7 +6,7 @@ cmd = goss
 GO111MODULE=on
 GO_FILES = $(shell git ls-files -- '*.go' ':!:*vendor*_test.go')
 
-.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy precise alpine3 arch test-int32 centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 
 all: test-short-all test-int-all dgoss-sha256
 
@@ -76,8 +76,8 @@ test-darwin-all: test-short-all test-int-darwin-all
 test-linux-all: test-short-all test-int-64 test-int-32
 test-windows-all: test-short-all test-int-windows-all
 
-test-int-64: centos7 wheezy precise alpine3 arch test-int-serve-linux-amd64
-test-int-32: centos7-32 wheezy-32 precise-32 alpine3-32 arch-32
+test-int-64: centos7 wheezy trusty alpine3 arch test-int-serve-linux-amd64
+test-int-32: centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 test-int-darwin-all: alpha-test-alpha-darwin-amd64 test-int-serve-alpha-darwin-amd64
 test-int-windows-all: alpha-test-alpha-windows-amd64 test-int-serve-alpha-windows-amd64
 test-int-all: test-int-32 test-int-64
@@ -88,9 +88,9 @@ centos7-32: build
 wheezy-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy 386
-precise-32: build
+trusty-32: build
 	$(info INFO: Starting build $@)
-	cd integration-tests/ && ./test.sh precise 386
+	cd integration-tests/ && ./test.sh trusty 386
 alpine3-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 386
@@ -103,9 +103,9 @@ centos7: build
 wheezy: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy amd64
-precise: build
+trusty: build
 	$(info INFO: Starting build $@)
-	cd integration-tests/ && ./test.sh precise amd64
+	cd integration-tests/ && ./test.sh trusty amd64
 alpine3: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 amd64

@@ -33,6 +33,7 @@ var (
 		"rspecish":      &Rspecish{},
 		"structured":    &Structured{},
 		"tap":           &Tap{},
+		"silent":        &Silent{},
 	}
 	foPerfData = "perfdata"
 	foVerbose  = "verbose"

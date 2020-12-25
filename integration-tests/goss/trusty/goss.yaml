@@ -1,6 +1,6 @@
 ---
 service:
-  autofs:
+  tinyproxy:
     enabled: true
     running: true
 user:

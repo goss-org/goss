@@ -78,7 +78,7 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
-	allOpts := strings.Split(strings.Join([]string{m.mountInfo.Opts, m.mountInfo.VfsOpts}, ","), ",")
+	allOpts := strings.Split(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","), ",")
 
 	return funk.UniqString(allOpts), nil
 }
@@ -96,7 +96,7 @@ func (m *DefMount) Filesystem() (string, error) {
 		return "", err
 	}
 
-	return m.mountInfo.Fstype, nil
+	return m.mountInfo.FSType, nil
 }
 
 func (m *DefMount) Usage() (int, error) {
