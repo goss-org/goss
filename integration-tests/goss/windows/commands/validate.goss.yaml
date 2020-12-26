@@ -3,7 +3,7 @@
 command:
   "validate":
     exit-status: 0
-    exec: "release\\goss-alpha-windows-amd64 --use-alpha=1 -g integration-tests/goss/windows/commands/validate-input.yaml validate"
+    exec: "release\\goss-windows-amd64 --use-alpha=1 -g integration-tests/goss/windows/commands/validate-input.yaml validate"
     stdout:
       - 'Count: 1'
       - 'Failed: 0'

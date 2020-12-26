@@ -36,15 +36,13 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
-alpha-test-%: release/goss-%
+test-int-validate-%: release/goss-%
 	$(info INFO: Starting build $@)
-	./integration-tests/run-tests-alpha.sh $*
+	./integration-tests/run-validate-tests.sh $*
 
 test-int-serve-%: release/goss-%
 	$(info INFO: Starting build $@)
 	./integration-tests/run-serve-tests.sh $*
-# shim to account for linux being not in alpha
-test-int-serve-linux-amd64: test-int-serve-alpha-linux-amd64
 
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
@@ -53,7 +51,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-alpha-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-alpha-windows-amd64
+build: release/goss-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-windows-amd64
 
 gen:
 	$(info INFO: Starting build $@)
@@ -78,8 +76,8 @@ test-windows-all: test-short-all test-int-windows-all
 
 test-int-64: centos7 wheezy trusty alpine3 arch test-int-serve-linux-amd64
 test-int-32: centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
-test-int-darwin-all: alpha-test-alpha-darwin-amd64 test-int-serve-alpha-darwin-amd64
-test-int-windows-all: alpha-test-alpha-windows-amd64 test-int-serve-alpha-windows-amd64
+test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
+test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
 test-int-all: test-int-32 test-int-64
 
 centos7-32: build

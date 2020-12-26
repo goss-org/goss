@@ -2,7 +2,7 @@
 command:
   "autoadd Administrator":
     exit-status: 0
-    exec: release\goss-alpha-windows-amd64 --use-alpha=1 autoadd Administrator
+    exec: release\goss-windows-amd64 --use-alpha=1 autoadd Administrator
     stdout:
       - 'user:'
       - '  name: Administrator'
