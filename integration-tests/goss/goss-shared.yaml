@@ -62,6 +62,13 @@ package:
     versions:
     - {{$ver}}
 {{end}}
+service:
+{{- range $name, $runlevels := index .Vars .Env.OS "services"}}
+  {{$name}}:
+    enabled: true
+    running: true
+    runlevels: {{toJson $runlevels}}
+{{end}}
 addr:
   tcp://google.com:22:
     reachable: false
