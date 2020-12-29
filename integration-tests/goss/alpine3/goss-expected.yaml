@@ -13,7 +13,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.4.27-r1
+    - 2.4.46-r1
   foobar:
     installed: false
   vim-tiny:
@@ -30,15 +30,15 @@ addr:
     timeout: 1000
 port:
   tcp:80:
-    listening: false
-    ip: []
+    listening: true
+    ip:
+    - 0.0.0.0
   tcp:9999:
     listening: false
     ip: []
   tcp6:80:
-    listening: true
-    ip:
-    - '::'
+    listening: false
+    ip: []
 service:
   apache2:
     enabled: true
@@ -159,3 +159,10 @@ http:
     no-follow-redirects: false
     timeout: 5000
     body: []
+  https://www.microsoft.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []
+    proxy: http://127.0.0.1:8888

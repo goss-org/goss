@@ -19,9 +19,33 @@ import (
 	"github.com/icza/dyno"
 )
 
+type formatOption struct {
+	name string
+}
+
 type Outputer interface {
 	Output(io.Writer, <-chan []resource.TestResult, time.Time, util.OutputConfig) int
+	ValidOptions() []*formatOption
 }
+
+var (
+	outputersMu sync.Mutex
+	outputers   = map[string]Outputer{
+		"documentation": &Documentation{},
+		"json_oneline":  &JsonOneline{},
+		"json":          &Json{},
+		"junit":         &JUnit{},
+		"nagios":        &Nagios{},
+		"rspecish":      &Rspecish{},
+		"structured":    &Structured{},
+		"tap":           &Tap{},
+		"silent":        &Silent{},
+	}
+	foPerfData   = "perfdata"
+	foVerbose    = "verbose"
+	foPretty     = "pretty"
+	foIncludeRaw = "include_raw"
+)
 
 var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
@@ -123,14 +147,7 @@ func indentLines(text string) string {
 	return result[:len(result)-1]
 }
 
-// Copied from database/sql
-var (
-	outputersMu           sync.Mutex
-	outputers             = make(map[string]Outputer)
-	outputerFormatOptions = make(map[string][]string)
-)
-
-func RegisterOutputer(name string, outputer Outputer, formatOptions []string) {
+func RegisterOutputer(name string, outputer Outputer) {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
 
@@ -141,7 +158,6 @@ func RegisterOutputer(name string, outputer Outputer, formatOptions []string) {
 		panic("goss: Register called twice for ouputer " + name)
 	}
 	outputers[name] = outputer
-	outputerFormatOptions[name] = formatOptions
 }
 
 // Outputers returns a sorted list of the names of the registered outputers.
@@ -156,17 +172,19 @@ func Outputers() []string {
 	return list
 }
 
-// FormatOptions are all the valid options formatters accept
+// FormatOptions returns a sorted list of all the valid options that outputers accept
 func FormatOptions() []string {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
-	var list []string
-	for _, formatOptions := range outputerFormatOptions {
-		for _, opt := range formatOptions {
-			if !(util.IsValueInList(opt, list)) {
-				list = append(list, opt)
-			}
+	found := map[string]*formatOption{}
+	for _, o := range outputers {
+		for _, opt := range o.ValidOptions() {
+			found[opt.name] = opt
 		}
+	}
+	var list []string
+	for name := range found {
+		list = append(list, name)
 	}
 	sort.Strings(list)
 	return list
@@ -176,17 +194,6 @@ func FormatOptions() []string {
 func IsValidFormat(f string) bool {
 	for _, o := range Outputers() {
 		if o == f {
-			return true
-		}
-	}
-
-	return false
-}
-
-// IsValidFormatOption determines if o is a valid format option based on FormatOptions()
-func IsValidFormatOption(o string) bool {
-	for _, p := range FormatOptions() {
-		if p == o {
 			return true
 		}
 	}

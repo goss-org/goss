@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
+# shellcheck source=../ci/lib/setup.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
+# preserve current behaviour
+set -x
 
-set -xeu
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty wheezy"}"
+arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
-os=$1
-arch=$2
 vars_inline="{inline: bar, overwrite: bar}"
 
-seccomp_opts() {
-  local docker_ver minor_ver
-  docker_ver=$(docker version -f '{{.Client.Version}}')
-  minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  if ((minor_ver>=10)); then
-    echo '--security-opt seccomp:unconfined'
-  fi
-}
+# setup places us inside repo-root; this preserves current behaviour with least change.
+cd integration-tests
 
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
@@ -33,7 +30,7 @@ docker_exec() {
 if docker ps -a | grep "$container_name";then
   docker rm -vf "$container_name"
 fi
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" $(seccomp_opts))
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable)
 id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
@@ -45,9 +42,9 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 86, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 97, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 103, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 118, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

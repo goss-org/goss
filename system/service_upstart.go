@@ -77,3 +77,7 @@ func (s *ServiceUpstart) Running() (bool, error) {
 	}
 	return false, nil
 }
+func (s *ServiceUpstart) RunLevels() ([]string, error) {
+	sysv := &ServiceInit{service: s.service}
+	return sysv.RunLevels()
+}

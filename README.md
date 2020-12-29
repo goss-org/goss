@@ -24,10 +24,12 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 ### Why use Goss?
 
 * Goss is EASY! - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST! - small-medium test suits are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
+* Goss is FAST! - small-medium test suites are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
 * Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
+
+**Note:** For macOS and Windows, see: [platform-feature-parity].
 
 This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
 
@@ -43,17 +45,20 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 
 ### Manual installation
 
-
 #### Latest
+
 ```bash
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+# Alternatively, using the latest master
+# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
 #### Specific Version
+
 ```bash
 # See https://github.com/aelsabbahy/goss/releases for release versions
 VERSION=v0.3.10
@@ -62,7 +67,7 @@ chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 VERSION=v0.3.10
-curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/goss
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
@@ -84,7 +89,7 @@ An initial set of tests can be derived from the system state by using the [add](
 
 Let's write a simple sshd test using autoadd.
 
-```
+```txt
 # Running it as root will allow it to also detect ports
 $ sudo goss autoadd sshd
 ```
@@ -128,7 +133,7 @@ Now that we have a test suite, we can:
 
 * Run it once
 
-```
+```txt
 goss validate
 ...............
 
@@ -138,25 +143,29 @@ Count: 15, Failed: 0
 
 * Edit it to use [templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates), and run with a vars file
 
-```
+```txt
 goss --vars vars.yaml validate
 ```
 
 * keep running it until the system enters a valid state or we timeout
 
-```
+```txt
 goss validate --retry-timeout 30s --sleep 1s
 ```
 
 * serve the tests as a health endpoint
 
-```
+```txt
 goss serve &
 curl localhost:8080/healthz
 
 # JSON endpoint
 goss serve --format json &
 curl localhost:8080/healthz
+
+# rspecish response via content negotiation
+goss serve --format json &
+curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
 ### Manually editing Goss files
@@ -225,7 +234,7 @@ package:
 * kernel-param - add new kernel-param
 * mount - add new mount
 * interface - add new network interface
-* http - add new network http url
+* http - add new network http url with proxy support
 * goss - add new goss file, it will be imported from this one
 * matching - test for matches in supplied content
 
@@ -250,7 +259,7 @@ package:
 
 ## Limitations
 
-Currently goss only runs on Linux.
+`goss` works well on Linux, but support on Windows & macOS is alpha. See [platform-feature-parity].
 
 The following tests have limitations.
 
@@ -269,3 +278,4 @@ Service:
 * Upstart
 
 [kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
+[platform-feature-parity]: docs/platform-feature-parity.md

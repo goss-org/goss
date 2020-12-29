@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/aelsabbahy/goss/util"
 )
 
 type ServiceInit struct {
-	service string
-	alpine  bool
+	service  string
+	alpine   bool
+	runlevel string
 }
 
 func NewServiceInit(service string, system *System, config util.Config) Service {
@@ -18,7 +20,11 @@ func NewServiceInit(service string, system *System, config util.Config) Service 
 }
 
 func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
-	return &ServiceInit{service: service, alpine: true}
+	runlevel := config.RunLevel
+	if runlevel == "" {
+		runlevel = "sysinit"
+	}
+	return &ServiceInit{service: service, alpine: true, runlevel: runlevel}
 }
 
 func (s *ServiceInit) Service() string {
@@ -39,10 +45,24 @@ func (s *ServiceInit) Enabled() (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
+	var runLevels []string
+	var err error
 	if s.alpine {
-		return alpineInitServiceEnabled(s.service, "sysinit")
+		runLevels, err = alpineServiceRunLevels(s.service)
 	} else {
-		return initServiceEnabled(s.service, 3)
+		runLevels, err = initServiceRunLevels(s.service)
+	}
+	return len(runLevels) != 0, err
+}
+
+func (s *ServiceInit) RunLevels() ([]string, error) {
+	if invalidService(s.service) {
+		return nil, nil
+	}
+	if s.alpine {
+		return alpineServiceRunLevels(s.service)
+	} else {
+		return initServiceRunLevels(s.service)
 	}
 }
 
@@ -58,18 +78,34 @@ func (s *ServiceInit) Running() (bool, error) {
 	return false, nil
 }
 
-func initServiceEnabled(service string, level int) (bool, error) {
-	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc%d.d/S[0-9][0-9]%s", level, service))
-	if err == nil && matches != nil {
-		return true, nil
+func initServiceRunLevels(service string) ([]string, error) {
+	var runLevels []string
+	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc*.d/S[0-9][0-9]%s", service))
+	if err != nil {
+		return nil, err
 	}
-	return false, err
+	re := regexp.MustCompile("/etc/rc([0-9]+).d/")
+	for _, m := range matches {
+		matches := re.FindStringSubmatch(m)
+		if matches != nil {
+			runLevels = append(runLevels, matches[1])
+		}
+	}
+	return runLevels, nil
 }
 
-func alpineInitServiceEnabled(service string, level string) (bool, error) {
-	matches, err := filepath.Glob(fmt.Sprintf("/etc/runlevels/%s/%s", level, service))
-	if err == nil && matches != nil {
-		return true, nil
+func alpineServiceRunLevels(service string) ([]string, error) {
+	var runLevels []string
+	matches, err := filepath.Glob(fmt.Sprintf("/etc/runlevels/*/%s", service))
+	if err != nil {
+		return nil, err
 	}
-	return false, err
+	re := regexp.MustCompile("/etc/runlevels/([^/]+)")
+	for _, m := range matches {
+		matches := re.FindStringSubmatch(m)
+		if matches != nil {
+			runLevels = append(runLevels, matches[1])
+		}
+	}
+	return runLevels, nil
 }

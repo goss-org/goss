@@ -1,0 +1,13 @@
+---
+command:
+  "autoadd Administrator":
+    exit-status: 0
+    exec: release\goss-windows-amd64 --use-alpha=1 autoadd Administrator
+    stdout:
+      - 'user:'
+      - '  name: Administrator'
+    stderr: []
+    timeout: 5000
+
+    # needs implementation
+    skip: true

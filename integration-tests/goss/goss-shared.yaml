@@ -32,6 +32,7 @@ file:
     exists: true
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd
     sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+    sha512: 372864ab83187de41ca57c5c77cd4a99220ccadc8b8ddb18367893fd3e58764193a599edbf63a48c0c44f1e923606a00929b46de3bda1744fd722b9d42829206
   "/tmp/goss/foobar":
     exists: false
     contains: []
@@ -60,6 +61,13 @@ package:
     installed: true
     versions:
     - {{$ver}}
+{{end}}
+service:
+{{- range $name, $runlevels := index .Vars .Env.OS "services"}}
+  {{$name}}:
+    enabled: true
+    running: true
+    runlevels: {{toJson $runlevels}}
 {{end}}
 addr:
   tcp://google.com:22:
@@ -147,7 +155,6 @@ dns:
     resolvable: true
     addrs:
     - 127.0.0.1
-    - "::1"
     timeout: 2000
   dnstest.io:
     resolvable: true
@@ -180,6 +187,11 @@ interface:
       contain-element:
         have-prefix: '172.17'
 http:
+  {{ if index .Vars .Env.OS "proxy" }}
+  https://httpbin.org/anything:
+    status: 200
+    proxy: {{ index .Vars .Env.OS "proxy" }}
+  {{ end }}
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false
@@ -188,14 +200,42 @@ http:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
+  https://httpbin.org/headers?host:
+    status: 200
+    allow-insecure: false
+    timeout: 5000
+    request-headers:
+      # This is causing intermittent errors depending on the httpbin server hit
+      # need to see if there's a good way around this, maybe local httpbin?
+      #- "Host: example.com"
+      - "Host: httpbin.org"
+    headers: ["Content-Type: application/json"]
+    # body: ['"Host": "example.com"']
+    body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
     username: username
     password: secret
-  https://httpbin.org/basic-auth/username/secret:
+  https://httpbin.org/basic-auth/username/secret?failure:
     status: 401
     username: username
     password: wrong
+  https://httpbin.org/put:
+    status: 200
+    method: PUT
+    request-body: '{"key": "value"}'
+    body:
+      - '"key": "value"'
+  anything-with-get:
+    url: https://httpbin.org/anything
+    status: 200
+    body: []
+  anything-with-put:
+    url: https://httpbin.org/anything
+    status: 200
+    method: GET
+    request-body: "request-body"
+    body: ["request-body"]
 matching:
   has_substr:
     content: some string
@@ -235,3 +275,7 @@ matching:
     content: {{ .Vars.overwrite }}
     matches:
       match-regexp: bar
+  sping_basic:
+    content: {{ "hello!" | upper | repeat 5 }}
+    matches:
+      match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"

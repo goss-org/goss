@@ -1,0 +1,4 @@
+---
+file:
+  non-existent.txt:
+    exists: false

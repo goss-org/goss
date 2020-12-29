@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+
 	//"fmt"
 	"os/exec"
 	"syscall"
@@ -20,6 +21,7 @@ func NewCommand(name string, arg ...string) *Command {
 	command := new(Command)
 	command.name = name
 	command.Cmd = exec.Command(name, arg...)
+
 	return command
 }
 

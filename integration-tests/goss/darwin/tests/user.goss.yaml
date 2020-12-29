@@ -1,0 +1,13 @@
+---
+user:
+  travis:
+    exists: true
+    uid: 65534
+    gid: 65534
+    groups:
+    - _developers
+    home: /Users/travis
+    shell: /sbin/nologin
+
+    # TODO: needs implementation
+    skip: true

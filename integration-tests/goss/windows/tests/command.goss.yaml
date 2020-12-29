@@ -1,0 +1,30 @@
+---
+command:
+  hello world:
+    exit-status: 0
+    exec: "echo hello world"
+    stdout:
+    - hello world
+    stderr: []
+    timeout: 10000
+  wrap a powershell - expect 0 because travis does not restrict anonymous logins:
+    exec: powershell -noprofile -noninteractive -command (get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous
+    exit-status: 0
+    stdout:
+    - 0
+    stderr: []
+    timeout: 10000
+  wrap a powershell with quotes - expect 0 because travis does not restrict anonymous logins:
+    exec: powershell -noprofile -noninteractive -command "(get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous"
+    exit-status: 0
+    stdout:
+    - 0
+    stderr: []
+    timeout: 10000
+  powershell with quotes:
+    exec: powershell /c "(echo '{"b":2, "a":1}' | ConvertFrom-json).a"
+    exit-status: 0
+    stdout:
+    - "1"
+    stderr: []
+    timeout: 10000

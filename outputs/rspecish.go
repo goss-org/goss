@@ -11,6 +11,10 @@ import (
 
 type Rspecish struct{}
 
+func (r Rspecish) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 
@@ -49,8 +53,4 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 		return 1
 	}
 	return 0
-}
-
-func init() {
-	RegisterOutputer("rspecish", &Rspecish{}, []string{"include_raw"})
 }

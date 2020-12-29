@@ -1,0 +1,14 @@
+---
+file:
+  integration-tests\goss\testdata\static-file.txt:
+    exists: true
+    # mode: "0000"  # not applicable on Windows
+    # user: ""  # not applicable on Windows
+    # group: ""  # not applicable on Windows
+    size: 21
+    filetype: file
+    md5: dc9a07ca9789f866d21d544fe5651954
+    sha256: aa8b1b4a0d9bf174f5019c8f8a9568858ee2bdf8e0ad16aec54417d49b48df49
+    contains:
+      - "nothing to see here"
+      - "/nothing.*here/"

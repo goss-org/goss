@@ -1,0 +1,14 @@
+---
+command:
+  "autoadd /Users/travis":
+    exit-status: 0
+    exec: "release/goss-darwin-amd64 --use-alpha=1 autoadd /Users/travis"
+    stdout:
+      - 'file:'
+      - '  exists: true'
+      - '  filetype: directory'
+    stderr: []
+    timeout: 5000
+
+    # needs implementation
+    skip: true

@@ -2,12 +2,11 @@ package system
 
 import (
 	"fmt"
-	"math"
 	"strings"
-	"syscall"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/docker/docker/pkg/mount"
+	"github.com/moby/sys/mountinfo"
+	"github.com/thoas/go-funk"
 )
 
 type Mount interface {
@@ -23,7 +22,7 @@ type DefMount struct {
 	mountPoint string
 	loaded     bool
 	exists     bool
-	mountInfo  *mount.Info
+	mountInfo  *mountinfo.Info
 	usage      int
 	err        error
 }
@@ -79,8 +78,9 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
+	allOpts := strings.Split(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","), ",")
 
-	return strings.Split(m.mountInfo.Opts, ","), nil
+	return funk.UniqString(allOpts), nil
 }
 
 func (m *DefMount) Source() (string, error) {
@@ -96,7 +96,7 @@ func (m *DefMount) Filesystem() (string, error) {
 		return "", err
 	}
 
-	return m.mountInfo.Fstype, nil
+	return m.mountInfo.FSType, nil
 }
 
 func (m *DefMount) Usage() (int, error) {
@@ -107,30 +107,13 @@ func (m *DefMount) Usage() (int, error) {
 	return m.usage, nil
 }
 
-func getMount(mountpoint string) (*mount.Info, error) {
-	entries, err := mount.GetMounts()
+func getMount(mountpoint string) (*mountinfo.Info, error) {
+	entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
 	if err != nil {
 		return nil, err
 	}
-
-	// Search the table for the mountpoint
-	for _, e := range entries {
-		if e.Mountpoint == mountpoint {
-			return e, nil
-		}
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("Mountpoint not found")
 	}
-	return nil, fmt.Errorf("Mountpoint not found")
-}
-
-func getUsage(mountpoint string) (int, error) {
-	statfsOut := &syscall.Statfs_t{}
-	err := syscall.Statfs(mountpoint, statfsOut)
-	if err != nil {
-		return -1, err
-	}
-
-	percentageFree := float64(statfsOut.Bfree) / float64(statfsOut.Blocks)
-	usage := math.Round((1 - percentageFree) * 100)
-
-	return int(usage), nil
+	return entries[0], nil
 }

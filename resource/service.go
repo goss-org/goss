@@ -6,12 +6,13 @@ import (
 )
 
 type Service struct {
-	Title   string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Service string  `json:"-" yaml:"-"`
-	Enabled matcher `json:"enabled" yaml:"enabled"`
-	Running matcher `json:"running" yaml:"running"`
-	Skip    bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Service   string  `json:"-" yaml:"-"`
+	Enabled   matcher `json:"enabled" yaml:"enabled"`
+	Running   matcher `json:"running" yaml:"running"`
+	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	RunLevels matcher `json:"runlevels,omitempty" yaml:"runlevels,omitempty"`
 }
 
 func (s *Service) ID() string      { return s.Service }
@@ -29,8 +30,15 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
-	results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
+	if s.Enabled != nil {
+		results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
+	}
+	if s.Running != nil {
+		results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
+	}
+	if s.RunLevels != nil {
+		results = append(results, ValidateValue(s, "runlevels", s.RunLevels, sysservice.RunLevels, skip))
+	}
 	return results
 }
 

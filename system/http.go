@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -27,11 +28,14 @@ type DefHTTP struct {
 	noFollowRedirects bool
 	resp              *http.Response
 	RequestHeader     http.Header
+	RequestBody       string
 	Timeout           int
 	loaded            bool
 	err               error
 	Username          string
 	Password          string
+	Method            string
+	Proxy             string
 }
 
 func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
@@ -43,11 +47,14 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 	return &DefHTTP{
 		http:              httpStr,
 		allowInsecure:     config.AllowInsecure,
+		Method:            config.Method,
 		noFollowRedirects: config.NoFollowRedirects,
 		RequestHeader:     headers,
+		RequestBody:       config.RequestBody,
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
+		Proxy:             config.Proxy,
 	}
 }
 
@@ -66,9 +73,21 @@ func (u *DefHTTP) setup() error {
 	}
 	u.loaded = true
 
+	proxyURL := http.ProxyFromEnvironment
+	if u.Proxy != "" {
+		parseProxy, err := url.Parse(u.Proxy)
+
+		if err != nil {
+			return err
+		}
+
+		proxyURL = http.ProxyURL(parseProxy)
+	}
+
 	tr := &http.Transport{
 		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
 		DisableKeepAlives: true,
+		Proxy:             proxyURL,
 	}
 	client := &http.Client{
 		Transport: tr,
@@ -81,11 +100,16 @@ func (u *DefHTTP) setup() error {
 		}
 	}
 
-	req, err := http.NewRequest("GET", u.http, nil)
+	req, err := http.NewRequest(u.Method, u.http, strings.NewReader(u.RequestBody))
 	if err != nil {
 		return u.err
 	}
 	req.Header = u.RequestHeader.Clone()
+
+	if host := req.Header.Get("Host"); host != "" {
+		req.Host = host
+	}
+
 	if u.Username != "" || u.Password != "" {
 		req.SetBasicAuth(u.Username, u.Password)
 	}
@@ -112,6 +136,7 @@ func (u *DefHTTP) SetAllowInsecure(t bool) {
 func (u *DefHTTP) ID() string {
 	return u.http
 }
+
 func (u *DefHTTP) HTTP() string {
 	return u.http
 }

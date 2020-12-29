@@ -9,41 +9,52 @@ go:
   - 1.15.x
 
 os:
+  - osx
   - linux
+  - windows
 
 dist: trusty
+osx_image: xcode12.2
 
 services:
   - docker
 
+before_install:
+  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
+  # bash from macOS is too old to have readarray. Install newer version.
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
+
 install:
-  - go get -u golang.org/x/lint/golint
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
+  - ./ci/install.sh
 
 before_script:
-  - ./cc-test-reporter before-build
+  - ./ci/before-build.sh
 
 script:
-  - make all
+  - ./ci/build.sh
 
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -d
+  - ./ci/after-build.sh
 
 deploy:
   provider: releases
   token:
     secure: hEHCC4EN7iHz7pIWKRn2qw22NTqUxnuBp59wfAlLBtV26j5rHMzSu8mlxkJInusDUGLJiNLrZPRWN0mzOdIXalbUeLhlX7EflJgEj6Q0MchUR69LzCAp0KMIFL1Sfq0v81VgujRLUUy5utxDL8Er4tZknn2PpXAMzpO+ozjNRDhhSEM4iMXfY3bcOIMnx6XRgCjFCb036wlBgOfdgv5fwm2PP638DTKar4W6ZZbqCQByhJ5RyL3BMDPTT0moA/tYbG+FA6p6Rme1OcBkMnpsiJZoB3u8gxsNiEJ43/C2RcULW/18qqp2UVD5FipSDYP7GQ5ugKCbgpWXb0Ctl8o4hv1UsNl0XoyJhAt0PRp6vqnyy6LWB2FzX30Xj/vGIhO/IfiJvspHxpatTk7Esjr46K4u9ao/x63LX6F6yI1ZTfbzt2MhRYRjwh4ORNfqhysuzXChftX1S9hj6s6gO0/zqoOsRK/PK8DProbUn4bxrGOBzi16P0GEk4agWWUm74Pis9qCThXNW8MXEV936KvE1wb1RxTACYvFBtO2IM5eQ26t2Y7mGJd7FJup9LR4oUtUTSbYo5P2Sal6xntBKH5P4nwEtM+TtHoeSCKQ3X5i1VSdvAH7soEAly6rP5d5wwPhqqx9mgUPYO/3ulvxLJOYHamrbj6nlHDXnCEoj1ZMxX4=
   file:
+    - release/goss-darwin-amd64
+    - release/goss-darwin-amd64.sha256
     - release/goss-linux-amd64
     - release/goss-linux-amd64.sha256
     - release/goss-linux-386
     - release/goss-linux-386.sha256
     - release/goss-linux-arm
     - release/goss-linux-arm.sha256
+    - release/goss-windows-amd64.exe
+    - release/goss-windows-amd64.exe.sha256
     - extras/dgoss/dgoss
     - extras/dgoss/dgoss.sha256
   skip_cleanup: true
   on:
     repo: aelsabbahy/goss
     tags: true
+    condition: $TRAVIS_OS_NAME = linux

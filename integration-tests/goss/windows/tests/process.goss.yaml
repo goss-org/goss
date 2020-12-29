@@ -1,0 +1,8 @@
+---
+process:
+  'wininit.exe':
+    running: true
+
+  # note - must use .exe suffix on Windows currently
+  wininit:
+    running: false

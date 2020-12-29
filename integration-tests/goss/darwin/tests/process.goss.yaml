@@ -1,0 +1,4 @@
+---
+process:
+  bash:
+    running: true

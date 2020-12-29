@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -30,14 +31,18 @@ type Config struct {
 	ListenAddress     string
 	LocalAddress      string
 	MaxConcurrent     int
+	Method            string
 	NoColor           *bool
 	NoFollowRedirects bool
 	OutputFormat      string
 	OutputWriter      io.Writer
 	PackageManager    string
 	Password          string
+	RequestBody       string
+	Proxy             string
 	RequestHeader     []string
 	RetryTimeout      time.Duration
+	RunLevel          string
 	Server            string
 	Sleep             time.Duration
 	Spec              string
@@ -70,6 +75,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		OutputFormat:      "structured", // most appropriate for package usage
 		PackageManager:    "",
 		Password:          "",
+		Proxy:             "",
 		RequestHeader:     nil,
 		RetryTimeout:      0,
 		Server:            "",
@@ -192,6 +198,41 @@ func WithPackageManager(p string) ConfigOption {
 func WithDebug() ConfigOption {
 	return func(c *Config) error {
 		c.Debug = true
+		return nil
+	}
+}
+
+// WithVarsFile is a json or yaml file containing variables to pass to the validator
+func WithVarsFile(file string) ConfigOption {
+	return func(c *Config) error {
+		c.Vars = file
+		return nil
+	}
+}
+
+// WithVarsData uses v as variables to pass to the Validator
+func WithVarsData(v interface{}) ConfigOption {
+	return func(c *Config) error {
+		jv, err := json.Marshal(v)
+		if err != nil {
+			return err
+		}
+
+		c.VarsInline = string(jv)
+
+		return nil
+	}
+}
+
+// WithVarsBytes is a yaml or json byte stream to use as variables passed to the Validator
+func WithVarsBytes(v []byte) ConfigOption {
+	return WithVarsString(string(v))
+}
+
+// WithVarsString is a yaml or json string to use as variables passed to the Validator
+func WithVarsString(v string) ConfigOption {
+	return func(c *Config) error {
+		c.VarsInline = v
 		return nil
 	}
 }

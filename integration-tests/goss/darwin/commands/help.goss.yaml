@@ -1,0 +1,9 @@
+---
+command:
+  help:
+    exit-status: 0
+    exec: "release/goss-darwin-amd64 help"
+    stdout:
+      - alpha
+    stderr: []
+    timeout: 5000

@@ -85,3 +85,7 @@ func (s *ServiceSystemd) Running() (bool, error) {
 	}
 	return false, nil
 }
+
+func (s *ServiceSystemd) RunLevels() ([]string, error) {
+	return nil, nil
+}

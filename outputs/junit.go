@@ -15,6 +15,10 @@ import (
 
 type JUnit struct{}
 
+func (r JUnit) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
@@ -76,10 +80,6 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
-}
-
-func init() {
-	RegisterOutputer("junit", &JUnit{}, []string{})
 }
 
 func escapeString(str string) string {

@@ -1,0 +1,19 @@
+---
+# paths are relative to the goss file that includes the gossfile directive.
+gossfile:
+  addr.goss.yaml: {}
+  command.goss.yaml: {}
+  dns.goss.yaml: {}
+  file.goss.yaml: {}
+  # don't use gossfile; avoid self-referencing
+  # gossfile.goss.yaml: {}
+  group.goss.yaml: {}
+  http.goss.yaml: {}
+  interface.goss.yaml: {}
+  # kernel-param.na-goss.yaml: {}
+  mount.goss.yaml: {}
+  package.goss.yaml: {}
+  port.goss.yaml: {}
+  process.goss.yaml: {}
+  service.goss.yaml: {}
+  user.goss.yaml: {}
