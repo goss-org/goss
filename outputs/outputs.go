@@ -32,7 +32,6 @@ var (
 	outputersMu sync.Mutex
 	outputers   = map[string]Outputer{
 		"documentation": &Documentation{},
-		"json_oneline":  &JsonOneline{},
 		"json":          &Json{},
 		"junit":         &JUnit{},
 		"nagios":        &Nagios{},
@@ -40,6 +39,7 @@ var (
 		"structured":    &Structured{},
 		"tap":           &Tap{},
 		"silent":        &Silent{},
+		"bench":         &Bench{},
 	}
 	foPerfData   = "perfdata"
 	foVerbose    = "verbose"

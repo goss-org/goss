@@ -37,7 +37,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 			switch testResult.Result {
 			case resource.FAIL:
 				if util.IsValueInList(foVerbose, outConfig.FormatOptions) {
-					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult, true, includeRaw) + "\n"
+					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult(testResult, true, includeRaw) + "\n"
 				}
 				failed++
 			case resource.SKIP:

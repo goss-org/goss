@@ -21,7 +21,7 @@ func (r JUnit) ValidOptions() []*formatOption {
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
-	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	color.NoColor = true
 	var testCount, failed, skipped int

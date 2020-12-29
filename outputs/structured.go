@@ -47,7 +47,7 @@ func (s *StructureTestSummary) String() string {
 
 // Output processes output from tests into StructuredOutput written to w as a string
 func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
-	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 	result := &StructuredOutput{
 		Results: []StructuredTestResult{},
 		Summary: StructureTestSummary{},

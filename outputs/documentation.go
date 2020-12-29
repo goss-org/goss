@@ -17,7 +17,7 @@ func (r Documentation) ValidOptions() []*formatOption {
 
 func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
-	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult

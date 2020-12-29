@@ -11,8 +11,12 @@ import (
 
 type Bench struct{}
 
+func (r Bench) ValidOptions() []*formatOption {
+	return []*formatOption{}
+}
+
 func (r Bench) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
-	includeRaw := util.IsValueInList("include_raw", outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 	var testCount, skipped, failed int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -32,8 +36,4 @@ func (r Bench) Output(w io.Writer, results <-chan []resource.TestResult, startTi
 		return 1
 	}
 	return 0
-}
-
-func init() {
-	RegisterOutputer("bench", &Bench{}, []string{})
 }
