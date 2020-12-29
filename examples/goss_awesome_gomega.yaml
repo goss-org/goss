@@ -113,7 +113,7 @@ matching:
 
 
   test_gjson_transform:
-    content: '{"foo": "bar", "moo" {"nested": "cow"}, "count": "15"}'
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
     as-reader: true
     matches:
       gjson:
@@ -127,7 +127,7 @@ matching:
             - {not: {have-key: "nested2"}}
 
   test_gjson_using_this_and_equal:
-    content: '{"foo": "bar", "baz" "bing"}'
+    content: '{"foo": "bar", "baz": "bing"}'
     matches:
       gjson:
         '@this':

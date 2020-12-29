@@ -122,9 +122,9 @@ func (g Gjson) Transform(i interface{}) (interface{}, error) {
 		return nil, fmt.Errorf("Invalid json")
 	}
 	r := gjson.Get(s, g.Path)
-	//if !r.Exists() {
-	//	return nil, fmt.Errorf("gjson failed to find value at %s", g.Path)
-	//}
+	if !r.Exists() {
+		return nil, fmt.Errorf("Path not found: %s", g.Path)
+	}
 
 	return r.Value(), nil
 }
