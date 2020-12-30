@@ -27,6 +27,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	var perfdata, verbose bool
 	perfdata = util.IsValueInList(foPerfData, outConfig.FormatOptions)
 	verbose = util.IsValueInList(foVerbose, outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	var summary map[int]string
 	summary = make(map[int]string)
@@ -36,7 +37,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 			switch testResult.Result {
 			case resource.FAIL:
 				if util.IsValueInList(foVerbose, outConfig.FormatOptions) {
-					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult2(testResult) + "\n"
+					summary[failed] = "Fail " + strconv.Itoa(failed+1) + " - " + humanizeResult(testResult, true, includeRaw) + "\n"
 				}
 				failed++
 			case resource.SKIP:

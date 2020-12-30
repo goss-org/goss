@@ -20,13 +20,13 @@ func (f *FakeResource) GetMeta() meta { return meta{"foo": "bar"} }
 
 var stringTests = []struct {
 	in, in2 interface{}
-	want    bool
+	want    string
 }{
-	{"", "", true},
-	{"foo", "foo", true},
-	{"foo", "bar", false},
-	{"foo", "", false},
-	{true, true, true},
+	{"", "", SUCCESS},
+	{"foo", "foo", SUCCESS},
+	{"foo", "bar", FAIL},
+	{"foo", "", FAIL},
+	{true, true, SUCCESS},
 }
 
 func TestValidateValue(t *testing.T) {
@@ -35,8 +35,8 @@ func TestValidateValue(t *testing.T) {
 			return c.in2, nil
 		}
 		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
-		if got.Successful != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
+		if got.Result != c.want {
+			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
 	}
 }
@@ -47,8 +47,8 @@ func TestValidateValueErr(t *testing.T) {
 			return c.in2, fmt.Errorf("some err")
 		}
 		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
-		if got.Successful != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
+		if got.Result != FAIL {
+			t.Errorf("%+v: got %v, want %v", c, got.Result, FAIL)
 		}
 	}
 }
@@ -75,19 +75,19 @@ func BenchmarkValidateValue(b *testing.B) {
 }
 
 var containsTests = []struct {
-	in   []string
+	in   []interface{}
 	in2  string
-	want bool
+	want string
 }{
-	{[]string{""}, "", true},
-	{[]string{"foo"}, "foo\nbar", true},
-	{[]string{"!foo"}, "foo\nbar", false},
-	{[]string{"!moo"}, "foo\nbar", true},
-	{[]string{"/fo.*/"}, "foo\nbar", true},
-	{[]string{"!/fo.*/"}, "foo\nbar", false},
-	{[]string{"!/mo.*/"}, "foo\nbar", true},
-	{[]string{"foo"}, "", false},
-	{[]string{`/\s/tmp\b/`}, "test /tmp bar", true},
+	{[]interface{}{""}, "", SUCCESS},
+	{[]interface{}{"foo"}, "foo\nbar", SUCCESS},
+	{[]interface{}{"!foo"}, "foo\nbar", FAIL},
+	{[]interface{}{"!moo"}, "foo\nbar", SUCCESS},
+	{[]interface{}{"/fo.*/"}, "foo\nbar", SUCCESS},
+	{[]interface{}{"!/fo.*/"}, "foo\nbar", FAIL},
+	{[]interface{}{"!/mo.*/"}, "foo\nbar", SUCCESS},
+	{[]interface{}{"foo"}, "", FAIL},
+	{[]interface{}{`/\s/tmp\b/`}, "test /tmp bar", SUCCESS},
 }
 
 func TestValidateContains(t *testing.T) {
@@ -96,9 +96,9 @@ func TestValidateContains(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateContains(&FakeResource{""}, "", c.in, inFunc, false)
-		if got.Successful != c.want {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, c.want)
+		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		if got.Result != c.want {
+			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
 	}
 }
@@ -109,9 +109,9 @@ func TestValidateContainsErr(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, fmt.Errorf("some err")
 		}
-		got := ValidateContains(&FakeResource{""}, "", c.in, inFunc, false)
-		if got.Successful != false {
-			t.Errorf("%+v: got %v, want %v", c, got.Successful, false)
+		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		if got.Result != FAIL {
+			t.Errorf("%+v: got %v, want %v", c, got.Result, FAIL)
 		}
 	}
 }
@@ -121,7 +121,7 @@ func TestValidateContainsBadRegexErr(t *testing.T) {
 		reader := strings.NewReader("dummy")
 		return reader, nil
 	}
-	got := ValidateContains(&FakeResource{""}, "", []string{"/*\\.* @@.*/"}, inFunc, false)
+	got := ValidateValue(&FakeResource{""}, "", []interface{}{"/*\\.* @@.*/"}, inFunc, false)
 	if got.Err == nil {
 		t.Errorf("Expected bad regex to raise error, got nil")
 	}
@@ -133,7 +133,7 @@ func TestValidateContainsSkip(t *testing.T) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateContains(&FakeResource{""}, "", c.in, inFunc, true)
+		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, true)
 		if got.Result != SKIP {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, SKIP)
 		}

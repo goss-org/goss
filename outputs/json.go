@@ -24,6 +24,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var pretty bool
 	pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	color.NoColor = true
 	testCount := 0
@@ -31,11 +32,12 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	var resultsOut []map[string]interface{}
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
-			if !testResult.Successful {
+			if testResult.Result == resource.FAIL {
 				failed++
 			}
 			m := struct2map(testResult)
-			m["summary-line"] = humanizeResult(testResult)
+			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
+			m["summary-line-compact"] = humanizeResult(testResult, true, includeRaw)
 			m["duration"] = int64(m["duration"].(float64))
 			resultsOut = append(resultsOut, m)
 			testCount++

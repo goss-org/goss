@@ -19,8 +19,8 @@ type HTTP struct {
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
 	RequestBody       string   `json:"request-bod,omitemptyy" yaml:"request-body,omitempty"`
-	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Body              []string `json:"body" yaml:"body"`
+	Headers           matcher  `json:"headers,omitempty" yaml:"headers,omitempty"`
+	Body              matcher  `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
@@ -63,11 +63,11 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if len(u.Headers) > 0 {
-		results = append(results, ValidateContains(u, "Headers", u.Headers, sysHTTP.Headers, skip))
+	if isSet(u.Headers) {
+		results = append(results, ValidateGomegaValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if len(u.Body) > 0 {
-		results = append(results, ValidateContains(u, "Body", u.Body, sysHTTP.Body, skip))
+	if isSet(u.Body) {
+		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 
 	return results
@@ -80,7 +80,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		HTTP:              http,
 		Status:            status,
 		RequestHeader:     []string{},
-		Headers:           []string{},
+		Headers:           nil,
 		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,

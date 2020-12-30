@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/outputs"
+	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/util"
 )
 
@@ -85,7 +86,7 @@ func TestUseAsPackage(t *testing.T) {
 		for _, r := range rg {
 			found++
 
-			if r.Successful {
+			if r.Result == resource.SUCCESS {
 				passed++
 			}
 		}
@@ -111,7 +112,7 @@ func TestUseAsPackage(t *testing.T) {
 
 	okcount := 0
 	for _, r := range res.Results {
-		if r.Successful {
+		if r.Result == resource.SUCCESS {
 			okcount++
 		}
 	}

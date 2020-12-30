@@ -33,7 +33,7 @@
   * [process](#process)
   * [service](#service)
   * [user](#user)
-* [Patterns](#patterns)
+* [Matchers](#matchers)
 * [Advanced Matchers](#advanced-matchers)
 * [Templates](#templates)
 
@@ -461,7 +461,7 @@ addr:
 
 
 ### command
-Validates the exit-status and output of a command
+Validates the exit-status and output of a command. This can be used in combination with the [gjson](#gjson) matcher to create powerful goss custom tests.
 
 ```yaml
 command:
@@ -730,8 +730,6 @@ matching:
       baz: bing
     matches:
       and:
-        - have-key-with-value:
-            foo: bar
         - have-key: baz
 ```
 
@@ -820,91 +818,294 @@ user:
 **NOTE:** This check is inspecting the contents of local passwd file `/etc/passwd`, this does not validate remote users (e.g. LDAP).
 
 
-## Patterns
-For the attributes that use patterns (ex. `file`, `command` `output`), each pattern is checked against the attribute string, the type of patterns are:
+## Matchers
 
-* `"string"` - checks if any line contain string.
-* `"!string"` - inverse of above, checks that no line contains string
-* `"\\!string"` - escape sequence, check if any line contains `"!string"`
-* `"/regex/"` - verifies that line contains regex
-* `"!/regex/"` - inverse of above, checks that no line contains regex
+### Default Matchers
 
-**NOTE:** Pattern attributes do not support [Advanced Matchers](#advanced-matchers)
+Default matchers are determined by the attribute value received from the system.
 
-**NOTE:** Regex support is based on golang's regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
+#### Bool, Strings, Integers
+
+Bool, Strings and integers are compared using equality, for example:
+
+```yaml
+matching:
+  basic_string:
+    content: 'foo'
+    matches: 'foo'
+
+user:
+  nfsnobody:
+    exists: true
+    uid: 65534
+```
+
+#### Arrays
+
+Arrays are treated as a [contains-elements](#array-matchers) by default, this validates that the expected test is a subset of the returned system state.
+
+```yaml
+matching:
+  basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      - 'group1'
+      - 'group2'
+
+  # This fails, since the returned result and it's no longer a subset
+  basic_array_failing:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      - 'group1'
+      - 'group2'
+      - 'group2' # this 2nd group2 is not in the returned content
+```
+
+#### io.Readers
+
+This is the most magical matcher for goss. It remains a default for historic and performance reasons. Some attributes return an io.Reader that is read line by line (ex. file content, command, http body). This allows goss to validate large files/content efficiently.
+
+
+Each pattern is checked against the attribute output, the type of patterns are:
+
+* `"foo"` - checks if any line contains `foo`
+* `"!foo"` - inverse of above, checks that no line contains `foo`
+* `"\\!foo"` - escape sequence, check if any line contains `!string`
+* `"/[Rr]egex/"` - verifies that line matches regex
+* `"!/[Rr]egex/"` - inverse of above, checks that no line matches regex
+
+**NOTE:** Regex support is based on Golang's regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
 
 **NOTE:** You will **need** the double backslash (`\\`) escape for Regex special entities, for example `\\s` for blank spaces.
 
-### Example
-```bash
-$ cat /tmp/test.txt
-found
-!alsofound
+Example:
 
-
-$ cat goss.yaml
+```yaml
 file:
   /tmp/test.txt:
     exists: true
     contains:
-    - found
-    - /fou.d/
-    - "\\!alsofound"
-    - "!missing"
-    - "!/mis.ing/"
+    - "foo"
+    - "!bar"
+    - "/[Gg]oss/"
+```
 
-$ goss validate
-..
+The above can be expressed as:
+
+```yaml
+file:
+  /tmp/test.txt:
+    exists: true
+    contains:
+      and:
+        - contain-element: "foo"
+        - not: {contain-element: "bar"}
+        - contain-element: {match-regexp: "[Gg]oss"}
+
+```
+
+### Transforms
+
+If the system state type and the expected type don't match, goss will attempt to transform the system state type before matching it.
+
+For example, kernel-param attribute returns a string, however, it can be tested using numeric comparisons:
+
+Example kernel-param test:
+```yaml
+kernel-param:
+  net.core.somaxconn:
+      value: "128"
+```
+
+Example (failing) kernel-param test with transform:
+```yaml
+kernel-param:
+  net.core.somaxconn:
+      value: {gt: 200}
+```
+
+When a transformed test fails, it will detail the transformers used, the `-o include_raw` option can be used to include the raw, untransformed attribute value:
+```
+$ goss v
+F
+
+Failures/Skipped:
+
+KernelParam: net.core.somaxconn: value:
+Expected
+    128
+to be >
+    200
+the transform chain was
+    [{"to-numeric":{}}]
 
 Total Duration: 0.001s
-Count: 2, Failed: 0
+Count: 1, Failed: 1, Skipped: 0
+
+
+$ goss v -o include_raw
+F
+
+Failures/Skipped:
+
+KernelParam: net.core.somaxconn: value:
+Expected
+    128
+to be >
+    200
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "128"
+
+Total Duration: 0.001s
+Count: 1, Failed: 1, Skipped: 0
+
 ```
 
-## Advanced Matchers
-Goss supports advanced matchers by converting json input to [gomega](https://onsi.github.io/gomega/) matchers.
+### Advanced Matchers
 
-### Examples
+Goss supports advanced matchers by converting YAML input to [gomega](https://onsi.github.io/gomega/) matchers.
 
-Validate that user `nobody` has a `uid` that is less than `500` and that they are **only** a member of the `nobody` group.
+#### String Matchers
 
+These will convert the system attribute to a string prior to matching.
+
+* `'55'` - Checks that the numeric is "55" when converted to string
+* `have-prefix: pre` - Checks if string starts with "pre"
+* `have-suffix: suf` - Checks if string ends with "suf"
+* `match-regexp: '.*'` - Checks if string matches regexp
+* `contain-substring: '2'` - Checks if string contains "2"
+
+Example:
 ```yaml
-user:
-  nobody:
-    exists: true
-    uid:
-      lt: 500
-    groups:
-      consist-of: [nobody]
-```
-
-Matchers can be nested for more complex logic, for example you can ensure that you have 3 kernel versions installed and none of them are `4.1.0`:
-
-```yaml
-package:
-  kernel:
-    installed: true
-    versions:
+matching:
+  example:
+    content: 42
+    matches:
       and:
-        - have-len: 3
-        - not:
-            contain-element: "4.1.0"
+        - '42'
+        - have-prefix: '4'
+        - have-suffix: '2'
+        - match-regexp: '\d{2}'
+        - contain-substring: '2'
 ```
 
-Custom semver matcher is available under `semver-constraint`:
+#### Numeric matchers
 
+These will convert the system attribute to a numeric prior to matching.
+
+* `42` - If the expected type is a number
+* `gt, ge, lt, le` - Greater than, greater than or equal, less than, etc..
+
+Example:
 ```yaml
-example:
-  content:
-    - 1.0.1
-    - 1.9.9
-  matches:
-    semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+matching:
+  example:
+    content: "42"
+    matches:
+      and:
+        - 42
+        - 42.0
+        - gt: 40
+        - lt: 45
 ```
 
-For more information see:
-* [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
-* [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference
-* [semver](https://github.com/blang/semver#ranges) - Semver constraint (or range) syntax
+#### Array matchers
+
+These will convert the system attribute to an array prior to matching. Strings are split on "\n"
+
+
+* `contain-element: matcher` - Checks if the array contains an element that passes the matcher
+* `contain-elements: [matcher, ...]` - checks if the array is a superset of the provided matchers
+* `[matcher, ...]` - same as above
+* `equal: [value, ...]` - Checks if the array is exactly equal to provided array
+* `consist-of: [matcher, ...]` - Checks if the array consists of the provided matchers (order does not matter)
+
+Example:
+```yaml
+matching:
+  example:
+    content: [foo, bar, moo]
+    matches:
+      and:
+        - contain-elements: [foo, bar]
+        - [foo, bar] # same as above
+        - equal: [foo, bar, moo] # order matters, exact match
+        - consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        - contain-element:
+            have-prefix: b
+```
+
+#### Misc matchers
+
+These matchers don't really fall into any of the above categories, or span multiple categories.
+
+* `equal` - Useful when needing to override a default matcher
+* `have-len: 3` - Checks if the array/string/map has length of 3
+* `have-key: "foo"` - Checks if key exists in map, useful with `gjson`
+* `not: matcher` - Checks that a matcher does not match
+* `and: [matcher, ..]` - Checks that all matchers match
+* `or: [matcher, ..]` - Checks that any matchers match
+    * when system returns a string it is converted into a one element array and matched
+
+See the following for examples: [link..]fixme
+
+##### semver-constraint
+
+Checks that all versions match semver constraint or range syntax. This uses [semver](https://github.com/blang/semver) under the hood, however, wildcards (e.g. `1.X` are not officially supported and may go away in a future release.
+
+Example:
+```yaml
+matching:
+  semver:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver2:
+    content:
+      - 1.0.1
+      - 1.5.0
+      - 1.9.9
+    matches:
+      not:
+        semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver3:
+    content: 1.0.1
+    matches:
+      semver-constraint: ">5.0.0 || < 1.5.0"
+```
+
+
+##### gjson
+
+Checks extracted [gjson](https://gjson.dev/) passes the matcher
+
+Example:
+```yaml
+matching:
+  example:
+    content: '{"foo": "bar", "moo" {"nested": "cow"}, "count": "15"}'
+    matches:
+      gjson:
+        moo.nested: cow
+        foo: {have-prefix: b}
+        count: {le: 25}
+        '@this': {have-key: "foo"}
+        moo:
+          and:
+            - {have-key: "nested"}
+            - {not: {have-key: "nested2"}}
+```
+
 
 ## Templates
 

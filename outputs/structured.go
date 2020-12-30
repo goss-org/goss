@@ -22,7 +22,8 @@ func (r Structured) ValidOptions() []*formatOption {
 // StructuredTestResult is an individual test result with additional human friendly summary
 type StructuredTestResult struct {
 	resource.TestResult
-	SummaryLine string `json:"summary-line"`
+	SummaryLine        string `json:"summary-line"`
+	SummaryLineCompact string `json:"summary-line-compact"`
 }
 
 // StructureTestSummary holds summary information about a test run
@@ -46,6 +47,7 @@ func (s *StructureTestSummary) String() string {
 
 // Output processes output from tests into StructuredOutput written to w as a string
 func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 	result := &StructuredOutput{
 		Results: []StructuredTestResult{},
 		Summary: StructureTestSummary{},
@@ -54,11 +56,12 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			r := StructuredTestResult{
-				TestResult:  testResult,
-				SummaryLine: humanizeResult(testResult),
+				TestResult:         testResult,
+				SummaryLine:        humanizeResult(testResult, false, includeRaw),
+				SummaryLineCompact: humanizeResult(testResult, true, includeRaw),
 			}
 
-			if !testResult.Successful {
+			if testResult.Result == resource.FAIL {
 				result.Summary.Failed++
 			}
 

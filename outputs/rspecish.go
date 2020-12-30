@@ -44,7 +44,9 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	fmt.Fprint(w, "\n\n")
-	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped))
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+
+	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
 
 	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
 	if failed > 0 {

@@ -3,8 +3,8 @@
 dgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker containers.
 
 ## Examples and Tutorials
-* [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Introduction to dgoss tutorial
-* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) - Same as above, but in written format
+* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) - Introduction to dgoss tutorial
+* [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Same as above, but in video format
 * [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate docker images
 
 ## Installation

@@ -77,12 +77,12 @@ func (t *TmplVars) Env() map[string]string {
 func loadVars(varsFile string, varsInline string) (map[string]interface{}, error) {
 	vars, err := varsFromFile(varsFile)
 	if err != nil {
-		return nil, fmt.Errorf("Error: loading vars file '%s'\n%w", varsFile, err)
+		return nil, fmt.Errorf("loading vars file '%s'\n%w", varsFile, err)
 	}
 
 	varsExtra, err := varsFromString(varsInline)
 	if err != nil {
-		return nil, fmt.Errorf("Error: loading inline vars\n%w", err)
+		return nil, fmt.Errorf("loading inline vars\n%w", err)
 	}
 
 	for k, v := range varsExtra {
@@ -143,7 +143,7 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	}
 
 	format := outStoreFormat
-	if detectFormat == true {
+	if detectFormat {
 		format, err = getStoreFormatFromData(data)
 		if err != nil {
 			return GossConfig{}, err
@@ -311,10 +311,5 @@ func marshalYAML(gossConfig interface{}) ([]byte, error) {
 }
 
 func unmarshalYAML(data []byte, v interface{}) error {
-	err := yaml.Unmarshal(data, v)
-	if err != nil {
-		return fmt.Errorf("could not unmarshal %q as YAML data: %s", string(data), err)
-	}
-
-	return nil
+	return yaml.Unmarshal(data, v)
 }

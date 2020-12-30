@@ -11,20 +11,23 @@ require (
 	github.com/cheekybits/genny v1.0.0
 	github.com/fatih/color v1.10.0
 	github.com/go-ole/go-ole v1.2.4 // indirect
-	github.com/google/uuid v1.1.1 // indirect
-	github.com/huandu/xstrings v1.3.0 // indirect
-	github.com/imdario/mergo v0.3.8 // indirect
+	github.com/google/uuid v1.1.2 // indirect
+	github.com/huandu/xstrings v1.3.2 // indirect
+	github.com/icza/dyno v0.0.0-20200205103839-49cb13720835
+	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/miekg/dns v1.1.35
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/moby/sys/mountinfo v0.4.0
-	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
+	github.com/oleiade/reflections v1.0.1
 	github.com/onsi/gomega v1.10.4
-	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
+	github.com/opencontainers/runc v0.1.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/shirou/gopsutil v2.20.6+incompatible
+	github.com/shirou/gopsutil v3.20.11+incompatible
 	github.com/stretchr/testify v1.6.1
 	github.com/thoas/go-funk v0.7.0
-	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
+	github.com/tidwall/gjson v1.6.7
+	github.com/urfave/cli v1.22.5
+	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 

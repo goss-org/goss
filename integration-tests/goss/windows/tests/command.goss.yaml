@@ -11,14 +11,14 @@ command:
     exec: powershell -noprofile -noninteractive -command (get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous
     exit-status: 0
     stdout:
-    - 0
+    - "0"
     stderr: []
     timeout: 10000
   wrap a powershell with quotes - expect 0 because travis does not restrict anonymous logins:
     exec: powershell -noprofile -noninteractive -command "(get-itemproperty -path 'HKLM:/SYSTEM/CurrentControlSet/Control/Lsa/').restrictanonymous"
     exit-status: 0
     stdout:
-    - 0
+    - "0"
     stderr: []
     timeout: 10000
   powershell with quotes:

@@ -3,6 +3,7 @@ package resource
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"reflect"
 	"strings"
 
@@ -11,11 +12,12 @@ import (
 )
 
 type Matching struct {
-	Title   string      `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Content interface{} `json:"content,omitempty" yaml:"content,omitempty"`
-	Id      string      `json:"-" yaml:"-"`
-	Matches matcher     `json:"matches" yaml:"matches"`
+	Title    string      `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Content  interface{} `json:"content,omitempty" yaml:"content,omitempty"`
+	AsReader bool        `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
+	Id       string      `json:"-" yaml:"-"`
+	Matches  matcher     `json:"matches" yaml:"matches"`
 }
 
 type MatchingMap map[string]*Matching
@@ -30,9 +32,17 @@ func (r *Matching) GetMeta() meta    { return r.Meta }
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false
 
-	// ValidateValue expects a function
-	stub := func() (interface{}, error) {
-		return a.Content, nil
+	var stub interface{}
+	if a.AsReader {
+		// ValidateValue expects a function
+		stub = func() (io.Reader, error) {
+			return strings.NewReader(a.Content.(string)), nil
+		}
+	} else {
+		// ValidateValue expects a function
+		stub = func() (interface{}, error) {
+			return a.Content, nil
+		}
 	}
 
 	var results []TestResult

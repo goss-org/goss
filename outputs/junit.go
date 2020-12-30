@@ -21,6 +21,7 @@ func (r JUnit) ValidOptions() []*formatOption {
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	color.NoColor = true
 	var testCount, failed, skipped int
@@ -42,10 +43,10 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 				"time=\"" + duration + "\">\n"
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</system-err>\n"
 				summary[testCount] += "<failure>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</failure>\n</testcase>\n"
 
 				failed++
@@ -55,7 +56,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 					skipped++
 				}
 				summary[testCount] += "<system-out>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</system-out>\n</testcase>\n"
 			}
 			testCount++

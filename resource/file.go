@@ -6,21 +6,21 @@ import (
 )
 
 type File struct {
-	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Path     string   `json:"-" yaml:"-"`
-	Exists   matcher  `json:"exists" yaml:"exists"`
-	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
-	Size     matcher  `json:"size,omitempty" yaml:"size,omitempty"`
-	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
-	Group    matcher  `json:"group,omitempty" yaml:"group,omitempty"`
-	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
-	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
-	Contains []string `json:"contains" yaml:"contains"`
-	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
-	Sha256   matcher  `json:"sha256,omitempty" yaml:"sha256,omitempty"`
-	Sha512   matcher  `json:"sha512,omitempty" yaml:"sha512,omitempty"`
-	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Path     string  `json:"-" yaml:"-"`
+	Exists   matcher `json:"exists" yaml:"exists"`
+	Mode     matcher `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Size     matcher `json:"size,omitempty" yaml:"size,omitempty"`
+	Owner    matcher `json:"owner,omitempty" yaml:"owner,omitempty"`
+	Group    matcher `json:"group,omitempty" yaml:"group,omitempty"`
+	LinkedTo matcher `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
+	Filetype matcher `json:"filetype,omitempty" yaml:"filetype,omitempty"`
+	Contains matcher `json:"contains" yaml:"contains"`
+	Md5      matcher `json:"md5,omitempty" yaml:"md5,omitempty"`
+	Sha256   matcher `json:"sha256,omitempty" yaml:"sha256,omitempty"`
+	Sha512   matcher `json:"sha512,omitempty" yaml:"sha512,omitempty"`
+	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 func (f *File) ID() string      { return f.Path }
@@ -57,8 +57,8 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	if f.Filetype != nil {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
-	if len(f.Contains) > 0 {
-		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains, skip))
+	if isSet(f.Contains) {
+		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contains, skip))
 	}
 	if f.Size != nil {
 		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
@@ -109,11 +109,6 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	if !contains(config.IgnoreList, "filetype") {
 		if filetype, err := sysFile.Filetype(); err == nil {
 			f.Filetype = filetype
-		}
-	}
-	if !contains(config.IgnoreList, "size") {
-		if size, err := sysFile.Size(); err == nil {
-			f.Size = size
 		}
 	}
 	return f, nil
