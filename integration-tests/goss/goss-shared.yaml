@@ -172,6 +172,7 @@ mount:
     opts:
     - rw
     - nosuid
+    - mode=755
     source: tmpfs
     filesystem: tmpfs
   "/":

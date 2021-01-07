@@ -78,7 +78,7 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
-	allOpts := strings.Split(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","), ",")
+	allOpts := splitMountInfo(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","))
 
 	return funk.UniqString(allOpts), nil
 }
@@ -116,4 +116,14 @@ func getMount(mountpoint string) (*mountinfo.Info, error) {
 		return nil, fmt.Errorf("Mountpoint not found")
 	}
 	return entries[0], nil
+}
+
+func splitMountInfo(s string) []string {
+	quoted := false
+	return strings.FieldsFunc(s, func(r rune) bool {
+		if r == '"' {
+			quoted = !quoted
+		}
+		return !quoted && r == ','
+	})
 }

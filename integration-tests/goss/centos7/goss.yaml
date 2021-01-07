@@ -29,15 +29,3 @@ process:
     running: true
 gossfile:
   ../goss-s*.yaml: {}
-mount:
-  /dev:
-    exists: true
-    opts:
-    - rw
-    - nosuid
-    - context="system_u:object_r:container_file_t:s0:c321
-    - c460"
-    - size=65536k
-    - mode=755
-    source: tmpfs
-    filesystem: tmpfs
