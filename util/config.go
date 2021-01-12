@@ -64,7 +64,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		AnnounceToCLI:     false,
 		Cache:             5 * time.Second,
 		Debug:             false,
-		LogLevel:          "WARN",
+		LogLevel:          "FATAL",
 		Endpoint:          "/healthz",
 		FormatOptions:     []string{},
 		IgnoreList:        []string{},
