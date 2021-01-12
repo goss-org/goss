@@ -21,7 +21,7 @@ services:
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
   # bash from macOS is too old to have readarray. Install newer version.
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew search bash ; brew install --build-from-source bash; fi
 
 install:
   - ./ci/install.sh
