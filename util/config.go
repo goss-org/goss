@@ -74,7 +74,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		DisabledResourceTypes: []string{},
 		ListenAddress:         ":8080",
 		LocalAddress:          "",
-		LogLevel:              "WARN",
+		LogLevel:              "FATAL",
 		MaxConcurrent:         50,
 		NoColor:               nil,
 		NoFollowRedirects:     false,

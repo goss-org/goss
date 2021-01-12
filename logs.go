@@ -26,7 +26,7 @@ func setLogLevel(c *util.Config) error {
 		return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
 	}
 	filter.MinLevel = logutils.LogLevel(c.LogLevel)
-	log.Printf("Setting log level to %v", c.LogLevel)
 	log.SetOutput(filter)
+	log.Printf("[DEBUG] Setting log level to %v", c.LogLevel)
 	return nil
 }
