@@ -31,7 +31,18 @@ else
     arch="386"
 fi
 
-url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$arch"
+os=""
+url=""
+if [ "$(uname -s)" = "Linux" ]; then
+    os="linux"
+    url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$arch"
+elif [ "$(uname -s)" = "Darwin" ]; then
+    os="darwin"
+    url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-alpha-$os-$arch"
+else
+    os="windows"
+    url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-alpha-$os-$arch.exe"
+fi
 
 echo "Downloading $url"
 curl -L "$url" -o "$INSTALL_LOC"
