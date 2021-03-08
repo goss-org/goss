@@ -101,3 +101,6 @@ Strategy used for copying goss files into the docker container. If set to `'moun
 
 ##### CONTAINER_LOG_OUTPUT
 Location of the file that contains tested container logs. Logs are retained only if the variable is set to a non-empty string. (Default `''`)
+
+##### DGOSS_TEMP_DIR
+Location of the temporary directory used by dgoss. (Default `'$(mktemp -d /tmp/tmp.XXXXXXXXXX)'`)

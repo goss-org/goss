@@ -70,7 +70,7 @@ get_docker_file() {
 }
 
 # Main
-tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
+tmp_dir=$(mktemp -d ${DGOSS_TEMP_DIR:-/tmp}/tmp.XXXXXXXXXX)
 chmod 777 "$tmp_dir"
 trap 'ret=$?;cleanup;exit $ret' EXIT
 
