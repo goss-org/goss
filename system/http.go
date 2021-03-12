@@ -34,6 +34,7 @@ type DefHTTP struct {
 	err               error
 	Username          string
 	Password          string
+	ClientCertAuth    util.ClientCertAuthConfig
 	Method            string
 	Proxy             string
 }
@@ -54,6 +55,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
+		ClientCertAuth:    config.ClientCertAuth,
 		Proxy:             config.Proxy,
 	}
 }
@@ -84,8 +86,22 @@ func (u *DefHTTP) setup() error {
 		proxyURL = http.ProxyURL(parseProxy)
 	}
 
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: u.allowInsecure,
+		Renegotiation:      tls.RenegotiateFreelyAsClient,
+	}
+
+	if u.ClientCertAuth.Cert != "" && u.ClientCertAuth.PrivateKey != "" {
+		cert, err := tls.LoadX509KeyPair(u.ClientCertAuth.Cert, u.ClientCertAuth.PrivateKey)
+		if err != nil {
+			return err
+		}
+
+		tlsConfig.Certificates = []tls.Certificate{cert}
+	}
+
 	tr := &http.Transport{
-		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
+		TLSClientConfig:   tlsConfig,
 		DisableKeepAlives: true,
 		Proxy:             proxyURL,
 	}

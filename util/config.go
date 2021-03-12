@@ -14,6 +14,13 @@ import (
 // ConfigOption manipulates Config
 type ConfigOption func(c *Config) error
 
+// ClientCertAuthConfig is the configuration object
+// for TLS client cert authn
+type ClientCertAuthConfig struct {
+	Cert       string
+	PrivateKey string
+}
+
 // Config is the runtime configuration for the goss system, the cli.Context gets
 // converted to this and it allows other packages to embed goss by creating this
 // structure and using it when adding, validating etc.
@@ -47,6 +54,7 @@ type Config struct {
 	Spec              string
 	Timeout           time.Duration
 	Username          string
+	ClientCertAuth    ClientCertAuthConfig
 	Vars              string
 	VarsInline        string
 }
