@@ -47,6 +47,9 @@ When running in debug mode, the tmp dir with the container output will not be cl
 
 `DEBUG=true dcgoss edit db`
 
+##### GOSS_TMPDIR
+Location of the tmp dir used. (Default: `$(mktemp -d /tmp/tmp.XXXXXXXXXX)`)
+
 ##### GOSS_PATH
 Location of the goss binary to use. (Default: `$(which goss)`)
 

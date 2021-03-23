@@ -18,7 +18,7 @@ error() {
 cleanup() {
     set +e
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
-    [ "$DEBUG" ] || rm -rf "$tmp_dir"
+    [ "$DEBUG" ] || rm -rf "${GOSS_TMPDIR}"
     if [[ -n "$service" ]]; then
         info "Stopping container"
         docker-compose stop > /dev/null
@@ -27,29 +27,29 @@ cleanup() {
 
 run(){
     # Copy in goss
-    cp "${GOSS_PATH}" "$tmp_dir/goss"
-    chmod 755 "$tmp_dir/goss"
-    [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" "$tmp_dir"
-    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/goss_wait.yaml" "$tmp_dir"
-    [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_VARS}" "$tmp_dir"
+    cp "${GOSS_PATH}" "${GOSS_TMPDIR}/goss"
+    chmod 755 "${GOSS_TMPDIR}/goss"
+    [[ -e "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}" "${GOSS_TMPDIR}"
+    [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/goss_wait.yaml" "${GOSS_TMPDIR}"
+    [[ -n "${GOSS_VARS}" ]] && [[ -e "${GOSS_FILES_PATH}/${GOSS_VARS}" ]] && install -m ugo+rw "${GOSS_FILES_PATH}/${GOSS_VARS}" "${GOSS_TMPDIR}"
 
     # Switch between mount or cp files strategy
     GOSS_FILES_STRATEGY=${GOSS_FILES_STRATEGY:="mount"}
     case "$GOSS_FILES_STRATEGY" in
       mount)
         info "Starting docker container"
-        docker-compose run -d -T --name "$service" -v "$tmp_dir:/goss" --rm "${@:2}"
+        docker-compose run -d -T --name "$service" -v "${GOSS_TMPDIR}:/goss" --rm "${@:2}"
         ;;
       cp)
         info "Creating docker container"
         docker-compose run -d -T --name "$service" --rm "${@:2}" > /dev/null
         info "Copy goss files into container"
-        docker cp "$tmp_dir/." "$service:/goss"
+        docker cp "${GOSS_TMPDIR}/." "$service:/goss"
         ;;
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
 
-    docker logs -f "$service" > "$tmp_dir/docker_output.log" 2>&1 &
+    docker logs -f "$service" > "${GOSS_TMPDIR}/docker_output.log" 2>&1 &
     log_pid="$!"
     info "Container name: $service"
 }
@@ -65,8 +65,13 @@ get_docker_file() {
 }
 
 # Main
-tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
-chmod 777 "$tmp_dir"
+if [[ "$GOSS_TMPDIR" ]]; then
+    mkdir -p "${GOSS_TMPDIR}"
+else
+    GOSS_TMPDIR="$(mktemp -d /tmp/tmp.XXXXXXXXXX)"
+fi
+
+chmod 777 "${GOSS_TMPDIR}"
 # shellcheck disable=SC2154
 trap 'ret=$?; cleanup; info "Test ran for a total of $SECONDS seconds"; exit $ret' EXIT
 service="$2"
