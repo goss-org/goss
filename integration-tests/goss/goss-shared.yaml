@@ -274,3 +274,9 @@ matching:
     content: {{ "hello!" | upper | repeat 5 }}
     matches:
       match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
+gossfile:
+  "nonexistent-file.yaml":
+    skip: true
+  bypath:
+    file: "goss-dummy.yaml"
+
