@@ -585,10 +585,18 @@ Import other gossfiles from this one. This is the best way to maintain a large n
 
 ```yaml
 gossfile:
+  myapplication:
+    file: myapp_gossfile.yaml
+    skip: false
+  *.yaml:
+    skip: true
   goss_httpd.yaml: {}
   /etc/goss.d/*.yaml: {}
 ```
 
+You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.  
+
+If the 'skip' attribute is true, then the file is not processed.  If the filename is a glob pattern, then none of the matching files are processed.  Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented.  Skipping a gossfile include is the same as omitting the gossfile resource entirely.
 
 ### group
 Validates the state of a group
