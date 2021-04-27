@@ -13,8 +13,12 @@ seccomp_opts() {
   local docker_ver minor_ver
   docker_ver=$(docker version -f '{{.Client.Version}}')
   minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  if ((minor_ver>=10)); then
-    echo '--security-opt seccomp:unconfined'
+  major_ver=$(cut -d'.' -f1 <<<$docker_ver)
+  if ((minor_ver>=10))||((major_ver>18)); then
+    echo ' --security-opt seccomp:unconfined '
+  fi
+  if ((major_ver>18)); then
+    echo ' --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro '
   fi
 }
 
