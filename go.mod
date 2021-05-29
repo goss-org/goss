@@ -17,7 +17,7 @@ require (
 	github.com/miekg/dns v1.1.35
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
-	github.com/onsi/gomega v1.10.4
+	github.com/onsi/gomega v1.13.0
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.6.1
