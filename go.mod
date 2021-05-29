@@ -10,7 +10,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v1.0.0
 	github.com/docker/docker v1.13.1
-	github.com/fatih/color v1.10.0
+	github.com/fatih/color v1.12.0
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
