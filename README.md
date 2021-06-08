@@ -33,7 +33,7 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 
 **Note:** For macOS and Windows, see: [platform-feature-parity].
 
-This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
+This will install goss, [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss), [dcgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dcgoss) and [kgoss](https://github.com/aelsabbahy/goss/tree/master/extras/kgoss).
 
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
 
@@ -54,9 +54,15 @@ curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-a
 chmod +rx /usr/local/bin/goss
 
 curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dcgoss -o /usr/local/bin/dcgoss
+curl -L https://github.com/aelsabbahy/goss/releases/latest/download/kgoss -o /usr/local/bin/kgoss
 # Alternatively, using the latest master
 # curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dcgoss/dcgoss -o /usr/local/bin/dcgoss
+# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/kgoss/kgoss -o /usr/local/bin/kgoss
 chmod +rx /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dcgoss
+chmod +rx /usr/local/bin/kgoss
 ```
 
 #### Specific Version
@@ -70,7 +76,11 @@ chmod +rx /usr/local/bin/goss
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 VERSION=v0.3.10
 curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dcgoss" -o /usr/local/bin/dcgoss
+curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/kgoss" -o /usr/local/bin/kgoss
 chmod +rx /usr/local/bin/dgoss
+chmod +rx /usr/local/bin/dcgoss
+chmod +rx /usr/local/bin/kgoss
 ```
 
 ### Build it yourself

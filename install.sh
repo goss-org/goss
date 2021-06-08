@@ -7,11 +7,11 @@ LATEST_URL="https://github.com/aelsabbahy/goss/releases/latest"
 LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
 LATEST=${LATEST_EFFECTIVE##*/}
 
-DGOSS_VER=$GOSS_VER
+EXTRA_VER=$GOSS_VER
 
 if [ -z "$GOSS_VER" ]; then
     GOSS_VER=${GOSS_VER:-$LATEST}
-    DGOSS_VER='master'
+    EXTRA_VER='master'
 fi
 if [ -z "$GOSS_VER" ]; then
     echo "ERROR: Could not automatically detect latest version, set GOSS_VER env var and re-run"
@@ -19,7 +19,6 @@ if [ -z "$GOSS_VER" ]; then
 fi
 GOSS_DST=${GOSS_DST:-/usr/local/bin}
 INSTALL_LOC="${GOSS_DST%/}/goss"
-DGOSS_INSTALL_LOC="${GOSS_DST%/}/dgoss"
 touch "$INSTALL_LOC" || { echo "ERROR: Cannot write to $GOSS_DST set GOSS_DST elsewhere or use sudo"; exit 1; }
 
 arch=""
@@ -40,9 +39,18 @@ echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
 "$INSTALL_LOC" --version
 
-dgoss_url="https://raw.githubusercontent.com/aelsabbahy/goss/$DGOSS_VER/extras/dgoss/dgoss"
-echo "Downloading $dgoss_url"
-curl -L "$dgoss_url" -o "$DGOSS_INSTALL_LOC"
-chmod +rx "$DGOSS_INSTALL_LOC"
-echo "dgoss $DGOSS_VER has been installed to $DGOSS_INSTALL_LOC"
+install_extra() {
+    name=$1
+    extra_url="https://raw.githubusercontent.com/aelsabbahy/goss/$EXTRA_VER/extras/$name/$name"
+    dest="${GOSS_DST%/}/${name}"
+    echo "Downloading $extra_url"
+    curl -L "$extra_url" -o "$dest"
+    chmod +rx "$dest"
+    echo "$name $EXTRA_VER has been installed to $dest"
+}
+
+install_extra "dgoss"
+install_extra "dcgoss"
+install_extra "kgoss"
+
 }

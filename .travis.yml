@@ -52,6 +52,10 @@ deploy:
     - release/goss-alpha-windows-amd64.exe.sha256
     - extras/dgoss/dgoss
     - extras/dgoss/dgoss.sha256
+    - extras/dcgoss/dcgoss
+    - extras/dcgoss/dcgoss.sha256
+    - extras/kgoss/kgoss
+    - extras/kgoss/kgoss.sha256
   skip_cleanup: true
   on:
     repo: aelsabbahy/goss
