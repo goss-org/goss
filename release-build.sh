@@ -28,4 +28,12 @@ GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
 
 chmod +x "${output}"
 
-(cd "$output_dir" && sha256sum "${output_fname}" > "${output_fname}.sha256")
+SHA256="$(command -v sha256sum || true)"
+if [[ -z "$SHA256" ]]; then
+    build_host="$(uname)"
+    if [[ "$build_host" = "FreeBSD" ]]; then
+        SHA256="sha256"
+    fi
+fi
+
+(cd "$output_dir" && $SHA256 "${output_fname}" > "${output_fname}.sha256")
