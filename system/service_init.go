@@ -36,10 +36,11 @@ func (s *ServiceInit) Exists() (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
-	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", s.service)); err == nil {
-		return true, err
+	if s.freebsd {
+		return freebsdInitServiceExists(s.service)
+	} else {
+		return initServiceExists(s.service)
 	}
-	return false, nil
 }
 
 func (s *ServiceInit) Enabled() (bool, error) {
@@ -63,6 +64,24 @@ func (s *ServiceInit) Running() (bool, error) {
 	cmd.Run()
 	if cmd.Status == 0 {
 		return true, cmd.Err
+	}
+	return false, nil
+}
+
+func initServiceExists(service string) (bool, error) {
+	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", service)); err == nil {
+		return true, err
+	}
+	return false, nil
+}
+
+func freebsdInitServiceExists(service string) (bool, error) {
+	searchDir := [...]string{"/etc/rc.d", "/usr/local/etc/rc.d"}
+
+	for _, dir := range searchDir {
+		if _, err := os.Stat(fmt.Sprintf("%s/%s", dir, service)); err == nil {
+			return true, err
+		}
 	}
 	return false, nil
 }
