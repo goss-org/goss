@@ -1,9 +1,11 @@
 package system
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/aelsabbahy/goss/util"
 )
@@ -11,6 +13,7 @@ import (
 type ServiceInit struct {
 	service string
 	alpine  bool
+	freebsd bool
 }
 
 func NewServiceInit(service string, system *System, config util.Config) Service {
@@ -19,6 +22,10 @@ func NewServiceInit(service string, system *System, config util.Config) Service 
 
 func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service, alpine: true}
+}
+
+func NewFreeBSDServiceInit(service string, system *System, config util.Config) Service {
+	return &ServiceInit{service: service, freebsd: true}
 }
 
 func (s *ServiceInit) Service() string {
@@ -41,6 +48,8 @@ func (s *ServiceInit) Enabled() (bool, error) {
 	}
 	if s.alpine {
 		return alpineInitServiceEnabled(s.service, "sysinit")
+	} else if s.freebsd {
+		return bsdInitServiceEnabled(s.service, "freebsd")
 	} else {
 		return initServiceEnabled(s.service, 3)
 	}
@@ -70,6 +79,35 @@ func alpineInitServiceEnabled(service string, level string) (bool, error) {
 	matches, err := filepath.Glob(fmt.Sprintf("/etc/runlevels/%s/%s", level, service))
 	if err == nil && matches != nil {
 		return true, nil
+	}
+	return false, err
+}
+
+func bsdInitServiceEnabled(service string, opsys string) (bool, error) {
+	rcconfs, err := filepath.Glob("/etc/rc.conf*")
+	if err != nil {
+		return false, err
+	}
+
+	for _, rcconf := range rcconfs {
+		f, err := os.Open(rcconf)
+		if err != nil {
+			return false, err
+		}
+		defer f.Close()
+
+		var r *regexp.Regexp
+		switch opsys {
+		case "freebsd":
+			r = regexp.MustCompile(fmt.Sprintf("^%s_enable=\"?(YES|yes)\"?", service))
+		}
+
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			if r.MatchString(scanner.Text()) {
+				return true, nil
+			}
+		}
 	}
 	return false, err
 }

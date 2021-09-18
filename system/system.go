@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -109,6 +110,8 @@ func (sys *System) detectService() {
 		sys.NewService = NewServiceSystemdLegacy
 	case "alpineinit":
 		sys.NewService = NewAlpineServiceInit
+	case "freebsd":
+		sys.NewService = NewFreeBSDServiceInit
 	default:
 		sys.NewService = NewServiceInit
 	}
@@ -174,6 +177,10 @@ func DetectService() string {
 		return "alpineinit"
 	case "arch":
 		return "systemd"
+	}
+	switch runtime.GOOS {
+	case "freebsd":
+		return "freebsd"
 	}
 	return "init"
 }
