@@ -84,7 +84,7 @@ func New(packageManager string) *System {
 
 // detectPackage adds the correct package creation function to a System struct
 func (sys *System) detectPackage(p string) {
-	if p != "dpkg" && p != "apk" && p != "pacman" && p != "rpm" {
+	if p != "dpkg" && p != "apk" && p != "pacman" && p != "rpm" && p != "pkg" {
 		p = DetectPackageManager()
 	}
 	switch p {
@@ -94,6 +94,8 @@ func (sys *System) detectPackage(p string) {
 		sys.NewPackage = NewAlpinePackage
 	case "pacman":
 		sys.NewPackage = NewPacmanPackage
+	case "pkg":
+		sys.NewPackage = NewPkgPackage
 	default:
 		sys.NewPackage = NewRpmPackage
 	}
@@ -119,7 +121,7 @@ func (sys *System) detectService() {
 
 // SupportedPackageManagers is a list of package managers we support
 func SupportedPackageManagers() []string {
-	return []string{"apk", "dpkg", "pacman", "rpm"}
+	return []string{"apk", "dpkg", "pacman", "rpm", "pkg"}
 }
 
 // IsSupportedPackageManager determines if p is a supported package manager
@@ -150,7 +152,11 @@ func DetectPackageManager() string {
 	case "debian":
 		return "dpkg"
 	}
-	for _, manager := range []string{"dpkg", "rpm", "apk", "pacman"} {
+	switch runtime.GOOS {
+	case "freebsd":
+		return "pkg"
+	}
+	for _, manager := range SupportedPackageManagers() {
 		if HasCommand(manager) {
 			return manager
 		}
