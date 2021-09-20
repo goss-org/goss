@@ -60,7 +60,12 @@ func (s *ServiceInit) Running() (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
-	cmd := util.NewCommand("service", s.service, "status")
+	var cmd *util.Command
+	if s.freebsd {
+		cmd = util.NewCommand("service", s.service, "onestatus")
+	} else {
+		cmd = util.NewCommand("service", s.service, "status")
+	}
 	cmd.Run()
 	if cmd.Status == 0 {
 		return true, cmd.Err
