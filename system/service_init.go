@@ -24,6 +24,7 @@ func NewAlpineServiceInit(service string, system *System, config util.Config) Se
 	return &ServiceInit{service: service, alpine: true}
 }
 
+// NewFreeBSDServiceInit returns ServiceInit structure for FreeBSD.
 func NewFreeBSDServiceInit(service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service, freebsd: true}
 }
