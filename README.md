@@ -271,6 +271,7 @@ Package:
 * deb
 * Alpine apk
 * pacman
+* FreeBSD pkg
 
 Service:
 
