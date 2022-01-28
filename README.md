@@ -42,7 +42,7 @@ This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/maste
 curl -fsSL https://goss.rocks/install | sh
 
 # Install v0.3.6 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.16 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
