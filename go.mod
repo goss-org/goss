@@ -9,6 +9,7 @@ require (
 	github.com/aelsabbahy/go-ps v0.0.0-20201009164808-61c449472dcf
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v1.0.0
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/docker v1.13.1
 	github.com/fatih/color v1.13.0
 	github.com/google/uuid v1.1.1 // indirect
