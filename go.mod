@@ -18,7 +18,7 @@ require (
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/miekg/dns v1.1.45
 	github.com/mitchellh/copystructure v1.0.0 // indirect
-	github.com/oleiade/reflections v0.0.0-20160817071559-0e86b3c98b2f
+	github.com/oleiade/reflections v1.0.1
 	github.com/onsi/gomega v1.10.4
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
