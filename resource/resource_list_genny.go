@@ -1,3 +1,4 @@
+//go:build genny
 // +build genny
 
 package resource
