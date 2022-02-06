@@ -26,6 +26,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli v0.0.0-20161102131801-d86a009f5e13
 	github.com/yuin/goldmark v1.4.4 // indirect
+	golang.org/x/mod v0.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
 
