@@ -17,7 +17,7 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/miekg/dns v1.1.45
-	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/oleiade/reflections v1.0.1
 	github.com/onsi/gomega v1.10.4
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
