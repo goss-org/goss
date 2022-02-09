@@ -9,18 +9,15 @@ require (
 	github.com/aelsabbahy/go-ps v0.0.0-20201009164808-61c449472dcf
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheekybits/genny v1.0.0
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/docker v1.13.1
 	github.com/fatih/color v1.13.0
-	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/miekg/dns v1.1.45
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oleiade/reflections v1.0.1
-	github.com/onsi/gomega v1.10.4
+	github.com/onsi/gomega v1.18.1
 	github.com/opencontainers/runc v0.0.0-20161107232042-8779fa57eb4a
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.7.0
