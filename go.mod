@@ -16,7 +16,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
-	github.com/miekg/dns v1.1.45
+	github.com/miekg/dns v1.1.47
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oleiade/reflections v1.0.1
