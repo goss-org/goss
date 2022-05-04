@@ -8,12 +8,12 @@ import (
 	"hash"
 	"io"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/opencontainers/runc/libcontainer/user"
 )
 
 type File interface {
@@ -159,17 +159,17 @@ func realPath(path string) (string, error) {
 	pathS := strings.Split(path, "/")
 	f := pathS[0]
 
-	var usr user.User
+	var usr *user.User
 	var err error
 	if f == "~" {
-		usr, err = user.CurrentUser()
+		usr, err = user.Current()
 	} else {
-		usr, err = user.LookupUser(f[1:len(f)])
+		usr, err = user.Lookup(f[1:len(f)])
 	}
 	if err != nil {
 		return "", err
 	}
-	pathS[0] = usr.Home
+	pathS[0] = usr.HomeDir
 
 	realPath := strings.Join(pathS, "/")
 	realPath, err = filepath.Abs(realPath)
@@ -222,8 +222,8 @@ func (f *DefFile) Sha512() (string, error) {
 }
 
 func getUserForUid(uid int) (string, error) {
-	if user, err := user.LookupUid(uid); err == nil {
-		return user.Name, nil
+	if user, err := user.LookupId(strconv.Itoa(uid)); err == nil {
+		return user.Username, nil
 	}
 
 	cmd := util.NewCommand("getent", "passwd", strconv.Itoa(uid))
@@ -236,7 +236,7 @@ func getUserForUid(uid int) (string, error) {
 }
 
 func getGroupForGid(gid int) (string, error) {
-	if group, err := user.LookupGid(gid); err == nil {
+	if group, err := user.LookupGroupId(strconv.Itoa(gid)); err == nil {
 		return group.Name, nil
 	}
 
