@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/blang/semver"
+	"github.com/blang/semver/v4"
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/types"
 )
