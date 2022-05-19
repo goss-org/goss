@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/aelsabbahy/goss/matchers"
 )
@@ -51,6 +52,12 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(value.(string))), nil
 	case "have-len":
 		return matchers.HaveLen(int(value.(float64))), nil
+	case "have-patterns":
+		_, isArr := value.([]interface{})
+		if !isArr {
+			return nil, fmt.Errorf("have-patterns: incorrect expectation type, expected array, got: %t", value)
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePatterns(value)), nil
 	case "have-key":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -58,7 +65,12 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		}
 		return matchers.HaveKey(subMatcher), nil
 	case "contain-element":
+		_, isArr := value.([]interface{})
+		if isArr {
+			return nil, fmt.Errorf("contain-element: incorrect expectation type, expected matcher or value, got: %t", value)
+		}
 		subMatcher, err := matcherToGomegaMatcher(value)
+		log.Printf("output: %#v", value)
 		if err != nil {
 			return nil, err
 		}

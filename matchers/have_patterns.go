@@ -31,7 +31,7 @@ func HavePatterns(elements interface{}) GossMatcher {
 func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
 	t, ok := m.Elements.([]interface{})
 	if !ok {
-		return false, fmt.Errorf("HavePatterns matcher expects an io.reader.  Got:\n%s", format.Object(actual, 1))
+		return false, fmt.Errorf("HavePatterns matcher expects an array of matchers.  Got:\n%s", format.Object(m.Elements, 1))
 	}
 	elements := make([]string, len(t))
 	for i, v := range t {
@@ -50,9 +50,18 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 	if len(notfound) == 0 {
 		return true, nil
 	}
-	fh, ok := actual.(io.Reader)
-	if !ok {
-		return false, fmt.Errorf("Incorrect type")
+	var fh io.Reader
+	switch av := actual.(type) {
+	case io.Reader:
+		fh = av
+	case string:
+		fh = strings.NewReader(av)
+	default:
+		err = fmt.Errorf("Incorrect type %T", actual)
+
+	}
+	if err != nil {
+		return false, err
 	}
 
 	defer func() {
@@ -105,8 +114,12 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 }
 
 func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
+	a, ok := actual.(string)
+	if !ok {
+		a = fmt.Sprintf("object: %T", actual)
+	}
 	return MatcherResult{
-		Actual:          fmt.Sprintf("object: %T", actual),
+		Actual:          a,
 		Message:         "to contain patterns",
 		Expected:        m.Elements,
 		MissingElements: m.missingElements,
@@ -114,8 +127,12 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 }
 
 func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+	a, ok := actual.(string)
+	if !ok {
+		a = fmt.Sprintf("object: %T", actual)
+	}
 	return MatcherResult{
-		Actual:   fmt.Sprintf("object: %T", actual),
+		Actual:   a,
 		Message:  "not to contain patterns",
 		Expected: m.Elements,
 	}
