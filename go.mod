@@ -10,7 +10,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
-	github.com/miekg/dns v1.1.49
+	github.com/miekg/dns v1.1.50
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/moby/sys/mountinfo v0.6.1
 	github.com/oleiade/reflections v1.0.1
