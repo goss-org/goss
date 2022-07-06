@@ -198,7 +198,7 @@ initialize () {
         info "Creating Kubernetes pod/container to test"
         test_pod_name=kgoss-tester-${RANDOM}
         set -x
-        id=$(${k} run $test_pod_name --image-pull-policy=Always --generator=run-pod/v1 --restart=Never \
+        id=$(${k} run $test_pod_name --image-pull-policy=Always --restart=Never \
           --labels='app=kgoss-test' --output=jsonpath={.metadata.name} ${envs} \
           --image=${image} ${to_exec})
         set +x
