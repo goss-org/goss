@@ -164,6 +164,8 @@ func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, ou
 func (h healthHandler) responseContentType(outputName string) string {
 	if outputName == "json" {
 		return "application/json"
+	} else if outputName == "prometheus" {
+		return "text/plain; version=0.0.4"
 	}
 	return fmt.Sprintf("%s%s", mediaTypePrefix, outputName)
 }
