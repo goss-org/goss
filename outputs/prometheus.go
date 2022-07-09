@@ -83,9 +83,6 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprint(w, "# TYPE goss_duration_seconds_total gauge\n")
 	fmt.Fprintf(w, "goss_duration_seconds_total %f\n", float64(time.Since(startTime).Nanoseconds())/1000000000)
 
-	if failed > 0 {
-		return 1
-	}
 	return 0
 }
 
@@ -111,5 +108,5 @@ func KeysString(m map[string]string) string {
 	for k, v := range m {
 		l = append(l, fmt.Sprintf("%s=\"%s\"", k, QuoteValue(v)))
 	}
-	return strings.Join(l, ", ")
+	return strings.Join(l, ",")
 }
