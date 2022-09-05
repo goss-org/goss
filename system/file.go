@@ -19,7 +19,7 @@ import (
 type File interface {
 	Path() string
 	Exists() (bool, error)
-	Contains() (io.Reader, error)
+	Contents() (io.Reader, error)
 	Mode() (string, error)
 	Size() (int, error)
 	Filetype() (string, error)
@@ -83,7 +83,7 @@ func (f *DefFile) Exists() (bool, error) {
 	return true, err
 }
 
-func (f *DefFile) Contains() (io.Reader, error) {
+func (f *DefFile) Contents() (io.Reader, error) {
 	if err := f.setup(); err != nil {
 		return nil, err
 	}

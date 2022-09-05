@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -64,7 +65,7 @@ func deprecateAtoI(depr interface{}, desc string) interface{} {
 	if !ok {
 		return depr
 	}
-	fmt.Printf("DEPRECATION WARNING: %s should be an integer not a string\n", desc)
+	fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: %s should be an integer not a string\n", desc)
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		panic(err)

@@ -563,7 +563,7 @@ file:
     owner: root
     group: root
     filetype: file # file, symlink, directory
-    contains: [] # Check file content for these patterns
+    contents: [] # Check file content for these patterns
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
     # A stronger checksum alternatives to md5 (recommended)
     sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
@@ -577,7 +577,7 @@ file:
     skip: false
 ```
 
-`contains` can be a string or a [pattern](#patterns)
+`contents` can be a string or a [pattern](#patterns)
 
 
 ### gossfile
@@ -890,7 +890,7 @@ Example:
 file:
   /tmp/test.txt:
     exists: true
-    contains:
+    contents:
     - "foo"
     - "!bar"
     - "/[Gg]oss/"
@@ -902,7 +902,7 @@ The above can be expressed as:
 file:
   /tmp/test.txt:
     exists: true
-    contains:
+    contents:
       and:
         - contain-element: "foo"
         - not: {contain-element: "bar"}

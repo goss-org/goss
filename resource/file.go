@@ -1,6 +1,9 @@
 package resource
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -16,7 +19,8 @@ type File struct {
 	Group    matcher `json:"group,omitempty" yaml:"group,omitempty"`
 	LinkedTo matcher `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
 	Filetype matcher `json:"filetype,omitempty" yaml:"filetype,omitempty"`
-	Contains matcher `json:"contains" yaml:"contains"`
+	Contains matcher `json:"contains,omitempty" yaml:"contains,omitempty"`
+	Contents matcher `json:"contents" yaml:"contents"`
 	Md5      matcher `json:"md5,omitempty" yaml:"md5,omitempty"`
 	Sha256   matcher `json:"sha256,omitempty" yaml:"sha256,omitempty"`
 	Sha512   matcher `json:"sha512,omitempty" yaml:"sha512,omitempty"`
@@ -58,7 +62,11 @@ func (f *File) Validate(sys *system.System) []TestResult {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
 	if isSet(f.Contains) {
-		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contains, skip))
+		fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: file.contains has been renamed to file.contents\n")
+		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contents, skip))
+	}
+	if isSet(f.Contents) {
+		results = append(results, ValidateValue(f, "contents", f.Contents, sysFile.Contents, skip))
 	}
 	if f.Size != nil {
 		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
@@ -84,7 +92,7 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	f := &File{
 		Path:     path,
 		Exists:   exists,
-		Contains: []string{},
+		Contents: []string{},
 	}
 	if !contains(config.IgnoreList, "mode") {
 		if mode, err := sysFile.Mode(); err == nil {
