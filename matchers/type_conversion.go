@@ -47,6 +47,12 @@ type ToString struct{}
 
 func (t ToString) Transform(e interface{}) (interface{}, error) {
 	switch v := e.(type) {
+	case []interface{}:
+		vs := make([]string, len(v))
+		for i, v := range v {
+			vs[i] = fmt.Sprintf("%v", v)
+		}
+		return strings.Join(vs, "\n"), nil
 	case []string:
 		return strings.Join(v, "\n"), nil
 	default:

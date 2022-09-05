@@ -34,9 +34,10 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 
 	var stub interface{}
 	if a.AsReader {
+		s := fmt.Sprintf("%v", a.Content)
 		// ValidateValue expects a function
 		stub = func() (io.Reader, error) {
-			return strings.NewReader(a.Content.(string)), nil
+			return strings.NewReader(s), nil
 		}
 	} else {
 		// ValidateValue expects a function
