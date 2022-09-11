@@ -860,44 +860,116 @@ Count: 2, Failed: 0
 ```
 
 ## Advanced Matchers
-Goss supports advanced matchers by converting json input to [gomega](https://onsi.github.io/gomega/) matchers.
 
-### Examples
+Goss supports advanced matchers by converting YAML input to [gomega](https://onsi.github.io/gomega/) matchers.
 
-Validate that user `nobody` has a `uid` that is less than `500` and that they are **only** a member of the `nobody` group.
+### String Matchers
 
+These will convert the system attribute to a string prior to matching.
+
+* `'55'` - Checks that the numeric is "55" when converted to string
+* `have-prefix: pre` - Checks if string starts with "pre"
+* `have-suffix: suf` - Checks if string ends with "suf"
+* `match-regexp: '.*'` - Checks if string matches regexp
+* `contain-substring: '2'` - Checks if string contains "2"
+
+Example:
 ```yaml
-user:
-  nobody:
-    exists: true
-    uid:
-      lt: 500
-    groups:
-      consist-of: [nobody]
-```
-
-Matchers can be nested for more complex logic, for example you can ensure that you have 3 kernel versions installed and none of them are `4.1.0`:
-
-```yaml
-package:
-  kernel:
-    installed: true
-    versions:
+matching:
+  example:
+    content: 42
+    matches:
       and:
-        - have-len: 3
-        - not:
-            contain-element: "4.1.0"
+        - '42'
+        - have-prefix: '4'
+        - have-suffix: '2'
+        - match-regexp: '\d{2}'
+        - contain-substring: '2'
 ```
 
-Custom semver matcher is available under `semver-constraint`:
+### Numeric matchers
 
+These will convert the system attribute to a numeric prior to matching.
+
+* `42` - If the expected type is a number
+* `gt, ge, lt, le` - Greater than, greater than or equal, less than, etc..
+
+Example:
 ```yaml
-example:
-  content:
-    - 1.0.1
-    - 1.9.9
-  matches:
-    semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+matching:
+  example:
+    content: "42"
+    matches:
+      and:
+        - 42
+        - 42.0
+        - gt: 40
+        - lt: 45
+```
+
+### Array matchers
+
+These will convert the system attribute to an array prior to matching. Strings are split on "\n"
+
+
+* `contain-element: matcher` - Checks if the array contains an element that passes the matcher
+* `contain-elements: [matcher, ...]` - checks if the array is a superset of the provided matchers
+* `[matcher, ...]` - same as above
+* `equal: [value, ...]` - Checks if the array is exactly equal to provided array
+* `consist-of: [matcher, ...]` - Checks if the array consists of the provided matchers (order does not matter)
+
+Example:
+```yaml
+matching:
+  example:
+    content: [foo, bar, moo]
+    matches:
+      and:
+        - contain-elements: [foo, bar]
+        - [foo, bar] # same as above
+        - equal: [foo, bar, moo] # order matters, exact match
+        - consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        - contain-element:
+            have-prefix: b
+```
+
+### Misc matchers
+
+These matchers don't really fall into any of the above categories, or span multiple categories.
+
+* `equal` - Useful when needing to override a default matcher
+* `have-len: 3` - Checks if the array/string/map has length of 3
+* `have-key: "foo"` - Checks if key exists in map, useful with `gjson`
+* `not: matcher` - Checks that a matcher does not match
+* `and: [matcher, ..]` - Checks that all matchers match
+* `or: [matcher, ..]` - Checks that any matchers match
+    * when system returns a string it is converted into a one element array and matched
+
+#### semver-constraint
+
+Checks that all versions match semver constraint or range syntax. This uses [semver](https://github.com/blang/semver) under the hood, however, wildcards (e.g. `1.X` are not officially supported and may go away in a future release.
+
+Example:
+```yaml
+matching:
+  semver:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver2:
+    content:
+      - 1.0.1
+      - 1.5.0
+      - 1.9.9
+    matches:
+      not:
+        semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+  semver3:
+    content: 1.0.1
+    matches:
+      semver-constraint: ">5.0.0 || < 1.5.0"
 ```
 
 For more information see:
