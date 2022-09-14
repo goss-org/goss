@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/aelsabbahy/goss/util"
-	"github.com/docker/docker/pkg/mount"
+	"github.com/moby/sys/mountinfo"
 )
 
 type Mount interface {
@@ -21,7 +21,7 @@ type DefMount struct {
 	mountPoint string
 	loaded     bool
 	exists     bool
-	mountInfo  *mount.Info
+	mountInfo  *mountinfo.Info
 	usage      int
 	err        error
 }
@@ -78,7 +78,7 @@ func (m *DefMount) Opts() ([]string, error) {
 		return nil, err
 	}
 
-	return strings.Split(m.mountInfo.Opts, ","), nil
+	return strings.Split(m.mountInfo.Options, ","), nil
 }
 
 func (m *DefMount) Source() (string, error) {
@@ -94,7 +94,7 @@ func (m *DefMount) Filesystem() (string, error) {
 		return "", err
 	}
 
-	return m.mountInfo.Fstype, nil
+	return m.mountInfo.FSType, nil
 }
 
 func (m *DefMount) Usage() (int, error) {
@@ -105,17 +105,21 @@ func (m *DefMount) Usage() (int, error) {
 	return m.usage, nil
 }
 
-func getMount(mountpoint string) (*mount.Info, error) {
-	entries, err := mount.GetMounts()
+func getMount(mountpoint string) (*mountinfo.Info, error) {
+	entries, err := mountinfo.GetMounts(func(e *mountinfo.Info) (skip bool, stop bool) {
+		if e.Mountpoint == mountpoint {
+			return false, true
+		}
+
+		return true, false
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	// Search the table for the mountpoint
-	for _, e := range entries {
-		if e.Mountpoint == mountpoint {
-			return e, nil
-		}
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("Mountpoint not found")
 	}
-	return nil, fmt.Errorf("Mountpoint not found")
+
+	return entries[0], nil
 }
