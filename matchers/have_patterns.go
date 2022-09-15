@@ -56,6 +56,8 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 		fh = av
 	case string:
 		fh = strings.NewReader(av)
+	case []string:
+		fh = strings.NewReader(strings.Join(av, "\n"))
 	default:
 		err = fmt.Errorf("Incorrect type %T", actual)
 
@@ -114,8 +116,11 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 }
 
 func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
-	a, ok := actual.(string)
-	if !ok {
+	var a interface{}
+	switch actual.(type) {
+	case string, []string:
+		a = actual
+	default:
 		a = fmt.Sprintf("object: %T", actual)
 	}
 	return MatcherResult{

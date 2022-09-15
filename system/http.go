@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 type HTTP interface {
 	HTTP() string
 	Status() (int, error)
-	Headers() (io.Reader, error)
+	Headers() ([]string, error)
 	Body() (io.Reader, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
@@ -61,9 +62,10 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 func HeaderToArray(header http.Header) (res []string) {
 	for name, values := range header {
 		for _, value := range values {
-			res = append(res, fmt.Sprintf("%s: %s", name, value))
+			res = append(res, strings.ToLower(fmt.Sprintf("%s: %s", name, value)))
 		}
 	}
+	sort.Strings(res)
 	return
 }
 
@@ -149,13 +151,12 @@ func (u *DefHTTP) Status() (int, error) {
 	return u.resp.StatusCode, nil
 }
 
-func (u *DefHTTP) Headers() (io.Reader, error) {
+func (u *DefHTTP) Headers() ([]string, error) {
 	if err := u.setup(); err != nil {
 		return nil, err
 	}
 
-	var headerString = strings.Join(HeaderToArray(u.resp.Header), "\n")
-	return strings.NewReader(headerString), nil
+	return HeaderToArray(u.resp.Header), nil
 }
 
 func (u *DefHTTP) Body() (io.Reader, error) {
