@@ -25,7 +25,7 @@ file:
     owner: root
     group: root
     filetype: file
-    contains:
+    contents:
     - root
 {{end}}
   "/goss/hellogoss.txt":
@@ -35,7 +35,7 @@ file:
     sha512: 372864ab83187de41ca57c5c77cd4a99220ccadc8b8ddb18367893fd3e58764193a599edbf63a48c0c44f1e923606a00929b46de3bda1744fd722b9d42829206
   "/tmp/goss/foobar":
     exists: false
-    contains: []
+    contents: []
   "~root":
     exists: true
     mode: '0700'
@@ -50,7 +50,7 @@ file:
     filetype: pipe
   "/does/not/exist":
     exists: true
-    contains:
+    contents:
     - skip-this-test
     skip: true
 package:
@@ -199,7 +199,7 @@ http:
     timeout: 5000
     request-headers:
       - "Foo: bar"
-    headers: ["Content-Type: application/json"]
+    headers: ["content-type: application/json"]
     body: ['"Foo": "bar"']
   https://httpbin.org/headers?host:
     status: 200
@@ -210,7 +210,7 @@ http:
       # need to see if there's a good way around this, maybe local httpbin?
       #- "Host: example.com"
       - "Host: httpbin.org"
-    headers: ["Content-Type: application/json"]
+    headers: ["content-type: application/json"]
     # body: ['"Host": "example.com"']
     body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:

@@ -5,10 +5,10 @@ file:
     owner: root
     group: root
     filetype: file
-    contains: []
+    contents: []
   /tmp/goss/foobar:
     exists: false
-    contains: []
+    contents: []
 package:
   foobar:
     installed: false

@@ -1,10 +1,10 @@
 file:
   /etc/passwd:
     exists: true
-    contains: []
+    contents: []
   /tmp/goss/foobar:
     exists: false
-    contains: []
+    contents: []
 package:
   apache2:
     installed: true

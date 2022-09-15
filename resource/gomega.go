@@ -86,7 +86,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.HaveKey(subMatcher), nil
 	case "contain-element":
 		switch value.(type) {
-		case map[string]interface{}, string:
+		case map[string]interface{}, string, float64:
 		default:
 			return nil, fmt.Errorf("contain-element: syntax error: incorrect expectation type. expected matcher or value, got: %#v", value)
 		}

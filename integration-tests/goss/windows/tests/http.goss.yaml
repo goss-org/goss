@@ -8,7 +8,7 @@ http:
     request-headers:
       - "Content-Type: text/html"
     headers:
-      - "Content-Type: text/html"
+      - "content-type: text/html"
     body:
       - "google"
     username: ""
