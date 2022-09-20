@@ -3,7 +3,6 @@ package goss
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -63,7 +62,7 @@ func TestUseAsPackage(t *testing.T) {
 	output := &bytes.Buffer{}
 
 	// temp spec file
-	fh, err := ioutil.TempFile("", "*.yaml")
+	fh, err := os.CreateTemp("", "*.yaml")
 	checkErr(t, err, "temp file failed")
 	fh.Close()
 
@@ -125,7 +124,7 @@ func TestSkipResourcesByType(t *testing.T) {
 	output := &bytes.Buffer{}
 
 	// temp spec file
-	fh, err := ioutil.TempFile("", "*.yaml")
+	fh, err := os.CreateTemp("", "*.yaml")
 	checkErr(t, err, "temp file failed")
 	fh.Close()
 

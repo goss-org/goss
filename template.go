@@ -3,7 +3,6 @@ package goss
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -51,7 +50,7 @@ func mkSlice(args ...interface{}) []interface{} {
 }
 
 func readFile(f string) (string, error) {
-	b, err := ioutil.ReadFile(f)
+	b, err := os.ReadFile(f)
 	if err != nil {
 		return "", err
 

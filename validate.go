@@ -3,7 +3,6 @@ package goss
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -32,7 +31,7 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	if specFile == "-" {
 		source = "STDIN"
 		fh = os.Stdin
-		data, err := ioutil.ReadAll(fh)
+		data, err := io.ReadAll(fh)
 		if err != nil {
 			return nil, err
 		}

@@ -3,7 +3,6 @@ package goss
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -53,7 +52,7 @@ func getStoreFormatFromData(data []byte) (int, error) {
 
 // ReadJSON Reads json file returning GossConfig
 func ReadJSON(filePath string) (GossConfig, error) {
-	file, err := ioutil.ReadFile(filePath)
+	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return GossConfig{}, fmt.Errorf("file error: %v", err)
 	}
@@ -97,7 +96,7 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 	if varsFile == "" {
 		return vars, nil
 	}
-	data, err := ioutil.ReadFile(varsFile)
+	data, err := os.ReadFile(varsFile)
 	if err != nil {
 		return vars, err
 	}
@@ -257,7 +256,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 		return nil
 	}
 
-	if err := ioutil.WriteFile(filePath, jsonData, 0644); err != nil {
+	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
 		return fmt.Errorf("failed to write %s: %s", filePath, err)
 	}
 
