@@ -14,14 +14,23 @@ type Package struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	PackageResourceKey  = "package"
+	PackageResourceName = "Package"
+)
+
+func init() {
+	registerResource(PackageResourceKey, &Package{})
+}
+
 func (p *Package) ID() string      { return p.Name }
 func (p *Package) SetID(id string) { p.Name = id }
 
 func (p *Package) GetTitle() string { return p.Title }
 func (p *Package) GetMeta() meta    { return p.Meta }
 
-func (p *Package) Validate(sys *system.System) []TestResult {
-	skip := false
+func (p *Package) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(PackageResourceKey, skipTypes)
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
 
 	if p.Skip {

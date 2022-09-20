@@ -16,14 +16,23 @@ type Group struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	GroupFileResourceKey  = "group"
+	GroupFileResourceName = "Group"
+)
+
+func init() {
+	registerResource(GroupFileResourceKey, &Group{})
+}
+
 func (g *Group) ID() string      { return g.Groupname }
 func (g *Group) SetID(id string) { g.Groupname = id }
 
 func (g *Group) GetTitle() string { return g.Title }
 func (g *Group) GetMeta() meta    { return g.Meta }
 
-func (g *Group) Validate(sys *system.System) []TestResult {
-	skip := false
+func (g *Group) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(GroupFileResourceKey, skipTypes)
 	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})
 
 	if g.Skip {

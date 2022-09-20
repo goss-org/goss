@@ -23,6 +23,15 @@ type Command struct {
 	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	CommandResourceKey  = "command"
+	CommandResourceName = "Command"
+)
+
+func init() {
+	registerResource(CommandResourceKey, &Command{})
+}
+
 func (c *Command) ID() string      { return c.Command }
 func (c *Command) SetID(id string) { c.Command = id }
 
@@ -35,8 +44,9 @@ func (c *Command) GetExec() string {
 	return c.Command
 }
 
-func (c *Command) Validate(sys *system.System) []TestResult {
-	skip := false
+func (c *Command) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(CommandResourceKey, skipTypes)
+
 	if c.Timeout == 0 {
 		c.Timeout = 10000
 	}

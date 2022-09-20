@@ -27,7 +27,7 @@ func (a *Matching) SetID(id string) { a.Id = id }
 func (r *Matching) GetTitle() string { return r.Title }
 func (r *Matching) GetMeta() meta    { return r.Meta }
 
-func (a *Matching) Validate(sys *system.System) []TestResult {
+func (a *Matching) Validate(sys *system.System, skipTypes []string) []TestResult {
 	skip := false
 
 	// ValidateValue expects a function

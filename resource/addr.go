@@ -16,6 +16,15 @@ type Addr struct {
 	Timeout      int     `json:"timeout" yaml:"timeout"`
 }
 
+const (
+	AddrResourceKey = "addr"
+	AddResourceName = "Addr"
+)
+
+func init() {
+	registerResource(AddrResourceKey, &Addr{})
+}
+
 func (a *Addr) ID() string      { return a.Address }
 func (a *Addr) SetID(id string) { a.Address = id }
 
@@ -23,8 +32,9 @@ func (a *Addr) SetID(id string) { a.Address = id }
 func (r *Addr) GetTitle() string { return r.Title }
 func (r *Addr) GetMeta() meta    { return r.Meta }
 
-func (a *Addr) Validate(sys *system.System) []TestResult {
-	skip := false
+func (a *Addr) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(AddrResourceKey, skipTypes)
+
 	if a.Timeout == 0 {
 		a.Timeout = 500
 	}

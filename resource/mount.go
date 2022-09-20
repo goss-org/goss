@@ -17,6 +17,15 @@ type Mount struct {
 	Usage      matcher `json:"usage,omitempty" yaml:"usage,omitempty"`
 }
 
+const (
+	MountResourceKey  = "mount"
+	MountResourceName = "Mount"
+)
+
+func init() {
+	registerResource(MountResourceKey, &Mount{})
+}
+
 func (m *Mount) ID() string      { return m.MountPoint }
 func (m *Mount) SetID(id string) { m.MountPoint = id }
 
@@ -24,8 +33,8 @@ func (m *Mount) SetID(id string) { m.MountPoint = id }
 func (m *Mount) GetTitle() string { return m.Title }
 func (m *Mount) GetMeta() meta    { return m.Meta }
 
-func (m *Mount) Validate(sys *system.System) []TestResult {
-	skip := false
+func (m *Mount) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(MountResourceKey, skipTypes)
 	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
 
 	if m.Skip {

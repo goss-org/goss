@@ -14,14 +14,23 @@ type Port struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	PortResourceKey  = "port"
+	PortResourceName = "Port"
+)
+
+func init() {
+	registerResource(PortResourceKey, &Port{})
+}
+
 func (p *Port) ID() string      { return p.Port }
 func (p *Port) SetID(id string) { p.Port = id }
 
 func (p *Port) GetTitle() string { return p.Title }
 func (p *Port) GetMeta() meta    { return p.Meta }
 
-func (p *Port) Validate(sys *system.System) []TestResult {
-	skip := false
+func (p *Port) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(PortResourceKey, skipTypes)
 	sysPort := sys.NewPort(p.Port, sys, util.Config{})
 
 	if p.Skip {

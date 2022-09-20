@@ -20,14 +20,23 @@ type DNS struct {
 	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	DNSResourceKey  = "dns"
+	DNSResourceName = "DNS"
+)
+
+func init() {
+	registerResource(DNSResourceKey, &DNS{})
+}
+
 func (d *DNS) ID() string      { return d.Host }
 func (d *DNS) SetID(id string) { d.Host = id }
 
 func (d *DNS) GetTitle() string { return d.Title }
 func (d *DNS) GetMeta() meta    { return d.Meta }
 
-func (d *DNS) Validate(sys *system.System) []TestResult {
-	skip := false
+func (d *DNS) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(DNSResourceKey, skipTypes)
 	if d.Timeout == 0 {
 		d.Timeout = 500
 	}

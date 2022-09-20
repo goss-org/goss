@@ -15,6 +15,15 @@ type Interface struct {
 	Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	InterfaceResourceKey  = "interface"
+	InterfaceResourceName = "Interface"
+)
+
+func init() {
+	registerResource(InterfaceResourceKey, &Interface{})
+}
+
 func (i *Interface) ID() string      { return i.Name }
 func (i *Interface) SetID(id string) { i.Name = id }
 
@@ -22,8 +31,8 @@ func (i *Interface) SetID(id string) { i.Name = id }
 func (i *Interface) GetTitle() string { return i.Title }
 func (i *Interface) GetMeta() meta    { return i.Meta }
 
-func (i *Interface) Validate(sys *system.System) []TestResult {
-	skip := false
+func (i *Interface) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(InterfaceResourceKey, skipTypes)
 	sysInterface := sys.NewInterface(i.Name, sys, util.Config{})
 
 	if i.Skip {

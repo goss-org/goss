@@ -20,14 +20,23 @@ type User struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	UserResourceKey  = "user"
+	UserResourceName = "User"
+)
+
+func init() {
+	registerResource(UserResourceKey, &User{})
+}
+
 func (u *User) ID() string      { return u.Username }
 func (u *User) SetID(id string) { u.Username = id }
 
 func (u *User) GetTitle() string { return u.Title }
 func (u *User) GetMeta() meta    { return u.Meta }
 
-func (u *User) Validate(sys *system.System) []TestResult {
-	skip := false
+func (u *User) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(UserResourceKey, skipTypes)
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})
 
 	if u.Skip {

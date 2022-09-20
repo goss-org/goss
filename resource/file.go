@@ -23,14 +23,23 @@ type File struct {
 	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	FileResourceKey  = "file"
+	FileResourceName = "File"
+)
+
+func init() {
+	registerResource(FileResourceKey, &File{})
+}
+
 func (f *File) ID() string      { return f.Path }
 func (f *File) SetID(id string) { f.Path = id }
 
 func (f *File) GetTitle() string { return f.Title }
 func (f *File) GetMeta() meta    { return f.Meta }
 
-func (f *File) Validate(sys *system.System) []TestResult {
-	skip := false
+func (f *File) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(FileResourceKey, skipTypes)
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})
 
 	if f.Skip {

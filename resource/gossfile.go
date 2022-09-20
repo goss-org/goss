@@ -11,13 +11,22 @@ type Gossfile struct {
 	Path  string `json:"-" yaml:"-"`
 }
 
+const (
+	GossFileResourceKey  = "gossfile"
+	GossFileResourceName = "Gossfile"
+)
+
+func init() {
+	registerResource(GossFileResourceKey, &Gossfile{})
+}
+
 func (g *Gossfile) ID() string      { return g.Path }
 func (g *Gossfile) SetID(id string) { g.Path = id }
 
 func (g *Gossfile) GetTitle() string { return g.Title }
 func (g *Gossfile) GetMeta() meta    { return g.Meta }
 
-func (g *Gossfile) Validate(sys *system.System) []TestResult {
+func (g *Gossfile) Validate(sys *system.System, skipTypes []string) []TestResult {
 	return []TestResult{}
 }
 

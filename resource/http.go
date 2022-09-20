@@ -30,6 +30,15 @@ type HTTP struct {
 	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
+const (
+	HTTPResourceKey  = "http"
+	HTTPResourceName = "HTTP"
+)
+
+func init() {
+	registerResource(HTTPResourceKey, &HTTP{})
+}
+
 func (u *HTTP) ID() string { return u.HTTP }
 
 func (u *HTTP) SetID(id string) { u.HTTP = id }
@@ -45,8 +54,8 @@ func (r *HTTP) getURL() string {
 	return r.HTTP
 }
 
-func (u *HTTP) Validate(sys *system.System) []TestResult {
-	skip := false
+func (u *HTTP) Validate(sys *system.System, skipTypes []string) []TestResult {
+	skip := util.IsValueInList(HTTPResourceKey, skipTypes)
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
