@@ -41,21 +41,24 @@ func init() {
 
 func (u *HTTP) ID() string { return u.HTTP }
 
-func (u *HTTP) SetID(id string) { u.HTTP = id }
+func (u *HTTP) SetID(id string)  { u.HTTP = id }
+func (u *HTTP) SetSkip()         { u.Skip = true }
+func (u *HTTP) TypeKey() string  { return HTTPResourceKey }
+func (u *HTTP) TypeName() string { return HTTPResourceName }
 
 // FIXME: Can this be refactored?
-func (r *HTTP) GetTitle() string { return r.Title }
-func (r *HTTP) GetMeta() meta    { return r.Meta }
+func (u *HTTP) GetTitle() string { return u.Title }
+func (u *HTTP) GetMeta() meta    { return u.Meta }
 
-func (r *HTTP) getURL() string {
-	if r.URL != "" {
-		return r.URL
+func (u *HTTP) getURL() string {
+	if u.URL != "" {
+		return u.URL
 	}
-	return r.HTTP
+	return u.HTTP
 }
 
-func (u *HTTP) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(HTTPResourceKey, skipTypes)
+func (u *HTTP) Validate(sys *system.System) []TestResult {
+	skip := u.Skip
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
@@ -69,10 +72,6 @@ func (u *HTTP) Validate(sys *system.System, skipTypes []string) []TestResult {
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
-
-	if u.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))

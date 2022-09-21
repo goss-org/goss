@@ -12,8 +12,11 @@ import (
 )
 
 type Resource interface {
-	Validate(sys *system.System, skipTypes []string) []TestResult
+	Validate(sys *system.System) []TestResult
 	SetID(string)
+	SetSkip()
+	TypeKey() string
+	TypeName() string
 }
 
 var (

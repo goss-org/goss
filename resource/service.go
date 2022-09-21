@@ -23,19 +23,17 @@ func init() {
 	registerResource(ServiceResourceKey, &Service{})
 }
 
-func (s *Service) ID() string      { return s.Service }
-func (s *Service) SetID(id string) { s.Service = id }
-
+func (s *Service) ID() string       { return s.Service }
+func (s *Service) SetID(id string)  { s.Service = id }
+func (s *Service) SetSkip()         { s.Skip = true }
+func (s *Service) TypeKey() string  { return ServiceResourceKey }
+func (s *Service) TypeName() string { return ServiceResourceName }
 func (s *Service) GetTitle() string { return s.Title }
 func (s *Service) GetMeta() meta    { return s.Meta }
 
-func (s *Service) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(ServiceResourceKey, skipTypes)
+func (s *Service) Validate(sys *system.System) []TestResult {
+	skip := s.Skip
 	sysservice := sys.NewService(s.Service, sys, util.Config{})
-
-	if s.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))

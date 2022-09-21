@@ -14,6 +14,7 @@ type Addr struct {
 	LocalAddress string  `json:"local-address,omitempty" yaml:"local-address,omitempty"`
 	Reachable    matcher `json:"reachable" yaml:"reachable"`
 	Timeout      int     `json:"timeout" yaml:"timeout"`
+	Skip         bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -25,15 +26,18 @@ func init() {
 	registerResource(AddrResourceKey, &Addr{})
 }
 
-func (a *Addr) ID() string      { return a.Address }
-func (a *Addr) SetID(id string) { a.Address = id }
+func (a *Addr) ID() string       { return a.Address }
+func (a *Addr) SetID(id string)  { a.Address = id }
+func (a *Addr) SetSkip()         { a.Skip = true }
+func (a *Addr) TypeKey() string  { return AddrResourceKey }
+func (a *Addr) TypeName() string { return AddResourceName }
 
 // FIXME: Can this be refactored?
-func (r *Addr) GetTitle() string { return r.Title }
-func (r *Addr) GetMeta() meta    { return r.Meta }
+func (a *Addr) GetTitle() string { return a.Title }
+func (a *Addr) GetMeta() meta    { return a.Meta }
 
-func (a *Addr) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(AddrResourceKey, skipTypes)
+func (a *Addr) Validate(sys *system.System) []TestResult {
+	skip := a.Skip
 
 	if a.Timeout == 0 {
 		a.Timeout = 500

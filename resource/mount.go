@@ -26,20 +26,19 @@ func init() {
 	registerResource(MountResourceKey, &Mount{})
 }
 
-func (m *Mount) ID() string      { return m.MountPoint }
-func (m *Mount) SetID(id string) { m.MountPoint = id }
+func (m *Mount) ID() string       { return m.MountPoint }
+func (m *Mount) SetID(id string)  { m.MountPoint = id }
+func (m *Mount) SetSkip()         { m.Skip = true }
+func (m *Mount) TypeKey() string  { return MountResourceKey }
+func (m *Mount) TypeName() string { return MountResourceName }
 
 // FIXME: Can this be refactored?
 func (m *Mount) GetTitle() string { return m.Title }
 func (m *Mount) GetMeta() meta    { return m.Meta }
 
-func (m *Mount) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(MountResourceKey, skipTypes)
+func (m *Mount) Validate(sys *system.System) []TestResult {
+	skip := m.Skip
 	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
-
-	if m.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))

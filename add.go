@@ -55,7 +55,7 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 		res, err = gossConfig.DNS.AppendSysResource(key, sys, config)
 	case resource.FileResourceName:
 		res, err = gossConfig.Files.AppendSysResource(key, sys, config)
-	case resource.GroupFileResourceName:
+	case resource.GroupResourceName:
 		res, err = gossConfig.Groups.AppendSysResource(key, sys, config)
 	case resource.PackageResourceName:
 		res, err = gossConfig.Packages.AppendSysResource(key, sys, config)

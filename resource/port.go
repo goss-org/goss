@@ -23,19 +23,17 @@ func init() {
 	registerResource(PortResourceKey, &Port{})
 }
 
-func (p *Port) ID() string      { return p.Port }
-func (p *Port) SetID(id string) { p.Port = id }
-
+func (p *Port) ID() string       { return p.Port }
+func (p *Port) SetID(id string)  { p.Port = id }
+func (p *Port) SetSkip()         { p.Skip = true }
+func (p *Port) TypeKey() string  { return PortResourceKey }
+func (p *Port) TypeName() string { return PortResourceName }
 func (p *Port) GetTitle() string { return p.Title }
 func (p *Port) GetMeta() meta    { return p.Meta }
 
-func (p *Port) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(PortResourceKey, skipTypes)
+func (p *Port) Validate(sys *system.System) []TestResult {
+	skip := p.Skip
 	sysPort := sys.NewPort(p.Port, sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))

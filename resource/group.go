@@ -17,27 +17,25 @@ type Group struct {
 }
 
 const (
-	GroupFileResourceKey  = "group"
-	GroupFileResourceName = "Group"
+	GroupResourceKey  = "group"
+	GroupResourceName = "Group"
 )
 
 func init() {
-	registerResource(GroupFileResourceKey, &Group{})
+	registerResource(GroupResourceKey, &Group{})
 }
 
-func (g *Group) ID() string      { return g.Groupname }
-func (g *Group) SetID(id string) { g.Groupname = id }
-
+func (g *Group) ID() string       { return g.Groupname }
+func (g *Group) SetID(id string)  { g.Groupname = id }
+func (g *Group) SetSkip()         { g.Skip = true }
+func (g *Group) TypeKey() string  { return GroupResourceKey }
+func (g *Group) TypeName() string { return GroupResourceName }
 func (g *Group) GetTitle() string { return g.Title }
 func (g *Group) GetMeta() meta    { return g.Meta }
 
-func (g *Group) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(GroupFileResourceKey, skipTypes)
+func (g *Group) Validate(sys *system.System) []TestResult {
+	skip := g.Skip
 	sysgroup := sys.NewGroup(g.Groupname, sys, util.Config{})
-
-	if g.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))

@@ -23,19 +23,17 @@ func init() {
 	registerResource(PackageResourceKey, &Package{})
 }
 
-func (p *Package) ID() string      { return p.Name }
-func (p *Package) SetID(id string) { p.Name = id }
-
+func (p *Package) ID() string       { return p.Name }
+func (p *Package) SetID(id string)  { p.Name = id }
+func (p *Package) SetSkip()         { p.Skip = true }
+func (p *Package) TypeKey() string  { return PackageResourceKey }
+func (p *Package) TypeName() string { return PackageResourceName }
 func (p *Package) GetTitle() string { return p.Title }
 func (p *Package) GetMeta() meta    { return p.Meta }
 
-func (p *Package) Validate(sys *system.System, skipTypes []string) []TestResult {
-	skip := util.IsValueInList(PackageResourceKey, skipTypes)
+func (p *Package) Validate(sys *system.System) []TestResult {
+	skip := p.Skip
 	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))

@@ -291,11 +291,11 @@ func main() {
 					},
 				},
 				{
-					Name:  resource.GroupFileResourceKey,
+					Name:  resource.GroupResourceKey,
 					Usage: "add new group",
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
-						return goss.AddResources(c.GlobalString("gossfile"), resource.GroupFileResourceName, c.Args(), newRuntimeConfigFromCLI(c))
+						return goss.AddResources(c.GlobalString("gossfile"), resource.GroupResourceName, c.Args(), newRuntimeConfigFromCLI(c))
 					},
 				},
 				{

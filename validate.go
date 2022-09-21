@@ -150,6 +150,10 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 
 	go func() {
 		for _, t := range gossConfig.Resources() {
+			if util.IsValueInList(t.TypeName(), skipList) || util.IsValueInList(t.TypeKey(), skipList) {
+				t.SetSkip()
+			}
+
 			in <- t
 		}
 		close(in)
@@ -165,7 +169,7 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 		go func() {
 			defer wg.Done()
 			for f := range in {
-				out <- f.Validate(sys, skipList)
+				out <- f.Validate(sys)
 			}
 		}()
 	}
