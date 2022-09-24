@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"fmt"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -8,22 +10,34 @@ import (
 type Service struct {
 	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Service   string  `json:"-" yaml:"-"`
+	id        string  `json:"-" yaml:"-"`
+	Name      string  `json:"name,omitempty" yaml:"name,omitempty"`
 	Enabled   matcher `json:"enabled" yaml:"enabled"`
 	Running   matcher `json:"running" yaml:"running"`
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 	RunLevels matcher `json:"runlevels,omitempty" yaml:"runlevels,omitempty"`
 }
 
-func (s *Service) ID() string      { return s.Service }
-func (s *Service) SetID(id string) { s.Service = id }
+func (s *Service) ID() string {
+	if s.Name != "" && s.Name != s.id {
+		return fmt.Sprintf("%s: %s", s.id, s.Name)
+	}
+	return s.id
+}
+func (s *Service) SetID(id string) { s.id = id }
 
 func (s *Service) GetTitle() string { return s.Title }
 func (s *Service) GetMeta() meta    { return s.Meta }
+func (s *Service) GetName() string {
+	if s.Name != "" {
+		return s.Name
+	}
+	return s.id
+}
 
 func (s *Service) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysservice := sys.NewService(s.Service, sys, util.Config{})
+	sysservice := sys.NewService(s.GetName(), sys, util.Config{})
 
 	if s.Skip {
 		skip = true
@@ -53,7 +67,7 @@ func NewService(sysService system.Service, config util.Config) (*Service, error)
 		return nil, err
 	}
 	return &Service{
-		Service: service,
+		id:      service,
 		Enabled: enabled,
 		Running: running,
 	}, nil

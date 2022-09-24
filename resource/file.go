@@ -11,7 +11,8 @@ import (
 type File struct {
 	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Path     string  `json:"-" yaml:"-"`
+	id       string  `json:"-" yaml:"-"`
+	Path     string  `json:"path,omitempty" yaml:"path,omitempty"`
 	Exists   matcher `json:"exists" yaml:"exists"`
 	Mode     matcher `json:"mode,omitempty" yaml:"mode,omitempty"`
 	Size     matcher `json:"size,omitempty" yaml:"size,omitempty"`
@@ -27,15 +28,26 @@ type File struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (f *File) ID() string      { return f.Path }
-func (f *File) SetID(id string) { f.Path = id }
+func (f *File) ID() string {
+	if f.Path != "" && f.Path != f.id {
+		return fmt.Sprintf("%s: %s", f.id, f.Path)
+	}
+	return f.id
+}
+func (f *File) SetID(id string) { f.id = id }
 
 func (f *File) GetTitle() string { return f.Title }
 func (f *File) GetMeta() meta    { return f.Meta }
+func (f *File) GetPath() string {
+	if f.Path != "" {
+		return f.Path
+	}
+	return f.id
+}
 
 func (f *File) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysFile := sys.NewFile(f.Path, sys, util.Config{})
+	sysFile := sys.NewFile(f.GetPath(), sys, util.Config{})
 
 	if f.Skip {
 		skip = true
@@ -90,7 +102,7 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 		return nil, err
 	}
 	f := &File{
-		Path:     path,
+		id:       path,
 		Exists:   exists,
 		Contents: []string{},
 	}

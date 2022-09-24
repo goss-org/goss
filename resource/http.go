@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aelsabbahy/goss/system"
@@ -9,9 +10,9 @@ import (
 
 type HTTP struct {
 	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
-	URL               string   `json:"url,omitempty" yaml:"url,omitempty"`
 	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	HTTP              string   `json:"-" yaml:"-"`
+	id                string   `json:"-" yaml:"-"`
+	URL               string   `json:"url,omitempty" yaml:"url,omitempty"`
 	Method            string   `json:"method,omitempty" yaml:"method,omitempty"`
 	Status            matcher  `json:"status" yaml:"status"`
 	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
@@ -27,19 +28,23 @@ type HTTP struct {
 	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
-func (u *HTTP) ID() string { return u.HTTP }
+func (h *HTTP) ID() string {
+	if h.URL != "" && h.URL != h.id {
+		return fmt.Sprintf("%s: %s", h.id, h.URL)
+	}
+	return h.id
+}
 
-func (u *HTTP) SetID(id string) { u.HTTP = id }
+func (h *HTTP) SetID(id string) { h.id = id }
 
 // FIXME: Can this be refactored?
 func (r *HTTP) GetTitle() string { return r.Title }
 func (r *HTTP) GetMeta() meta    { return r.Meta }
-
 func (r *HTTP) getURL() string {
 	if r.URL != "" {
 		return r.URL
 	}
-	return r.HTTP
+	return r.id
 }
 
 func (u *HTTP) Validate(sys *system.System) []TestResult {
@@ -77,7 +82,7 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 	http := sysHTTP.HTTP()
 	status, err := sysHTTP.Status()
 	u := &HTTP{
-		HTTP:              http,
+		id:                http,
 		Status:            status,
 		RequestHeader:     []string{},
 		Headers:           nil,

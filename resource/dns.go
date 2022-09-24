@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -11,7 +12,8 @@ import (
 type DNS struct {
 	Title       string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta        meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Host        string  `json:"-" yaml:"-"`
+	id          string  `json:"-" yaml:"-"`
+	Resolve     string  `json:"resolve,omitempty" yaml:"resolve,omitempty"`
 	Resolveable matcher `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
 	Resolvable  matcher `json:"resolvable" yaml:"resolvable"`
 	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
@@ -20,11 +22,22 @@ type DNS struct {
 	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (d *DNS) ID() string      { return d.Host }
-func (d *DNS) SetID(id string) { d.Host = id }
+func (d *DNS) ID() string {
+	if d.Resolve != "" && d.Resolve != d.id {
+		return fmt.Sprintf("%s: %s", d.id, d.Resolve)
+	}
+	return d.id
+}
+func (d *DNS) SetID(id string) { d.id = id }
 
 func (d *DNS) GetTitle() string { return d.Title }
 func (d *DNS) GetMeta() meta    { return d.Meta }
+func (d *DNS) GetResolve() string {
+	if d.Resolve != "" {
+		return d.Resolve
+	}
+	return d.id
+}
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
 	skip := false
@@ -35,7 +48,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 		skip = true
 	}
 
-	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+	sysDNS := sys.NewDNS(d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
 	// Backwards copatibility hack for now
@@ -64,7 +77,7 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 	server := sysDNS.Server()
 
 	d := &DNS{
-		Host:       host,
+		id:         host,
 		Resolvable: resolvable,
 		Timeout:    config.TimeOutMilliSeconds(),
 		Server:     server,

@@ -29,6 +29,7 @@ require (
 	github.com/tidwall/gjson v1.6.7
 	github.com/urfave/cli v1.22.5
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad // indirect
+	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gotest.tools/v3 v3.0.3
 )

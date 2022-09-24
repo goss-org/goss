@@ -10,7 +10,8 @@ import (
 type User struct {
 	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Username string  `json:"-" yaml:"-"`
+	id       string  `json:"-" yaml:"-"`
+	Username string  `json:"username,omitempty" yaml:"username,omitempty"`
 	Exists   matcher `json:"exists" yaml:"exists"`
 	UID      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
 	GID      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
@@ -20,15 +21,26 @@ type User struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (u *User) ID() string      { return u.Username }
-func (u *User) SetID(id string) { u.Username = id }
+func (u *User) ID() string {
+	if u.Username != "" && u.Username != u.id {
+		return fmt.Sprintf("%s: %s", u.id, u.Username)
+	}
+	return u.id
+}
+func (u *User) SetID(id string) { u.id = id }
 
 func (u *User) GetTitle() string { return u.Title }
 func (u *User) GetMeta() meta    { return u.Meta }
+func (u *User) GetUsername() string {
+	if u.Username != "" {
+		return u.Username
+	}
+	return u.id
+}
 
 func (u *User) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysuser := sys.NewUser(u.Username, sys, util.Config{})
+	sysuser := sys.NewUser(u.GetUsername(), sys, util.Config{})
 
 	if u.Skip {
 		skip = true
@@ -63,8 +75,8 @@ func NewUser(sysUser system.User, config util.Config) (*User, error) {
 	username := sysUser.Username()
 	exists, _ := sysUser.Exists()
 	u := &User{
-		Username: username,
-		Exists:   exists,
+		id:     username,
+		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "uid") {
 		if uid, err := sysUser.UID(); err == nil {

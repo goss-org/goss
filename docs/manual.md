@@ -453,9 +453,12 @@ Validates if a remote `address:port` are accessible.
 ```yaml
 addr:
   tcp://ip-address-or-domain-name:80:
+    # required attributes
     reachable: true
-    timeout: 500
     # optional attributes
+    # defaults to hash key
+    address: "tcp://ip-address-or-domain-name:80"
+    timeout: 500
     local-address: 127.0.0.1
 ```
 
@@ -465,12 +468,12 @@ Validates the exit-status and output of a command. This can be used in combinati
 
 ```yaml
 command:
-  version:
+  'go version':
     # required attributes
     exit-status: 0
+    # optional attributes
     # defaults to hash key
     exec: "go version"
-    # optional attributes
     stdout:
     - go version go1.6 linux/amd64
     stderr: []
@@ -492,6 +495,8 @@ dns:
     # required attributes
     resolvable: true
     # optional attributes
+    # defaults to hash key
+    resolve: localhost
     addrs:
     - 127.0.0.1
     - ::1
@@ -558,6 +563,8 @@ file:
     # required attributes
     exists: true
     # optional attributes
+    # defaults to hash key
+    path: /etc/passwd
     mode: "0644"
     size: 2118 # in bytes
     owner: root
@@ -599,6 +606,8 @@ group:
     # required attributes
     exists: true
     # optional attributes
+    # defaults to hash key
+    groupname: /etc/passwd
     gid: 65534
     skip: false
 ```
@@ -613,6 +622,8 @@ http:
     # required attributes
     status: 200
     # optional attributes
+    # defaults to hash key
+    url: https://www.google.com
     allow-insecure: false
     no-follow-redirects: false # Setting this to true will NOT follow redirects
     timeout: 1000
@@ -639,6 +650,8 @@ interface:
     # required attributes
     exists: true
     # optional attributes
+    # defaults to hash key
+    name: eth0
     addrs:
     - 172.17.0.2/16
     - fe80::42:acff:fe11:2/64
@@ -654,6 +667,9 @@ kernel-param:
   kernel.ostype:
     # required attributes
     value: Linux
+    # optional attributes
+    # defaults to hash key
+    name: kernel.ostype
 ```
 
 To see the full list of current values, run `sysctl -a`.
@@ -668,6 +684,8 @@ mount:
     # required attributes
     exists: true
     # optional attributes
+    # defaults to hash key
+    mountpoint: /home
     opts:
     - rw
     - relatime
@@ -742,6 +760,8 @@ package:
     # required attributes
     installed: true
     # optional attributes
+    # defaults to hash key
+    name: httpd
     versions:
     - 2.2.15
     skip: false
@@ -762,6 +782,8 @@ port:
     # required attributes
     listening: true
     # optional attributes
+    # defaults to hash key
+    port: 'tcp:22'
     ip: # what IP(s) is it listening on
     - 0.0.0.0
     skip: false
@@ -776,6 +798,9 @@ process:
   chrome:
     # required attributes
     running: true
+    # optional attributes
+    # defaults to hash key
+    comm: chrome
     skip: false
 ```
 
@@ -786,6 +811,8 @@ Validates the state of a service.
 service:
   sshd:
     # Optional attributes
+    # defaults to hash key
+    name: sshd
     enabled: true
     running: true
     runlevels: ["3", "4", "5"]  # Alpine example, runlevels: ["default"]
@@ -806,6 +833,8 @@ user:
     # required attributes
     exists: true
     # optional attributes
+    # defaults to hash key
+    username: nfsnobody
     uid: 65534
     gid: 65534
     groups:

@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"fmt"
+
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 )
@@ -8,7 +10,8 @@ import (
 type Mount struct {
 	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	MountPoint string  `json:"-" yaml:"-"`
+	id         string  `json:"-" yaml:"-"`
+	MountPoint string  `json:"mountpoint,omitempty" yaml:"mountpoint,omitempty"`
 	Exists     matcher `json:"exists" yaml:"exists"`
 	Opts       matcher `json:"opts,omitempty" yaml:"opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
@@ -17,16 +20,27 @@ type Mount struct {
 	Usage      matcher `json:"usage,omitempty" yaml:"usage,omitempty"`
 }
 
-func (m *Mount) ID() string      { return m.MountPoint }
-func (m *Mount) SetID(id string) { m.MountPoint = id }
+func (m *Mount) ID() string {
+	if m.MountPoint != "" && m.MountPoint != m.id {
+		return fmt.Sprintf("%s: %s", m.id, m.MountPoint)
+	}
+	return m.id
+}
+func (m *Mount) SetID(id string) { m.id = id }
 
 // FIXME: Can this be refactored?
 func (m *Mount) GetTitle() string { return m.Title }
 func (m *Mount) GetMeta() meta    { return m.Meta }
+func (m *Mount) GetMountPoint() string {
+	if m.MountPoint != "" {
+		return m.MountPoint
+	}
+	return m.id
+}
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	skip := false
-	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
+	sysMount := sys.NewMount(m.GetMountPoint(), sys, util.Config{})
 
 	if m.Skip {
 		skip = true
@@ -56,8 +70,8 @@ func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
 	mountPoint := sysMount.MountPoint()
 	exists, _ := sysMount.Exists()
 	m := &Mount{
-		MountPoint: mountPoint,
-		Exists:     exists,
+		id:     mountPoint,
+		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "opts") {
 		if opts, err := sysMount.Opts(); err == nil {

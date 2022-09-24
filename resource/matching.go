@@ -16,14 +16,14 @@ type Matching struct {
 	Meta     meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Content  interface{} `json:"content,omitempty" yaml:"content,omitempty"`
 	AsReader bool        `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
-	Id       string      `json:"-" yaml:"-"`
+	id       string      `json:"-" yaml:"-"`
 	Matches  matcher     `json:"matches" yaml:"matches"`
 }
 
 type MatchingMap map[string]*Matching
 
-func (a *Matching) ID() string      { return a.Id }
-func (a *Matching) SetID(id string) { a.Id = id }
+func (a *Matching) ID() string      { return a.id }
+func (a *Matching) SetID(id string) { a.id = id }
 
 // FIXME: Can this be refactored?
 func (r *Matching) GetTitle() string { return r.Title }
