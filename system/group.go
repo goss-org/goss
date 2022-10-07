@@ -1,8 +1,10 @@
 package system
 
 import (
+	"os/user"
+	"strconv"
+
 	"github.com/aelsabbahy/goss/util"
-	"github.com/opencontainers/runc/libcontainer/user"
 )
 
 type Group interface {
@@ -37,5 +39,10 @@ func (u *DefGroup) GID() (int, error) {
 		return 0, err
 	}
 
-	return group.Gid, nil
+	gid, err := strconv.Atoi(group.Gid)
+	if err != nil {
+		return 0, err
+	}
+
+	return gid, nil
 }

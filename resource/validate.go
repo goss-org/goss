@@ -23,7 +23,26 @@ const (
 	SUCCESS = iota
 	FAIL
 	SKIP
+	UNKNOWN
 )
+
+const (
+	OutcomePass    = "pass"
+	OutcomeFail    = "fail"
+	OutcomeSkip    = "skip"
+	OutcomeUnknown = "unknown"
+)
+
+var humanOutcomes map[int]string = map[int]string{
+	UNKNOWN: OutcomeUnknown,
+	SUCCESS: OutcomePass,
+	FAIL:    OutcomeFail,
+	SKIP:    OutcomeSkip,
+}
+
+func HumanOutcomes() map[int]string {
+	return humanOutcomes
+}
 
 const (
 	maxScanTokenSize = 10 * 1024 * 1024
@@ -43,6 +62,20 @@ type TestResult struct {
 	Found        []string      `json:"found" yaml:"found"`
 	Human        string        `json:"human" yaml:"human"`
 	Duration     time.Duration `json:"duration" yaml:"duration"`
+}
+
+// ToOutcome converts the enum to a human-friendly string.
+func (tr TestResult) ToOutcome() string {
+	switch tr.Result {
+	case SUCCESS:
+		return OutcomePass
+	case FAIL:
+		return OutcomeFail
+	case SKIP:
+		return OutcomeSkip
+	default:
+		return OutcomeUnknown
+	}
 }
 
 func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {

@@ -119,7 +119,7 @@ Commands are the actions goss can run.
 * [add](#add-a---add-system-resource-to-test-suite): add a single test for a resource
 * [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite): automatically add multiple tests for a resource
 * [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles): renders and outputs the gossfile, importing all included gossfiles
-* [serve](#serve-s---serve-a-health-endpoint): serves the gossfile validation as an HTTP endpoint on a specified address and port, so you can use your gossfile as a health repor for the host
+* [serve](#serve-s---serve-a-health-endpoint): serves the gossfile validation as an HTTP endpoint on a specified address and port, so you can use your gossfile as a health report for the host
 * [validate](#validate-v---validate-the-system): runs the goss test suite on your server
 
 
@@ -310,6 +310,7 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
+  * `prometheus` - Prometheus compatible output.
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
