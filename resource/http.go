@@ -23,6 +23,9 @@ type HTTP struct {
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
+	CAFile            string   `json:"ca-file,omitempty" yaml:"ca-file,omitempty"`
+	CertFile          string   `json:"cert-file,omitempty" yaml:"cert-file,omitempty"`
+	KeyFile           string   `json:"key-file,omitempty" yaml:"key-file,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
@@ -48,8 +51,12 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 		u.Timeout = 5000
 	}
 	sysHTTP := sys.NewHTTP(u.getURL(), sys, util.Config{
-		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
-		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
+		AllowInsecure:     u.AllowInsecure,
+		CAFile:            u.CAFile,
+		CertFile:          u.CertFile,
+		KeyFile:           u.KeyFile,
+		NoFollowRedirects: u.NoFollowRedirects,
+		Timeout:           time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)

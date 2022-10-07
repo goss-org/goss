@@ -47,6 +47,9 @@ type Config struct {
 	Spec              string
 	Timeout           time.Duration
 	Username          string
+	CAFile            string
+	CertFile          string
+	KeyFile           string
 	Vars              string
 	VarsInline        string
 }
