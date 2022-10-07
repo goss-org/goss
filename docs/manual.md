@@ -290,6 +290,7 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
+  * `prometheus` - Prometheus compatible output.
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
