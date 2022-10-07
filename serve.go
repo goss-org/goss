@@ -15,6 +15,7 @@ import (
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
 	"github.com/patrickmn/go-cache"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Serve(c *util.Config) error {
@@ -24,6 +25,7 @@ func Serve(c *util.Config) error {
 		return err
 	}
 	http.Handle(endpoint, health)
+	http.Handle("/metrics", promhttp.Handler())
 	log.Printf("Starting to listen on: %s", c.ListenAddress)
 	return http.ListenAndServe(c.ListenAddress, nil)
 }
