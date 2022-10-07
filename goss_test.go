@@ -3,7 +3,6 @@ package goss
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -63,7 +62,7 @@ func TestUseAsPackage(t *testing.T) {
 	output := &bytes.Buffer{}
 
 	// temp spec file
-	fh, err := ioutil.TempFile("", "*.yaml")
+	fh, err := os.CreateTemp("", "*.yaml")
 	checkErr(t, err, "temp file failed")
 	fh.Close()
 
@@ -118,5 +117,39 @@ func TestUseAsPackage(t *testing.T) {
 
 	if okcount != passed {
 		t.Fatalf("expected %d passed but got %d", passed, okcount)
+	}
+}
+
+func TestSkipResourcesByType(t *testing.T) {
+	output := &bytes.Buffer{}
+
+	// temp spec file
+	fh, err := os.CreateTemp("", "*.yaml")
+	checkErr(t, err, "temp file failed")
+	fh.Close()
+
+	// new config that doesnt spam output etc
+	cfg, err := util.NewConfig(util.WithFormatOptions("pretty"), util.WithResultWriter(output), util.WithSpecFile(fh.Name()), util.WithDisabledResourceTypes("file"))
+	checkErr(t, err, "new config failed")
+
+	// adds the os tmp dir to the goss spec file
+	err = AddResources(fh.Name(), "File", []string{os.TempDir()}, cfg)
+	checkErr(t, err, "could not add resource %q", os.TempDir())
+
+	// validate and sanity check, compare structured vs direct results etc
+	results, err := ValidateResults(cfg)
+	checkErr(t, err, "check failed")
+
+	skipped := 0
+	for rg := range results {
+		for _, r := range rg {
+			if r.Skipped {
+				skipped++
+			}
+		}
+	}
+
+	if skipped != 6 {
+		t.Fatalf("Expected to skip 6 tests, skipped %d", skipped)
 	}
 }

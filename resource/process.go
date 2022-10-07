@@ -13,19 +13,26 @@ type Process struct {
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (p *Process) ID() string      { return p.Executable }
-func (p *Process) SetID(id string) { p.Executable = id }
+const (
+	ProcessResourceKey  = "process"
+	ProcessResourceName = "Process"
+)
 
+func init() {
+	registerResource(ProcessResourceKey, &Process{})
+}
+
+func (p *Process) ID() string       { return p.Executable }
+func (p *Process) SetID(id string)  { p.Executable = id }
+func (p *Process) SetSkip()         { p.Skip = true }
+func (p *Process) TypeKey() string  { return ProcessResourceKey }
+func (p *Process) TypeName() string { return ProcessResourceName }
 func (p *Process) GetTitle() string { return p.Title }
 func (p *Process) GetMeta() meta    { return p.Meta }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := p.Skip
 	sysProcess := sys.NewProcess(p.Executable, sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))

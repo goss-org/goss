@@ -50,6 +50,7 @@ const (
 
 type TestResult struct {
 	Successful   bool          `json:"successful" yaml:"successful"`
+	Skipped      bool          `json:"skipped" yaml:"skipped"`
 	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
 	ResourceType string        `json:"resource-type" yaml:"resource-type"`
 	Title        string        `json:"title" yaml:"title"`
@@ -82,6 +83,7 @@ func skipResult(typeS string, testType int, id string, title string, meta meta, 
 	return TestResult{
 		Successful:   true,
 		Result:       SKIP,
+		Skipped:      true,
 		ResourceType: typeS,
 		TestType:     testType,
 		ResourceId:   id,
@@ -336,7 +338,7 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	}
 
 	defer func() {
-		//Do we need to close the stream?
+		// Do we need to close the stream?
 		if rc, ok := fh.(io.ReadCloser); ok {
 			rc.Close()
 		}

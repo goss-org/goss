@@ -3,7 +3,6 @@ package goss
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -32,7 +31,7 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	if specFile == "-" {
 		source = "STDIN"
 		fh = os.Stdin
-		data, err := ioutil.ReadAll(fh)
+		data, err := io.ReadAll(fh)
 		if err != nil {
 			return nil, err
 		}
@@ -92,7 +91,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 
 	sys := system.New(c.PackageManager)
 
-	return validate(sys, *gossConfig, c.MaxConcurrent), nil
+	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
 }
 
 // Validate performs validation, writes formatted output to stdout by default
@@ -126,7 +125,7 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	i := 1
 	for {
 		iStartTime := time.Now()
-		out := validate(sys, *gossConfig, c.MaxConcurrent)
+		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
 		exitCode := outputer.Output(ofh, out, iStartTime, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
@@ -144,12 +143,16 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig, maxConcurrent int) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
 	go func() {
 		for _, t := range gossConfig.Resources() {
+			if util.IsValueInList(t.TypeName(), skipList) || util.IsValueInList(t.TypeKey(), skipList) {
+				t.SetSkip()
+			}
+
 			in <- t
 		}
 		close(in)
@@ -167,7 +170,6 @@ func validate(sys *system.System, gossConfig GossConfig, maxConcurrent int) <-ch
 			for f := range in {
 				out <- f.Validate(sys)
 			}
-
 		}()
 	}
 

@@ -23,19 +23,27 @@ type File struct {
 	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (f *File) ID() string      { return f.Path }
-func (f *File) SetID(id string) { f.Path = id }
+const (
+	FileResourceKey  = "file"
+	FileResourceName = "File"
+)
+
+func init() {
+	registerResource(FileResourceKey, &File{})
+}
+
+func (f *File) ID() string       { return f.Path }
+func (f *File) SetID(id string)  { f.Path = id }
+func (f *File) SetSkip()         { f.Skip = true }
+func (f *File) TypeKey() string  { return FileResourceKey }
+func (f *File) TypeName() string { return FileResourceName }
 
 func (f *File) GetTitle() string { return f.Title }
 func (f *File) GetMeta() meta    { return f.Meta }
 
 func (f *File) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := f.Skip
 	sysFile := sys.NewFile(f.Path, sys, util.Config{})
-
-	if f.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))

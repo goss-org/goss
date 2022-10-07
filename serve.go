@@ -115,7 +115,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 func (h healthHandler) runValidate(outputer outputs.Outputer) res {
 	h.sys = system.New(h.c.PackageManager)
 	iStartTime := time.Now()
-	out := validate(h.sys, h.gossConfig, h.maxConcurrent)
+	out := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,

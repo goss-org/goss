@@ -1,8 +1,8 @@
 package goss
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -220,7 +220,7 @@ func Test_loadVars(t *testing.T) {
 func fileMaker(content string) (string, func()) {
 	bytes := []byte(content)
 
-	f, err := ioutil.TempFile("", "*")
+	f, err := os.CreateTemp("", "*")
 	if err != nil {
 		log.Fatal(err)
 	}
