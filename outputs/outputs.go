@@ -45,6 +45,7 @@ var (
 	foVerbose    = "verbose"
 	foPretty     = "pretty"
 	foIncludeRaw = "include_raw"
+	foSort       = "sort"
 )
 
 var green = color.New(color.FgGreen).SprintfFunc()
@@ -243,6 +244,9 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw 
 	var s string
 	if len(failedOrSkipped) > 0 {
 		s += fmt.Sprint("Failures/Skipped:\n\n")
+		sort.Slice(failedOrSkipped, func(i, j int) bool {
+			return failedOrSkipped[i][0].SortKey() < failedOrSkipped[j][0].SortKey()
+		})
 		for _, failedGroup := range failedOrSkipped {
 			first := failedGroup[0]
 			header := header(first)
@@ -256,4 +260,29 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw 
 		}
 	}
 	return s
+}
+
+func getResults(tr <-chan []resource.TestResult, doSort bool) <-chan []resource.TestResult {
+	if !doSort {
+		return tr
+	}
+	str := make([][]resource.TestResult, 0)
+	for i := range tr {
+		str = append(str, i)
+	}
+
+	sort.Slice(str, func(i, j int) bool {
+		return str[i][0].SortKey() < str[j][0].SortKey()
+	})
+
+	c := make(chan []resource.TestResult)
+	go func(c chan []resource.TestResult) {
+		defer close(c)
+
+		for _, i := range str {
+			c <- i
+		}
+	}(c)
+
+	return c
 }

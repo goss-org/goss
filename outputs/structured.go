@@ -16,6 +16,7 @@ type Structured struct{}
 func (r Structured) ValidOptions() []*formatOption {
 	return []*formatOption{
 		{name: foPretty},
+		{name: foSort},
 	}
 }
 
@@ -48,6 +49,10 @@ func (s *StructureTestSummary) String() string {
 // Output processes output from tests into StructuredOutput written to w as a string
 func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
+
 	result := &StructuredOutput{
 		Results: []StructuredTestResult{},
 		Summary: StructureTestSummary{},

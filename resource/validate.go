@@ -43,6 +43,10 @@ type TestResult struct {
 	Duration      time.Duration          `json:"duration" yaml:"duration"`
 }
 
+func (t TestResult) SortKey() string {
+	return fmt.Sprintf("%s:%s", t.ResourceType, t.ResourceId)
+}
+
 func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
 	return TestResult{
 		Result:       SKIP,

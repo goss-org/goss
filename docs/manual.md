@@ -293,8 +293,9 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
-  * `verbose` - Gives verbose output. Applies to `nagios` output
-  * `pretty` - Pretty printing for the `json` output
+  * `verbose`  - Gives verbose output. Applies to `nagios` output
+  * `pretty`   - Pretty printing for the `json` output
+  * `sort`     - Sorts the results
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color

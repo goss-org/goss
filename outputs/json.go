@@ -16,6 +16,7 @@ type Json struct{}
 func (r Json) ValidOptions() []*formatOption {
 	return []*formatOption{
 		{name: foPretty},
+		{name: foSort},
 	}
 }
 
@@ -25,6 +26,9 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	var pretty bool
 	pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
 
 	color.NoColor = true
 	testCount := 0

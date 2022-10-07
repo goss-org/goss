@@ -16,12 +16,17 @@ import (
 type JUnit struct{}
 
 func (r JUnit) ValidOptions() []*formatOption {
-	return []*formatOption{}
+	return []*formatOption{
+		{name: foSort},
+	}
 }
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
 
 	color.NoColor = true
 	var testCount, failed, skipped int

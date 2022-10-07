@@ -12,12 +12,17 @@ import (
 type Documentation struct{}
 
 func (r Documentation) ValidOptions() []*formatOption {
-	return []*formatOption{}
+	return []*formatOption{
+		{name: foSort},
+	}
 }
 
 func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
 
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
