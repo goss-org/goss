@@ -2,10 +2,12 @@ package system
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -34,7 +36,9 @@ type DefHTTP struct {
 	err               error
 	Username          string
 	Password          string
-	ClientCertAuth    util.ClientCertAuthConfig
+	CAFile            string
+	CertFile          string
+	KeyFile           string
 	Method            string
 	Proxy             string
 }
@@ -55,7 +59,9 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
-		ClientCertAuth:    config.ClientCertAuth,
+		CAFile:            config.CAFile,
+		CertFile:          config.CertFile,
+		KeyFile:           config.KeyFile,
 		Proxy:             config.Proxy,
 	}
 }
@@ -90,9 +96,22 @@ func (u *DefHTTP) setup() error {
 		InsecureSkipVerify: u.allowInsecure,
 		Renegotiation:      tls.RenegotiateFreelyAsClient,
 	}
+	if u.CAFile != "" {
+		// FIXME: iotutil
+		caCert, err := os.ReadFile(u.CAFile)
+		if err != nil {
+			return err
+		}
+		roots := x509.NewCertPool()
+		ok := roots.AppendCertsFromPEM(caCert)
+		if !ok {
+			return fmt.Errorf("Failed parse root certificate: %s", u.CAFile)
+		}
+		tlsConfig.RootCAs = roots
+	}
 
-	if u.ClientCertAuth.Cert != "" && u.ClientCertAuth.PrivateKey != "" {
-		cert, err := tls.LoadX509KeyPair(u.ClientCertAuth.Cert, u.ClientCertAuth.PrivateKey)
+	if u.CertFile != "" && u.KeyFile != "" {
+		cert, err := tls.LoadX509KeyPair(u.CertFile, u.KeyFile)
 		if err != nil {
 			return err
 		}

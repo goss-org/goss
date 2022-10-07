@@ -642,11 +642,11 @@ http:
     headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     request-body: '{"key": "value"}' # request body
     body: [] # Check http response content for these patterns
-    username: "" # username for basic auth
-    password: "" # password for basic auth
-    client-cert-auth: # use TLS client certificate for authentication
-      cert: "" # certificate file to use for authentication
-      private-key: "" # private-key file to use for authentication
+    username: ""  # username for basic auth
+    password: ""  # password for basic auth
+    ca-file: ""   # CA root certs pem file, ex: /etc/ssl/cert.pem
+    cert-file: "" # certificate file to use for authentication (used with key-file)
+    key-file: ""  # private-key file to use for authentication (used with cert-file)
     proxy: "" # proxy server to proxy traffic through. Proxy can also be set with environment variables http_proxy.
     skip: false
     method: PUT # http method
