@@ -18,10 +18,18 @@ type Matching struct {
 	Matches matcher     `json:"matches" yaml:"matches"`
 }
 
+const (
+	MatchingResourceKey  = "mount"
+	MatchingResourceName = "Mount"
+)
+
 type MatchingMap map[string]*Matching
 
-func (a *Matching) ID() string      { return a.Id }
-func (a *Matching) SetID(id string) { a.Id = id }
+func (a *Matching) ID() string       { return a.Id }
+func (a *Matching) SetID(id string)  { a.Id = id }
+func (a *Matching) SetSkip()         {}
+func (a *Matching) TypeKey() string  { return MatchingResourceKey }
+func (a *Matching) TypeName() string { return MatchingResourceName }
 
 // FIXME: Can this be refactored?
 func (r *Matching) GetTitle() string { return r.Title }

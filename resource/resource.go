@@ -12,30 +12,23 @@ import (
 )
 
 type Resource interface {
-	Validate(*system.System) []TestResult
+	Validate(sys *system.System) []TestResult
 	SetID(string)
+	SetSkip()
+	TypeKey() string
+	TypeName() string
 }
 
 var (
 	resourcesMu sync.Mutex
-	resources   = map[string]Resource{
-		"addr":         &Addr{},
-		"command":      &Command{},
-		"dns":          &DNS{},
-		"file":         &File{},
-		"gossfile":     &Gossfile{},
-		"group":        &Group{},
-		"http":         &HTTP{},
-		"interface":    &Interface{},
-		"kernel-param": &KernelParam{},
-		"mount":        &Mount{},
-		"package":      &Package{},
-		"port":         &Port{},
-		"process":      &Process{},
-		"service":      &Service{},
-		"user":         &User{},
-	}
+	resources   = map[string]Resource{}
 )
+
+func registerResource(key string, resource Resource) {
+	resourcesMu.Lock()
+	resources[key] = resource
+	resourcesMu.Unlock()
+}
 
 func Resources() map[string]Resource {
 	return resources

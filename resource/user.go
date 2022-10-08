@@ -20,19 +20,26 @@ type User struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (u *User) ID() string      { return u.Username }
-func (u *User) SetID(id string) { u.Username = id }
+const (
+	UserResourceKey  = "user"
+	UserResourceName = "User"
+)
 
+func init() {
+	registerResource(UserResourceKey, &User{})
+}
+
+func (u *User) ID() string       { return u.Username }
+func (u *User) SetID(id string)  { u.Username = id }
+func (u *User) SetSkip()         { u.Skip = true }
+func (u *User) TypeKey() string  { return UserResourceKey }
+func (u *User) TypeName() string { return UserResourceName }
 func (u *User) GetTitle() string { return u.Title }
 func (u *User) GetMeta() meta    { return u.Meta }
 
 func (u *User) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := u.Skip
 	sysuser := sys.NewUser(u.Username, sys, util.Config{})
-
-	if u.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))

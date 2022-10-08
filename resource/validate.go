@@ -23,7 +23,26 @@ const (
 	SUCCESS = iota
 	FAIL
 	SKIP
+	UNKNOWN
 )
+
+const (
+	OutcomePass    = "pass"
+	OutcomeFail    = "fail"
+	OutcomeSkip    = "skip"
+	OutcomeUnknown = "unknown"
+)
+
+var humanOutcomes map[int]string = map[int]string{
+	UNKNOWN: OutcomeUnknown,
+	SUCCESS: OutcomePass,
+	FAIL:    OutcomeFail,
+	SKIP:    OutcomeSkip,
+}
+
+func HumanOutcomes() map[int]string {
+	return humanOutcomes
+}
 
 const (
 	maxScanTokenSize = 10 * 1024 * 1024
@@ -31,6 +50,7 @@ const (
 
 type TestResult struct {
 	Successful   bool          `json:"successful" yaml:"successful"`
+	Skipped      bool          `json:"skipped" yaml:"skipped"`
 	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
 	ResourceType string        `json:"resource-type" yaml:"resource-type"`
 	Title        string        `json:"title" yaml:"title"`
@@ -45,10 +65,25 @@ type TestResult struct {
 	Duration     time.Duration `json:"duration" yaml:"duration"`
 }
 
+// ToOutcome converts the enum to a human-friendly string.
+func (tr TestResult) ToOutcome() string {
+	switch tr.Result {
+	case SUCCESS:
+		return OutcomePass
+	case FAIL:
+		return OutcomeFail
+	case SKIP:
+		return OutcomeSkip
+	default:
+		return OutcomeUnknown
+	}
+}
+
 func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {
 	return TestResult{
 		Successful:   true,
 		Result:       SKIP,
+		Skipped:      true,
 		ResourceType: typeS,
 		TestType:     testType,
 		ResourceId:   id,
@@ -303,7 +338,7 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 	}
 
 	defer func() {
-		//Do we need to close the stream?
+		// Do we need to close the stream?
 		if rc, ok := fh.(io.ReadCloser); ok {
 			rc.Close()
 		}

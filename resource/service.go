@@ -14,19 +14,26 @@ type Service struct {
 	Skip    bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (s *Service) ID() string      { return s.Service }
-func (s *Service) SetID(id string) { s.Service = id }
+const (
+	ServiceResourceKey  = "service"
+	ServiceResourceName = "Service"
+)
 
+func init() {
+	registerResource(ServiceResourceKey, &Service{})
+}
+
+func (s *Service) ID() string       { return s.Service }
+func (s *Service) SetID(id string)  { s.Service = id }
+func (s *Service) SetSkip()         { s.Skip = true }
+func (s *Service) TypeKey() string  { return ServiceResourceKey }
+func (s *Service) TypeName() string { return ServiceResourceName }
 func (s *Service) GetTitle() string { return s.Title }
 func (s *Service) GetMeta() meta    { return s.Meta }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := s.Skip
 	sysservice := sys.NewService(s.Service, sys, util.Config{})
-
-	if s.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))

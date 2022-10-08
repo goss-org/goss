@@ -18,45 +18,60 @@ type HTTP struct {
 	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
 	Timeout           int      `json:"timeout" yaml:"timeout"`
 	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	RequestBody       string   `json:"request-bod,omitemptyy" yaml:"request-body,omitempty"`
+	RequestBody       string   `json:"request-body,omitemptyy" yaml:"request-body,omitempty"`
 	Headers           []string `json:"headers,omitempty" yaml:"headers,omitempty"`
 	Body              []string `json:"body" yaml:"body"`
 	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
 	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
+	CAFile            string   `json:"ca-file,omitempty" yaml:"ca-file,omitempty"`
+	CertFile          string   `json:"cert-file,omitempty" yaml:"cert-file,omitempty"`
+	KeyFile           string   `json:"key-file,omitempty" yaml:"key-file,omitempty"`
 	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
+const (
+	HTTPResourceKey  = "http"
+	HTTPResourceName = "HTTP"
+)
+
+func init() {
+	registerResource(HTTPResourceKey, &HTTP{})
+}
+
 func (u *HTTP) ID() string { return u.HTTP }
 
-func (u *HTTP) SetID(id string) { u.HTTP = id }
+func (u *HTTP) SetID(id string)  { u.HTTP = id }
+func (u *HTTP) SetSkip()         { u.Skip = true }
+func (u *HTTP) TypeKey() string  { return HTTPResourceKey }
+func (u *HTTP) TypeName() string { return HTTPResourceName }
 
 // FIXME: Can this be refactored?
-func (r *HTTP) GetTitle() string { return r.Title }
-func (r *HTTP) GetMeta() meta    { return r.Meta }
+func (u *HTTP) GetTitle() string { return u.Title }
+func (u *HTTP) GetMeta() meta    { return u.Meta }
 
-func (r *HTTP) getURL() string {
-	if r.URL != "" {
-		return r.URL
+func (u *HTTP) getURL() string {
+	if u.URL != "" {
+		return u.URL
 	}
-	return r.HTTP
+	return u.HTTP
 }
 
 func (u *HTTP) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := u.Skip
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
 	sysHTTP := sys.NewHTTP(u.getURL(), sys, util.Config{
-		AllowInsecure: u.AllowInsecure, NoFollowRedirects: u.NoFollowRedirects,
-		Timeout: time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
+		AllowInsecure:     u.AllowInsecure,
+		CAFile:            u.CAFile,
+		CertFile:          u.CertFile,
+		KeyFile:           u.KeyFile,
+		NoFollowRedirects: u.NoFollowRedirects,
+		Timeout:           time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
-
-	if u.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))

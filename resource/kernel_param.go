@@ -10,17 +10,30 @@ type KernelParam struct {
 	Meta  meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
 	Key   string  `json:"-" yaml:"-"`
 	Value matcher `json:"value" yaml:"value"`
+	Skip  bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (a *KernelParam) ID() string      { return a.Key }
-func (a *KernelParam) SetID(id string) { a.Key = id }
+const (
+	KernelParamResourceKey  = "kernel-param"
+	KernelParamResourceName = "KernelParam"
+)
+
+func init() {
+	registerResource(KernelParamResourceKey, &KernelParam{})
+}
+
+func (a *KernelParam) ID() string       { return a.Key }
+func (a *KernelParam) SetID(id string)  { a.Key = id }
+func (a *KernelParam) SetSkip()         { a.Skip = true }
+func (a *KernelParam) TypeKey() string  { return KernelParamResourceKey }
+func (a *KernelParam) TypeName() string { return KernelParamResourceName }
 
 // FIXME: Can this be refactored?
-func (r *KernelParam) GetTitle() string { return r.Title }
-func (r *KernelParam) GetMeta() meta    { return r.Meta }
+func (a *KernelParam) GetTitle() string { return a.Title }
+func (a *KernelParam) GetMeta() meta    { return a.Meta }
 
 func (a *KernelParam) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := a.Skip
 	sysKernelParam := sys.NewKernelParam(a.Key, sys, util.Config{})
 
 	var results []TestResult

@@ -20,25 +20,33 @@ type DNS struct {
 	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (d *DNS) ID() string      { return d.Host }
-func (d *DNS) SetID(id string) { d.Host = id }
+const (
+	DNSResourceKey  = "dns"
+	DNSResourceName = "DNS"
+)
 
+func init() {
+	registerResource(DNSResourceKey, &DNS{})
+}
+
+func (d *DNS) ID() string       { return d.Host }
+func (d *DNS) SetID(id string)  { d.Host = id }
+func (d *DNS) SetSkip()         { d.Skip = true }
+func (d *DNS) TypeKey() string  { return DNSResourceKey }
+func (d *DNS) TypeName() string { return DNSResourceName }
 func (d *DNS) GetTitle() string { return d.Title }
 func (d *DNS) GetMeta() meta    { return d.Meta }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500
-	}
-	if d.Skip {
-		skip = true
 	}
 
 	sysDNS := sys.NewDNS(d.Host, sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
-	// Backwards copatibility hack for now
+	// Backwards compatibility hack for now
 	if d.Resolvable == nil {
 		d.Resolvable = d.Resolveable
 	}
