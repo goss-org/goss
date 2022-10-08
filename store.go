@@ -210,10 +210,14 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 	for _, k := range keys {
 		g := gossConfig.Gossfiles[k]
 		var fpath string
-		if strings.HasPrefix(g.ID(), "/") {
-			fpath = g.ID()
+		if strings.HasPrefix(g.GetGossfile(), "/") {
+			fpath = g.GetGossfile()
 		} else {
-			fpath = filepath.Join(path, g.ID())
+			fpath = filepath.Join(path, g.GetGossfile())
+		}
+		if g.GetSkip() {
+			// Do not process gossfiles with the skip attribute
+			continue
 		}
 		matches, err := filepath.Glob(fpath)
 		if err != nil {

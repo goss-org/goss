@@ -13,8 +13,12 @@ seccomp_opts() {
   local docker_ver minor_ver
   docker_ver=$(docker version -f '{{.Client.Version}}')
   minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  if ((minor_ver>=10)); then
-    echo '--security-opt seccomp:unconfined'
+  major_ver=$(cut -d'.' -f1 <<<$docker_ver)
+  if ((minor_ver>=10))||((major_ver>18)); then
+    echo ' --security-opt seccomp:unconfined '
+  fi
+  if ((major_ver>18)); then
+    echo ' --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro '
   fi
 }
 
@@ -51,9 +55,9 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 97, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 99, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 117, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 119, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
