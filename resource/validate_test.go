@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -137,5 +138,32 @@ func TestValidateContainsSkip(t *testing.T) {
 		if got.Result != SKIP {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, SKIP)
 		}
+	}
+}
+
+func TestResultMarshaling(t *testing.T) {
+	inFunc := func() (io.Reader, error) {
+		return nil, fmt.Errorf("dummy error")
+	}
+	res := ValidateContains(&FakeResource{}, "", []string{"x"}, inFunc, false)
+	if res.Err == nil {
+		t.Fatalf("Expected to receive an error")
+	}
+	if res.Err.Error() != "dummy error" {
+		t.Fatalf("expected to receive 'dummy error', got: %v", res.Err.Error())
+	}
+
+	rj, _ := json.Marshal(res)
+	res = TestResult{}
+	err := json.Unmarshal(rj, &res)
+	if err != nil {
+		t.Fatalf("could not unmarshal result: %v", err)
+	}
+
+	if res.Err == nil {
+		t.Fatalf("Expected to receive an error")
+	}
+	if res.Err.Error() != "dummy error" {
+		t.Fatalf("expected to receive 'dummy error', got: %v", res.Err.Error())
 	}
 }
