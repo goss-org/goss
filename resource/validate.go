@@ -48,21 +48,32 @@ const (
 	maxScanTokenSize = 10 * 1024 * 1024
 )
 
+type ValidateError string
+
+func (g ValidateError) Error() string { return string(g) }
+func toValidateError(err error) *ValidateError {
+	if err == nil {
+		return nil
+	}
+	ve := ValidateError(err.Error())
+	return &ve
+}
+
 type TestResult struct {
-	Successful   bool          `json:"successful" yaml:"successful"`
-	Skipped      bool          `json:"skipped" yaml:"skipped"`
-	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
-	ResourceType string        `json:"resource-type" yaml:"resource-type"`
-	Title        string        `json:"title" yaml:"title"`
-	Meta         meta          `json:"meta" yaml:"meta"`
-	TestType     int           `json:"test-type" yaml:"test-type"`
-	Result       int           `json:"result" yaml:"result"`
-	Property     string        `json:"property" yaml:"property"`
-	Err          error         `json:"err" yaml:"err"`
-	Expected     []string      `json:"expected" yaml:"expected"`
-	Found        []string      `json:"found" yaml:"found"`
-	Human        string        `json:"human" yaml:"human"`
-	Duration     time.Duration `json:"duration" yaml:"duration"`
+	Successful   bool           `json:"successful" yaml:"successful"`
+	Skipped      bool           `json:"skipped" yaml:"skipped"`
+	ResourceId   string         `json:"resource-id" yaml:"resource-id"`
+	ResourceType string         `json:"resource-type" yaml:"resource-type"`
+	Title        string         `json:"title" yaml:"title"`
+	Meta         meta           `json:"meta" yaml:"meta"`
+	TestType     int            `json:"test-type" yaml:"test-type"`
+	Result       int            `json:"result" yaml:"result"`
+	Property     string         `json:"property" yaml:"property"`
+	Err          *ValidateError `json:"err" yaml:"err"`
+	Expected     []string       `json:"expected" yaml:"expected"`
+	Found        []string       `json:"found" yaml:"found"`
+	Human        string         `json:"human" yaml:"human"`
+	Duration     time.Duration  `json:"duration" yaml:"duration"`
 }
 
 // ToOutcome converts the enum to a human-friendly string.
@@ -149,7 +160,7 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 			Title:        title,
 			Meta:         meta,
 			Property:     property,
-			Err:          err,
+			Err:          toValidateError(err),
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
@@ -176,7 +187,6 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		Expected:     []string{string(expected)},
 		Found:        []string{string(found)},
 		Human:        failMessage,
-		Err:          err,
 		Duration:     time.Now().Sub(startTime),
 	}
 }
@@ -332,7 +342,7 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 			Title:        title,
 			Meta:         meta,
 			Property:     property,
-			Err:          err,
+			Err:          toValidateError(err),
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
@@ -377,7 +387,7 @@ func ValidateContains(res ResourceRead, property string, expectedValues []string
 			Title:        title,
 			Meta:         meta,
 			Property:     property,
-			Err:          err,
+			Err:          toValidateError(err),
 			Duration:     time.Now().Sub(startTime),
 		}
 	}
