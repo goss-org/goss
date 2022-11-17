@@ -29,7 +29,7 @@ func (m *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult 
 func (m *ContainElementMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "to contain element matching",
+		Message:  "to not contain element matching",
 		Expected: m.Element,
 	}
 }
