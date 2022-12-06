@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type File interface {

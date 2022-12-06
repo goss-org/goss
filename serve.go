@@ -9,11 +9,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 	"github.com/patrickmn/go-cache"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )

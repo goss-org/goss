@@ -1,6 +1,6 @@
 # goss manual
 
-**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/aelsabbahy/goss/blob/master/docs/platform-feature-parity.md)
+**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/goss-org/goss/blob/master/docs/platform-feature-parity.md)
 
 ## Table of Contents
 
@@ -787,7 +787,7 @@ package:
 ### port
 Validates the state of a local port.
 
-**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/aelsabbahy/goss/issues/149))
+**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/goss-org/goss/issues/149))
 
 ```yaml
 port:
@@ -933,7 +933,7 @@ example:
 ```
 
 For more information see:
-* [gomega_test.go](https://github.com/aelsabbahy/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
+* [gomega_test.go](https://github.com/goss-org/goss/blob/master/resource/gomega_test.go) - For a complete set of supported json -> Gomega mapping
 * [gomega](https://onsi.github.io/gomega/) - Gomega matchers reference
 * [semver](https://github.com/blang/semver#ranges) - Semver constraint (or range) syntax
 

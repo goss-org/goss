@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Command interface {

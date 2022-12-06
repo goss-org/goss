@@ -4,7 +4,7 @@ import (
 	"os/user"
 	"strconv"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Group interface {

@@ -10,18 +10,18 @@ dgoss is a convenience wrapper around goss that aims to bring the simplicity of 
 ## Installation
 #### Linux:
 
-Follow the goss [installation instructions](https://github.com/aelsabbahy/goss#installation)
+Follow the goss [installation instructions](https://github.com/goss-org/goss#installation)
 
 #### Mac OSX
 
 Since goss runs on the target container, dgoss can be used on a Mac OSX system by doing the following:
 ```
 # Install dgoss
-curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
 # Download desired goss version to your preferred location (e.g. v0.3.6)
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+curl -L https://github.com/goss-org/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
 
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64

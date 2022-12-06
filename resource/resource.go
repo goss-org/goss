@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aelsabbahy/goss/system"
+	"github.com/goss-org/goss/system"
 	"github.com/oleiade/reflections"
 )
 

@@ -6,9 +6,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 type Json struct{}

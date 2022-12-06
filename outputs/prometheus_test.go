@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 	"github.com/stretchr/testify/assert"
 )
 
