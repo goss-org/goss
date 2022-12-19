@@ -6,8 +6,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 // Structured is a output formatter that logs into a StructuredOutput structure

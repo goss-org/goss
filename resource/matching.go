@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Matching struct {

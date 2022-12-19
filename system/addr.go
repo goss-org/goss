@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Addr interface {

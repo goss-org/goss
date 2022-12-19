@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/aelsabbahy/goss/matchers"
+	"github.com/goss-org/goss/matchers"
 
 	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"

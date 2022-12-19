@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss"
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 
 	"github.com/fatih/color"
 	"github.com/urfave/cli"
@@ -420,8 +420,8 @@ const msgFormat string = `WARNING: goss for this platform (%q) is alpha-quality,
 
 You should not expect everything to work. Treat linux as the canonical behaviour to expect.
 
-Please see https://github.com/aelsabbahy/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
-Please file issues via https://github.com/aelsabbahy/goss/issues/new/choose
+Please see https://github.com/goss-org/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
+Please file issues via https://github.com/goss-org/goss/issues/new/choose
 Pull requests and bug reports very welcome.`
 
 func fatalAlphaIfNeeded(c *cli.Context) {

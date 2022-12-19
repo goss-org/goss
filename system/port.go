@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aelsabbahy/GOnetstat"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/GOnetstat"
+	"github.com/goss-org/goss/util"
 )
 
 type Port interface {
@@ -68,8 +68,8 @@ func GetPorts(lookupPids bool) map[string][]GOnetstat.Process {
 	ports := make(map[string][]GOnetstat.Process)
 	netstat, _ := GOnetstat.Tcp(lookupPids)
 	var net string
-	//netPorts := make(map[string]GOnetstat.Process)
-	//ports["tcp"] = netPorts
+	// netPorts := make(map[string]GOnetstat.Process)
+	// ports["tcp"] = netPorts
 	net = "tcp"
 	for _, entry := range netstat {
 		if entry.State == "LISTEN" {
@@ -78,8 +78,8 @@ func GetPorts(lookupPids bool) map[string][]GOnetstat.Process {
 		}
 	}
 	netstat, _ = GOnetstat.Tcp6(lookupPids)
-	//netPorts = make(map[string]GOnetstat.Process)
-	//ports["tcp6"] = netPorts
+	// netPorts = make(map[string]GOnetstat.Process)
+	// ports["tcp6"] = netPorts
 	net = "tcp6"
 	for _, entry := range netstat {
 		if entry.State == "LISTEN" {
@@ -88,16 +88,16 @@ func GetPorts(lookupPids bool) map[string][]GOnetstat.Process {
 		}
 	}
 	netstat, _ = GOnetstat.Udp(lookupPids)
-	//netPorts = make(map[string]GOnetstat.Process)
-	//ports["udp"] = netPorts
+	// netPorts = make(map[string]GOnetstat.Process)
+	// ports["udp"] = netPorts
 	net = "udp"
 	for _, entry := range netstat {
 		port := strconv.FormatInt(entry.Port, 10)
 		ports[net+":"+port] = append(ports[net+":"+port], entry)
 	}
 	netstat, _ = GOnetstat.Udp6(lookupPids)
-	//netPorts = make(map[string]GOnetstat.Process)
-	//ports["udp6"] = netPorts
+	// netPorts = make(map[string]GOnetstat.Process)
+	// ports["udp6"] = netPorts
 	net = "udp6"
 	for _, entry := range netstat {
 		port := strconv.FormatInt(entry.Port, 10)

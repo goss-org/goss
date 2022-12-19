@@ -3,7 +3,7 @@
 {
 set -e
 
-LATEST_URL="https://github.com/aelsabbahy/goss/releases/latest"
+LATEST_URL="https://github.com/goss-org/goss/releases/latest"
 LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
 LATEST=${LATEST_EFFECTIVE##*/}
 
@@ -33,7 +33,7 @@ else
     arch="386"
 fi
 
-url="https://github.com/aelsabbahy/goss/releases/download/$GOSS_VER/goss-linux-$arch"
+url="https://github.com/goss-org/goss/releases/download/$GOSS_VER/goss-linux-$arch"
 
 echo "Downloading $url"
 curl -L "$url" -o "$INSTALL_LOC"
@@ -42,7 +42,7 @@ echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
 "$INSTALL_LOC" --version
 
-dgoss_url="https://raw.githubusercontent.com/aelsabbahy/goss/$DGOSS_VER/extras/dgoss/dgoss"
+dgoss_url="https://raw.githubusercontent.com/goss-org/goss/$DGOSS_VER/extras/dgoss/dgoss"
 echo "Downloading $dgoss_url"
 curl -L "$dgoss_url" -o "$DGOSS_INSTALL_LOC"
 chmod +rx "$DGOSS_INSTALL_LOC"

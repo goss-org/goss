@@ -2,7 +2,7 @@ package system
 
 import (
 	"github.com/achanda/go-sysctl"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type KernelParam interface {

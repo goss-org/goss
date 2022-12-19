@@ -7,11 +7,10 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/aelsabbahy/GOnetstat"
-	// This needs a better name
-	"github.com/aelsabbahy/go-ps"
+	"github.com/goss-org/GOnetstat"
+	"github.com/goss-org/go-ps"
 
-	util2 "github.com/aelsabbahy/goss/util"
+	util2 "github.com/goss-org/goss/util"
 )
 
 type Resource interface {

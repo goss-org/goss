@@ -57,6 +57,6 @@ deploy:
     - extras/dgoss/dgoss.sha256
   skip_cleanup: true
   on:
-    repo: aelsabbahy/goss
+    repo: goss-org/goss
     tags: true
     condition: $TRAVIS_OS_NAME = linux

@@ -4,8 +4,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 type Silent struct{}

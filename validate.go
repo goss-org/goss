@@ -11,10 +11,10 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {

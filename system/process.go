@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/aelsabbahy/go-ps"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/go-ps"
+	"github.com/goss-org/goss/util"
 )
 
 type Process interface {

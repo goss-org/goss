@@ -3,7 +3,7 @@ package goss
 import (
 	"reflect"
 
-	"github.com/aelsabbahy/goss/resource"
+	"github.com/goss-org/goss/resource"
 )
 
 type GossConfig struct {

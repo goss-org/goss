@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 	"github.com/miekg/dns"
 )
 

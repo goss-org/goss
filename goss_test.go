@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/util"
 )
 
 func checkErr(t *testing.T, err error, format string, a ...interface{}) {

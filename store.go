@@ -12,8 +12,8 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 const (
