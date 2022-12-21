@@ -222,7 +222,7 @@ get_pod_file() {
     if  ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "test -e ${GOSS_CONTAINER_PATH}/$1" &> /dev/null; then
         mkdir -p "${GOSS_FILES_PATH}"
         info "Copied '$1' from pod/container to '${GOSS_FILES_PATH}'"
-        ${k} cp ${GOSS_KUBECTL_OPTS} "${id}:${GOSS_CONTAINER_PATH}/$1" "${GOSS_FILES_PATH}/$1 "
+        ${k} cp ${GOSS_KUBECTL_OPTS} "${id}:${GOSS_CONTAINER_PATH}/$1" "${GOSS_FILES_PATH}/$1"
     fi
 }
 
