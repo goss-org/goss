@@ -1,0 +1,112 @@
+process:
+  mysql:
+    exec: "mysql -h"
+    exit-status: 0
+
+
+addr:
+  tcp:
+    reachable: true
+    timeout: 500
+    local-address: 127.0.0.1
+
+dns:
+  localhost:
+    addrs:
+      - ::1
+    resolvable: true
+
+file:
+  /ect/password:
+    exists: true
+    mode: "0644"
+    size: 2118
+    owner: root
+    group: root
+    filetype: file
+    contains:
+      - hrll
+    md5: 7c9bb14b3bf178e82c00c2a4398c93cd
+    sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+    sha512: cb71b1940dc879a3688bd502846bff6316dd537bbe917484964fe0f098e9245d80958258dc3bd6297bf42d5bd978cbe2c03d077d4ed45b2b1ed9cd831ceb1bd0
+    linked-to: /usr/sbin/sendmail.sendmail
+    skip: false
+
+
+gossfile:
+  myapplication:
+    file: myapp_gossfile.yaml
+    skip: false
+
+group:
+  nfsnobody:
+    exists: true
+    skip: false
+    gid: 65534
+
+http:
+  https://www.google.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 1000
+    username: ""
+    password: ""
+    ca-file: ""
+    cert-file: ""
+    key-file: ""
+    proxy: ""
+    skip: false
+    method: GET
+
+interface:
+  eth0:
+    exists: true
+    addrs:
+      - " 1"
+    mtu: 1500
+
+kernel-param:
+  kernel.ostype:
+    value: Linux
+
+mount:
+  /home:
+    exists: true
+    opts:
+      - rw
+    source: /dev/mapper/fedora-home
+    filesystem: xfs
+    usage:
+      lt: 95
+
+package:
+  httpd:
+    installed: true
+    versions:
+      - "2.1"
+    skip: false
+
+port:
+  tcp:22:
+    listening: true
+    ip:
+      - "1"
+    skip: false
+
+service:
+  sshd:
+    enabled: true
+    skip: false
+    running: true
+
+user:
+    nfsbody:
+      exists: true
+      uid: 65534
+      gid: 65534
+      groups:
+        - nfsnobody
+      home: /var/lib/nfs
+      shell: /sbin/nologin
+      skip: false
