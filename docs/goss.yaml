@@ -45,6 +45,9 @@ group:
     exists: true
     skip: false
     gid: 65534
+  nobody:
+    exists: true
+    
 
 http:
   https://www.google.com:
@@ -104,7 +107,12 @@ matching:
                 foo: bar
             - have-key: baz
 
-
+# TODO: sprig syntax fails to accept upper block below
+# https://github.com/goss-org/goss/blob/master/docs/manual.md#examples-2
+#  sping_basic:
+#    content: { { "hello!" | upper | repeat 5 }}
+#                 matches:
+#                 match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
 
 mount:
   /home:
@@ -122,7 +130,14 @@ package:
     versions:
       - "2.1"
     skip: false
-
+# https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files    
+  kernel:
+    installed: true
+    versions:
+      and:
+        - have-len: 3
+        - not:
+            contain-element: "4.1.0"
 port:
   tcp:22:
     listening: true
@@ -146,3 +161,53 @@ user:
       home: /var/lib/nfs
       shell: /sbin/nologin
       skip: false
+    
+    nobody:
+      exists: true
+      uid:
+        lt: 500
+      groups:
+        consist-of: [nobody]
+    
+    sshd:
+      title: UID must be between 50-100, GID doesn't matter. home is flexible
+      meta:
+        desc: Ensure sshd is enabled and running since it's needed for system management
+        sev: 5
+      exists: true
+      uid:
+        # Validate that UID is between 50 and 100
+        and:
+          gt: 50
+          lt: 100
+      home:
+        # Home can be any of the following
+        or:
+          - /var/empty/sshd
+          - /var/run/sshd
+
+# https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files
+            
+## Matchers
+
+# https://github.com/goss-org/goss/blob/master/docs/manual.md#examples-1
+# TODO: not yet clear whether this is a valid example or should instead be in a matching block
+#example:
+#  content:
+#    - 1.0.1
+#    - 1.9.9
+#  matches:
+#    semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
+
+## Templates
+    
+# TODO: templates are not valid yaml hence can't be supporter by Json schema 
+#file:
+#  {{- range mkSlice "/etc/passwd" "/etc/group"}}
+#  {{.}}:
+#exists: true
+#mode: "0644"
+#owner: root
+#group: root
+#filetype: file
+#  {{end}}

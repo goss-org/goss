@@ -178,7 +178,7 @@ A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob
 
 For example, to configure the Json schema in JetBrains intellij IDEA, follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom), with arguments such as `schema url=https://raw.githubusercontent.com/goss-org/goss/master/docs/goss-json-schema.yaml`, `schema version=Json schema version 7`, `file path pattern=*/goss.yaml`
 
-In addition, Goss files can also be further manually edited to use:
+In addition, Goss files can also be further manually edited (without full json support) to use:
 
 * [Patterns](https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/goss-org/goss/blob/master/docs/manual.md#advanced-matchers)
