@@ -132,7 +132,6 @@ definitions:
       skip:
         type: boolean
         default: false
-
   gossfileTest:
     properties:
       file:
@@ -256,7 +255,6 @@ definitions:
       mtu:
         type: integer
         default: 1500
-
   kernelParamTest:
     description: |
       To see the full list of current values, run sysctl -a.
@@ -266,8 +264,24 @@ definitions:
       value:
         type: string
         default: Linux
-
-
+  matchingTest:
+    properties:
+      content:
+        anyOf:
+        - type: string
+          default: "some string"
+        - type: array
+          default:
+            - 2
+        - type: object
+          default:
+            foo: bar
+            baz: ring
+      matches:
+        anyOf:
+          - type: integer
+          - type: object
+          - type: array
 
   mountTest:
     required:
@@ -573,9 +587,12 @@ properties:
 
   matching:
       type: object
-      description: "test "
+      description: "Validates specified content against a matcher. Best used with Templates."
+      x-intellij-html-description: |
+        Validates specified content against a matcher. Best used with <a href="#templates">Templates</a>.</p>
+        <h4 dir="auto"><a id="user-content-with-templates" class="anchor" aria-hidden="true" href="#with-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
       additionalProperties:
-        $ref: "#/definitions/Test"
+        $ref: "#/definitions/matchingTest"
 
   mount:
       type: object

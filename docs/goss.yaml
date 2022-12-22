@@ -72,6 +72,40 @@ kernel-param:
   kernel.ostype:
     value: Linux
 
+matching:
+  check_instance_count:
+    content: {{ .Vars.instance_count }}
+    matches:
+      gt: 0
+  check_failure_count_from_all_instance:
+    content: {{ .Vars.failures }}
+    matches: 0
+  check_status:
+    content: {{ .Vars.status }}
+    matches:
+      - not: FAIL
+
+  has_substr: # friendly test name
+    content: some string
+    matches:
+      match-regexp: some str
+    has_2:
+      content:
+        - 2
+      matches:
+        contain-element: 2
+      has_foo_bar_and_baz:
+        content:
+          foo: bar
+          baz: bing
+        matches:
+          and:
+            - have-key-with-value:
+                foo: bar
+            - have-key: baz
+
+
+
 mount:
   /home:
     exists: true
