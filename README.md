@@ -172,7 +172,13 @@ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 
 ### Manually editing Goss files
 
-Goss files can be manually edited to use:
+Goss files can be manually edited to improve readability and expresssiveneess of tests.
+
+A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available in [docs/goss-json-schema.yaml](./docs/goss-json-schema.yaml) makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance such as inline documentation, completion and static analysis.
+
+For example, to configure the Json schema in JetBrains intellij IDEA, follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom), with arguments such as `schema url=https://raw.githubusercontent.com/goss-org/goss/master/docs/goss-json-schema.yaml`, `schema version=Json schema version 7`, `file path pattern=*/goss.yaml`
+
+In addition, Goss files can also be further manually edited to use:
 
 * [Patterns](https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/goss-org/goss/blob/master/docs/manual.md#advanced-matchers)
