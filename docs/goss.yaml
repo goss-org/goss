@@ -1,3 +1,5 @@
+# This sample goss.yaml file is used to test the json schema goss-json-schema.yaml
+
 process:
   mysql:
     exec: "mysql -h"

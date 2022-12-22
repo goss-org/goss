@@ -1,5 +1,15 @@
-#$schema: "https://json-schema.org/draft/2020-12/schema"
-#$id: "https://github.com/goss-org/goss.json"
+$id: "https://github.com/goss-org/goss/master/docs/goss-json-schema.yaml"
+# Note: this schema was authored using intellij support for Json schema version 7
+# providing coding assistance
+# This schema is based on content from https://github.com/goss-org/goss/blob/master/docs/manual.md
+# It was tested in intellij against https://github.com/goss-org/goss/master/docs/goss.yaml
+# both for completion and code analysis use-cases.
+# Limitations / missing support
+# - meta
+# - title
+# - patterns
+# - advanced matchers
+# - templates
 $schema: http://json-schema.org/draft-07/schema#
 title: "Goss-file-schema"
 definitions:
