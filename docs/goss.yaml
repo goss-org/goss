@@ -26,7 +26,7 @@ dns:
     resolvable: true
 
 file:
-  /ect/password:
+  /ect/password/static:
     exists: true
     mode: "0644"
     size: 2118
@@ -40,7 +40,17 @@ file:
     sha512: cb71b1940dc879a3688bd502846bff6316dd537bbe917484964fe0f098e9245d80958258dc3bd6297bf42d5bd978cbe2c03d077d4ed45b2b1ed9cd831ceb1bd0
     linked-to: /usr/sbin/sendmail.sendmail
     skip: false
-
+# Inline templates are not valid json/yaml that could be validated as-in by json schema
+# Instead, run `goss --vars ./vars.yaml render > rendered_goss.yaml` to render them
+# and apply the schema validation on the rendered file.
+{{- range mkSlice "/etc/passwd" "/etc/group"}}
+  {{.}}:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+{{end}}
 
 gossfile:
   myapplication:
@@ -94,25 +104,30 @@ matching:
     content: {{ .Vars.status }}
     matches:
       - not: FAIL
-
+  example:
+    content:
+      - 1.0.1
+      - 1.9.9
+    matches:
+      semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
   has_substr: # friendly test name
     content: some string
     matches:
       match-regexp: some str
-    has_2:
-      content:
-        - 2
-      matches:
-        contain-element: 2
-      has_foo_bar_and_baz:
-        content:
-          foo: bar
-          baz: bing
-        matches:
-          and:
-            - have-key-with-value:
-                foo: bar
-            - have-key: baz
+  has_2:
+    content:
+      - 2
+    matches:
+      contain-element: 2
+  has_foo_bar_and_baz:
+    content:
+      foo: bar
+      baz: bing
+    matches:
+      and:
+        - have-key-with-value:
+            foo: bar
+        - have-key: baz
 
 # TODO: sprig syntax fails to accept upper block below
 # https://github.com/goss-org/goss/blob/master/docs/manual.md#examples-2
@@ -201,26 +216,6 @@ user:
 
 # https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files
             
-## Matchers
 
-# https://github.com/goss-org/goss/blob/master/docs/manual.md#examples-1
-# TODO: not yet clear whether this is a valid example or should instead be in a matching block
-#example:
-#  content:
-#    - 1.0.1
-#    - 1.9.9
-#  matches:
-#    semver-constraint: ">1.0.0 <2.0.0 !=1.5.0"
 
-## Templates
-    
-# TODO: templates are not valid yaml hence can't be supporter by Json schema 
-#file:
-#  {{- range mkSlice "/etc/passwd" "/etc/group"}}
-#  {{.}}:
-#exists: true
-#mode: "0644"
-#owner: root
-#group: root
-#filetype: file
-#  {{end}}
+

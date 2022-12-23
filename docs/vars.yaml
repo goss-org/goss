@@ -1,0 +1,5 @@
+# Sample vars file used in goss.yaml#matching
+# Used for render test and Json schema validation.
+instance_count: 1
+failures: 0
+status: "PASS"
