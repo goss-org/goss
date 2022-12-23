@@ -1,16 +1,23 @@
 # This sample goss.yaml file is used to test the json schema goss-json-schema.yaml
 
-process:
-  mysql:
-    exec: "mysql -h"
-    exit-status: 0
-
-
 addr:
   tcp:
     reachable: true
     timeout: 500
     local-address: 127.0.0.1
+
+command:
+  version:
+    # required attributes
+    exit-status: 0
+    # defaults to hash key
+    exec: "go version"
+    # optional attributes
+    stdout:
+      - go version go1.6 linux/amd64
+    stderr: []
+    timeout: 10000 # in milliseconds
+    skip: false
 
 dns:
   localhost:
@@ -143,6 +150,12 @@ port:
     listening: true
     ip:
       - "1"
+    skip: false
+
+process:
+  chrome:
+    # required attributes
+    running: true
     skip: false
 
 service:
