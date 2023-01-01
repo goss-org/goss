@@ -15,7 +15,7 @@ import (
 
 var gomegaTests = []struct {
 	in              string
-	want            interface{}
+	want            any
 	useNegateTester bool
 }{
 	// Default for simple types
@@ -138,7 +138,7 @@ var gomegaTests = []struct {
 
 func TestMatcherToGomegaMatcher(t *testing.T) {
 	for _, c := range gomegaTests {
-		var dat interface{}
+		var dat any
 		if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
 			t.Fatal(err)
 		}
@@ -150,12 +150,12 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 	}
 }
 
-func gomegaTestEqual(t *testing.T, got, want interface{}, useNegateTester bool, in string) {
+func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
 	if !gomegaEqual(got, want, useNegateTester) {
 		t.Errorf("For input '%s': got %T %v, want %T %v", in, got, got, want, want)
 	}
 }
-func gomegaEqual(g, w interface{}, negateTester bool) bool {
+func gomegaEqual(g, w any, negateTester bool) bool {
 	gotT := reflect.TypeOf(g)
 	wantT := reflect.TypeOf(w)
 	got := g.(types.GomegaMatcher)

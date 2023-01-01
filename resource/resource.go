@@ -40,8 +40,8 @@ type ResourceRead interface {
 	GetMeta() meta
 }
 
-type matcher interface{}
-type meta map[string]interface{}
+type matcher any
+type meta map[string]any
 
 func contains(a []string, s string) bool {
 	for _, e := range a {
@@ -52,7 +52,7 @@ func contains(a []string, s string) bool {
 	return false
 }
 
-func deprecateAtoI(depr interface{}, desc string) interface{} {
+func deprecateAtoI(depr any, desc string) any {
 	s, ok := depr.(string)
 	if !ok {
 		return depr
@@ -65,7 +65,7 @@ func deprecateAtoI(depr interface{}, desc string) interface{} {
 	return float64(i)
 }
 
-func validAttrs(i interface{}, t string) (map[string]bool, error) {
+func validAttrs(i any, t string) (map[string]bool, error) {
 	validAttrs := make(map[string]bool)
 	tags, err := reflections.Tags(i, t)
 	if err != nil {

@@ -39,7 +39,7 @@ func getStoreFormatFromFileName(f string) (int, error) {
 }
 
 func getStoreFormatFromData(data []byte) (int, error) {
-	var v interface{}
+	var v any
 	if err := unmarshalJSON(data, &v); err == nil {
 		return JSON, nil
 	}
@@ -61,7 +61,7 @@ func ReadJSON(filePath string) (GossConfig, error) {
 }
 
 type TmplVars struct {
-	Vars map[string]interface{}
+	Vars map[string]any
 }
 
 func (t *TmplVars) Env() map[string]string {
@@ -73,7 +73,7 @@ func (t *TmplVars) Env() map[string]string {
 	return env
 }
 
-func loadVars(varsFile string, varsInline string) (map[string]interface{}, error) {
+func loadVars(varsFile string, varsInline string) (map[string]any, error) {
 	vars, err := varsFromFile(varsFile)
 	if err != nil {
 		return nil, fmt.Errorf("Error: loading vars file '%s'\n%w", varsFile, err)
@@ -91,8 +91,8 @@ func loadVars(varsFile string, varsInline string) (map[string]interface{}, error
 	return vars, nil
 }
 
-func varsFromFile(varsFile string) (map[string]interface{}, error) {
-	vars := make(map[string]interface{})
+func varsFromFile(varsFile string) (map[string]any, error) {
+	vars := make(map[string]any)
 	if varsFile == "" {
 		return vars, nil
 	}
@@ -110,8 +110,8 @@ func varsFromFile(varsFile string) (map[string]interface{}, error) {
 	return vars, nil
 }
 
-func varsFromString(varsString string) (map[string]interface{}, error) {
-	vars := make(map[string]interface{})
+func varsFromString(varsString string) (map[string]any, error) {
+	vars := make(map[string]any)
 	if varsString == "" {
 		return vars, nil
 	}
@@ -279,7 +279,7 @@ func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {
 	}
 }
 
-func marshal(gossConfig interface{}) ([]byte, error) {
+func marshal(gossConfig any) ([]byte, error) {
 	switch outStoreFormat {
 	case JSON:
 		return marshalJSON(gossConfig)
@@ -290,7 +290,7 @@ func marshal(gossConfig interface{}) ([]byte, error) {
 	}
 }
 
-func unmarshal(data []byte, v interface{}, storeFormat int) error {
+func unmarshal(data []byte, v any, storeFormat int) error {
 	switch storeFormat {
 	case JSON:
 		return unmarshalJSON(data, v)
@@ -301,19 +301,19 @@ func unmarshal(data []byte, v interface{}, storeFormat int) error {
 	}
 }
 
-func marshalJSON(gossConfig interface{}) ([]byte, error) {
+func marshalJSON(gossConfig any) ([]byte, error) {
 	return json.MarshalIndent(gossConfig, "", "    ")
 }
 
-func unmarshalJSON(data []byte, v interface{}) error {
+func unmarshalJSON(data []byte, v any) error {
 	return json.Unmarshal(data, v)
 }
 
-func marshalYAML(gossConfig interface{}) ([]byte, error) {
+func marshalYAML(gossConfig any) ([]byte, error) {
 	return yaml.Marshal(gossConfig)
 }
 
-func unmarshalYAML(data []byte, v interface{}) error {
+func unmarshalYAML(data []byte, v any) error {
 	err := yaml.Unmarshal(data, v)
 	if err != nil {
 		return fmt.Errorf("could not unmarshal %q as YAML data: %s", string(data), err)

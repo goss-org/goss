@@ -140,7 +140,7 @@ func (c *GossConfig) Resources() []resource.Resource {
 	return tests
 }
 
-func genericConcatMaps(maps ...interface{}) (ret []map[string]interface{}) {
+func genericConcatMaps(maps ...any) (ret []map[string]any) {
 	for _, slice := range maps {
 		im := interfaceMap(slice)
 		ret = append(ret, im)
@@ -148,13 +148,13 @@ func genericConcatMaps(maps ...interface{}) (ret []map[string]interface{}) {
 	return ret
 }
 
-func interfaceMap(slice interface{}) map[string]interface{} {
+func interfaceMap(slice any) map[string]any {
 	m := reflect.ValueOf(slice)
 	if m.Kind() != reflect.Map {
 		panic("InterfaceSlice() given a non-slice type")
 	}
 
-	ret := make(map[string]interface{})
+	ret := make(map[string]any)
 
 	for _, k := range m.MapKeys() {
 		ret[k.Interface().(string)] = m.MapIndex(k).Interface()

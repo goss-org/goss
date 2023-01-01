@@ -105,7 +105,7 @@ func skipResult(typeS string, testType int, id string, title string, meta meta, 
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+func ValidateValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -124,7 +124,7 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		)
 	}
 
-	var foundValue interface{}
+	var foundValue any
 	var err error
 	switch f := actual.(type) {
 	case func() (bool, error):
@@ -135,7 +135,7 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		foundValue, err = f()
 	case func() ([]string, error):
 		foundValue, err = f()
-	case func() (interface{}, error):
+	case func() (any, error):
 		foundValue, err = f()
 	default:
 		err = fmt.Errorf("Unknown method signature: %t", f)
