@@ -45,7 +45,7 @@ func NewTemplateFilter(varsFile string, varsInline string) (func([]byte) ([]byte
 	return f, nil
 }
 
-func mkSlice(args ...interface{}) []interface{} {
+func mkSlice(args ...any) []any {
 	return args
 }
 

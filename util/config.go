@@ -215,7 +215,7 @@ func WithVarsFile(file string) ConfigOption {
 }
 
 // WithVarsData uses v as variables to pass to the Validator
-func WithVarsData(v interface{}) ConfigOption {
+func WithVarsData(v any) ConfigOption {
 	return func(c *Config) error {
 		jv, err := json.Marshal(v)
 		if err != nil {
@@ -260,9 +260,9 @@ const (
 	YAML format = "yaml"
 )
 
-func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
+func ValidateSections(unmarshal func(any) error, i any, whitelist map[string]bool) error {
 	// Get generic input
-	var toValidate map[string]map[string]interface{}
+	var toValidate map[string]map[string]any
 	if err := unmarshal(&toValidate); err != nil {
 		return err
 	}
@@ -281,7 +281,7 @@ func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelis
 	return nil
 }
 
-func WhitelistAttrs(i interface{}, format format) (map[string]bool, error) {
+func WhitelistAttrs(i any, format format) (map[string]bool, error) {
 	validAttrs := make(map[string]bool)
 	tags, err := reflections.Tags(i, string(format))
 	if err != nil {

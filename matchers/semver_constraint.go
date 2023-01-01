@@ -9,17 +9,17 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-func BeSemverConstraint(constraint interface{}) types.GomegaMatcher {
+func BeSemverConstraint(constraint any) types.GomegaMatcher {
 	return &BeSemverConstraintMatcher{
 		Constraint: constraint,
 	}
 }
 
 type BeSemverConstraintMatcher struct {
-	Constraint interface{}
+	Constraint any
 }
 
-func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err error) {
+func (matcher *BeSemverConstraintMatcher) Match(actual any) (success bool, err error) {
 	constraint, ok := toConstraint(matcher.Constraint)
 	if !ok {
 		return false, fmt.Errorf("Expected a valid semver constraint.  Got:\n%s", format.Object(matcher.Constraint, 1))
@@ -39,15 +39,15 @@ func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success boo
 	return true, nil
 }
 
-func (matcher *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
+func (matcher *BeSemverConstraintMatcher) FailureMessage(actual any) (message string) {
 	return format.Message(actual, fmt.Sprintf("to be %s", matcher.Constraint))
 }
 
-func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual any) (message string) {
 	return format.Message(actual, fmt.Sprintf("not to be %s", matcher.Constraint))
 }
 
-func toConstraint(in interface{}) (semver.Range, bool) {
+func toConstraint(in any) (semver.Range, bool) {
 	str, ok := in.(string)
 	if !ok {
 		return nil, false
@@ -57,7 +57,7 @@ func toConstraint(in interface{}) (semver.Range, bool) {
 	return out, err == nil
 }
 
-func toVersion(in interface{}) (*semver.Version, bool) {
+func toVersion(in any) (*semver.Version, bool) {
 	str, ok := in.(string)
 	if !ok {
 		return nil, false
@@ -71,7 +71,7 @@ func toVersion(in interface{}) (*semver.Version, bool) {
 	return &v, true
 }
 
-func toVersions(in interface{}) ([]*semver.Version, bool) {
+func toVersions(in any) ([]*semver.Version, bool) {
 	if v, ok := toVersion(in); ok {
 		return []*semver.Version{v}, ok
 	}
@@ -82,7 +82,7 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 
 	out := make([]*semver.Version, 0)
 
-	if slice, ok := in.([]interface{}); ok {
+	if slice, ok := in.([]any); ok {
 		for _, ele := range slice {
 			if v, ok := toVersion(ele); ok {
 				out = append(out, v)

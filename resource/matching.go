@@ -11,11 +11,11 @@ import (
 )
 
 type Matching struct {
-	Title   string      `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Content interface{} `json:"content,omitempty" yaml:"content,omitempty"`
-	Id      string      `json:"-" yaml:"-"`
-	Matches matcher     `json:"matches" yaml:"matches"`
+	Title   string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta    meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Content any     `json:"content,omitempty" yaml:"content,omitempty"`
+	Id      string  `json:"-" yaml:"-"`
+	Matches matcher `json:"matches" yaml:"matches"`
 }
 
 const (
@@ -39,7 +39,7 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false
 
 	// ValidateValue expects a function
-	stub := func() (interface{}, error) {
+	stub := func() (any, error) {
 		return a.Content, nil
 	}
 
@@ -50,7 +50,7 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 
 func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -85,7 +85,7 @@ func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Matching{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)

@@ -11,7 +11,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func checkErr(t *testing.T, err error, format string, a ...interface{}) {
+func checkErr(t *testing.T, err error, format string, a ...any) {
 	t.Helper()
 	if err == nil {
 		return

@@ -10,11 +10,11 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+func matcherToGomegaMatcher(matcher any) (types.GomegaMatcher, error) {
 	switch x := matcher.(type) {
 	case string, int, bool, float64:
 		return gomega.Equal(x), nil
-	case []interface{}:
+	case []any:
 		var matchers []types.GomegaMatcher
 		for _, valueI := range x {
 			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
@@ -29,12 +29,12 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	if matcher == nil {
 		return nil, fmt.Errorf("Missing Required Attribute")
 	}
-	matcherMap, ok := matcher.(map[string]interface{})
+	matcherMap, ok := matcher.(map[string]any)
 	if !ok {
 		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))
 	}
 	var matchType string
-	var value interface{}
+	var value any
 	for matchType, value = range matcherMap {
 		break
 	}
@@ -82,7 +82,7 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		var interfaceSlice []interface{}
+		var interfaceSlice []any
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
@@ -117,8 +117,8 @@ func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
 	}
 }
 
-func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err error) {
-	valueI, ok := value.(map[string]interface{})
+func mapToGomega(value any) (subMatchers []types.GomegaMatcher, err error) {
+	valueI, ok := value.(map[string]any)
 	if !ok {
 		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
 	}
@@ -144,8 +144,8 @@ func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err erro
 	return
 }
 
-func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
-	valueI, ok := value.([]interface{})
+func sliceToGomega(value any) ([]types.GomegaMatcher, error) {
+	valueI, ok := value.([]any)
 	if !ok {
 		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
 	}
@@ -161,12 +161,12 @@ func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
 }
 
 // Normalize expectedValue so json and yaml are the same
-func sanitizeExpectedValue(i interface{}) interface{} {
+func sanitizeExpectedValue(i any) any {
 	if e, ok := i.(float64); ok {
 		return int(e)
 	}
-	if e, ok := i.(map[interface{}]interface{}); ok {
-		out := make(map[string]interface{})
+	if e, ok := i.(map[any]any); ok {
+		out := make(map[string]any)
 		for k, v := range e {
 			ks, ok := k.(string)
 			if !ok {

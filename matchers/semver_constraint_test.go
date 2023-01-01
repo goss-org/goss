@@ -12,7 +12,7 @@ import (
 
 func TestBeSemverConstraint(t *testing.T) {
 	type args struct {
-		Constraint interface{}
+		Constraint any
 	}
 	tests := []struct {
 		name string
@@ -36,10 +36,10 @@ func TestBeSemverConstraint(t *testing.T) {
 
 func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	tests := []struct {
 		name        string
@@ -73,10 +73,10 @@ func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 
 func TestBeSemverConstraintMatcher_Match(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	type want struct {
 		success    bool
@@ -165,10 +165,10 @@ func TestBeSemverConstraintMatcher_Match(t *testing.T) {
 
 func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	tests := []struct {
 		name        string
@@ -203,7 +203,7 @@ func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 
 func Test_toConstraint(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -254,7 +254,7 @@ func Test_toConstraint(t *testing.T) {
 
 func Test_toVersion(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -303,7 +303,7 @@ func Test_toVersion(t *testing.T) {
 
 func Test_toVersions(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -325,7 +325,7 @@ func Test_toVersions(t *testing.T) {
 		},
 		{
 			name: "slice_interfaces",
-			args: args{in: []interface{}{"1.0.0"}},
+			args: args{in: []any{"1.0.0"}},
 			want: want{ok: true},
 		},
 		{
@@ -335,7 +335,7 @@ func Test_toVersions(t *testing.T) {
 		},
 		{
 			name: "invalid_object_in_slice",
-			args: args{in: []interface{}{want{}}},
+			args: args{in: []any{want{}}},
 			want: want{ok: false},
 		},
 	}
@@ -351,7 +351,7 @@ func Test_toVersions(t *testing.T) {
 				for i, version := range gotVersions {
 					if versions, ok := tt.args.in.([]string); ok {
 						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
-					} else if versions, ok := tt.args.in.([]interface{}); ok {
+					} else if versions, ok := tt.args.in.([]any); ok {
 						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
 					} else {
 						assert.Equal(t, fmt.Sprint(tt.args.in), version.String())
