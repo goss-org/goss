@@ -172,13 +172,13 @@ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 
 ### Manually editing Goss files
 
-Goss files can be manually edited to improve readability and expresssiveneess of tests.
+Goss files can be manually edited to improve readability and expressiveness of tests.
 
-A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available in [docs/goss-json-schema.yaml](./docs/goss-json-schema.yaml) makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance such as inline documentation, completion and static analysis.
+A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available in [docs/goss-json-schema.yaml](./docs/goss-json-schema.yaml) makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance such as inline documentation, completion and static analysis. See [PR 793](https://github.com/goss-org/goss/pull/793) for screenshots.
 
 For example, to configure the Json schema in JetBrains intellij IDEA, follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom), with arguments such as `schema url=https://raw.githubusercontent.com/goss-org/goss/master/docs/goss-json-schema.yaml`, `schema version=Json schema version 7`, `file path pattern=*/goss.yaml`
 
-In addition, Goss files can also be further manually edited (without full json support) to use:
+In addition, Goss files can also be further manually edited (without yet full json support) to use:
 
 * [Patterns](https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns)
 * [Advanced Matchers](https://github.com/goss-org/goss/blob/master/docs/manual.md#advanced-matchers)
@@ -226,6 +226,29 @@ package:
     installed: true
 {{end}}
 ```
+
+Goss.yaml files with templates can still be validated through the Json schema after being rendered using the `goss render` command. See example below  
+
+```bash
+cd docs
+goss --vars ./vars.yaml render > rendered_goss.yaml 
+# proceed with json schema validation of rendered_goss.yaml in your favorite IDE 
+# or in one of the Json schema validator listed in https://json-schema.org/implementations.html
+# The following example is for a Linux AMD64 host 
+curl -LO https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+chmod a+x yajsv.linux.amd64 
+sudo mv yajsv.linux.amd64 /usr/sbin/yajsv
+
+yajsv -s goss-json-schema.yaml rendered_goss.yaml
+
+rendered_goss.yaml: fail: process.chrome: skip is required
+rendered_goss.yaml: fail: service.sshd: skip is required
+1 of 1 failed validation
+rendered_goss.yaml: fail: process.chrome: skip is required
+rendered_goss.yaml: fail: service.sshd: skip is required
+```
+
+Full list of available Json schema validators can be found in https://json-schema.org/implementations.html#validator-command%20line
 
 ## Supported resources
 
