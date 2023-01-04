@@ -3,7 +3,7 @@ $id: "https://github.com/goss-org/goss/master/docs/goss-json-schema.yaml"
 # providing coding assistance
 # This schema is based on content from https://github.com/goss-org/goss/blob/master/docs/manual.md and
 #  and https://github.com/goss-org/goss/blob/master/README.md
-# It was tested in intellij against https://github.com/goss-org/goss/master/docs/goss.yaml
+# It was tested in intellij against https://github.com/goss-org/goss/blob/master/docs/goss.yaml
 # both for completion and code analysis use-cases.
 # Limitations / missing support
 # - patterns
