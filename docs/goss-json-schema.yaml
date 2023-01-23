@@ -3,7 +3,7 @@ $id: "https://github.com/goss-org/goss/master/docs/goss-json-schema.yaml"
 # providing coding assistance
 # This schema is based on content from https://github.com/goss-org/goss/blob/master/docs/manual.md and
 #  and https://github.com/goss-org/goss/blob/master/README.md
-# It was tested in intellij against https://github.com/goss-org/goss/master/docs/goss.yaml
+# It was tested in intellij against https://github.com/goss-org/goss/blob/master/docs/goss.yaml
 # both for completion and code analysis use-cases.
 # Limitations / missing support
 # - patterns
@@ -19,6 +19,25 @@ definitions:
   meta:
     description: meta (arbitrary data) attributes are persisted when adding other resources with goss add
     type: object
+  addrTest:
+    required:
+      - reachable
+      - timeout
+    properties:
+      title: { "$ref":"#/definitions/title" }
+      meta: { "$ref":"#/definitions/meta" }
+      reachable:
+        type: boolean
+        default: true
+      timeout:
+        type: integer
+        default: 500
+        examples:
+          - 500
+          # optional attributes
+      local-address:
+        type: string
+        default: 127.0.0.1
   commandTest:
     type: object
     properties:
@@ -48,25 +67,6 @@ definitions:
         default: false
     required:
       - exit-status
-  addrTest:
-    required:
-      - reachable
-      - timeout
-    properties:
-      title: { "$ref":"#/definitions/title" }
-      meta: { "$ref":"#/definitions/meta" }
-      reachable:
-        type: boolean
-        default: true
-      timeout:
-        type: integer
-        default: 500
-        examples:
-          - 500
-          # optional attributes
-      local-address:
-        type: string
-        default: 127.0.0.1
   dnsTest:
     required:
       - resolvable
@@ -313,7 +313,6 @@ definitions:
           - type: integer
           - type: object
           - type: array
-
   mountTest:
     required:
       - exists
@@ -383,6 +382,19 @@ definitions:
       skip:
         type: boolean
         default: false
+  processTest:
+    required:
+      - running
+      - skip
+    properties:
+      title: { "$ref":"#/definitions/title" }
+      meta: { "$ref":"#/definitions/meta" }
+      running:
+        type: boolean
+        default: true
+      skip:
+        type: boolean
+        default: false
   serviceTest:
     required:
       - enabled
@@ -445,12 +457,6 @@ description: "A file describing a series of tests"
 type: "object"
 
 properties:
-  process:
-    type: object
-    description: "test executing a command"
-    additionalProperties:
-      $ref: "#/definitions/commandTest"
-  
   addr:
       type: object
       description: "Validates if a remote address:port are accessible."
@@ -461,6 +467,12 @@ properties:
             local-address: 127.0.0.1
       additionalProperties:
         $ref: "#/definitions/addrTest"
+
+  command:
+    type: object
+    description: "test executing a command"
+    additionalProperties:
+      $ref: "#/definitions/commandTest"
 
   dns:
       type: object
@@ -786,6 +798,12 @@ properties:
             <span class="pl-ent">skip</span>: <span class="pl-c1">false</span>
       additionalProperties:
         $ref: "#/definitions/portTest"
+
+  process:
+      type: object
+      description: "Validates if a process is running."
+      additionalProperties:
+        $ref: "#/definitions/processTest"
 
   service:
       type: object
