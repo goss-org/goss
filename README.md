@@ -288,6 +288,7 @@ Full list of available Json schema validators can be found in https://json-schem
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
 * [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
+* [gossboss](https://github.com/mdb/gossboss) - Collect and view aggregated Goss test results from multiple remote Goss servers.
 
 ## Limitations
 
