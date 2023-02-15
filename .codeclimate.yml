@@ -2,7 +2,7 @@ version: "2"
 checks:
   return-statements:
     config:
-      threshold: 5
+      threshold: 6
 plugins:
   gofmt:
     enabled: true

@@ -19,6 +19,10 @@ import (
 )
 
 func Serve(c *util.Config) error {
+	err := setLogLevel(c)
+	if err != nil {
+		return err
+	}
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
@@ -26,7 +30,7 @@ func Serve(c *util.Config) error {
 	}
 	http.Handle(endpoint, health)
 	http.Handle("/metrics", promhttp.Handler())
-	log.Printf("Starting to listen on: %s", c.ListenAddress)
+	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
 	return http.ListenAndServe(c.ListenAddress, nil)
 }
 
@@ -73,13 +77,13 @@ type healthHandler struct {
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	outputFormat, outputer, err := h.negotiateResponseContentType(r)
 	if err != nil {
-		log.Printf("Warn: Using process-level output-format. %s", err)
+		log.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
 		outputFormat = h.c.OutputFormat
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
 
-	log.Printf("%v: requesting health probe", r.RemoteAddr)
+	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
 	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
@@ -88,13 +92,14 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logBody = " - " + resp.body.String()
 	}
 	resp.body.WriteTo(w)
-	log.Printf("%v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
+	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
 	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
+		log.Printf("[TRACE] Returning cached[%s] (1).", cacheKey)
 		return tmp.(res)
 	}
 
@@ -102,11 +107,11 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	defer h.gossMu.Unlock()
 	tmp, found = h.cache.Get(cacheKey)
 	if found {
-		log.Printf("Returning cached[%s].", cacheKey)
+		log.Printf("[TRACE] Returning cached[%s] (2).", cacheKey)
 		return tmp.(res)
 	}
 
-	log.Printf("Stale cache[%s], running tests", cacheKey)
+	log.Printf("[TRACE] Stale cache[%s], running tests", cacheKey)
 	resp := h.runValidate(outputer)
 	h.cache.SetDefault(cacheKey, resp)
 	return resp

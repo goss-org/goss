@@ -30,6 +30,7 @@ type Config struct {
 	IgnoreList            []string
 	ListenAddress         string
 	LocalAddress          string
+	LogLevel              string
 	MaxConcurrent         int
 	Method                string
 	NoColor               *bool
@@ -73,6 +74,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		DisabledResourceTypes: []string{},
 		ListenAddress:         ":8080",
 		LocalAddress:          "",
+		LogLevel:              "FATAL",
 		MaxConcurrent:         50,
 		NoColor:               nil,
 		NoFollowRedirects:     false,
