@@ -112,7 +112,7 @@ func Validate(c *util.Config) (code int, err error) {
 
 	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
-		return 1, err
+		return 78, err
 	}
 
 	sys := system.New(c.PackageManager)
