@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/aelsabbahy/goss/outputs"
+	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/system"
 	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
@@ -89,34 +90,28 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
-	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
+	var tra [][]resource.TestResult
+	cacheKey := "res"
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		return tmp.(res)
-	}
-
-	h.gossMu.Lock()
-	defer h.gossMu.Unlock()
-	tmp, found = h.cache.Get(cacheKey)
-	if found {
 		log.Printf("Returning cached[%s].", cacheKey)
-		return tmp.(res)
+		tra = tmp.([][]resource.TestResult)
+	} else {
+		log.Printf("Stale cache[%s], running tests", cacheKey)
+		h.sys = system.New(h.c.PackageManager)
+		tra = h.validate()
+		h.cache.SetDefault(cacheKey, tra)
 	}
-
-	log.Printf("Stale cache[%s], running tests", cacheKey)
-	resp := h.runValidate(outputer)
-	h.cache.SetDefault(cacheKey, resp)
-	return resp
+	trc := testResultArrayToChan(tra)
+	return h.output(trc, outputer)
 }
 
-func (h healthHandler) runValidate(outputer outputs.Outputer) res {
-	h.sys = system.New(h.c.PackageManager)
-	out := validate(h.sys, h.gossConfig, h.maxConcurrent)
+func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs.Outputer) res {
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
 	}
-	exitCode := outputer.Output(&b, out, outputConfig)
+	exitCode := outputer.Output(&b, trc, outputConfig)
 	resp := res{
 		body: b,
 	}
@@ -126,6 +121,28 @@ func (h healthHandler) runValidate(outputer outputs.Outputer) res {
 		resp.statusCode = http.StatusServiceUnavailable
 	}
 	return resp
+}
+func (h healthHandler) validate() [][]resource.TestResult {
+	h.sys = system.New(h.c.PackageManager)
+	res := make([][]resource.TestResult, 0)
+	tr := validate(h.sys, h.gossConfig, h.maxConcurrent)
+	for i := range tr {
+		res = append(res, i)
+	}
+	return res
+}
+
+func testResultArrayToChan(tra [][]resource.TestResult) <-chan []resource.TestResult {
+	c := make(chan []resource.TestResult)
+	go func(c chan []resource.TestResult) {
+		defer close(c)
+
+		for _, i := range tra {
+			c <- i
+		}
+	}(c)
+
+	return c
 }
 
 const (
