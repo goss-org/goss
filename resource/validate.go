@@ -40,6 +40,8 @@ type TestResult struct {
 	Result        string                 `json:"result" yaml:"result"`
 	Err           error                  `json:"err" yaml:"err"`
 	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
+	StartTime     time.Time              `json:"duration" yaml:"duration"`
+	EndTime       time.Time              `json:"duration" yaml:"duration"`
 	Duration      time.Duration          `json:"duration" yaml:"duration"`
 }
 
@@ -48,6 +50,7 @@ func (t TestResult) SortKey() string {
 }
 
 func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+	endTime := time.Now()
 	return TestResult{
 		Result:       SKIP,
 		ResourceType: typeS,
@@ -55,7 +58,9 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 		Title:        title,
 		Meta:         meta,
 		Property:     property,
-		Duration:     startTime.Sub(startTime),
+		StartTime:    startTime,
+		EndTime:      endTime,
+		Duration:     endTime.Sub(startTime),
 	}
 }
 
@@ -124,6 +129,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		gomegaMatcher, err = matcherToGomegaMatcher(expectedValue)
 	}
 	if err != nil {
+		endTime := time.Now()
 		return TestResult{
 			Result:       FAIL,
 			ResourceType: typeS,
@@ -132,7 +138,9 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 			Meta:         meta,
 			Property:     property,
 			Err:          err,
-			Duration:     time.Now().Sub(startTime),
+			StartTime:    startTime,
+			EndTime:      endTime,
+			Duration:     endTime.Sub(startTime),
 		}
 	}
 
@@ -151,6 +159,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		result = FAIL
 	}
 
+	endTime := time.Now()
 	return TestResult{
 		Result:        result,
 		ResourceType:  typeS,
@@ -160,6 +169,8 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		Property:      property,
 		MatcherResult: matcherResult,
 		Err:           err,
-		Duration:      time.Now().Sub(startTime),
+		StartTime:     startTime,
+		EndTime:       endTime,
+		Duration:      endTime.Sub(startTime),
 	}
 }

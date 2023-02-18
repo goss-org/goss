@@ -24,7 +24,7 @@ type formatOption struct {
 }
 
 type Outputer interface {
-	Output(io.Writer, <-chan []resource.TestResult, time.Time, util.OutputConfig) int
+	Output(io.Writer, <-chan []resource.TestResult, util.OutputConfig) int
 	ValidOptions() []*formatOption
 }
 
@@ -229,9 +229,9 @@ func header(t resource.TestResult) string {
 	return out
 }
 
-func summary(startTime time.Time, count, failed, skipped int) string {
+func summary(startTime, endTime time.Time, count, failed, skipped int) string {
 	var s string
-	s += fmt.Sprintf("Total Duration: %.3fs\n", time.Since(startTime).Seconds())
+	s += fmt.Sprintf("Total Duration: %.3fs\n", endTime.Sub(startTime).Seconds())
 	f := green
 	if failed > 0 {
 		f = red

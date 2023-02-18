@@ -100,7 +100,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
-func Validate(c *util.Config, startTime time.Time) (code int, err error) {
+func Validate(c *util.Config) (code int, err error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid
@@ -130,10 +130,10 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout
 	i := 1
+	startTime := time.Now()
 	for {
-		iStartTime := time.Now()
 		out := validate(sys, *gossConfig, c.MaxConcurrent)
-		exitCode := outputer.Output(ofh, out, iStartTime, outputConfig)
+		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
 		}

@@ -18,12 +18,14 @@ func (r Documentation) ValidOptions() []*formatOption {
 }
 
 func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 
+	var startTime time.Time
+	var endTime time.Time
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
@@ -35,6 +37,12 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 			fmt.Fprint(w, header)
 		}
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			switch testResult.Result {
 			case resource.SUCCESS:
 				fmt.Fprintln(w, humanizeResult(testResult, false, includeRaw))
@@ -57,7 +65,7 @@ func (r Documentation) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprint(w, "\n\n")
 	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
 
-	fmt.Fprint(w, summary(startTime, testCount, failed, skipped))
+	fmt.Fprint(w, summary(startTime, endTime, testCount, failed, skipped))
 	if failed > 0 {
 		return 1
 	}

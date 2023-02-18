@@ -20,7 +20,7 @@ func (r Nagios) ValidOptions() []*formatOption {
 }
 
 func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 
 	var testCount, failed, skipped int
 
@@ -29,11 +29,19 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	verbose = util.IsValueInList(foVerbose, outConfig.FormatOptions)
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
+	var startTime time.Time
+	var endTime time.Time
 	var summary map[int]string
 	summary = make(map[int]string)
 
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			switch testResult.Result {
 			case resource.FAIL:
 				if util.IsValueInList(foVerbose, outConfig.FormatOptions) {
@@ -47,7 +55,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 		}
 	}
 
-	duration := time.Since(startTime)
+	duration := endTime.Sub(startTime)
 	if failed > 0 {
 		fmt.Fprintf(w, "GOSS CRITICAL - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", testCount, failed, skipped, duration.Seconds())
 		if perfdata {

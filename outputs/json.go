@@ -21,7 +21,7 @@ func (r Json) ValidOptions() []*formatOption {
 }
 
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 
 	var pretty bool
 	pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
@@ -30,12 +30,20 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 
+	var startTime time.Time
+	var endTime time.Time
 	color.NoColor = true
 	testCount := 0
 	failed := 0
 	var resultsOut []map[string]interface{}
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			if testResult.Result == resource.FAIL {
 				failed++
 			}
@@ -49,7 +57,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	summary := make(map[string]interface{})
-	duration := time.Since(startTime)
+	duration := endTime.Sub(startTime)
 	summary["test-count"] = testCount
 	summary["failed-count"] = failed
 	summary["total-duration"] = duration

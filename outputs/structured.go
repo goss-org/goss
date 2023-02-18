@@ -47,7 +47,7 @@ func (s *StructureTestSummary) String() string {
 }
 
 // Output processes output from tests into StructuredOutput written to w as a string
-func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
@@ -58,8 +58,16 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 		Summary: StructureTestSummary{},
 	}
 
+	var startTime time.Time
+	var endTime time.Time
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			r := StructuredTestResult{
 				TestResult:         testResult,
 				SummaryLine:        humanizeResult(testResult, false, includeRaw),
@@ -76,7 +84,7 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 		}
 	}
 
-	result.Summary.TotalDuration = time.Since(startTime)
+	result.Summary.TotalDuration = endTime.Sub(startTime)
 	result.SummaryLine = result.Summary.String()
 
 	var j []byte

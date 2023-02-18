@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 
 	"github.com/aelsabbahy/goss/resource"
 	"github.com/aelsabbahy/goss/util"
@@ -19,7 +18,7 @@ func (r Tap) ValidOptions() []*formatOption {
 }
 
 func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)

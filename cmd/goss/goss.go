@@ -65,7 +65,6 @@ func timeoutFlag(value time.Duration) cli.DurationFlag {
 }
 
 func main() {
-	startTime := time.Now()
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
 	app.Version = version
@@ -141,7 +140,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
-				code, err := goss.Validate(newRuntimeConfigFromCLI(c), startTime)
+				code, err := goss.Validate(newRuntimeConfigFromCLI(c))
 				if err != nil {
 					color.Red(fmt.Sprintf("Error: %v\n", err))
 				}
