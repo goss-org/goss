@@ -268,14 +268,14 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		logOutput.Reset()
 	})
 
-	t.Run("immediately re-request but different accept header, cache should be cold", func(t *testing.T) {
+	t.Run("immediately re-request but different accept header, cache should be warm", func(t *testing.T) {
 		req := makeRequest(t, config, map[string][]string{
 			"accept": {"application/vnd.goss-rspecish"},
 		})
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
+		assert.NotContains(t, logOutput.String(), "Stale cache")
 		t.Log(logOutput.String())
 		logOutput.Reset()
 	})

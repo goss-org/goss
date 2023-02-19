@@ -40,8 +40,8 @@ type TestResult struct {
 	Result        string                 `json:"result" yaml:"result"`
 	Err           error                  `json:"err" yaml:"err"`
 	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
-	StartTime     time.Time              `json:"duration" yaml:"duration"`
-	EndTime       time.Time              `json:"duration" yaml:"duration"`
+	StartTime     time.Time              `json:"start-time" yaml:"start-time"`
+	EndTime       time.Time              `json:"end-time" yaml:"end-time"`
 	Duration      time.Duration          `json:"duration" yaml:"duration"`
 }
 

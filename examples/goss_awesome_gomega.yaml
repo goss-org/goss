@@ -69,11 +69,13 @@ matching:
 
   test_array:
     content:
-      - '46'
       - '45'
-    matches:
-      - and: [{ge: 40}, {le: 50}]
       - '46'
+      - '47'
+    matches:
+      - contain-element: {match-regexp: "4."}
+      - '45'
+      - and: [{ge: 46}, {le: 50}]
 
   test_reader_using_string_matchers:
     content: |

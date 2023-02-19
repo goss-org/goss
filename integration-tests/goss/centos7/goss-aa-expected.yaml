@@ -2,7 +2,7 @@ package:
   httpd:
     installed: true
     versions:
-    - 2.4.6
+    - 2.4.6-95.el7.centos
 port:
   tcp:80:
     listening: true

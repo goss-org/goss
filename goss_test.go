@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/aelsabbahy/goss/outputs"
 	"github.com/aelsabbahy/goss/resource"
@@ -92,7 +91,7 @@ func TestUseAsPackage(t *testing.T) {
 		}
 	}
 
-	code, err := Validate(cfg, time.Now())
+	code, err := Validate(cfg)
 	checkErr(t, err, "check failed")
 	if code != 0 {
 		t.Fatalf("check failed, expected 0 got %d", code)

@@ -10,7 +10,7 @@ arch:
 centos7:
   proxy: http://127.0.0.1:8888
   packages:
-    httpd: "2.4.6"
+    httpd: "2.4.6-95.el7.centos"
   services:
     httpd: []
 trusty:
