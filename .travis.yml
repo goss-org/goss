@@ -6,7 +6,7 @@ env:
 language: go
 
 go:
-  - 1.18.x
+  - 1.20.x
 
 os:
   - osx
