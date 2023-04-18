@@ -1,34 +1,4 @@
 matching:
-  # Basic matchers
-  basic_string:
-    content: 'this is a test'
-    matches: 'this is a test'
-
-  basic_int:
-    content: 42
-    matches: 42
-
-  basic_array:
-    content:
-      - 'group1'
-      - 'group2'
-      - 'group3'
-    matches:
-      - 'group1'
-      - 'group2'
-
-  basic_reader:
-    as-reader: true
-    content: |
-      foo bar
-      moo cow
-    matches:
-      - 'foo'
-      - '/^m.*w$/'
-      - '!wtf'
-      - '!/^ERROR:/'
-
-  # Transformers
   basic_reader_as_array:
     as-reader: true
     content: |
@@ -98,6 +68,17 @@ matching:
           - not: 'this_doesnt_exist'
           - lt: 20
           - have-prefix: 'moo'
+
+  test_reader_using_array:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      - "foo bar"
+      - "15"
+      - "moo cow"
 
 
   test_reader_as_single_string:

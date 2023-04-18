@@ -18,6 +18,7 @@ type Matching struct {
 	AsReader bool        `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
 	id       string      `json:"-" yaml:"-"`
 	Matches  matcher     `json:"matches" yaml:"matches"`
+	Skip     bool        `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 type MatchingMap map[string]*Matching
@@ -31,6 +32,9 @@ func (r *Matching) GetMeta() meta    { return r.Meta }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false
+	if a.Skip {
+		skip = true
+	}
 
 	var stub interface{}
 	if a.AsReader {

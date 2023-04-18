@@ -101,6 +101,14 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(c *util.Config) (code int, err error) {
+	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	if err != nil {
+		return 78, err
+	}
+	return ValidateConfig(c, gossConfig)
+}
+
+func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid
@@ -108,11 +116,6 @@ func Validate(c *util.Config) (code int, err error) {
 	format.UseStringerRepresentation = true
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
-	}
-
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
-	if err != nil {
-		return 78, err
 	}
 
 	sys := system.New(c.PackageManager)

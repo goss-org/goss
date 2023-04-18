@@ -1,0 +1,141 @@
+matching:
+  basic_reader_as_array:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      and:
+        - contain-element: {contain-substring: 'fox'}
+        - contain-element: {match-regexp: '^t.*w$'}
+        - not: {contain-substring: 'foo'}
+        - not: {match-regexp: '^foo'}
+
+  test_numeric_string:
+    content: 128
+    matches:
+      and:
+        - '129'
+        - have-prefix: '2'
+        - have-suffix: '9'
+        - match-regexp: '\s{3}'
+
+  test_string_numeric:
+    content: '128'
+    matches:
+      and:
+        - 129
+        - 129.1
+        - le: 127
+        - gt: 130
+
+  test_string_float:
+    content: '128.3'
+    matches:
+      and:
+        - 129.3
+        - le: 127
+        - gt: 130.2
+
+  test_array:
+    content:
+      - '45'
+      - '46'
+      - '47'
+    matches:
+      - contain-element: {match-regexp: "5."}
+      - '55'
+      - and: [{ge: 56}, {le: 30}]
+
+  test_reader_using_string_matchers:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      and:
+        - have-len: 15
+        - |
+          fox bar
+          15
+          moo cow
+        - have-prefix: 'fox'
+        - have-suffix: "tow\n"
+        - contain-element:
+            have-prefix: 'too'
+        - contain-elements:
+          - not: 'moo cow'
+          - lt: 10
+          - have-prefix: 'tow'
+
+
+  test_reader_as_single_string:
+    content: 'cool'
+    as-reader: true
+    matches: 'not-cool'
+
+  test_reader_using_int_matchers:
+    content: '40'
+    as-reader: true
+    matches:
+      and:
+       - le: 20
+       - ge: 50
+
+
+  test_gjson_transform_simple:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        moo.nested: cowx
+
+  test_gjson_transform_nested_prefix:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        foo: {have-prefix: x}
+
+  test_gjson_transform_nested_count:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        count: {le: 10}
+
+  test_gjson_transform_nested_this:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        '@this': {have-key: "nope"}
+
+  test_gjson_transform_nested_and:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        moo:
+          and:
+            - {have-key: "nope"}
+            - {not: {have-key: "nested"}}
+
+  test_gjson_transform_not_key:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        moo:
+          not:
+            have-key: "nested"
+
+  test_gjson_using_this_and_equal:
+    content: '{"foo": "bar", "baz": "bing"}'
+    matches:
+      gjson:
+        '@this':
+          equal:
+            fox: bar
+            baz: bing

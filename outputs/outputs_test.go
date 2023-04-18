@@ -41,5 +41,5 @@ func TestOutputFormatOptions(t *testing.T) {
 	assert.Contains(t, list, foPerfData)
 	assert.Contains(t, list, foPretty)
 	assert.Contains(t, list, foVerbose)
-	assert.Len(t, list, 3)
+	assert.Len(t, list, 4)
 }

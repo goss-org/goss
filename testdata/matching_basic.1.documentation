@@ -1,0 +1,27 @@
+Matching: basic_array: matches: matches expectation: ["group1","group2"]
+Matching: basic_array_matchers: matches: matches expectation: {"and":[{"contain-elements":["foo","bar"]},["foo","bar"],{"equal":["foo","bar","moo"]},{"consist-of":["foo",{"have-prefix":"m"},"bar"]},{"contain-element":{"have-prefix":"b"}}]}
+Matching: basic_int: matches: matches expectation: 42
+Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!wtf","!/^ERROR:/"]
+Matching: basic_string: matches: matches expectation: "this is a test"
+Matching: basic_string_regexp: matches: matches expectation: {"match-regexp":"^this"}
+Matching: basic_string_skip: matches: skipped
+Matching: negated_basic_array: matches: matches expectation: {"not":["group1","group2","group2","group4"]}
+Matching: negated_basic_array_matchers: matches: matches expectation: {"and":[{"not":{"contain-elements":["fox","box"]}},{"not":["fox","bax"]},{"not":{"equal":["fox","bax","mox"]}},{"not":{"consist-of":["fox",{"have-prefix":"t"},"box"]}},{"not":{"contain-element":{"have-prefix":"x"}}}]}
+Matching: negated_basic_int: matches: matches expectation: {"not":43}
+Matching: negated_basic_reader: matches:
+Error
+    Unknown matcher: contains-elements
+Matching: negated_basic_string: matches: matches expectation: {"not":"this is a failing test"}
+Matching: negated_basic_string_regexp: matches: matches expectation: {"not":{"match-regexp":"^foo"}}
+
+
+Failures/Skipped:
+
+Matching: basic_string_skip: matches: skipped
+
+Matching: negated_basic_reader: matches:
+Error
+    Unknown matcher: contains-elements
+
+Total Duration: 
+Count: 13, Failed: 1, Skipped: 1

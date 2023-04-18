@@ -20,6 +20,19 @@ test:
 	$(info INFO: Starting build $@)
 	./ci/go-test.sh $(pkgs)
 
+cov:
+	go test -coverpkg=./... -coverprofile=c.out ./...
+	# go tool cover -func ./c.out
+
+funcov:
+	go test -coverpkg=./... -coverprofile=c.out ./...
+	go tool cover -func ./c.out
+
+htmlcov:
+	go test -v -coverpkg=./... -coverprofile=c.out ./...
+	go tool cover -html ./c.out
+
+
 lint:
 	$(info INFO: Starting build $@)
 	golint $(pkgs) || true
