@@ -1,5 +1,6 @@
 Matching: basic_reader_as_array: matches: matches expectation: {"and":[{"contain-element":{"contain-substring":"foo"}},{"contain-element":{"match-regexp":"^m.*w$"}},{"not":{"contain-substring":"wtf"}},{"not":{"match-regexp":"^ERROR:"}}]}
 Matching: test_array: matches: matches expectation: [{"contain-element":{"match-regexp":"4."}},"45",{"and":[{"ge":46},{"le":50}]}]
+Matching: test_gjson_have_key_array: matches: matches expectation: {"gjson":{"arr":{"or":[{"contain-elements":[{"have-key":"nested"}]}]}}}
 Matching: test_gjson_transform: matches: matches expectation: {"gjson":{"@this":{"have-key":"foo"},"count":{"le":25},"foo":{"have-prefix":"b"},"moo":{"and":[{"have-key":"nested"},{"not":{"have-key":"nested2"}}]},"moo.nested":"cow"}}
 Matching: test_gjson_using_this_and_equal: matches: matches expectation: {"gjson":{"@this":{"equal":{"baz":"bing","foo":"bar"}}}}
 Matching: test_numeric_string: matches: matches expectation: {"and":["128",{"have-prefix":"1"},{"have-suffix":"8"},{"match-regexp":"\\d{3}"}]}
@@ -12,4 +13,4 @@ Matching: test_string_numeric: matches: matches expectation: {"and":[128,128,{"l
 
 
 Total Duration: 
-Count: 11, Failed: 0, Skipped: 0
+Count: 12, Failed: 0, Skipped: 0

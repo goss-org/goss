@@ -106,7 +106,7 @@ matching:
         '@this': {have-key: "foo"}
         moo:
           and:
-            - {have-key: "nested"}
+            - have-key: "nested"
             - {not: {have-key: "nested2"}}
 
   test_gjson_using_this_and_equal:
@@ -117,3 +117,13 @@ matching:
           equal:
             foo: bar
             baz: bing
+
+  test_gjson_have_key_array:
+    content: '{"arr": [{"nested": "cow"}, {"nested2": "moo"}]}'
+    matches:
+      gjson:
+        arr:
+          # or tests MarshalJSON
+          or:
+            - contain-elements:
+              - have-key: 'nested'

@@ -4,10 +4,37 @@ matching:
     content: 'this is a test'
     matches: 'this is a failing test'
 
+  basic_string_have_prefix:
+    content: 'foo'
+    matches:
+      have-prefix: 'g'
+
+  basic_string_have_suffix:
+    content: 'foo'
+    matches:
+      have-suffix: 'x'
+
+  basic_string_contain_substring:
+    content: 'foo'
+    matches:
+      contain-substring: 'x'
+
   basic_string_regexp:
     content: 'this is a test'
     matches:
       match-regexp: '^foo'
+
+  basic_semver:
+    content: '1.2.3'
+    matches:
+      or:
+       - semver-constraint: '>=9.9.0'
+
+  basic_len:
+    content: "123"
+    matches:
+      or:
+       - have-len: 2
 
   basic_int:
     content: 42
@@ -34,6 +61,8 @@ matching:
         - consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
         - contain-element:
             have-prefix: x
+        - contain-element:
+            have-suffix: x
 
   basic_array_consists_of:
     content: [foo, bar, moo]
@@ -63,10 +92,42 @@ matching:
       not:
         match-regexp: '^this'
 
+  negatedbasic_string_have_prefix:
+    content: 'foo'
+    matches:
+      not:
+        have-prefix: 'f'
+
+  negatedbasic_string_have_suffix:
+    content: 'foo'
+    matches:
+      not:
+        have-suffix: 'o'
+
+  negatedbasic_string_contain_substring:
+    content: 'foo'
+    matches:
+      not:
+        contain-substring: 'oo'
+
+  negatedbasic_len:
+    content: '123'
+    matches:
+      not:
+        have-len: 3
+
   negated_basic_int:
     content: 42
     matches:
       not: 42
+
+  negated_and:
+    content: 42
+    matches:
+      not:
+        and:
+          - 42
+          - 42
 
   negated_basic_array:
     content:
@@ -94,6 +155,12 @@ matching:
         - not:
             contain-element:
               have-prefix: b
+
+  negated_basic_array_contain_element:
+    content: [foo, bar, moo]
+    matches:
+      not:
+        contain-element: foo
 
   negated_basic_array_consists_of:
     content: [foo, bar, moo]

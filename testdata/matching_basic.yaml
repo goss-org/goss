@@ -14,6 +14,11 @@ matching:
     content: 'this is a test'
     matches: 'this is a test'
 
+  basic_semver:
+    content: '1.2.3'
+    matches:
+      semver-constraint: '>=1.2.0'
+
   basic_int:
     content: 42
     matches: 42
@@ -37,6 +42,8 @@ matching:
         - consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
         - contain-element:
             have-prefix: b
+        - contain-element:
+            have-suffix: r
 
   basic_reader:
     as-reader: true
@@ -88,7 +95,7 @@ matching:
         - not:
             equal: [fox, bax, mox] # order matters, exact match
         - not:
-            consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
+            consist-of: [have-suffix: x, have-prefix: t, box] # order doesn't matter, can use matchers
         - not:
             contain-element:
               have-prefix: x

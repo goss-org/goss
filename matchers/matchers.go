@@ -1,7 +1,6 @@
 package matchers
 
 import (
-	"encoding/json"
 	"reflect"
 	"unsafe"
 
@@ -14,7 +13,7 @@ type GossMatcher interface {
 	//Match(actual interface{}) (success bool, err error)
 	FailureResult(actual interface{}) MatcherResult
 	NegatedFailureResult(actual interface{}) MatcherResult
-	json.Marshaler
+	//json.Marshaler
 }
 
 type MatcherResult struct {

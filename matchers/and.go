@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type AndMatcher struct {
@@ -35,8 +34,9 @@ func (m *AndMatcher) FailureResult(actual interface{}) MatcherResult {
 
 func (m *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
-		Actual:  actual,
-		Message: fmt.Sprintf("To not satisfy all of these matchers: %s", m.Matchers),
+		Actual:   actual,
+		Message:  "To not satisfy all of these matchers",
+		Expected: m.Matchers,
 	}
 }
 

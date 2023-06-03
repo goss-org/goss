@@ -1,0 +1,13 @@
+1..12
+ok 1 - Matching: basic_reader_as_array: matches: matches expectation: {"and":[{"contain-element":{"contain-substring":"foo"}},{"contain-element":{"match-regexp":"^m.*w$"}},{"not":{"contain-substring":"wtf"}},{"not":{"match-regexp":"^ERROR:"}}]}
+ok 2 - Matching: test_array: matches: matches expectation: [{"contain-element":{"match-regexp":"4."}},"45",{"and":[{"ge":46},{"le":50}]}]
+ok 3 - Matching: test_gjson_have_key_array: matches: matches expectation: {"gjson":{"arr":{"or":[{"contain-elements":[{"have-key":"nested"}]}]}}}
+ok 4 - Matching: test_gjson_transform: matches: matches expectation: {"gjson":{"@this":{"have-key":"foo"},"count":{"le":25},"foo":{"have-prefix":"b"},"moo":{"and":[{"have-key":"nested"},{"not":{"have-key":"nested2"}}]},"moo.nested":"cow"}}
+ok 5 - Matching: test_gjson_using_this_and_equal: matches: matches expectation: {"gjson":{"@this":{"equal":{"baz":"bing","foo":"bar"}}}}
+ok 6 - Matching: test_numeric_string: matches: matches expectation: {"and":["128",{"have-prefix":"1"},{"have-suffix":"8"},{"match-regexp":"\\d{3}"}]}
+ok 7 - Matching: test_reader_as_single_string: matches: matches expectation: "cool"
+ok 8 - Matching: test_reader_using_array: matches: matches expectation: ["foo bar","15","moo cow"]
+ok 9 - Matching: test_reader_using_int_matchers: matches: matches expectation: {"and":[{"le":250},{"ge":20}]}
+ok 10 - Matching: test_reader_using_string_matchers: matches: matches expectation: {"and":[{"have-len":19},"foo bar\n15\nmoo cow\n",{"have-prefix":"foo"},{"have-suffix":"cow\n"},{"contain-element":{"have-prefix":"moo"}},{"contain-elements":[{"not":"this_doesnt_exist"},{"lt":20},{"have-prefix":"moo"}]}]}
+ok 11 - Matching: test_string_float: matches: matches expectation: {"and":[128.3,{"le":129},{"gt":120.2}]}
+ok 12 - Matching: test_string_numeric: matches: matches expectation: {"and":[128,128,{"le":128},{"gt":120}]}

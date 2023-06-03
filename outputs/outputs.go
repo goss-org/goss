@@ -123,11 +123,11 @@ func prettyPrint(i interface{}, indent bool) string {
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
 	var b []byte
+	// []matchers.GossMatcher doesn't print correctly
 	err := encoder.Encode(i)
 	if err == nil {
 		b = buffer.Bytes()
 	} else {
-		//b = []byte(fmt.Sprint(err))
 		b = []byte(fmt.Sprint(i))
 	}
 	b = bytes.TrimRightFunc(b, unicode.IsSpace)

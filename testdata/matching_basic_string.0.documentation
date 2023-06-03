@@ -1,8 +1,0 @@
-Matching: basic_array: matches: matches expectation: ["group1","group2"]
-Matching: basic_int: matches: matches expectation: 42
-Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!wtf","!/^ERROR:/"]
-Matching: basic_string: matches: matches expectation: "this is a test"
-
-
-Total Duration: 0.000s
-Count: 4, Failed: 0, Skipped: 0

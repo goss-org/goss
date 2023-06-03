@@ -139,3 +139,24 @@ matching:
           equal:
             fox: bar
             baz: bing
+
+  test_gjson_have_key_array:
+    content: '{"arr": [{"nested": "cow"}, {"nested2": "moo"}]}'
+    matches:
+      gjson:
+        '@this':
+          or:
+            - have-key: "fail"
+
+  test_gjson_not_found:
+    content: '{"arr": [{"nested": "cow"}, {"nested2": "moo"}]}'
+    matches:
+      gjson:
+        foo: 'bar'
+
+  test_gjson_invalid:
+    content: '{"arr"'
+    matches:
+      gjson:
+        '@this':
+            - have-key: "arr"

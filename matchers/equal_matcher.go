@@ -36,4 +36,7 @@ func (m *EqualMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 
 func (m *EqualMatcher) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m.Expected)
+	j := make(map[string]interface{})
+	j["equal"] = m.Expected
+	return json.Marshal(j)
 }
