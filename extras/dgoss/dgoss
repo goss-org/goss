@@ -125,7 +125,9 @@ case "$1" in
         $CONTAINER_RUNTIME exec -it "$id" sh -c 'cd /goss; PATH="/goss:$PATH" exec sh'
         get_docker_file "$id" "/goss/goss.yaml" "${GOSS_FILES_PATH}/${GOSS_FILE:-goss.yaml}"
         get_docker_file "$id" "/goss/goss_wait.yaml" "${GOSS_FILES_PATH}/goss_wait.yaml"
-        [[ ! -z "${GOSS_VARS}" ]] && get_docker_file "$id" "/goss/${GOSS_VARS}" "${GOSS_FILES_PATH}/${GOSS_VARS}"
+        if [[ ! -z "${GOSS_VARS}" ]]; then
+            get_docker_file "$id" "/goss/${GOSS_VARS}" "${GOSS_FILES_PATH}/${GOSS_VARS}"
+        fi
         ;;
     *)
         error "$USAGE"
