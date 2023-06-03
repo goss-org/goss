@@ -29,6 +29,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	color.NoColor = true
 	testCount := 0
 	failed := 0
+	skipped := 0
 	var resultsOut []map[string]any
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -37,6 +38,9 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 				logTrace("WARN", "FAIL", testResult, true)
 			} else {
 				logTrace("TRACE", "SUCCESS", testResult, true)
+			}
+			if testResult.Skipped {
+				skipped++
 			}
 			m := struct2map(testResult)
 			m["summary-line"] = humanizeResult(testResult)
@@ -50,8 +54,9 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	duration := time.Since(startTime)
 	summary["test-count"] = testCount
 	summary["failed-count"] = failed
+	summary["skipped-count"] = skipped
 	summary["total-duration"] = duration
-	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", testCount, failed, duration.Seconds())
+	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", testCount, failed, skipped, duration.Seconds())
 
 	out := make(map[string]any)
 	out["results"] = resultsOut
