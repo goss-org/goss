@@ -118,17 +118,16 @@ func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool)
 func prettyPrint(i interface{}, indent bool) string {
 	// JSON doesn't like non-string keys
 	i = dyno.ConvertMapI2MapS(i)
-	// fixme: error handling
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
 	var b []byte
-	// []matchers.GossMatcher doesn't print correctly
 	err := encoder.Encode(i)
 	if err == nil {
 		b = buffer.Bytes()
 	} else {
-		b = []byte(fmt.Sprint(i))
+		// FIXME: Is this the right thing to do?
+		b = []byte(err.Error())
 	}
 	b = bytes.TrimRightFunc(b, unicode.IsSpace)
 	if indent {

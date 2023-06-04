@@ -70,7 +70,7 @@ Matching: negated_and: matches:
 Expected
     42
 To not satisfy all of these matchers
-    [{"":42},{"":42}]
+    [{"eq":42},{"eq":42}]
 Matching: negated_basic_array: matches:
 Expected
     ["group1","group2","group3"]
@@ -220,7 +220,7 @@ Matching: negated_and: matches:
 Expected
     42
 To not satisfy all of these matchers
-    [{"":42},{"":42}]
+    [{"eq":42},{"eq":42}]
 
 Matching: negated_basic_array: matches:
 Expected

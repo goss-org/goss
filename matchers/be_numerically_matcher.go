@@ -38,7 +38,11 @@ func (m *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherR
 
 func (m *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	j[numericSymbolToStr[m.Comparator]] = m.CompareTo[0]
+	str, ok := numericSymbolToStr[m.Comparator]
+	if !ok {
+		return []byte{}, fmt.Errorf("unknown comparator %s", m.Comparator)
+	}
+	j[str] = m.CompareTo[0]
 	return json.Marshal(j)
 }
 
@@ -47,4 +51,5 @@ var numericSymbolToStr = map[string]string{
 	">=": "ge",
 	"<":  "lt",
 	"<=": "le",
+	"==": "eq",
 }

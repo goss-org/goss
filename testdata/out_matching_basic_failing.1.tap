@@ -11,7 +11,7 @@ not ok 9 - Matching: basic_string_contain_substring: matches: Expected "foo" to 
 not ok 10 - Matching: basic_string_have_prefix: matches: Expected "foo" to have prefix "g"
 not ok 11 - Matching: basic_string_have_suffix: matches: Expected "foo" to have suffix "x"
 not ok 12 - Matching: basic_string_regexp: matches: Expected "this is a test" to match regular expression "^foo"
-not ok 13 - Matching: negated_and: matches: Expected 42 To not satisfy all of these matchers [{"":42},{"":42}]
+not ok 13 - Matching: negated_and: matches: Expected 42 To not satisfy all of these matchers [{"eq":42},{"eq":42}]
 not ok 14 - Matching: negated_basic_array: matches: Expected ["group1","group2","group3"] not to contain elements ["group1","group2","group3"]
 not ok 15 - Matching: negated_basic_array_consists_of: matches: Expected ["foo","bar","moo"] not to consist of ["foo",{"have-prefix":"m"},"bar"]
 not ok 16 - Matching: negated_basic_array_contain_element: matches: Expected ["foo","bar","moo"] to not contain element matching "foo"
