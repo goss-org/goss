@@ -44,7 +44,7 @@ func (m *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err
 func (m *BeSemverConstraintMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "to satisfy constraint",
+		Message:  "to satisfy semver constraint",
 		Expected: m.Constraint,
 	}
 }
@@ -52,7 +52,7 @@ func (m *BeSemverConstraintMatcher) FailureResult(actual interface{}) MatcherRes
 func (m *BeSemverConstraintMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "not to satisfy constraint",
+		Message:  "not to satisfy semver constraint",
 		Expected: m.Constraint,
 	}
 }

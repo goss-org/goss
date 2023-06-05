@@ -15,7 +15,7 @@ the missing elements were
 Matching: test_gjson_have_key_array: matches:
 Expected
     {"arr":[{"nested":"cow"},{"nested2":"moo"}]}
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"have-key":"fail"}]
 the transform chain was
     [{"gjson":{"Path":"@this"}}]
@@ -39,7 +39,7 @@ the transform chain was
 Matching: test_gjson_transform_nested_count: matches:
 Expected
     15
-to be <=
+to be numerically le
     10
 the transform chain was
     [{"gjson":{"Path":"count"}},{"to-numeric":{}}]
@@ -93,7 +93,7 @@ to equal
 Matching: test_reader_using_int_matchers: matches:
 Expected
     40
-to be <=
+to be numerically le
     20
 the transform chain was
     [{"to-numeric":{}}]
@@ -105,14 +105,14 @@ to have length
 Matching: test_string_float: matches:
 Expected
     128.3
-to be ==
+to be numerically eq
     129.3
 the transform chain was
     [{"to-numeric":{}}]
 Matching: test_string_numeric: matches:
 Expected
     128
-to be ==
+to be numerically eq
     129
 the transform chain was
     [{"to-numeric":{}}]
@@ -139,7 +139,7 @@ the missing elements were
 Matching: test_gjson_have_key_array: matches:
 Expected
     {"arr":[{"nested":"cow"},{"nested2":"moo"}]}
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"have-key":"fail"}]
 the transform chain was
     [{"gjson":{"Path":"@this"}}]
@@ -167,7 +167,7 @@ the transform chain was
 Matching: test_gjson_transform_nested_count: matches:
 Expected
     15
-to be <=
+to be numerically le
     10
 the transform chain was
     [{"gjson":{"Path":"count"}},{"to-numeric":{}}]
@@ -229,7 +229,7 @@ to equal
 Matching: test_reader_using_int_matchers: matches:
 Expected
     40
-to be <=
+to be numerically le
     20
 the transform chain was
     [{"to-numeric":{}}]
@@ -243,7 +243,7 @@ to have length
 Matching: test_string_float: matches:
 Expected
     128.3
-to be ==
+to be numerically eq
     129.3
 the transform chain was
     [{"to-numeric":{}}]
@@ -251,7 +251,7 @@ the transform chain was
 Matching: test_string_numeric: matches:
 Expected
     128
-to be ==
+to be numerically eq
     129
 the transform chain was
     [{"to-numeric":{}}]

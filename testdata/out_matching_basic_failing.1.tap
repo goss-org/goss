@@ -1,22 +1,22 @@
 1..25
 not ok 1 - Matching: basic_array: matches: Expected ["group1","group2","group3"] to contain elements ["group1","group2","group2","group4"] the missing elements were ["group2","group4"]
 not ok 2 - Matching: basic_array_consists_of: matches: Expected ["foo","bar","moo"] to consist of ["fox",{"have-prefix":"t"},"box"] the missing elements were ["fox",{"have-prefix":"t"},"box"] the extra elements were ["foo","bar","moo"]
-not ok 3 - Matching: basic_array_matchers: matches: Expected ["foo","bar","moo"] To satisfy at least one of these matchers [{"contain-elements":["fox","box"]},{"contain-elements":["fox","bax"]},["fox","bax","mox"],{"consist-of":["fox",{"have-prefix":"t"},"box"]},{"contain-element":{"have-prefix":"x"}},{"contain-element":{"have-suffix":"x"}}]
-not ok 4 - Matching: basic_int: matches: Expected 42 to be == 43
-not ok 5 - Matching: basic_len: matches: Expected "123" To satisfy at least one of these matchers [{"have-len":2}]
-not ok 6 - Matching: basic_reader: matches: Expected "object: *strings.Reader" to contain patterns ["fox","/^t.*w$/","!foo","!/^foo/"] the missing elements were ["fox","/^t.*w$/","!foo","!/^foo/"]
-not ok 7 - Matching: basic_semver: matches: Expected "1.2.3" To satisfy at least one of these matchers [{"semver-constraint":">=9.9.0"}]
+not ok 3 - Matching: basic_array_matchers: matches: Expected ["foo","bar","moo"] to satisfy at least one of these matchers [{"contain-elements":["fox","box"]},{"contain-elements":["fox","bax"]},["fox","bax","mox"],{"consist-of":["fox",{"have-prefix":"t"},"box"]},{"contain-element":{"have-prefix":"x"}},{"contain-element":{"have-suffix":"x"}}]
+not ok 4 - Matching: basic_int: matches: Expected 42 to be numerically eq 43
+not ok 5 - Matching: basic_len: matches: Expected "123" to satisfy at least one of these matchers [{"have-len":2}]
+not ok 6 - Matching: basic_reader: matches: Expected "object: *strings.Reader" to have patterns ["fox","/^t.*w$/","!foo","!/^foo/"] the missing elements were ["fox","/^t.*w$/","!foo","!/^foo/"]
+not ok 7 - Matching: basic_semver: matches: Expected "1.2.3" to satisfy at least one of these matchers [{"semver-constraint":">=9.9.0"}]
 not ok 8 - Matching: basic_string: matches: Expected "this is a test" to equal "this is a failing test"
 not ok 9 - Matching: basic_string_contain_substring: matches: Expected "foo" to contain substring "x"
 not ok 10 - Matching: basic_string_have_prefix: matches: Expected "foo" to have prefix "g"
 not ok 11 - Matching: basic_string_have_suffix: matches: Expected "foo" to have suffix "x"
 not ok 12 - Matching: basic_string_regexp: matches: Expected "this is a test" to match regular expression "^foo"
-not ok 13 - Matching: negated_and: matches: Expected 42 To not satisfy all of these matchers [{"eq":42},{"eq":42}]
+not ok 13 - Matching: negated_and: matches: Expected 42 not to satisfy all of these matchers [{"eq":42},{"eq":42}]
 not ok 14 - Matching: negated_basic_array: matches: Expected ["group1","group2","group3"] not to contain elements ["group1","group2","group3"]
 not ok 15 - Matching: negated_basic_array_consists_of: matches: Expected ["foo","bar","moo"] not to consist of ["foo",{"have-prefix":"m"},"bar"]
-not ok 16 - Matching: negated_basic_array_contain_element: matches: Expected ["foo","bar","moo"] to not contain element matching "foo"
-not ok 17 - Matching: negated_basic_array_matchers: matches: Expected ["foo","bar","moo"] To satisfy at least one of these matchers [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
-not ok 18 - Matching: negated_basic_int: matches: Expected 42 not to be == 42
+not ok 16 - Matching: negated_basic_array_contain_element: matches: Expected ["foo","bar","moo"] not to contain element matching "foo"
+not ok 17 - Matching: negated_basic_array_matchers: matches: Expected ["foo","bar","moo"] to satisfy at least one of these matchers [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
+not ok 18 - Matching: negated_basic_int: matches: Expected 42 not to be numerically eq 42
 not ok 19 - Matching: negated_basic_reader: matches: Error ContainElements matcher expects an array/slice/map. Got: <string>: foo bar moo cow 
 not ok 20 - Matching: negated_basic_string: matches: Expected "this is a test" not to equal "this is a test"
 not ok 21 - Matching: negatedbasic_len: matches: Expected "123" not to have length 3

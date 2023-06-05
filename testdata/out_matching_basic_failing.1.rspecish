@@ -23,25 +23,25 @@ the extra elements were
 Matching: basic_array_matchers: matches:
 Expected
     ["foo","bar","moo"]
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"contain-elements":["fox","box"]},{"contain-elements":["fox","bax"]},["fox","bax","mox"],{"consist-of":["fox",{"have-prefix":"t"},"box"]},{"contain-element":{"have-prefix":"x"}},{"contain-element":{"have-suffix":"x"}}]
 
 Matching: basic_int: matches:
 Expected
     42
-to be ==
+to be numerically eq
     43
 
 Matching: basic_len: matches:
 Expected
     "123"
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"have-len":2}]
 
 Matching: basic_reader: matches:
 Expected
     "object: *strings.Reader"
-to contain patterns
+to have patterns
     ["fox","/^t.*w$/","!foo","!/^foo/"]
 the missing elements were
     ["fox","/^t.*w$/","!foo","!/^foo/"]
@@ -49,7 +49,7 @@ the missing elements were
 Matching: basic_semver: matches:
 Expected
     "1.2.3"
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"semver-constraint":">=9.9.0"}]
 
 Matching: basic_string: matches:
@@ -85,7 +85,7 @@ to match regular expression
 Matching: negated_and: matches:
 Expected
     42
-To not satisfy all of these matchers
+not to satisfy all of these matchers
     [{"eq":42},{"eq":42}]
 
 Matching: negated_basic_array: matches:
@@ -103,19 +103,19 @@ not to consist of
 Matching: negated_basic_array_contain_element: matches:
 Expected
     ["foo","bar","moo"]
-to not contain element matching
+not to contain element matching
     "foo"
 
 Matching: negated_basic_array_matchers: matches:
 Expected
     ["foo","bar","moo"]
-To satisfy at least one of these matchers
+to satisfy at least one of these matchers
     [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
 
 Matching: negated_basic_int: matches:
 Expected
     42
-not to be ==
+not to be numerically eq
     42
 
 Matching: negated_basic_reader: matches:

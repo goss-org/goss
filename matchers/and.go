@@ -35,7 +35,7 @@ func (m *AndMatcher) FailureResult(actual interface{}) MatcherResult {
 func (m *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "To not satisfy all of these matchers",
+		Message:  "not to satisfy all of these matchers",
 		Expected: m.Matchers,
 	}
 }

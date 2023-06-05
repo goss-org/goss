@@ -8,22 +8,34 @@ import (
 )
 
 type BeNumericallyMatcher struct {
-	matchers.BeNumericallyMatcher
+	fakeOmegaMatcher
+	Comparator string
+	CompareTo  []interface{}
+	//matchers.BeNumericallyMatcher
 }
 
 func BeNumerically(comparator string, compareTo ...interface{}) GossMatcher {
 	return &BeNumericallyMatcher{
-		matchers.BeNumericallyMatcher{
-			Comparator: comparator,
-			CompareTo:  compareTo,
-		},
+		Comparator: comparator,
+		CompareTo:  compareTo,
 	}
+}
+func (m *BeNumericallyMatcher) Match(actual interface{}) (success bool, err error) {
+	comparator, err := strToSymbol(m.Comparator)
+	if err != nil {
+		return false, err
+	}
+	matcher := &matchers.BeNumericallyMatcher{
+		Comparator: comparator,
+		CompareTo:  m.CompareTo,
+	}
+	return matcher.Match(actual)
 }
 
 func (m *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("to be %s", m.Comparator),
+		Message:  fmt.Sprintf("to be numerically %s", m.Comparator),
 		Expected: m.CompareTo[0],
 	}
 }
@@ -31,25 +43,27 @@ func (m *BeNumericallyMatcher) FailureResult(actual interface{}) MatcherResult {
 func (m *BeNumericallyMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("not to be %s", m.Comparator),
+		Message:  fmt.Sprintf("not to be numerically %s", m.Comparator),
 		Expected: m.CompareTo[0],
 	}
 }
 
 func (m *BeNumericallyMatcher) MarshalJSON() ([]byte, error) {
 	j := make(map[string]interface{})
-	str, ok := numericSymbolToStr[m.Comparator]
-	if !ok {
-		return []byte{}, fmt.Errorf("unknown comparator %s", m.Comparator)
-	}
-	j[str] = m.CompareTo[0]
+	j[m.Comparator] = m.CompareTo[0]
 	return json.Marshal(j)
 }
 
-var numericSymbolToStr = map[string]string{
-	">":  "gt",
-	">=": "ge",
-	"<":  "lt",
-	"<=": "le",
-	"==": "eq",
+func strToSymbol(s string) (string, error) {
+	comparator, ok := map[string]string{
+		"gt": ">",
+		"ge": ">=",
+		"lt": "<",
+		"le": "<=",
+		"eq": "==",
+	}[s]
+	if !ok {
+		return "", fmt.Errorf("Unknown comparator: %s", s)
+	}
+	return comparator, nil
 }

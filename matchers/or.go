@@ -35,7 +35,7 @@ func (m *OrMatcher) Match(actual interface{}) (success bool, err error) {
 func (m *OrMatcher) FailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "To satisfy at least one of these matchers",
+		Message:  "to satisfy at least one of these matchers",
 		Expected: m.Matchers,
 	}
 }

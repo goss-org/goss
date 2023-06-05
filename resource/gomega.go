@@ -12,7 +12,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 	case string:
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal(x)), nil
 	case float64, int:
-		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("==", x)), nil
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("eq", x)), nil
 	case bool:
 		return matchers.Equal(x), nil
 	case []interface{}:
@@ -134,14 +134,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		}
 		return matchers.Or(subMatchers...), nil
 	case "gt", "ge", "lt", "le":
-		// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
-		comparator := map[string]string{
-			"gt": ">",
-			"ge": ">=",
-			"lt": "<",
-			"le": "<=",
-		}[matchType]
-		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically(comparator, value)), nil
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically(matchType, value)), nil
 
 	case "semver-constraint":
 		v, isStr := value.(string)

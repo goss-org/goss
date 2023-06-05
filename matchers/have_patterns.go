@@ -125,7 +125,7 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 	return MatcherResult{
 		Actual:          a,
-		Message:         "to contain patterns",
+		Message:         "to have patterns",
 		Expected:        m.Elements,
 		MissingElements: m.missingElements,
 	}
@@ -138,7 +138,7 @@ func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherRe
 	}
 	return MatcherResult{
 		Actual:   a,
-		Message:  "not to contain patterns",
+		Message:  "not to have patterns",
 		Expected: m.Elements,
 	}
 }
