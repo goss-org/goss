@@ -1,8 +1,8 @@
 package goss
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,25 +12,25 @@ func Test_varsFromString(t *testing.T) {
 	tests := []struct {
 		name    string
 		arg     string
-		want    map[string]interface{}
+		want    map[string]any
 		wantErr bool
 	}{
 		{
 			name:    "empty_string",
 			arg:     ``,
-			want:    map[string]interface{}{},
+			want:    map[string]any{},
 			wantErr: false,
 		},
 		{
 			name:    "empty_JSON",
 			arg:     `{}`,
-			want:    map[string]interface{}{},
+			want:    map[string]any{},
 			wantErr: false,
 		},
 		{
 			name: "JSON_simple",
 			arg:  `{"a": "a", "b": 1}`,
-			want: map[string]interface{}{
+			want: map[string]any{
 				"a": "a",
 				"b": float64(1),
 			},
@@ -39,7 +39,7 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "YAML_simple",
 			arg:  `{a: a, b: 1}`,
-			want: map[string]interface{}{
+			want: map[string]any{
 				"a": "a",
 				"b": 1,
 			},
@@ -48,7 +48,7 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "JSON_float",
 			arg:  `{"f": 1.23}`,
-			want: map[string]interface{}{
+			want: map[string]any{
 				"f": 1.23,
 			},
 			wantErr: false,
@@ -56,7 +56,7 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "YAML_float",
 			arg:  `{f: 1.23}`,
-			want: map[string]interface{}{
+			want: map[string]any{
 				"f": 1.23,
 			},
 			wantErr: false,
@@ -64,8 +64,8 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "JSON_list",
 			arg:  `{"l": ["l1", "l2", 3]}`,
-			want: map[string]interface{}{
-				"l": []interface{}{
+			want: map[string]any{
+				"l": []any{
 					"l1",
 					"l2",
 					float64(3),
@@ -76,8 +76,8 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "YAML_list",
 			arg:  `{l: [l1, l2, 3]}`,
-			want: map[string]interface{}{
-				"l": []interface{}{
+			want: map[string]any{
+				"l": []any{
 					"l1",
 					"l2",
 					3,
@@ -88,10 +88,10 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "JSON_object",
 			arg:  `{"o": {"oa": "a", "oo": { "oo1": 1 } } }`,
-			want: map[string]interface{}{
-				"o": map[string]interface{}{
+			want: map[string]any{
+				"o": map[string]any{
 					"oa": "a",
-					"oo": map[string]interface{}{
+					"oo": map[string]any{
 						"oo1": float64(1),
 					},
 				},
@@ -101,10 +101,10 @@ func Test_varsFromString(t *testing.T) {
 		{
 			name: "YAML_object",
 			arg:  `{o: {oa: a, oo: { oo1: 1 } } }`,
-			want: map[string]interface{}{
-				"o": map[interface{}]interface{}{
+			want: map[string]any{
+				"o": map[any]any{
 					"oa": "a",
-					"oo": map[interface{}]interface{}{
+					"oo": map[any]any{
 						"oo1": 1,
 					},
 				},
@@ -139,7 +139,7 @@ func Test_loadVars(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    map[string]interface{}
+		want    map[string]any
 		wantErr bool
 	}{
 		{
@@ -148,7 +148,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileEmpty,
 				varsInline: `{}`,
 			},
-			want:    map[string]interface{}{},
+			want:    map[string]any{},
 			wantErr: false,
 		},
 		{
@@ -157,7 +157,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileNil,
 				varsInline: `{}`,
 			},
-			want:    map[string]interface{}{},
+			want:    map[string]any{},
 			wantErr: false,
 		},
 		{
@@ -166,7 +166,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileEmpty,
 				varsInline: `{b: b}`,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"b": "b",
 			},
 			wantErr: false,
@@ -177,7 +177,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileSimple,
 				varsInline: `{}`,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"a": "a",
 			},
 			wantErr: false,
@@ -188,7 +188,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileSimple,
 				varsInline: `{b: b}`,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"a": "a",
 				"b": "b",
 			},
@@ -200,7 +200,7 @@ func Test_loadVars(t *testing.T) {
 				varsFile:   fileSimple,
 				varsInline: `{a: c, b: b}`,
 			},
-			want: map[string]interface{}{
+			want: map[string]any{
 				"a": "c",
 				"b": "b",
 			},
@@ -220,7 +220,7 @@ func Test_loadVars(t *testing.T) {
 func fileMaker(content string) (string, func()) {
 	bytes := []byte(content)
 
-	f, err := ioutil.TempFile("", "*")
+	f, err := os.CreateTemp("", "*")
 	if err != nil {
 		log.Fatal(err)
 	}

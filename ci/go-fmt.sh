@@ -13,7 +13,7 @@ if [[ "${os_name}" == "windows" ]]; then
   exit 0
 fi
 
-fmt="$(go fmt github.com/aelsabbahy/goss/...)"
+fmt="$(go fmt github.com/goss-org/goss/...)"
 
 if [[ -z "${fmt}" ]]; then
   echo "valid gofmt"

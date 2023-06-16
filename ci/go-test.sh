@@ -5,6 +5,6 @@ command -v go
 
 go test -coverprofile="c.out" "${1}"
 
-sed 's|github.com/aelsabbahy/goss/||' <"c.out" >"c.out.tmp"
+sed 's|github.com/goss-org/goss/||' <"c.out" >"c.out.tmp"
 
 mv "c.out.tmp" "c.out"

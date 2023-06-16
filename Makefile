@@ -1,6 +1,6 @@
 export GO15VENDOREXPERIMENT=1
 
-exe = github.com/aelsabbahy/goss/cmd/goss
+exe = github.com/goss-org/goss/cmd/goss
 pkgs = $(shell ./novendor.sh)
 cmd = goss
 GO111MODULE=on
@@ -64,7 +64,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-windows-amd64
+build: release/goss-alpha-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-linux-arm64 release/goss-alpha-windows-amd64
 
 gen:
 	$(info INFO: Starting build $@)

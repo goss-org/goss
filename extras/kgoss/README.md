@@ -23,9 +23,9 @@ You can manually install kgoss and goss by going through the Web UI, getting
 the files and putting them in the right path. To get each of them:
 
 * **kgoss**: Run `curl -sSLO
-	https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/kgoss/kgoss`.
+	https://raw.githubusercontent.com/goss-org/goss/master/extras/kgoss/kgoss`.
 * **goss**: Download the `goss-linux-amd64` asset from
-  <https://github.com/aelsabbahy/goss/releases> and rename it `goss`. Place it
+  <https://github.com/goss-org/goss/releases> and rename it `goss`. Place it
   in your HOME directory, e.g. C:\\Users\\<username> on Windows; or set the
   environment variable `GOSS_PATH` to its path.
 
@@ -47,7 +47,7 @@ username=$(whoami)
 dest_dir=${HOME}/bin
 
 host=raw.githubusercontent.com
-repo=aelsabbahy/goss
+repo=goss-org/goss
 # for private repos, replace:
 # host=github.yourcompany.com
 # repo=org-name/goss
@@ -129,6 +129,7 @@ Variable | Description | Default
 GOSS\_PATH | Local location of a compatible goss binary to use in container | `$(which goss)`
 GOSS\_FILES\_PATH | Location of the goss yaml files | `.`
 GOSS\_KUBECTL\_BIN | Kubenetes client tool to use | `$(which kubectl)`
+GOSS\_KUBECTL\_OPTS | Options to inject more options such as "--namespace=default" | ""
 GOSS\_OPTS | Options to use for the goss test run. | `--color --format documentation`
 GOSS\_WAIT\_OPTS | Options to use for the goss wait run, when `./goss_wait.yaml` exists. | `-r 30s -s 1s > /dev/null`
 GOSS\_VARS | Variables file relative to `GOSS_FILES_PATH` to copy and use | ""

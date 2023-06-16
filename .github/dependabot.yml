@@ -11,3 +11,5 @@ updates:
       - "aelsabbahy"
     reviewers:
       - "aelsabbahy"
+    open-pull-requests-limit: 0
+

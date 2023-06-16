@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Interface struct {
@@ -18,13 +18,25 @@ type Interface struct {
 	Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	InterfaceResourceKey  = "interface"
+	InterfaceResourceName = "Interface"
+)
+
+func init() {
+	registerResource(InterfaceResourceKey, &Interface{})
+}
+
 func (i *Interface) ID() string {
 	if i.Name != "" && i.Name != i.id {
 		return fmt.Sprintf("%s: %s", i.id, i.Name)
 	}
 	return i.id
 }
-func (i *Interface) SetID(id string) { i.id = id }
+func (i *Interface) SetID(id string)  { i.id = id }
+func (i *Interface) SetSkip()         { i.Skip = true }
+func (i *Interface) TypeKey() string  { return InterfaceResourceKey }
+func (i *Interface) TypeName() string { return InterfaceResourceName }
 
 // FIXME: Can this be refactored?
 func (i *Interface) GetTitle() string { return i.Title }
@@ -37,12 +49,8 @@ func (i *Interface) GetName() string {
 }
 
 func (i *Interface) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := i.Skip
 	sysInterface := sys.NewInterface(i.GetName(), sys, util.Config{})
-
-	if i.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip))

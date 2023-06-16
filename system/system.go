@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strconv"
@@ -12,8 +11,7 @@ import (
 	"github.com/shirou/gopsutil/process"
 
 	// This needs a better name
-
-	util2 "github.com/aelsabbahy/goss/util"
+	util2 "github.com/goss-org/goss/util"
 )
 
 type Resource interface {
@@ -183,7 +181,7 @@ func DetectService() string {
 // using. One of "ubuntu", "redhat" (including Centos), "alpine", "arch", or
 // "debian". If it can't decide, it returns an empty string.
 func DetectDistro() string {
-	if b, e := ioutil.ReadFile("/etc/lsb-release"); e == nil && bytes.Contains(b, []byte("Ubuntu")) {
+	if b, e := os.ReadFile("/etc/lsb-release"); e == nil && bytes.Contains(b, []byte("Ubuntu")) {
 		return "ubuntu"
 	} else if isRedhat() {
 		return "redhat"
@@ -206,7 +204,7 @@ func HasCommand(cmd string) bool {
 }
 
 func isLegacySystemd() bool {
-	if b, err := ioutil.ReadFile("/etc/debian_version"); err == nil {
+	if b, err := os.ReadFile("/etc/debian_version"); err == nil {
 		i := bytes.Index(b, []byte("."))
 		if i < 0 {
 			return false

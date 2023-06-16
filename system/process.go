@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 	"github.com/shirou/gopsutil/process"
 )
 

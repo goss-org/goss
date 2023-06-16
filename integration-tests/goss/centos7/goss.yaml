@@ -28,4 +28,6 @@ process:
   httpd:
     running: true
 gossfile:
-  ../goss-s*.yaml: {}
+  "../goss-s*.yaml": {}
+  bypath:
+    file: "../goss-dummy.yaml"

@@ -6,7 +6,7 @@ env:
 language: go
 
 go:
-  - 1.15.x
+  - 1.20.x
 
 os:
   - osx
@@ -22,7 +22,7 @@ services:
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
   # bash from macOS is too old to have readarray. Install newer version.
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then brew install bash; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install bash; fi
 
 install:
   - ./ci/install.sh
@@ -38,8 +38,8 @@ after_script:
 
 deploy:
   provider: releases
-  token:
-    secure: hEHCC4EN7iHz7pIWKRn2qw22NTqUxnuBp59wfAlLBtV26j5rHMzSu8mlxkJInusDUGLJiNLrZPRWN0mzOdIXalbUeLhlX7EflJgEj6Q0MchUR69LzCAp0KMIFL1Sfq0v81VgujRLUUy5utxDL8Er4tZknn2PpXAMzpO+ozjNRDhhSEM4iMXfY3bcOIMnx6XRgCjFCb036wlBgOfdgv5fwm2PP638DTKar4W6ZZbqCQByhJ5RyL3BMDPTT0moA/tYbG+FA6p6Rme1OcBkMnpsiJZoB3u8gxsNiEJ43/C2RcULW/18qqp2UVD5FipSDYP7GQ5ugKCbgpWXb0Ctl8o4hv1UsNl0XoyJhAt0PRp6vqnyy6LWB2FzX30Xj/vGIhO/IfiJvspHxpatTk7Esjr46K4u9ao/x63LX6F6yI1ZTfbzt2MhRYRjwh4ORNfqhysuzXChftX1S9hj6s6gO0/zqoOsRK/PK8DProbUn4bxrGOBzi16P0GEk4agWWUm74Pis9qCThXNW8MXEV936KvE1wb1RxTACYvFBtO2IM5eQ26t2Y7mGJd7FJup9LR4oUtUTSbYo5P2Sal6xntBKH5P4nwEtM+TtHoeSCKQ3X5i1VSdvAH7soEAly6rP5d5wwPhqqx9mgUPYO/3ulvxLJOYHamrbj6nlHDXnCEoj1ZMxX4=
+  api_key:
+    secure: ijNltjw/mIHIOx8vLZ6asUun3SbY7D+XZbs5NX8vcIv0jvOiwaaT1hqny7SQBHfGZzqHsYUSS/GYAYJdBqKFFfGmTZsl90hFT6D0RGdz9C71UVxNFX4wQ5KQ/WVvdMT2SrLymGvu9TvoU0VG8OWqWVdxSlUPf6qOTGAagrzg+Tbsbb6czeiG67mlBBL23XSlfMG1p45UxzvI41SZj2R3ElUb0hym1CrFaoC36PBGrb0x41TXzvd8J7cu6xDzgczYhnYQQZpS6f2YcqNV1z0f+P67EQqQiDWIIcK2jE/YG+RgM8cbpLMiMec8CDiwNCsejBA5EbVMlGJlODvBXT5NmMBeugueqfSHEfkl5qZTQG4AOAT7UsqbnM7r0NqzmaE5Lj90igvJK6rNsH1ZRe79WfSsTtuzlkkouHGvyoz0M8gnMSzpbbwoyIy+UT0hhPMoZvIpXfr43en5WkbkPKfop0p4Vjc8NGg0iD45q1JAvIVTtz/WvWTknM1P8e3u+TiDTaZkcJJmFaBqgaeLoWktOGfi54p9nhgQnSyBYt4PyvhWDQs7QFmX0BdKlqJCESvUOJTe1t6zJJsV7Gn/3sGCN7JUEwbnXTsCoMjjFFUvQdm0Ur7t7/2xU3kO+dyfqcdM/5SYFeppQcjHI0ckhI51mIoBTsJsGvaVwKKL1I4cyBU=
   file:
     - release/goss-darwin-amd64
     - release/goss-darwin-amd64.sha256
@@ -49,12 +49,14 @@ deploy:
     - release/goss-linux-386.sha256
     - release/goss-linux-arm
     - release/goss-linux-arm.sha256
-    - release/goss-windows-amd64.exe
-    - release/goss-windows-amd64.exe.sha256
+    - release/goss-linux-arm64
+    - release/goss-linux-arm64.sha256
+    - release/goss-alpha-windows-amd64.exe
+    - release/goss-alpha-windows-amd64.exe.sha256
     - extras/dgoss/dgoss
     - extras/dgoss/dgoss.sha256
   skip_cleanup: true
   on:
-    repo: aelsabbahy/goss
+    repo: goss-org/goss
     tags: true
     condition: $TRAVIS_OS_NAME = linux

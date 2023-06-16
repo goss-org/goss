@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Command struct {
@@ -23,8 +23,20 @@ type Command struct {
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (c *Command) ID() string      { return c.id }
-func (c *Command) SetID(id string) { c.id = id }
+const (
+	CommandResourceKey  = "command"
+	CommandResourceName = "Command"
+)
+
+func init() {
+	registerResource(CommandResourceKey, &Command{})
+}
+
+func (c *Command) ID() string       { return c.id }
+func (c *Command) SetID(id string)  { c.id = id }
+func (c *Command) SetSkip()         { c.Skip = true }
+func (c *Command) TypeKey() string  { return CommandResourceKey }
+func (c *Command) TypeName() string { return CommandResourceName }
 
 func (c *Command) GetTitle() string { return c.Title }
 func (c *Command) GetMeta() meta    { return c.Meta }
@@ -36,12 +48,10 @@ func (c *Command) GetExec() string {
 }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := c.Skip
+
 	if c.Timeout == 0 {
 		c.Timeout = 10000
-	}
-	if c.Skip {
-		skip = true
 	}
 
 	var results []TestResult

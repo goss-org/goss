@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type User struct {
@@ -21,14 +21,25 @@ type User struct {
 	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	UserResourceKey  = "user"
+	UserResourceName = "User"
+)
+
+func init() {
+	registerResource(UserResourceKey, &User{})
+}
+
 func (u *User) ID() string {
 	if u.Username != "" && u.Username != u.id {
 		return fmt.Sprintf("%s: %s", u.id, u.Username)
 	}
 	return u.id
 }
-func (u *User) SetID(id string) { u.id = id }
-
+func (u *User) SetID(id string)  { u.id = id }
+func (u *User) SetSkip()         { u.Skip = true }
+func (u *User) TypeKey() string  { return UserResourceKey }
+func (u *User) TypeName() string { return UserResourceName }
 func (u *User) GetTitle() string { return u.Title }
 func (u *User) GetMeta() meta    { return u.Meta }
 func (u *User) GetUsername() string {
@@ -39,12 +50,8 @@ func (u *User) GetUsername() string {
 }
 
 func (u *User) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := u.Skip
 	sysuser := sys.NewUser(u.GetUsername(), sys, util.Config{})
-
-	if u.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))

@@ -3,10 +3,10 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/matchers"
+	"github.com/goss-org/goss/matchers"
 )
 
-func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
+func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	// Default matchers
 	switch x := matcher.(type) {
 	case string:
@@ -15,12 +15,12 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("eq", x)), nil
 	case bool:
 		return matchers.Equal(x), nil
-	case []interface{}:
+	case []any:
 		subMatchers, err := sliceToGomega(x)
 		if err != nil {
 			return nil, err
 		}
-		var interfaceSlice []interface{}
+		var interfaceSlice []any
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
@@ -30,12 +30,12 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 	if matcher == nil {
 		return nil, fmt.Errorf("Missing Required Attribute")
 	}
-	matcherMap, ok := matcher.(map[string]interface{})
+	matcherMap, ok := matcher.(map[string]any)
 	if !ok {
 		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))
 	}
 	var matchType string
-	var value interface{}
+	var value any
 	for matchType, value = range matcherMap {
 		break
 	}
@@ -73,7 +73,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		}
 		return matchers.HaveLen(int(v)), nil
 	case "have-patterns":
-		_, isArr := value.([]interface{})
+		_, isArr := value.([]any)
 		if !isArr {
 			return nil, fmt.Errorf("have-patterns: syntax error: incorrect expectation type. expected array, got: %#v", value)
 		}
@@ -86,7 +86,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.HaveKey(subMatcher), nil
 	case "contain-element":
 		switch value.(type) {
-		case map[string]interface{}, string, float64:
+		case map[string]any, string, float64:
 		default:
 			return nil, fmt.Errorf("contain-element: syntax error: incorrect expectation type. expected matcher or value, got: %#v", value)
 		}
@@ -100,7 +100,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		var interfaceSlice []interface{}
+		var interfaceSlice []any
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
@@ -116,7 +116,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		if err != nil {
 			return nil, err
 		}
-		var interfaceSlice []interface{}
+		var interfaceSlice []any
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
@@ -144,7 +144,7 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 		return matchers.BeSemverConstraint(v), nil
 	case "gjson":
 		var subMatchers []matchers.GossMatcher
-		valueI, ok := value.(map[string]interface{})
+		valueI, ok := value.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("Matcher expected map, got: %t", value)
 		}
@@ -163,8 +163,8 @@ func matcherToGomegaMatcher(matcher interface{}) (matchers.GossMatcher, error) {
 	}
 }
 
-func sliceToGomega(value interface{}) ([]matchers.GossMatcher, error) {
-	valueI, ok := value.([]interface{})
+func sliceToGomega(value any) ([]matchers.GossMatcher, error) {
+	valueI, ok := value.([]any)
 	if !ok {
 		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
 	}
@@ -180,12 +180,12 @@ func sliceToGomega(value interface{}) ([]matchers.GossMatcher, error) {
 }
 
 // sanitizeExpectedValue normalizes the value so json and yaml are the same
-func sanitizeExpectedValue(i interface{}) interface{} {
+func sanitizeExpectedValue(i any) any {
 	if e, ok := i.(int); ok {
 		return float64(e)
 	}
-	if e, ok := i.(map[interface{}]interface{}); ok {
-		out := make(map[string]interface{})
+	if e, ok := i.(map[any]any); ok {
+		out := make(map[string]any)
 		for k, v := range e {
 			ks, ok := k.(string)
 			if !ok {

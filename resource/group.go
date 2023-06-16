@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Group struct {
@@ -17,14 +17,25 @@ type Group struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	GroupResourceKey  = "group"
+	GroupResourceName = "Group"
+)
+
+func init() {
+	registerResource(GroupResourceKey, &Group{})
+}
+
 func (g *Group) ID() string {
 	if g.Groupname != "" && g.Groupname != g.id {
 		return fmt.Sprintf("%s: %s", g.id, g.Groupname)
 	}
 	return g.id
 }
-func (g *Group) SetID(id string) { g.id = id }
-
+func (g *Group) SetID(id string)  { g.id = id }
+func (g *Group) SetSkip()         { g.Skip = true }
+func (g *Group) TypeKey() string  { return GroupResourceKey }
+func (g *Group) TypeName() string { return GroupResourceName }
 func (g *Group) GetTitle() string { return g.Title }
 func (g *Group) GetMeta() meta    { return g.Meta }
 func (g *Group) GetGroupname() string {
@@ -35,12 +46,8 @@ func (g *Group) GetGroupname() string {
 }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := g.Skip
 	sysgroup := sys.NewGroup(g.GetGroupname(), sys, util.Config{})
-
-	if g.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))

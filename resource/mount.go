@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Mount struct {
@@ -20,13 +20,25 @@ type Mount struct {
 	Usage      matcher `json:"usage,omitempty" yaml:"usage,omitempty"`
 }
 
+const (
+	MountResourceKey  = "mount"
+	MountResourceName = "Mount"
+)
+
+func init() {
+	registerResource(MountResourceKey, &Mount{})
+}
+
 func (m *Mount) ID() string {
 	if m.MountPoint != "" && m.MountPoint != m.id {
 		return fmt.Sprintf("%s: %s", m.id, m.MountPoint)
 	}
 	return m.id
 }
-func (m *Mount) SetID(id string) { m.id = id }
+func (m *Mount) SetID(id string)  { m.id = id }
+func (m *Mount) SetSkip()         { m.Skip = true }
+func (m *Mount) TypeKey() string  { return MountResourceKey }
+func (m *Mount) TypeName() string { return MountResourceName }
 
 // FIXME: Can this be refactored?
 func (m *Mount) GetTitle() string { return m.Title }
@@ -39,12 +51,8 @@ func (m *Mount) GetMountPoint() string {
 }
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := m.Skip
 	sysMount := sys.NewMount(m.GetMountPoint(), sys, util.Config{})
-
-	if m.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))

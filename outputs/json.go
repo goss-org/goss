@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 type Json struct{}
@@ -35,7 +36,8 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	color.NoColor = true
 	testCount := 0
 	failed := 0
-	var resultsOut []map[string]interface{}
+	skipped := 0
+	var resultsOut []map[string]any
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
 			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
@@ -46,6 +48,12 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			if testResult.Result == resource.FAIL {
 				failed++
+				logTrace("WARN", "FAIL", testResult, true)
+			} else {
+				logTrace("TRACE", "SUCCESS", testResult, true)
+			}
+			if testResult.Skipped {
+				skipped++
 			}
 			m := struct2map(testResult)
 			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
@@ -56,14 +64,15 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 		}
 	}
 
-	summary := make(map[string]interface{})
+	summary := make(map[string]any)
 	duration := endTime.Sub(startTime)
 	summary["test-count"] = testCount
 	summary["failed-count"] = failed
+	summary["skipped-count"] = skipped
 	summary["total-duration"] = duration
-	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", testCount, failed, duration.Seconds())
+	summary["summary-line"] = fmt.Sprintf("Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", testCount, failed, skipped, duration.Seconds())
 
-	out := make(map[string]interface{})
+	out := make(map[string]any)
 	out["results"] = resultsOut
 	out["summary"] = summary
 
@@ -74,17 +83,20 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 		j, _ = json.Marshal(out)
 	}
 
-	fmt.Fprintln(w, string(j))
+	resstr := string(j)
+	fmt.Fprintln(w, resstr)
 
 	if failed > 0 {
+		log.Printf("[WARN] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
 
+	log.Printf("[INFO] OK SUMMARY: %s", resstr)
 	return 0
 }
 
-func struct2map(i interface{}) map[string]interface{} {
-	out := make(map[string]interface{})
+func struct2map(i any) map[string]any {
+	out := make(map[string]any)
 	j, _ := json.Marshal(i)
 	json.Unmarshal(j, &out)
 	return out

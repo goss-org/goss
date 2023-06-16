@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type KernelParam struct {
@@ -14,6 +14,16 @@ type KernelParam struct {
 	Name  string  `json:"name,omitempty" yaml:"name,omitempty"`
 	Key   string  `json:"-" yaml:"-"`
 	Value matcher `json:"value" yaml:"value"`
+	Skip  bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+}
+
+const (
+	KernelParamResourceKey  = "kernel-param"
+	KernelParamResourceName = "KernelParam"
+)
+
+func init() {
+	registerResource(KernelParamResourceKey, &KernelParam{})
 }
 
 func (k *KernelParam) ID() string {
@@ -23,6 +33,10 @@ func (k *KernelParam) ID() string {
 	return k.id
 }
 func (a *KernelParam) SetID(id string) { a.id = id }
+
+func (a *KernelParam) SetSkip()         { a.Skip = true }
+func (a *KernelParam) TypeKey() string  { return KernelParamResourceKey }
+func (a *KernelParam) TypeName() string { return KernelParamResourceName }
 
 // FIXME: Can this be refactored?
 func (k *KernelParam) GetTitle() string { return k.Title }
@@ -35,7 +49,7 @@ func (k *KernelParam) GetName() string {
 }
 
 func (k *KernelParam) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := a.Skip
 	sysKernelParam := sys.NewKernelParam(k.GetName(), sys, util.Config{})
 
 	var results []TestResult

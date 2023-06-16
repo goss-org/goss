@@ -9,22 +9,28 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 	"github.com/patrickmn/go-cache"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Serve(c *util.Config) error {
+	err := setLogLevel(c)
+	if err != nil {
+		return err
+	}
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
 		return err
 	}
 	http.Handle(endpoint, health)
-	log.Printf("Starting to listen on: %s", c.ListenAddress)
+	http.Handle("/metrics", promhttp.Handler())
+	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
 	return http.ListenAndServe(c.ListenAddress, nil)
 }
 
@@ -71,13 +77,13 @@ type healthHandler struct {
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	outputFormat, outputer, err := h.negotiateResponseContentType(r)
 	if err != nil {
-		log.Printf("Warn: Using process-level output-format. %s", err)
+		log.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
 		outputFormat = h.c.OutputFormat
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
 
-	log.Printf("%v: requesting health probe", r.RemoteAddr)
+	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
 	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
@@ -86,7 +92,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logBody = " - " + resp.body.String()
 	}
 	resp.body.WriteTo(w)
-	log.Printf("%v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
+	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
@@ -94,7 +100,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	cacheKey := "res"
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		log.Printf("Returning cached[%s].", cacheKey)
+		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
 		log.Printf("Stale cache[%s], running tests", cacheKey)

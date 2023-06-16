@@ -13,9 +13,9 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 	"github.com/icza/dyno"
 )
 
@@ -35,6 +35,7 @@ var (
 		"json":          &Json{},
 		"junit":         &JUnit{},
 		"nagios":        &Nagios{},
+		"prometheus":    &Prometheus{},
 		"rspecish":      &Rspecish{},
 		"structured":    &Structured{},
 		"tap":           &Tap{},

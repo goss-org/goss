@@ -4,13 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/aelsabbahy/goss/matchers"
+	"github.com/goss-org/goss/matchers"
 	"github.com/stretchr/testify/assert"
 )
 
 var gomegaTests = []struct {
 	in              string
-	want            interface{}
+	want            any
 	useNegateTester bool
 }{
 	// Default for simple types
@@ -147,7 +147,7 @@ var gomegaTests = []struct {
 
 func TestMatcherToGomegaMatcher(t *testing.T) {
 	for _, c := range gomegaTests {
-		var dat interface{}
+		var dat any
 		if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
 			t.Fatal(err)
 		}
@@ -159,6 +159,6 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 	}
 }
 
-func gomegaTestEqual(t *testing.T, got, want interface{}, useNegateTester bool, in string) {
+func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
 	assert.Equal(t, got, want)
 }

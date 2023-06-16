@@ -1,8 +1,9 @@
+//go:build windows
 // +build windows
 
 package system
 
-import "github.com/aelsabbahy/goss/util"
+import "github.com/goss-org/goss/util"
 
 const windowsShell string = "cmd"
 

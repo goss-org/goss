@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Service struct {
@@ -18,14 +18,25 @@ type Service struct {
 	RunLevels matcher `json:"runlevels,omitempty" yaml:"runlevels,omitempty"`
 }
 
+const (
+	ServiceResourceKey  = "service"
+	ServiceResourceName = "Service"
+)
+
+func init() {
+	registerResource(ServiceResourceKey, &Service{})
+}
+
 func (s *Service) ID() string {
 	if s.Name != "" && s.Name != s.id {
 		return fmt.Sprintf("%s: %s", s.id, s.Name)
 	}
 	return s.id
 }
-func (s *Service) SetID(id string) { s.id = id }
-
+func (s *Service) SetID(id string)  { s.id = id }
+func (s *Service) SetSkip()         { s.Skip = true }
+func (s *Service) TypeKey() string  { return ServiceResourceKey }
+func (s *Service) TypeName() string { return ServiceResourceName }
 func (s *Service) GetTitle() string { return s.Title }
 func (s *Service) GetMeta() meta    { return s.Meta }
 func (s *Service) GetName() string {
@@ -36,12 +47,8 @@ func (s *Service) GetName() string {
 }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := s.Skip
 	sysservice := sys.NewService(s.GetName(), sys, util.Config{})
-
-	if s.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	if s.Enabled != nil {

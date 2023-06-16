@@ -3,13 +3,12 @@ package goss
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 )
 
 // TemplateFilter is the type of the Goss Template Filter which include custom variables and functions.
@@ -46,12 +45,12 @@ func NewTemplateFilter(varsFile string, varsInline string) (func([]byte) ([]byte
 	return f, nil
 }
 
-func mkSlice(args ...interface{}) []interface{} {
+func mkSlice(args ...any) []any {
 	return args
 }
 
 func readFile(f string) (string, error) {
-	b, err := ioutil.ReadFile(f)
+	b, err := os.ReadFile(f)
 	if err != nil {
 		return "", err
 

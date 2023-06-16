@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type ServiceSystemd struct {

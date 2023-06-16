@@ -179,7 +179,7 @@ mount:
     exists: true
     usage:
       and:
-        - lt: 25
+        - lt: 95
         - gt: 0
 interface:
   eth0:
@@ -280,3 +280,9 @@ matching:
     content: {{ "hello!" | upper | repeat 5 }}
     matches:
       match-regexp: "HELLO!HELLO!HELLO!HELLO!HELLO!"
+gossfile:
+  "nonexistent-file.yaml":
+    skip: true
+  bypath:
+    file: "goss-dummy.yaml"
+

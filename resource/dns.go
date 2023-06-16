@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type DNS struct {
@@ -22,14 +22,25 @@ type DNS struct {
 	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	DNSResourceKey  = "dns"
+	DNSResourceName = "DNS"
+)
+
+func init() {
+	registerResource(DNSResourceKey, &DNS{})
+}
+
 func (d *DNS) ID() string {
 	if d.Resolve != "" && d.Resolve != d.id {
 		return fmt.Sprintf("%s: %s", d.id, d.Resolve)
 	}
 	return d.id
 }
-func (d *DNS) SetID(id string) { d.id = id }
-
+func (d *DNS) SetID(id string)  { d.id = id }
+func (d *DNS) SetSkip()         { d.Skip = true }
+func (d *DNS) TypeKey() string  { return DNSResourceKey }
+func (d *DNS) TypeName() string { return DNSResourceName }
 func (d *DNS) GetTitle() string { return d.Title }
 func (d *DNS) GetMeta() meta    { return d.Meta }
 func (d *DNS) GetResolve() string {
@@ -40,18 +51,15 @@ func (d *DNS) GetResolve() string {
 }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500
-	}
-	if d.Skip {
-		skip = true
 	}
 
 	sysDNS := sys.NewDNS(d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
-	// Backwards copatibility hack for now
+	// Backwards compatibility hack for now
 	if d.Resolvable == nil {
 		d.Resolvable = d.Resolveable
 	}

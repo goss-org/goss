@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Package struct {
@@ -17,14 +17,25 @@ type Package struct {
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	PackageResourceKey  = "package"
+	PackageResourceName = "Package"
+)
+
+func init() {
+	registerResource(PackageResourceKey, &Package{})
+}
+
 func (p *Package) ID() string {
 	if p.Name != "" && p.Name != p.id {
 		return fmt.Sprintf("%s: %s", p.id, p.Name)
 	}
 	return p.id
 }
-func (p *Package) SetID(id string) { p.id = id }
-
+func (p *Package) SetID(id string)  { p.id = id }
+func (p *Package) SetSkip()         { p.Skip = true }
+func (p *Package) TypeKey() string  { return PackageResourceKey }
+func (p *Package) TypeName() string { return PackageResourceName }
 func (p *Package) GetTitle() string { return p.Title }
 func (p *Package) GetMeta() meta    { return p.Meta }
 func (p *Package) GetName() string {
@@ -35,12 +46,8 @@ func (p *Package) GetName() string {
 }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := p.Skip
 	sysPkg := sys.NewPackage(p.GetName(), sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))

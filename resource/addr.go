@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Addr struct {
@@ -16,6 +16,16 @@ type Addr struct {
 	LocalAddress string  `json:"local-address,omitempty" yaml:"local-address,omitempty"`
 	Reachable    matcher `json:"reachable" yaml:"reachable"`
 	Timeout      int     `json:"timeout" yaml:"timeout"`
+	Skip         bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+}
+
+const (
+	AddrResourceKey = "addr"
+	AddResourceName = "Addr"
+)
+
+func init() {
+	registerResource(AddrResourceKey, &Addr{})
 }
 
 func (a *Addr) ID() string {
@@ -24,7 +34,10 @@ func (a *Addr) ID() string {
 	}
 	return a.id
 }
-func (a *Addr) SetID(id string) { a.id = id }
+func (a *Addr) SetID(id string)  { a.id = id }
+func (a *Addr) SetSkip()         { a.Skip = true }
+func (a *Addr) TypeKey() string  { return AddrResourceKey }
+func (a *Addr) TypeName() string { return AddResourceName }
 
 // FIXME: Can this be refactored?
 func (a *Addr) GetTitle() string { return a.Title }
@@ -37,7 +50,8 @@ func (a *Addr) GetAddress() string {
 }
 
 func (a *Addr) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := a.Skip
+
 	if a.Timeout == 0 {
 		a.Timeout = 500
 	}

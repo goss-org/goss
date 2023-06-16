@@ -1,7 +1,7 @@
 # Goss - Quick and Easy server validation
 
-[![Build Status](https://travis-ci.org/aelsabbahy/goss.svg?branch=master)](https://travis-ci.org/aelsabbahy/goss)
-[![Github All Releases](https://img.shields.io/github/downloads/aelsabbahy/goss/total.svg?maxAge=604800)](https://github.com/aelsabbahy/goss/releases)
+[![Build Status](https://travis-ci.org/goss-org/goss.svg?branch=master)](https://travis-ci.org/goss-org/goss)
+[![Github All Releases](https://img.shields.io/github/downloads/goss-org/goss/total.svg?maxAge=604800)](https://github.com/goss-org/goss/releases)
 **
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
@@ -9,7 +9,7 @@
 
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) wrapper. Also, see [extras/](https://github.com/aelsabbahy/goss/tree/master/extras) for other user submitted wrapper scrips ([Kubernetes](https://github.com/aelsabbahy/goss/tree/master/extras/kgoss), [Docker Compose](https://github.com/aelsabbahy/goss/tree/master/extras/dcgoss))
+**Note:** For testing docker containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper. Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss) and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
@@ -24,14 +24,14 @@ Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for v
 ### Why use Goss?
 
 * Goss is EASY! - [Goss in 45 seconds](#goss-in-45-seconds)
-* Goss is FAST! - small-medium test suites are near instantaneous, see [benchmarks](https://github.com/aelsabbahy/goss/wiki/Benchmarks)
+* Goss is FAST! - small-medium test suites are near instantaneous, see [benchmarks](https://github.com/goss-org/goss/wiki/Benchmarks)
 * Goss is SMALL! - <10MB single self-contained binary
 
 ## Installation
 
 **Note:** For macOS and Windows, see: [platform-feature-parity].
 
-This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss).
+This will install goss and [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss).
 
 **Note:** Using `curl | sh` is not recommended for production systems, use manual installation below.
 
@@ -39,8 +39,8 @@ This will install goss and [dgoss](https://github.com/aelsabbahy/goss/tree/maste
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.6 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
+# Install v0.3.16 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.16 GOSS_DST=~/bin sh
 ```
 
 ### Manual installation
@@ -48,26 +48,26 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.6 GOSS_DST=~/bin sh
 #### Latest
 
 ```bash
-curl -L https://github.com/aelsabbahy/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
+curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
-curl -L https://github.com/aelsabbahy/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
+curl -L https://github.com/goss-org/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
 # Alternatively, using the latest master
-# curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+# curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
 #### Specific Version
 
 ```bash
-# See https://github.com/aelsabbahy/goss/releases for release versions
+# See https://github.com/goss-org/goss/releases for release versions
 VERSION=v0.3.10
-curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
+curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
 VERSION=v0.3.10
-curl -L "https://github.com/aelsabbahy/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
+curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
 
@@ -79,13 +79,13 @@ make build
 
 ## Full Documentation
 
-Documentation is available here: [manual](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md)
+Documentation is available here: [manual](https://github.com/goss-org/goss/blob/master/docs/manual.md)
 
 ## Quick start
 
 ### Writing a simple sshd test
 
-An initial set of tests can be derived from the system state by using the [add](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#add-a---add-system-resource-to-test-suite) or [autoadd](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite) commands.
+An initial set of tests can be derived from the system state by using the [add](https://github.com/goss-org/goss/blob/master/docs/manual.md#add-a---add-system-resource-to-test-suite) or [autoadd](https://github.com/goss-org/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite) commands.
 
 Let's write a simple sshd test using autoadd.
 
@@ -141,7 +141,7 @@ Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 ```
 
-* Edit it to use [templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates), and run with a vars file
+* Edit it to use [templates](https://github.com/goss-org/goss/blob/master/docs/manual.md#templates), and run with a vars file
 
 ```txt
 goss --vars vars.yaml validate
@@ -170,11 +170,17 @@ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 
 ### Manually editing Goss files
 
-Goss files can be manually edited to use:
+Goss files can be manually edited to improve readability and expressiveness of tests.
 
-* [Patterns](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#patterns)
-* [Advanced Matchers](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#advanced-matchers)
-* [Templates](https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#templates)
+A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available in [docs/goss-json-schema.yaml](./docs/goss-json-schema.yaml) makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance such as inline documentation, completion and static analysis. See [PR 793](https://github.com/goss-org/goss/pull/793) for screenshots.
+
+For example, to configure the Json schema in JetBrains intellij IDEA, follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom), with arguments such as `schema url=https://raw.githubusercontent.com/goss-org/goss/master/docs/goss-json-schema.yaml`, `schema version=Json schema version 7`, `file path pattern=*/goss.yaml`
+
+In addition, Goss files can also be further manually edited (without yet full json support) to use:
+
+* [Patterns](https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns)
+* [Advanced Matchers](https://github.com/goss-org/goss/blob/master/docs/manual.md#advanced-matchers)
+* [Templates](https://github.com/goss-org/goss/blob/master/docs/manual.md#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
@@ -219,6 +225,29 @@ package:
 {{end}}
 ```
 
+Goss.yaml files with templates can still be validated through the Json schema after being rendered using the `goss render` command. See example below  
+
+```bash
+cd docs
+goss --vars ./vars.yaml render > rendered_goss.yaml 
+# proceed with json schema validation of rendered_goss.yaml in your favorite IDE 
+# or in one of the Json schema validator listed in https://json-schema.org/implementations.html
+# The following example is for a Linux AMD64 host 
+curl -LO https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+chmod a+x yajsv.linux.amd64 
+sudo mv yajsv.linux.amd64 /usr/sbin/yajsv
+
+yajsv -s goss-json-schema.yaml rendered_goss.yaml
+
+rendered_goss.yaml: fail: process.chrome: skip is required
+rendered_goss.yaml: fail: service.sshd: skip is required
+1 of 1 failed validation
+rendered_goss.yaml: fail: process.chrome: skip is required
+rendered_goss.yaml: fail: service.sshd: skip is required
+```
+
+Full list of available Json schema validators can be found in https://json-schema.org/implementations.html#validator-command%20line
+
 ## Supported resources
 
 * package - add new package
@@ -246,6 +275,7 @@ package:
 * tap - TAP style
 * junit - JUnit style
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.
+* prometheus - Prometheus compatible output.
 * silent - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint).
 
 ## Community Contributions
@@ -256,6 +286,7 @@ package:
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
 * [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
+* [gossboss](https://github.com/mdb/gossboss) - Collect and view aggregated Goss test results from multiple remote Goss servers.
 
 ## Limitations
 

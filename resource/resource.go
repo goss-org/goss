@@ -8,35 +8,28 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aelsabbahy/goss/system"
+	"github.com/goss-org/goss/system"
 	"github.com/oleiade/reflections"
 )
 
 type Resource interface {
-	Validate(*system.System) []TestResult
+	Validate(sys *system.System) []TestResult
 	SetID(string)
+	SetSkip()
+	TypeKey() string
+	TypeName() string
 }
 
 var (
 	resourcesMu sync.Mutex
-	resources   = map[string]Resource{
-		"addr":         &Addr{},
-		"command":      &Command{},
-		"dns":          &DNS{},
-		"file":         &File{},
-		"gossfile":     &Gossfile{},
-		"group":        &Group{},
-		"http":         &HTTP{},
-		"interface":    &Interface{},
-		"kernel-param": &KernelParam{},
-		"mount":        &Mount{},
-		"package":      &Package{},
-		"port":         &Port{},
-		"process":      &Process{},
-		"service":      &Service{},
-		"user":         &User{},
-	}
+	resources   = map[string]Resource{}
 )
+
+func registerResource(key string, resource Resource) {
+	resourcesMu.Lock()
+	resources[key] = resource
+	resourcesMu.Unlock()
+}
 
 func Resources() map[string]Resource {
 	return resources
@@ -48,8 +41,8 @@ type ResourceRead interface {
 	GetMeta() meta
 }
 
-type matcher interface{}
-type meta map[string]interface{}
+type matcher any
+type meta map[string]any
 
 func contains(a []string, s string) bool {
 	for _, e := range a {
@@ -60,7 +53,7 @@ func contains(a []string, s string) bool {
 	return false
 }
 
-func deprecateAtoI(depr interface{}, desc string) interface{} {
+func deprecateAtoI(depr any, desc string) any {
 	s, ok := depr.(string)
 	if !ok {
 		return depr
@@ -73,7 +66,7 @@ func deprecateAtoI(depr interface{}, desc string) interface{} {
 	return float64(i)
 }
 
-func validAttrs(i interface{}, t string) (map[string]bool, error) {
+func validAttrs(i any, t string) (map[string]bool, error) {
 	validAttrs := make(map[string]bool)
 	tags, err := reflections.Tags(i, t)
 	if err != nil {

@@ -43,3 +43,17 @@ func TestOutputFormatOptions(t *testing.T) {
 	assert.Contains(t, list, foVerbose)
 	assert.Len(t, list, 4)
 }
+
+func TestOptionsRegistration(t *testing.T) {
+	registeredOutputs := Outputers()
+	assert.Contains(t, registeredOutputs, "documentation")
+	assert.Contains(t, registeredOutputs, "json_oneline")
+	assert.Contains(t, registeredOutputs, "json")
+	assert.Contains(t, registeredOutputs, "junit")
+	assert.Contains(t, registeredOutputs, "nagios")
+	assert.Contains(t, registeredOutputs, "prometheus")
+	assert.Contains(t, registeredOutputs, "rspecish")
+	assert.Contains(t, registeredOutputs, "silent")
+	assert.Contains(t, registeredOutputs, "structured")
+	assert.Contains(t, registeredOutputs, "tap")
+}

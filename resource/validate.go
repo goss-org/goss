@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/matchers"
+	"github.com/goss-org/goss/matchers"
 )
 
 const (
@@ -17,16 +17,48 @@ const (
 )
 
 const (
-	SUCCESS = "SUCCESS"
-	FAIL    = "FAIL"
-	SKIP    = "SKIP"
+	SUCCESS = iota
+	FAIL
+	SKIP
+	UNKNOWN
 )
+
+const (
+	OutcomePass    = "pass"
+	OutcomeFail    = "fail"
+	OutcomeSkip    = "skip"
+	OutcomeUnknown = "unknown"
+)
+
+var humanOutcomes map[int]string = map[int]string{
+	UNKNOWN: OutcomeUnknown,
+	SUCCESS: OutcomePass,
+	FAIL:    OutcomeFail,
+	SKIP:    OutcomeSkip,
+}
+
+func HumanOutcomes() map[int]string {
+	return humanOutcomes
+}
 
 const (
 	maxScanTokenSize = 10 * 1024 * 1024
 )
 
+type ValidateError string
+
+func (g ValidateError) Error() string { return string(g) }
+func toValidateError(err error) *ValidateError {
+	if err == nil {
+		return nil
+	}
+	ve := ValidateError(err.Error())
+	return &ve
+}
+
 type TestResult struct {
+	Successful bool `json:"successful" yaml:"successful"`
+	Skipped    bool `json:"skipped" yaml:"skipped"`
 	// Resource data
 	ResourceId   string `json:"resource-id" yaml:"resource-id"`
 	ResourceType string `json:"resource-type" yaml:"resource-type"`
@@ -38,11 +70,25 @@ type TestResult struct {
 
 	// Result
 	Result        string                 `json:"result" yaml:"result"`
-	Err           error                  `json:"err" yaml:"err"`
+	Err           *ValidateError         `json:"err" yaml:"err"`
 	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
 	StartTime     time.Time              `json:"start-time" yaml:"start-time"`
 	EndTime       time.Time              `json:"end-time" yaml:"end-time"`
 	Duration      time.Duration          `json:"duration" yaml:"duration"`
+}
+
+// ToOutcome converts the enum to a human-friendly string.
+func (tr TestResult) ToOutcome() string {
+	switch tr.Result {
+	case SUCCESS:
+		return OutcomePass
+	case FAIL:
+		return OutcomeFail
+	case SKIP:
+		return OutcomeSkip
+	default:
+		return OutcomeUnknown
+	}
 }
 
 func (t TestResult) SortKey() string {
@@ -53,6 +99,7 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 	endTime := time.Now()
 	return TestResult{
 		Result:       SKIP,
+		Skipped:      true,
 		ResourceType: typeS,
 		ResourceId:   id,
 		Title:        title,
@@ -64,9 +111,9 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+func ValidateValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	if f, ok := actual.(func() (io.Reader, error)); ok {
-		if _, ok := expectedValue.([]interface{}); !ok {
+		if _, ok := expectedValue.([]any); !ok {
 			actual = func() (string, error) {
 				v, err := f()
 				if err != nil {
@@ -83,7 +130,7 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 	return ValidateGomegaValue(res, property, expectedValue, actual, skip)
 }
 
-func ValidateGomegaValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -101,7 +148,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		)
 	}
 
-	var foundValue interface{}
+	var foundValue any
 	var gomegaMatcher matchers.GossMatcher
 	var err error
 	switch f := actual.(type) {
@@ -113,7 +160,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue interf
 		foundValue, err = f()
 	case func() ([]string, error):
 		foundValue, err = f()
-	case func() (interface{}, error):
+	case func() (any, error):
 		foundValue, err = f()
 	case func() (io.Reader, error):
 		foundValue, err = f()

@@ -3,8 +3,8 @@ package resource
 import (
 	"fmt"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Process struct {
@@ -16,14 +16,25 @@ type Process struct {
 	Skip    bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+const (
+	ProcessResourceKey  = "process"
+	ProcessResourceName = "Process"
+)
+
+func init() {
+	registerResource(ProcessResourceKey, &Process{})
+}
+
 func (p *Process) ID() string {
 	if p.Comm != "" && p.Comm != p.id {
 		return fmt.Sprintf("%s: %s", p.id, p.Comm)
 	}
 	return p.id
 }
-func (p *Process) SetID(id string) { p.id = id }
-
+func (p *Process) SetID(id string)  { p.id = id }
+func (p *Process) SetSkip()         { p.Skip = true }
+func (p *Process) TypeKey() string  { return ProcessResourceKey }
+func (p *Process) TypeName() string { return ProcessResourceName }
 func (p *Process) GetTitle() string { return p.Title }
 func (p *Process) GetMeta() meta    { return p.Meta }
 func (p *Process) GetComm() string {
@@ -34,12 +45,8 @@ func (p *Process) GetComm() string {
 }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
-	skip := false
+	skip := p.Skip
 	sysProcess := sys.NewProcess(p.GetComm(), sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))

@@ -1,41 +1,8 @@
 # goss manual
 
-**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/aelsabbahy/goss/blob/master/docs/platform-feature-parity.md)
+**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/goss-org/goss/blob/master/docs/platform-feature-parity.md)
 
 ## Table of Contents
-
-* [Table of Contents](#table-of-contents)
-* [Usage](#usage)
-  * [global options](#global-options)
-    * [\-g gossfile](#-g-gossfile)
-  * [commands](#commands)
-    * [add, a \- Add system resource to test suite](#add-a---add-system-resource-to-test-suite)
-    * [autoadd, aa \- Auto add all matching resources to test suite](#autoadd-aa---auto-add-all-matching-resources-to-test-suite)
-    * [render, r \- Render gossfile after importing all referenced gossfiles](#render-r---render-gossfile-after-importing-all-referenced-gossfiles)
-    * [serve, s \- Serve a health endpoint](#serve-s---serve-a-health-endpoint)
-    * [validate, v \- Validate the system](#validate-v---validate-the-system)
-* [Goss test creation](#goss-test-creation)
-* [Important note about goss file format](#important-note-about-goss-file-format)
-* [Available tests](#available-tests)
-  * [addr](#addr)
-  * [command](#command)
-  * [dns](#dns)
-  * [file](#file)
-  * [gossfile](#gossfile)
-  * [group](#group)
-  * [http](#http)
-  * [interface](#interface)
-  * [kernel-param](#kernel-param)
-  * [mount](#mount)
-  * [matching](#matching)
-  * [package](#package)
-  * [port](#port)
-  * [process](#process)
-  * [service](#service)
-  * [user](#user)
-* [Matchers](#matchers)
-* [Advanced Matchers](#advanced-matchers)
-* [Templates](#templates)
 
 ## Usage
 
@@ -69,8 +36,8 @@ GLOBAL OPTIONS:
 
 
 ## global options
-### -g gossfile
-The file to use when reading/writing tests. Use `-g -` to read from `STDIN`.
+### --gossfile gossfile or -g gossfile
+The file to use when reading/writing tests. Use `--gossfile -` or `-g -` to read from `STDIN`.
 
 Valid formats:
 * **YAML** (default)
@@ -99,7 +66,7 @@ Commands are the actions goss can run.
 * [add](#add-a---add-system-resource-to-test-suite): add a single test for a resource
 * [autoadd](#autoadd-aa---auto-add-all-matching-resources-to-test-suite): automatically add multiple tests for a resource
 * [render](#render-r---render-gossfile-after-importing-all-referenced-gossfiles): renders and outputs the gossfile, importing all included gossfiles
-* [serve](#serve-s---serve-a-health-endpoint): serves the gossfile validation as an HTTP endpoint on a specified address and port, so you can use your gossfile as a health repor for the host
+* [serve](#serve-s---serve-a-health-endpoint): serves the gossfile validation as an HTTP endpoint on a specified address and port, so you can use your gossfile as a health report for the host
 * [validate](#validate-v---validate-the-system): runs the goss test suite on your server
 
 
@@ -259,6 +226,13 @@ service:
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
 * `--listen-addr [ip]:port`, `-l [ip]:port` - Address to listen on (default: `:8080`)
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
+  * `TRACE` - Print details for each check, successful or not and all incoming healthchecks
+  * `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
+  * `INFO` - Print summary when all checks run OK
+  * `WARN` - Print summary and corresponding checks when encountering some failures
+  * `ERROR` - Not used for now (will not print anything)
+  * `FATAL` - Not used for now (will not print anything)
 * `--max-concurrent` - Max number of tests to run concurrently
 
 #### Example:
@@ -290,12 +264,20 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures
   * `rspecish` **(default)** - Similar to rspec output
   * `tap`
+  * `prometheus` - Prometheus compatible output.
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
   * `verbose`  - Gives verbose output. Applies to `nagios` output
   * `pretty`   - Pretty printing for the `json` output
   * `sort`     - Sorts the results
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
+  * `TRACE` - Print details for each check, successful or not and all incoming healthchecks
+  * `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
+  * `INFO` - Print summary when all checks run OK
+  * `WARN` - Print summary and corresponding checks when encountering some failures
+  * `ERROR` - Not used for now (will not print anything)
+  * `FATAL` - Not used for now (will not print anything)
 * `--max-concurrent` - Max number of tests to run concurrently
 * `--no-color` - Disable color
 * `--color` - Force enable color
@@ -593,10 +575,18 @@ Import other gossfiles from this one. This is the best way to maintain a large n
 
 ```yaml
 gossfile:
+  myapplication:
+    file: myapp_gossfile.yaml
+    skip: false
+  *.yaml:
+    skip: true
   goss_httpd.yaml: {}
   /etc/goss.d/*.yaml: {}
 ```
 
+You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.  
+
+If the 'skip' attribute is true, then the file is not processed.  If the filename is a glob pattern, then none of the matching files are processed.  Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented.  Skipping a gossfile include is the same as omitting the gossfile resource entirely.
 
 ### group
 Validates the state of a group
@@ -633,8 +623,11 @@ http:
     headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     request-body: '{"key": "value"}' # request body
     body: [] # Check http response content for these patterns
-    username: "" # username for basic auth
-    password: "" # password for basic auth
+    username: ""  # username for basic auth
+    password: ""  # password for basic auth
+    ca-file: ""   # CA root certs pem file, ex: /etc/ssl/cert.pem
+    cert-file: "" # certificate file to use for authentication (used with key-file)
+    key-file: ""  # private-key file to use for authentication (used with cert-file)
     proxy: "" # proxy server to proxy traffic through. Proxy can also be set with environment variables http_proxy.
     skip: false
     method: PUT # http method
@@ -774,7 +767,7 @@ package:
 ### port
 Validates the state of a local port.
 
-**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/aelsabbahy/goss/issues/149))
+**Note:** Goss might consider your port to be listening on `tcp6` rather than `tcp`, try running `goss add port ..` to see how goss detects it. ([explanation](https://github.com/goss-org/goss/issues/149))
 
 ```yaml
 port:
@@ -1135,7 +1128,6 @@ matching:
             - {have-key: "nested"}
             - {not: {have-key: "nested2"}}
 ```
-
 
 ## Templates
 

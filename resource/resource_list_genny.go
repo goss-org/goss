@@ -1,3 +1,4 @@
+//go:build genny
 // +build genny
 
 package resource
@@ -8,9 +9,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/cheekybits/genny/generic"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 //go:generate genny -in=$GOFILE -out=resource_list.go gen "ResourceType=Addr,Command,DNS,File,Gossfile,Group,Package,Port,Process,Service,User,KernelParam,Mount,Interface,HTTP"
