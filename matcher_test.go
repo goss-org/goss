@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +39,6 @@ func TestMatchers(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		//tn := tf + " " + outFormat + wantCode
 		tn := outFile
 		t.Run(tn, func(t *testing.T) {
 			output := &bytes.Buffer{}
@@ -57,8 +56,6 @@ func TestMatchers(t *testing.T) {
 			actualOut := output.String()
 			actualOut = sanitizeOutput(actualOut)
 
-			//outFile := strings.TrimSuffix(tf, filepath.Ext(tf))
-			//outFile = fmt.Sprintf("%s.%d.%s", outFile, exitCode, of)
 			if *update {
 				os.WriteFile(outFile, []byte(actualOut), 0644)
 			}

@@ -9,6 +9,10 @@ IFS='- ' read -r -a segments <<< "${platform_spec}"
 
 os="${segments[0]}"
 arch="${segments[1]}"
+if [[ "${segments[0]}" == "alpha" ]]; then
+  os="${segments[1]}"
+  arch="${segments[2]}"
+fi
 
 output_dir="release/"
 output_fname="goss-${platform_spec}"

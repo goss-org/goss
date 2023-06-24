@@ -8,7 +8,7 @@ matching:
       and:
         - contain-element: {contain-substring: 'foo'}
         - contain-element: {match-regexp: '^m.*w$'}
-        - not: {contain-substring: 'wtf'}
+        - not: {contain-substring: 'ftw'}
         - not: {match-regexp: '^ERROR:'}
 
   test_numeric_string:

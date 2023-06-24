@@ -28,7 +28,6 @@ type Config struct {
 	Endpoint              string
 	FormatOptions         []string
 	IgnoreList            []string
-	DisabledResourceTypes []string
 	ListenAddress         string
 	LocalAddress          string
 	LogLevel              string
@@ -50,8 +49,12 @@ type Config struct {
 	Spec                  string
 	Timeout               time.Duration
 	Username              string
+	CAFile                string
+	CertFile              string
+	KeyFile               string
 	Vars                  string
 	VarsInline            string
+	DisabledResourceTypes []string
 }
 
 // TimeOutMilliSeconds is the timeout as milliseconds

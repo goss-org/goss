@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/aelsabbahy/GOnetstat"
+	"github.com/goss-org/GOnetstat"
 	"github.com/shirou/gopsutil/process"
 
 	// This needs a better name

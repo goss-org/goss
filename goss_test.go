@@ -149,7 +149,7 @@ func TestSkipResourcesByType(t *testing.T) {
 		}
 	}
 
-	if skipped != 6 {
-		t.Fatalf("Expected to skip 6 tests, skipped %d", skipped)
+	if skipped != 5 {
+		t.Fatalf("Expected to skip 5 tests, skipped %d", skipped)
 	}
 }

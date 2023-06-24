@@ -21,7 +21,7 @@ func (f *FakeResource) GetMeta() meta { return meta{"foo": "bar"} }
 
 var stringTests = []struct {
 	in, in2 any
-	want    string
+	want    int
 }{
 	{"", "", SUCCESS},
 	{"foo", "foo", SUCCESS},
@@ -78,7 +78,7 @@ func BenchmarkValidateValue(b *testing.B) {
 var containsTests = []struct {
 	in   []interface{}
 	in2  string
-	want string
+	want int
 }{
 	{[]interface{}{""}, "", SUCCESS},
 	{[]interface{}{"foo"}, "foo\nbar", SUCCESS},
@@ -145,7 +145,7 @@ func TestResultMarshaling(t *testing.T) {
 	inFunc := func() (io.Reader, error) {
 		return nil, fmt.Errorf("dummy error")
 	}
-	res := ValidateContains(&FakeResource{}, "", []string{"x"}, inFunc, false)
+	res := ValidateValue(&FakeResource{}, "", []string{"x"}, inFunc, false)
 	if res.Err == nil {
 		t.Fatalf("Expected to receive an error")
 	}

@@ -177,5 +177,5 @@ matching:
       not:
         - 'foo'
         - '/^m.*w$/'
-        - '!wtf'
+        - '!ftw'
         - '!/^ERROR:/'

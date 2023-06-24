@@ -53,7 +53,7 @@ matching:
     matches:
       - 'foo'
       - '/^m.*w$/'
-      - '!wtf'
+      - '!ftw'
       - '!/^ERROR:/'
 
   # Negated

@@ -64,7 +64,7 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
 
-	outstr := summary(startTime, endtime, testCount, failed, skipped)
+	outstr := summary(startTime, endTime, testCount, failed, skipped)
 	fmt.Fprint(w, outstr)
 	resstr := strings.ReplaceAll(outstr, "\n", " ")
 	if failed > 0 {

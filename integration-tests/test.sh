@@ -44,7 +44,7 @@ echo "$out"
 if [[ $os == "arch" ]]; then
     egrep -q 'Count: 99, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 119, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 120, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

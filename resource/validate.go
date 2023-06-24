@@ -69,7 +69,7 @@ type TestResult struct {
 	Meta  meta   `json:"meta" yaml:"meta"`
 
 	// Result
-	Result        string                 `json:"result" yaml:"result"`
+	Result        int                    `json:"result" yaml:"result"`
 	Err           *ValidateError         `json:"err" yaml:"err"`
 	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
 	StartTime     time.Time              `json:"start-time" yaml:"start-time"`
@@ -184,7 +184,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 			Title:        title,
 			Meta:         meta,
 			Property:     property,
-			Err:          err,
+			Err:          toValidateError(err),
 			StartTime:    startTime,
 			EndTime:      endTime,
 			Duration:     endTime.Sub(startTime),
@@ -215,7 +215,7 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 		Meta:          meta,
 		Property:      property,
 		MatcherResult: matcherResult,
-		Err:           err,
+		Err:           toValidateError(err),
 		StartTime:     startTime,
 		EndTime:       endTime,
 		Duration:      endTime.Sub(startTime),

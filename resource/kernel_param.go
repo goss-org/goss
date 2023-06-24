@@ -49,7 +49,7 @@ func (k *KernelParam) GetName() string {
 }
 
 func (k *KernelParam) Validate(sys *system.System) []TestResult {
-	skip := a.Skip
+	skip := k.Skip
 	sysKernelParam := sys.NewKernelParam(k.GetName(), sys, util.Config{})
 
 	var results []TestResult

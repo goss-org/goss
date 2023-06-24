@@ -1,13 +1,3 @@
-addr:
-  tcp://127.0.0.1:80:
-    local-address: 127.0.0.1
-    reachable: true
-    timeout: 500
-port:
-  tcp:80:
-    listening: true
-    ip:
-    - 0.0.0.0
 service:
   autofs:
     enabled: false
@@ -19,7 +9,7 @@ user:
     gid: 48
     groups:
     - apache
-    home: /usr/share/httpd
+    home: "/usr/share/httpd"
 group:
   apache:
     exists: true
@@ -27,6 +17,16 @@ group:
 process:
   httpd:
     running: true
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - '0.0.0.0'
+addr:
+  tcp://127.0.0.1:80:
+    reachable: true
+    timeout: 500
+    local-address: 127.0.0.1
 gossfile:
   "../goss-s*.yaml": {}
   bypath:

@@ -131,7 +131,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 func (h healthHandler) validate() [][]resource.TestResult {
 	h.sys = system.New(h.c.PackageManager)
 	res := make([][]resource.TestResult, 0)
-	tr := validate(h.sys, h.gossConfig, h.maxConcurrent)
+	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
 	for i := range tr {
 		res = append(res, i)
 	}

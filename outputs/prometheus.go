@@ -73,10 +73,14 @@ func (r Prometheus) ValidOptions() []*formatOption {
 
 // Output converts the results into the prometheus text-format.
 func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 	overallOutcome := resource.OutcomeUnknown
+	var startTime time.Time
 	for resultGroup := range results {
 		for _, tr := range resultGroup {
+			if startTime.IsZero() || tr.StartTime.Before(startTime) {
+				startTime = tr.StartTime
+			}
 			resType := strings.ToLower(tr.ResourceType)
 			outcome := tr.ToOutcome()
 			testOutcomes.WithLabelValues(resType, outcome).Inc()

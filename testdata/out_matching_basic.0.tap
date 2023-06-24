@@ -2,7 +2,7 @@
 ok 1 - Matching: basic_array: matches: matches expectation: ["group1","group2"]
 ok 2 - Matching: basic_array_matchers: matches: matches expectation: {"and":[{"contain-elements":["foo","bar"]},["foo","bar"],{"equal":["foo","bar","moo"]},{"consist-of":["foo",{"have-prefix":"m"},"bar"]},{"contain-element":{"have-prefix":"b"}},{"contain-element":{"have-suffix":"r"}}]}
 ok 3 - Matching: basic_int: matches: matches expectation: 42
-ok 4 - Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!wtf","!/^ERROR:/"]
+ok 4 - Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!ftw","!/^ERROR:/"]
 ok 5 - Matching: basic_semver: matches: matches expectation: {"semver-constraint":">=1.2.0"}
 ok 6 - Matching: basic_string: matches: matches expectation: "this is a test"
 ok 7 - Matching: basic_string_regexp: matches: matches expectation: {"match-regexp":"^this"}
