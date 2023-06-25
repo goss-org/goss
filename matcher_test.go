@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestMatchers(t *testing.T) {
-	files, err := filepath.Glob("testdata/out_matching_*")
+	files, err := filepath.Glob(filepath.Join("testdata", "out_matching_*"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +33,8 @@ func TestMatchers(t *testing.T) {
 	for _, outFile := range files {
 		outFile := outFile
 		parts := strings.Split(outFile, ".")
-		tf := fmt.Sprintf("testdata/%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
+		tfName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
+		tf := filepath.Join("testdata", tfName)
 		outFormat := parts[2]
 		wantCode, err := strconv.Atoi(parts[1])
 		if err != nil {
