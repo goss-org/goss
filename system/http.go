@@ -18,7 +18,7 @@ import (
 type HTTP interface {
 	HTTP() string
 	Status() (int, error)
-	Headers() ([]string, error)
+	Headers() (io.Reader, error)
 	Body() (io.Reader, error)
 	Exists() (bool, error)
 	SetAllowInsecure(bool)
@@ -70,7 +70,7 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 func HeaderToArray(header http.Header) (res []string) {
 	for name, values := range header {
 		for _, value := range values {
-			res = append(res, strings.ToLower(fmt.Sprintf("%s: %s", name, value)))
+			res = append(res, fmt.Sprintf("%s: %s", name, value))
 		}
 	}
 	sort.Strings(res)
@@ -186,12 +186,13 @@ func (u *DefHTTP) Status() (int, error) {
 	return u.resp.StatusCode, nil
 }
 
-func (u *DefHTTP) Headers() ([]string, error) {
+func (u *DefHTTP) Headers() (io.Reader, error) {
 	if err := u.setup(); err != nil {
 		return nil, err
 	}
 
-	return HeaderToArray(u.resp.Header), nil
+	var headerString = strings.Join(HeaderToArray(u.resp.Header), "\n")
+	return strings.NewReader(headerString), nil
 }
 
 func (u *DefHTTP) Body() (io.Reader, error) {

@@ -199,7 +199,7 @@ http:
     timeout: 5000
     request-headers:
       - "Foo: bar"
-    headers: ["content-type: application/json"]
+    headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
   https://httpbin.org/headers?host:
     status: 200
@@ -210,7 +210,7 @@ http:
       # need to see if there's a good way around this, maybe local httpbin?
       #- "Host: example.com"
       - "Host: httpbin.org"
-    headers: ["content-type: application/json"]
+    headers: ["Content-Type: application/json"]
     # body: ['"Host": "example.com"']
     body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:
