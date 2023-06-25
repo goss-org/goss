@@ -66,7 +66,7 @@ sed -i '/- mode=/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
 
 goss a "${args[@]}" http https://www.google.com
 
-goss a "${args[@]}" http https://www.microsoft.com -x http://127.0.0.1:8888
+goss a "${args[@]}" http https://www.apple.com -x http://127.0.0.1:8888
 
 goss a "${args[@]}" http http://google.com -r
 

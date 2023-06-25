@@ -111,16 +111,16 @@ http:
     no-follow-redirects: true
     timeout: 5000
     body: []
-  https://www.google.com:
-    status: 200
-    allow-insecure: false
-    no-follow-redirects: false
-    timeout: 5000
-    body: []
-  https://www.microsoft.com:
+  https://www.apple.com:
     status: 200
     allow-insecure: false
     no-follow-redirects: false
     timeout: 5000
     body: []
     proxy: http://127.0.0.1:8888
+  https://www.google.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []
