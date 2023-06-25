@@ -20,7 +20,7 @@ var gomegaTests = []struct {
 	},
 	{
 		in:   `1`,
-		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("==", float64(1))),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("eq", float64(1))),
 	},
 	{
 		in:   `true`,
@@ -39,19 +39,19 @@ var gomegaTests = []struct {
 	// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
 	{
 		in:   `{"gt": 1}`,
-		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically(">", float64(1))),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("gt", float64(1))),
 	},
 	{
 		in:   `{"ge": 1}`,
-		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically(">=", float64(1))),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("ge", float64(1))),
 	},
 	{
 		in:   `{"lt": 1}`,
-		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("<", float64(1))),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("lt", float64(1))),
 	},
 	{
 		in:   `{"le": 1}`,
-		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("<=", float64(1))),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("le", float64(1))),
 	},
 
 	// String

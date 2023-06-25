@@ -52,7 +52,7 @@ func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 			args:   args{actual: "1.0.0"},
 			wantResult: MatcherResult{
 				Actual:   "1.0.0",
-				Message:  "to satisfy constraint",
+				Message:  "to satisfy semver constraint",
 				Expected: "> 1.1.0",
 			},
 		},
@@ -179,7 +179,7 @@ func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 			args:   args{actual: "1.0.0"},
 			wantResult: MatcherResult{
 				Actual:   "1.0.0",
-				Message:  "not to satisfy constraint",
+				Message:  "not to satisfy semver constraint",
 				Expected: "> 1.1.0",
 			},
 		},

@@ -18,7 +18,7 @@ install: release/goss-linux-amd64
 
 test:
 	$(info INFO: Starting build $@)
-	./ci/go-test.sh $(pkgs)
+	./ci/go-test.sh
 
 cov:
 	go test -coverpkg=./... -coverprofile=c.out ./...
