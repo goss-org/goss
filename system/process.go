@@ -1,8 +1,8 @@
 package system
 
 import (
+	"github.com/goss-org/go-ps"
 	"github.com/goss-org/goss/util"
-	"github.com/shirou/gopsutil/process"
 )
 
 type Process interface {
@@ -14,7 +14,7 @@ type Process interface {
 
 type DefProcess struct {
 	executable string
-	procMap    map[string][]*process.Process
+	procMap    map[string][]ps.Process
 	err        error
 }
 
@@ -39,7 +39,7 @@ func (p *DefProcess) Pids() ([]int, error) {
 		return pids, p.err
 	}
 	for _, proc := range p.procMap[p.executable] {
-		pids = append(pids, int(proc.Pid))
+		pids = append(pids, proc.Pid())
 	}
 	return pids, nil
 }
@@ -54,16 +54,14 @@ func (p *DefProcess) Running() (bool, error) {
 	return false, nil
 }
 
-func GetProcs() (map[string][]*process.Process, error) {
-	pmap := make(map[string][]*process.Process)
-	processes, err := process.Processes()
+func GetProcs() (map[string][]ps.Process, error) {
+	pmap := make(map[string][]ps.Process)
+	processes, err := ps.Processes()
 	if err != nil {
 		return pmap, err
 	}
 	for _, p := range processes {
-		if pExe, err := p.Name(); err == nil {
-			pmap[pExe] = append(pmap[pExe], p)
-		}
+		pmap[p.Executable()] = append(pmap[p.Executable()], p)
 	}
 
 	return pmap, nil
