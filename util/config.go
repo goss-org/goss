@@ -127,10 +127,7 @@ func WithOutputFormat(f string) ConfigOption {
 // WithFormatOptions sets options used by the output format plugins, valid options are output.WithFormatOptions
 func WithFormatOptions(opts ...string) ConfigOption {
 	return func(c *Config) error {
-		for _, o := range opts {
-			c.FormatOptions = append(c.FormatOptions, o)
-		}
-
+		c.FormatOptions = append(c.FormatOptions, opts...)
 		return nil
 	}
 }
