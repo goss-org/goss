@@ -31,6 +31,9 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	for resultGroup := range results {
 		failedOrSkippedGroup := []resource.TestResult{}
 		for _, testResult := range resultGroup {
+			// Calculates the start and end times based on the start of the first test
+			// and end of the last test, this allows the time/duration to be stable
+			// FIXME: move this to shared code
 			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
 				startTime = testResult.StartTime
 			}

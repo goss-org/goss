@@ -11,7 +11,6 @@ type BeNumericallyMatcher struct {
 	fakeOmegaMatcher
 	Comparator string
 	CompareTo  []interface{}
-	//matchers.BeNumericallyMatcher
 }
 
 func BeNumerically(comparator string, compareTo ...interface{}) GossMatcher {

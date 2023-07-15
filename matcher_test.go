@@ -18,6 +18,8 @@ import (
 )
 
 var (
+	// This will generate the "golden files" prior to running the tests.
+	// helpful when the output is changed and a user doesn't want to update every single expectation file by hand
 	update = flag.Bool("update", false, "update the golden files of this test")
 )
 
@@ -35,8 +37,8 @@ func TestMatchers(t *testing.T) {
 	for _, outFile := range files {
 		outFile := outFile
 		parts := strings.Split(outFile, ".")
-		tfName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
-		tf := filepath.Join("testdata", tfName)
+		specName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
+		specFile := filepath.Join("testdata", specName)
 		outFormat := parts[2]
 		wantCode, err := strconv.Atoi(parts[1])
 		if err != nil {
@@ -49,7 +51,7 @@ func TestMatchers(t *testing.T) {
 			cfg, err := util.NewConfig(
 				util.WithOutputFormat(outFormat),
 				util.WithResultWriter(output),
-				util.WithSpecFile(tf),
+				util.WithSpecFile(specFile),
 				util.WithFormatOptions("sort", "pretty"),
 			)
 			if err != nil {

@@ -82,6 +82,10 @@ push-images:
 	$(info INFO: Starting build $@)
 	development/push_images.sh
 
+# Update the matcher test golden files
+update-matcher-tests:
+	go test -v -run '^TestMatchers' . -update
+
 test-darwin-all: test-short-all test-int-darwin-all
 # linux _does_ have the docker-style testing, but does _not_ currently have the same style integration tests darwin+windows do, _because_ of the docker-style testing.
 test-linux-all: test-short-all test-int-64 test-int-32

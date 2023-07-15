@@ -40,7 +40,6 @@ var (
 		"structured":    &Structured{},
 		"tap":           &Tap{},
 		"silent":        &Silent{},
-		"bench":         &Bench{},
 	}
 	foPerfData   = "perfdata"
 	foVerbose    = "verbose"
