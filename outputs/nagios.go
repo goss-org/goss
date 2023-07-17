@@ -27,7 +27,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	var perfdata, verbose bool
 	perfdata = util.IsValueInList(foPerfData, outConfig.FormatOptions)
 	verbose = util.IsValueInList(foVerbose, outConfig.FormatOptions)
-	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	var startTime time.Time
 	var endTime time.Time

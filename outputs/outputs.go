@@ -44,7 +44,7 @@ var (
 	foPerfData   = "perfdata"
 	foVerbose    = "verbose"
 	foPretty     = "pretty"
-	foIncludeRaw = "include_raw"
+	foExcludeRaw = "exclude_raw"
 	foSort       = "sort"
 )
 

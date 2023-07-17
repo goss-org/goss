@@ -63,7 +63,7 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	fmt.Fprint(w, "\n\n")
-	includeRaw := util.IsValueInList(foIncludeRaw, outConfig.FormatOptions)
+	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
 
