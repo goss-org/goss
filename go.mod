@@ -19,8 +19,8 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.10.0
+	github.com/samber/lo v1.38.1
 	github.com/stretchr/testify v1.8.1
-	github.com/thoas/go-funk v0.9.3
 	github.com/tidwall/gjson v1.14.4
 	github.com/urfave/cli v1.22.12
 	gopkg.in/yaml.v2 v2.4.0
@@ -54,6 +54,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/mod v0.9.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect

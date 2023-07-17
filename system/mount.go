@@ -6,7 +6,7 @@ import (
 
 	"github.com/goss-org/goss/util"
 	"github.com/moby/sys/mountinfo"
-	"github.com/thoas/go-funk"
+	"github.com/samber/lo"
 )
 
 type Mount interface {
@@ -80,7 +80,7 @@ func (m *DefMount) Opts() ([]string, error) {
 	}
 	allOpts := splitMountInfo(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","))
 
-	return funk.UniqString(allOpts), nil
+	return lo.Uniq(allOpts), nil
 }
 
 func (m *DefMount) Source() (string, error) {
