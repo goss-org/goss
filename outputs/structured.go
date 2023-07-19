@@ -16,13 +16,15 @@ type Structured struct{}
 func (r Structured) ValidOptions() []*formatOption {
 	return []*formatOption{
 		{name: foPretty},
+		{name: foSort},
 	}
 }
 
 // StructuredTestResult is an individual test result with additional human friendly summary
 type StructuredTestResult struct {
 	resource.TestResult
-	SummaryLine string `json:"summary-line"`
+	SummaryLine        string `json:"summary-line"`
+	SummaryLineCompact string `json:"summary-line-compact"`
 }
 
 // StructureTestSummary holds summary information about a test run
@@ -45,20 +47,34 @@ func (s *StructureTestSummary) String() string {
 }
 
 // Output processes output from tests into StructuredOutput written to w as a string
-func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, outConfig util.OutputConfig) (exitCode int) {
+	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
+
 	result := &StructuredOutput{
 		Results: []StructuredTestResult{},
 		Summary: StructureTestSummary{},
 	}
 
+	var startTime time.Time
+	var endTime time.Time
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			r := StructuredTestResult{
-				TestResult:  testResult,
-				SummaryLine: humanizeResult(testResult),
+				TestResult:         testResult,
+				SummaryLine:        humanizeResult(testResult, false, includeRaw),
+				SummaryLineCompact: humanizeResult(testResult, true, includeRaw),
 			}
 
-			if !testResult.Successful {
+			if testResult.Result == resource.FAIL {
 				result.Summary.Failed++
 			}
 
@@ -68,7 +84,7 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, st
 		}
 	}
 
-	result.Summary.TotalDuration = time.Since(startTime)
+	result.Summary.TotalDuration = endTime.Sub(startTime)
 	result.SummaryLine = result.Summary.String()
 
 	var j []byte

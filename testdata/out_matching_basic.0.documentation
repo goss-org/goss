@@ -1,0 +1,22 @@
+Matching: basic_array: matches: matches expectation: ["group1","group2"]
+Matching: basic_array_matchers: matches: matches expectation: {"and":[{"contain-elements":["foo","bar"]},["foo","bar"],{"equal":["foo","bar","moo"]},{"consist-of":["foo",{"have-prefix":"m"},"bar"]},{"contain-element":{"have-prefix":"b"}},{"contain-element":{"have-suffix":"r"}}]}
+Matching: basic_int: matches: matches expectation: 42
+Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!ftw","!/^ERROR:/"]
+Matching: basic_semver: matches: matches expectation: {"semver-constraint":">=1.2.0"}
+Matching: basic_string: matches: matches expectation: "this is a test"
+Matching: basic_string_regexp: matches: matches expectation: {"match-regexp":"^this"}
+Matching: basic_string_skip: matches: skipped
+Matching: negated_basic_array: matches: matches expectation: {"not":["group1","group2","group2","group4"]}
+Matching: negated_basic_array_matchers: matches: matches expectation: {"and":[{"not":{"contain-elements":["fox","box"]}},{"not":["fox","bax"]},{"not":{"equal":["fox","bax","mox"]}},{"not":{"consist-of":[{"have-suffix":"x"},{"have-prefix":"t"},"box"]}},{"not":{"contain-element":{"have-prefix":"x"}}}]}
+Matching: negated_basic_int: matches: matches expectation: {"not":43}
+Matching: negated_basic_reader: matches: matches expectation: {"not":{"contain-elements":["fox","/^t.*w$/","!foo","!/^foo/"]}}
+Matching: negated_basic_string: matches: matches expectation: {"not":"this is a failing test"}
+Matching: negated_basic_string_regexp: matches: matches expectation: {"not":{"match-regexp":"^foo"}}
+
+
+Failures/Skipped:
+
+Matching: basic_string_skip: matches: skipped
+
+Total Duration: 
+Count: 14, Failed: 0, Skipped: 1

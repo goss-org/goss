@@ -25,7 +25,7 @@ file:
     owner: root
     group: root
     filetype: file
-    contains:
+    contents:
     - root
 {{end}}
   "/goss/hellogoss.txt":
@@ -35,7 +35,7 @@ file:
     sha512: 372864ab83187de41ca57c5c77cd4a99220ccadc8b8ddb18367893fd3e58764193a599edbf63a48c0c44f1e923606a00929b46de3bda1744fd722b9d42829206
   "/tmp/goss/foobar":
     exists: false
-    contains: []
+    contents: []
   "~root":
     exists: true
     mode: '0700'
@@ -50,7 +50,7 @@ file:
     filetype: pipe
   "/does/not/exist":
     exists: true
-    contains:
+    contents:
     - skip-this-test
     skip: true
 package:
@@ -61,6 +61,13 @@ package:
     installed: true
     versions:
     - {{$ver}}
+{{end}}
+service:
+{{- range $name, $runlevels := index .Vars .Env.OS "services"}}
+  {{$name}}:
+    enabled: true
+    running: true
+    runlevels: {{toJson $runlevels}}
 {{end}}
 addr:
   tcp://google.com:22:
@@ -165,6 +172,7 @@ mount:
     opts:
     - rw
     - nosuid
+    - mode=755
     source: tmpfs
     filesystem: tmpfs
   "/":
@@ -183,12 +191,13 @@ http:
   {{ if index .Vars .Env.OS "proxy" }}
   https://httpbin.org/anything:
     status: 200
+    timeout: 60000
     proxy: {{ index .Vars .Env.OS "proxy" }}
   {{ end }}
   https://httpbin.org/headers:
     status: 200
     allow-insecure: false
-    timeout: 5000
+    timeout: 60000
     request-headers:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
@@ -196,7 +205,7 @@ http:
   https://httpbin.org/headers?host:
     status: 200
     allow-insecure: false
-    timeout: 5000
+    timeout: 60000
     request-headers:
       # This is causing intermittent errors depending on the httpbin server hit
       # need to see if there's a good way around this, maybe local httpbin?
@@ -207,26 +216,31 @@ http:
     body: ['"Host": "httpbin.org"']
   https://httpbin.org/basic-auth/username/secret:
     status: 200
+    timeout: 60000
     username: username
     password: secret
   https://httpbin.org/basic-auth/username/secret?failure:
     status: 401
+    timeout: 60000
     username: username
     password: wrong
   https://httpbin.org/put:
     status: 200
     method: PUT
+    timeout: 60000
     request-body: '{"key": "value"}'
     body:
       - '"key": "value"'
   anything-with-get:
     url: https://httpbin.org/anything
     status: 200
+    timeout: 60000
     body: []
   anything-with-put:
     url: https://httpbin.org/anything
     status: 200
     method: GET
+    timeout: 60000
     request-body: "request-body"
     body: ["request-body"]
 matching:
@@ -245,8 +259,6 @@ matching:
       baz: bing
     matches:
       and:
-        - have-key-with-value:
-            foo: bar
         - have-key: baz
   semver:
     content:

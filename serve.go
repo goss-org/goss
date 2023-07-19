@@ -96,36 +96,28 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
-	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
+	var tra [][]resource.TestResult
+	cacheKey := "res"
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		log.Printf("[TRACE] Returning cached[%s] (1).", cacheKey)
-		return tmp.(res)
+		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+		tra = tmp.([][]resource.TestResult)
+	} else {
+		log.Printf("Stale cache[%s], running tests", cacheKey)
+		h.sys = system.New(h.c.PackageManager)
+		tra = h.validate()
+		h.cache.SetDefault(cacheKey, tra)
 	}
-
-	h.gossMu.Lock()
-	defer h.gossMu.Unlock()
-	tmp, found = h.cache.Get(cacheKey)
-	if found {
-		log.Printf("[TRACE] Returning cached[%s] (2).", cacheKey)
-		return tmp.(res)
-	}
-
-	log.Printf("[TRACE] Stale cache[%s], running tests", cacheKey)
-	resp := h.runValidate(outputer)
-	h.cache.SetDefault(cacheKey, resp)
-	return resp
+	trc := testResultArrayToChan(tra)
+	return h.output(trc, outputer)
 }
 
-func (h healthHandler) runValidate(outputer outputs.Outputer) res {
-	h.sys = system.New(h.c.PackageManager)
-	iStartTime := time.Now()
-	out := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
+func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs.Outputer) res {
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
 	}
-	exitCode := outputer.Output(&b, out, iStartTime, outputConfig)
+	exitCode := outputer.Output(&b, trc, outputConfig)
 	resp := res{
 		body: b,
 	}
@@ -135,6 +127,28 @@ func (h healthHandler) runValidate(outputer outputs.Outputer) res {
 		resp.statusCode = http.StatusServiceUnavailable
 	}
 	return resp
+}
+func (h healthHandler) validate() [][]resource.TestResult {
+	h.sys = system.New(h.c.PackageManager)
+	res := make([][]resource.TestResult, 0)
+	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
+	for i := range tr {
+		res = append(res, i)
+	}
+	return res
+}
+
+func testResultArrayToChan(tra [][]resource.TestResult) <-chan []resource.TestResult {
+	c := make(chan []resource.TestResult)
+	go func(c chan []resource.TestResult) {
+		defer close(c)
+
+		for _, i := range tra {
+			c <- i
+		}
+	}(c)
+
+	return c
 }
 
 const (
@@ -173,13 +187,4 @@ func (h healthHandler) responseContentType(outputName string) string {
 		return "application/json"
 	}
 	return fmt.Sprintf("%s%s", mediaTypePrefix, outputName)
-}
-
-func (h healthHandler) renderBody(results <-chan []resource.TestResult, outputer outputs.Outputer) (int, bytes.Buffer) {
-	outputConfig := util.OutputConfig{
-		FormatOptions: h.c.FormatOptions,
-	}
-	var b bytes.Buffer
-	exitCode := outputer.Output(&b, results, time.Now(), outputConfig)
-	return exitCode, b
 }

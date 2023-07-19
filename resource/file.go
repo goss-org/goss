@@ -1,26 +1,31 @@
 package resource
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
 
 type File struct {
-	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Path     string   `json:"-" yaml:"-"`
-	Exists   matcher  `json:"exists" yaml:"exists"`
-	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
-	Size     matcher  `json:"size,omitempty" yaml:"size,omitempty"`
-	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
-	Group    matcher  `json:"group,omitempty" yaml:"group,omitempty"`
-	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
-	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
-	Contains []string `json:"contains" yaml:"contains"`
-	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
-	Sha256   matcher  `json:"sha256,omitempty" yaml:"sha256,omitempty"`
-	Sha512   matcher  `json:"sha512,omitempty" yaml:"sha512,omitempty"`
-	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	id       string  `json:"-" yaml:"-"`
+	Path     string  `json:"path,omitempty" yaml:"path,omitempty"`
+	Exists   matcher `json:"exists" yaml:"exists"`
+	Mode     matcher `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Size     matcher `json:"size,omitempty" yaml:"size,omitempty"`
+	Owner    matcher `json:"owner,omitempty" yaml:"owner,omitempty"`
+	Group    matcher `json:"group,omitempty" yaml:"group,omitempty"`
+	LinkedTo matcher `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
+	Filetype matcher `json:"filetype,omitempty" yaml:"filetype,omitempty"`
+	Contains matcher `json:"contains,omitempty" yaml:"contains,omitempty"`
+	Contents matcher `json:"contents" yaml:"contents"`
+	Md5      matcher `json:"md5,omitempty" yaml:"md5,omitempty"`
+	Sha256   matcher `json:"sha256,omitempty" yaml:"sha256,omitempty"`
+	Sha512   matcher `json:"sha512,omitempty" yaml:"sha512,omitempty"`
+	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -32,18 +37,29 @@ func init() {
 	registerResource(FileResourceKey, &File{})
 }
 
-func (f *File) ID() string       { return f.Path }
-func (f *File) SetID(id string)  { f.Path = id }
+func (f *File) ID() string {
+	if f.Path != "" && f.Path != f.id {
+		return fmt.Sprintf("%s: %s", f.id, f.Path)
+	}
+	return f.id
+}
+func (f *File) SetID(id string)  { f.id = id }
 func (f *File) SetSkip()         { f.Skip = true }
 func (f *File) TypeKey() string  { return FileResourceKey }
 func (f *File) TypeName() string { return FileResourceName }
 
 func (f *File) GetTitle() string { return f.Title }
 func (f *File) GetMeta() meta    { return f.Meta }
+func (f *File) GetPath() string {
+	if f.Path != "" {
+		return f.Path
+	}
+	return f.id
+}
 
 func (f *File) Validate(sys *system.System) []TestResult {
 	skip := f.Skip
-	sysFile := sys.NewFile(f.Path, sys, util.Config{})
+	sysFile := sys.NewFile(f.GetPath(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))
@@ -65,8 +81,12 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	if f.Filetype != nil {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
-	if len(f.Contains) > 0 {
-		results = append(results, ValidateContains(f, "contains", f.Contains, sysFile.Contains, skip))
+	if isSet(f.Contains) {
+		fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: file.contains has been renamed to file.contents\n")
+		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contents, skip))
+	}
+	if isSet(f.Contents) {
+		results = append(results, ValidateValue(f, "contents", f.Contents, sysFile.Contents, skip))
 	}
 	if f.Size != nil {
 		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
@@ -90,9 +110,9 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 		return nil, err
 	}
 	f := &File{
-		Path:     path,
+		id:       path,
 		Exists:   exists,
-		Contains: []string{},
+		Contents: []string{},
 	}
 	if !contains(config.IgnoreList, "mode") {
 		if mode, err := sysFile.Mode(); err == nil {
@@ -117,11 +137,6 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	if !contains(config.IgnoreList, "filetype") {
 		if filetype, err := sysFile.Filetype(); err == nil {
 			f.Filetype = filetype
-		}
-	}
-	if !contains(config.IgnoreList, "size") {
-		if size, err := sysFile.Size(); err == nil {
-			f.Size = size
 		}
 	}
 	return f, nil

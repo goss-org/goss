@@ -37,7 +37,7 @@ func TestPrometheusOutput(t *testing.T) {
 		},
 	}
 
-	exitCode := outputer.Output(buf, makeResults(injectedResults...), time.Now().Add(-1*time.Minute), util.OutputConfig{})
+	exitCode := outputer.Output(buf, makeResults(injectedResults...), util.OutputConfig{})
 
 	assert.Equal(t, 0, exitCode)
 	output := buf.String()

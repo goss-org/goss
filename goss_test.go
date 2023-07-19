@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 )
 
@@ -84,13 +84,13 @@ func TestUseAsPackage(t *testing.T) {
 		for _, r := range rg {
 			found++
 
-			if r.Successful {
+			if r.Result == resource.SUCCESS {
 				passed++
 			}
 		}
 	}
 
-	code, err := Validate(cfg, time.Now())
+	code, err := Validate(cfg)
 	checkErr(t, err, "check failed")
 	if code != 0 {
 		t.Fatalf("check failed, expected 0 got %d", code)
@@ -110,7 +110,7 @@ func TestUseAsPackage(t *testing.T) {
 
 	okcount := 0
 	for _, r := range res.Results {
-		if r.Successful {
+		if r.Result == resource.SUCCESS {
 			okcount++
 		}
 	}
@@ -149,7 +149,7 @@ func TestSkipResourcesByType(t *testing.T) {
 		}
 	}
 
-	if skipped != 6 {
-		t.Fatalf("Expected to skip 6 tests, skipped %d", skipped)
+	if skipped != 5 {
+		t.Fatalf("Expected to skip 5 tests, skipped %d", skipped)
 	}
 }

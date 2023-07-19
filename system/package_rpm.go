@@ -23,7 +23,7 @@ func (p *RpmPackage) setup() {
 		return
 	}
 	p.loaded = true
-	cmd := util.NewCommand("rpm", "-q", "--nosignature", "--nohdrchk", "--nodigest", "--qf", "%{VERSION}\n", p.name)
+	cmd := util.NewCommand("rpm", "-q", "--nosignature", "--nohdrchk", "--nodigest", "--qf", "%|EPOCH?{%{EPOCH}:}:{}|%{VERSION}-%{RELEASE}\n", p.name)
 	if err := cmd.Run(); err != nil {
 		return
 	}

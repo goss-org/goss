@@ -2,7 +2,7 @@
 command:
   "autoadd /Users/travis":
     exit-status: 0
-    exec: "release/goss-alpha-darwin-amd64 --use-alpha=1 autoadd /Users/travis"
+    exec: "release/goss-darwin-amd64 --use-alpha=1 autoadd /Users/travis"
     stdout:
       - 'file:'
       - '  exists: true'

@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/goss-org/GOnetstat"
+	// This needs a better name
 	"github.com/goss-org/go-ps"
 
 	util2 "github.com/goss-org/goss/util"

@@ -9,19 +9,6 @@ arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
 
-seccomp_opts() {
-  local docker_ver minor_ver
-  docker_ver=$(docker version -f '{{.Client.Version}}')
-  minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  major_ver=$(cut -d'.' -f1 <<<$docker_ver)
-  if ((minor_ver>=10))||((major_ver>18)); then
-    echo ' --security-opt seccomp:unconfined '
-  fi
-  if ((major_ver>18)); then
-    echo ' --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro '
-  fi
-}
-
 # setup places us inside repo-root; this preserves current behaviour with least change.
 cd integration-tests
 
@@ -43,7 +30,7 @@ docker_exec() {
 if docker ps -a | grep "$container_name";then
   docker rm -vf "$container_name"
 fi
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" $(seccomp_opts))
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable)
 id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
@@ -57,7 +44,7 @@ echo "$out"
 if [[ $os == "arch" ]]; then
     egrep -q 'Count: 99, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 119, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 120, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

@@ -2,6 +2,7 @@ package resource
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -57,7 +58,7 @@ func deprecateAtoI(depr any, desc string) any {
 	if !ok {
 		return depr
 	}
-	fmt.Printf("DEPRECATION WARNING: %s should be an integer not a string\n", desc)
+	fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: %s should be an integer not a string\n", desc)
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		panic(err)
@@ -81,14 +82,17 @@ func shouldSkip(results []TestResult) bool {
 	if len(results) < 1 {
 		return false
 	}
-	if results[0].Err != nil {
-		return true
-	}
-	if len(results[0].Found) < 1 {
-		return false
-	}
-	if results[0].Found[0] == "false" {
+	if results[0].Err != nil || results[0].Result != SUCCESS || results[0].MatcherResult.Actual == false {
 		return true
 	}
 	return false
+}
+
+func isSet(i interface{}) bool {
+	switch v := i.(type) {
+	case []interface{}:
+		return len(v) > 0
+	default:
+		return i != nil
+	}
 }

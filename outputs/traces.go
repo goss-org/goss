@@ -14,8 +14,8 @@ func logTrace(level string, msg string, testResult resource.TestResult, withIntR
 			testResult.ResourceType,
 			testResult.ResourceId,
 			testResult.Property,
-			testResult.Expected,
-			testResult.Found,
+			testResult.MatcherResult.Expected,
+			testResult.MatcherResult.Actual,
 			testResult.Duration.Seconds(),
 			testResult.Result,
 		)
@@ -26,8 +26,8 @@ func logTrace(level string, msg string, testResult resource.TestResult, withIntR
 			testResult.ResourceType,
 			testResult.ResourceId,
 			testResult.Property,
-			testResult.Expected,
-			testResult.Found,
+			testResult.MatcherResult.Expected,
+			testResult.MatcherResult.Actual,
 			testResult.Duration.Seconds(),
 		)
 	}

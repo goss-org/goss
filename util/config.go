@@ -43,6 +43,7 @@ type Config struct {
 	Proxy                 string
 	RequestHeader         []string
 	RetryTimeout          time.Duration
+	RunLevel              string
 	Server                string
 	Sleep                 time.Duration
 	Spec                  string

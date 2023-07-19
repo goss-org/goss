@@ -6,6 +6,7 @@ import (
 
 	"github.com/goss-org/goss/util"
 	"github.com/moby/sys/mountinfo"
+	"github.com/samber/lo"
 )
 
 type Mount interface {
@@ -77,8 +78,9 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
+	allOpts := splitMountInfo(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","))
 
-	return strings.Split(m.mountInfo.Options, ","), nil
+	return lo.Uniq(allOpts), nil
 }
 
 func (m *DefMount) Source() (string, error) {
@@ -106,20 +108,22 @@ func (m *DefMount) Usage() (int, error) {
 }
 
 func getMount(mountpoint string) (*mountinfo.Info, error) {
-	entries, err := mountinfo.GetMounts(func(e *mountinfo.Info) (skip bool, stop bool) {
-		if e.Mountpoint == mountpoint {
-			return false, true
-		}
-
-		return true, false
-	})
+	entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
 	if err != nil {
 		return nil, err
 	}
-
 	if len(entries) == 0 {
 		return nil, fmt.Errorf("Mountpoint not found")
 	}
-
 	return entries[0], nil
+}
+
+func splitMountInfo(s string) []string {
+	quoted := false
+	return strings.FieldsFunc(s, func(r rune) bool {
+		if r == '"' {
+			quoted = !quoted
+		}
+		return !quoted && r == ','
+	})
 }

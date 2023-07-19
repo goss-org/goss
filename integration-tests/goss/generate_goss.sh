@@ -59,10 +59,14 @@ goss a "${args[@]}" process $package foobar
 goss a "${args[@]}" kernel-param kernel.ostype
 
 goss a "${args[@]}" mount /dev
+# Make tests consistent across different docker setups
+sed -i '/- seclabel/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
+sed -i '/- size=/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
+sed -i '/- mode=/d' $SCRIPT_DIR/${OS}/goss-generated-$ARCH.yaml
 
 goss a "${args[@]}" http https://www.google.com
 
-goss a "${args[@]}" http https://www.microsoft.com -x http://127.0.0.1:8888
+goss a "${args[@]}" http https://www.apple.com -x http://127.0.0.1:8888
 
 goss a "${args[@]}" http http://google.com -r
 
@@ -78,6 +82,7 @@ $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.ya
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa $package
 # Validate that we can aa none existent resources without destroying the file
 $SCRIPT_DIR/$OS/goss-linux-$ARCH -g $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml aa nosuchresource
+
 if [[ ! -f $SCRIPT_DIR/${OS}/goss-aa-generated-$ARCH.yaml ]]
 then
   echo "Error! Config file removed by aa!" && exit 1

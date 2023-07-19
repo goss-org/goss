@@ -41,13 +41,12 @@ func TestOutputFormatOptions(t *testing.T) {
 	assert.Contains(t, list, foPerfData)
 	assert.Contains(t, list, foPretty)
 	assert.Contains(t, list, foVerbose)
-	assert.Len(t, list, 3)
+	assert.Len(t, list, 4)
 }
 
 func TestOptionsRegistration(t *testing.T) {
 	registeredOutputs := Outputers()
 	assert.Contains(t, registeredOutputs, "documentation")
-	assert.Contains(t, registeredOutputs, "json_oneline")
 	assert.Contains(t, registeredOutputs, "json")
 	assert.Contains(t, registeredOutputs, "junit")
 	assert.Contains(t, registeredOutputs, "nagios")
