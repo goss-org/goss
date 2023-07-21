@@ -186,45 +186,41 @@ interface:
     exists: true
     addrs:
       contain-element:
-        have-prefix: '172.17'
+        have-prefix: '172.'
 http:
   {{ if index .Vars .Env.OS "proxy" }}
-  https://httpbin.org/anything:
+  http://httpbin/anything:
     status: 200
     timeout: 60000
     proxy: {{ index .Vars .Env.OS "proxy" }}
   {{ end }}
-  https://httpbin.org/headers:
+  http://httpbin/headers:
     status: 200
-    allow-insecure: false
     timeout: 60000
     request-headers:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
-  https://httpbin.org/headers?host:
+  http://httpbin/headers?host:
     status: 200
-    allow-insecure: false
     timeout: 60000
     request-headers:
       # This is causing intermittent errors depending on the httpbin server hit
       # need to see if there's a good way around this, maybe local httpbin?
-      #- "Host: example.com"
-      - "Host: httpbin.org"
+      - "Host: httpbin"
     headers: ["Content-Type: application/json"]
-    # body: ['"Host": "example.com"']
-    body: ['"Host": "httpbin.org"']
-  https://httpbin.org/basic-auth/username/secret:
+    body: ['"Host": "httpbin"']
+  http://httpbin/basic-auth/username/secret:
     status: 200
     timeout: 60000
     username: username
     password: secret
-  https://httpbin.org/basic-auth/username/secret?failure:
+  http://httpbin/basic-auth/username/secret?failure:
     status: 401
     timeout: 60000
     username: username
     password: wrong
-  https://httpbin.org/put:
+  http://httpbin/put:
     status: 200
     method: PUT
     timeout: 60000
@@ -232,12 +228,12 @@ http:
     body:
       - '"key": "value"'
   anything-with-get:
-    url: https://httpbin.org/anything
+    url: http://httpbin/anything
     status: 200
     timeout: 60000
     body: []
   anything-with-put:
-    url: https://httpbin.org/anything
+    url: http://httpbin/anything
     status: 200
     method: GET
     timeout: 60000
