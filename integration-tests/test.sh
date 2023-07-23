@@ -34,7 +34,7 @@ fi
 # Setup local httbin
 # FIXME: this is a quick hack to fix intermittent CI issues
 network=goss-test
-docker network create --driver bridge $network
+docker network create --driver bridge  --subnet '172.19.0.0/16' $network
 docker run -d --name httpbin --network $network kennethreitz/httpbin
 opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable)
 id=$(docker run "${opts[@]}" --network $network "aelsabbahy/goss_$os" /sbin/init)
@@ -48,23 +48,23 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 99, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 100, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 120, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 121, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
   docker_exec /goss/generate_goss.sh "$os" "$arch"
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected.yaml"
   docker_exec diff -wu "/goss/${os}/goss-expected.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
   docker_exec diff -wu "/goss/${os}/goss-aa-expected.yaml" "/goss/${os}/goss-aa-generated-$arch.yaml"
 
   docker_exec /goss/generate_goss.sh "$os" "$arch" -q
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected-q.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected-q.yaml"
   docker_exec diff -wu "/goss/${os}/goss-expected-q.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 fi
 

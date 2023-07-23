@@ -144,6 +144,8 @@ mount:
     opts:
     - rw
     - nosuid
+    vfs-opts:
+    - rw
     source: tmpfs
     filesystem: tmpfs
 http:

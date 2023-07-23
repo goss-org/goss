@@ -14,6 +14,7 @@ type Mount struct {
 	MountPoint string  `json:"mountpoint,omitempty" yaml:"mountpoint,omitempty"`
 	Exists     matcher `json:"exists" yaml:"exists"`
 	Opts       matcher `json:"opts,omitempty" yaml:"opts,omitempty"`
+	VfsOpts    matcher `json:"vfs-opts,omitempty" yaml:"vfs-opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
 	Filesystem matcher `json:"filesystem,omitempty" yaml:"filesystem,omitempty"`
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
@@ -62,6 +63,9 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
 	if m.Opts != nil {
 		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
 	}
+	if m.VfsOpts != nil {
+		results = append(results, ValidateValue(m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
+	}
 	if m.Source != nil {
 		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip))
 	}
@@ -84,6 +88,11 @@ func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
 	if !contains(config.IgnoreList, "opts") {
 		if opts, err := sysMount.Opts(); err == nil {
 			m.Opts = opts
+		}
+	}
+	if !contains(config.IgnoreList, "vfs-opts") {
+		if vfsOpts, err := sysMount.VfsOpts(); err == nil {
+			m.VfsOpts = vfsOpts
 		}
 	}
 	if !contains(config.IgnoreList, "source") {

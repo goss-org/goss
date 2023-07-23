@@ -13,6 +13,7 @@ type Mount interface {
 	MountPoint() string
 	Exists() (bool, error)
 	Opts() ([]string, error)
+	VfsOpts() ([]string, error)
 	Source() (string, error)
 	Filesystem() (string, error)
 	Usage() (int, error)
@@ -78,9 +79,17 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
-	allOpts := splitMountInfo(strings.Join([]string{m.mountInfo.Options, m.mountInfo.VFSOptions}, ","))
+	allOpts := splitMountInfo(m.mountInfo.Options)
 
 	return lo.Uniq(allOpts), nil
+}
+
+func (m *DefMount) VfsOpts() ([]string, error) {
+	if err := m.setup(); err != nil {
+		return nil, err
+	}
+	opts := splitMountInfo(m.mountInfo.VFSOptions)
+	return opts, nil
 }
 
 func (m *DefMount) Source() (string, error) {
