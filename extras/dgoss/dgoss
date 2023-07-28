@@ -52,9 +52,9 @@ run(){
         info "Creating $CONTAINER_RUNTIME container"
         id=$($CONTAINER_RUNTIME create "${@:2}")
         info "Copy goss files into container"
-        $CONTAINER_RUNTIME cp $tmp_dir/. $id:/goss
+        $CONTAINER_RUNTIME cp "$tmp_dir/." "$id:/goss"
         info "Starting $CONTAINER_RUNTIME container"
-        $CONTAINER_RUNTIME start $id > /dev/null
+        $CONTAINER_RUNTIME start "$id" > /dev/null
         ;;
       *) error "Wrong goss files strategy used! Correct options are \"mount\" or \"cp\"."
     esac
@@ -96,20 +96,20 @@ case "$1" in
             info "Found goss_wait.yaml, waiting for it to pass before running tests"
             if [[ -z "${GOSS_VARS}" ]]; then
                 if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
-                    $CONTAINER_RUNTIME logs $id >&2
+                    $CONTAINER_RUNTIME logs "$id" >&2
                     error "goss_wait.yaml never passed"
                 fi
             else
                 if ! $CONTAINER_RUNTIME exec "$id" sh -c "/goss/goss -g /goss/goss_wait.yaml --vars='/goss/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
-                    $CONTAINER_RUNTIME logs $id >&2
+                    $CONTAINER_RUNTIME logs "$id" >&2
                     error "goss_wait.yaml never passed"
                 fi
             fi
         fi
         [[ $GOSS_SLEEP ]] && { info "Sleeping for $GOSS_SLEEP"; sleep "$GOSS_SLEEP"; }
         info "Container health"
-        if [ "true" != "$($CONTAINER_RUNTIME inspect -f '{{.State.Running}}' $id)" ]; then
-            $CONTAINER_RUNTIME logs $id >&2
+        if [ "true" != "$($CONTAINER_RUNTIME inspect -f '{{.State.Running}}' "$id")" ]; then
+            $CONTAINER_RUNTIME logs "$id" >&2
             error "the container failed to start"
         fi
         info "Running Tests"
