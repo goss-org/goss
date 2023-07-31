@@ -683,6 +683,11 @@ mount:
     opts:
     - rw
     - relatime
+    # This maps to the per-superblock options, see:
+    # https://man7.org/linux/man-pages/man5/proc.5.html
+    # https://man7.org/linux/man-pages/man2/mount.2.html
+    vfs-opts:
+    - rw
     source: /dev/mapper/fedora-home
     filesystem: xfs
     usage: #% of blocks used in this mountpoint
