@@ -2,7 +2,6 @@ package outputs
 
 import (
 	"io"
-	"time"
 
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
@@ -15,7 +14,7 @@ func (r Silent) ValidOptions() []*formatOption {
 }
 
 func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 
 	var failed int
 	for resultGroup := range results {

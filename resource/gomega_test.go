@@ -2,15 +2,10 @@ package resource
 
 import (
 	"encoding/json"
-	"fmt"
-	"reflect"
-	"regexp"
 	"testing"
 
 	"github.com/goss-org/goss/matchers"
-
-	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
+	"github.com/stretchr/testify/assert"
 )
 
 var gomegaTests = []struct {
@@ -21,20 +16,22 @@ var gomegaTests = []struct {
 	// Default for simple types
 	{
 		in:   `"foo"`,
-		want: gomega.Equal("foo"),
+		want: matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo")),
 	},
 	{
 		in:   `1`,
-		want: gomega.Equal(float64(1)),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("eq", float64(1))),
 	},
 	{
 		in:   `true`,
-		want: gomega.Equal(true),
+		want: matchers.Equal(true),
 	},
 	// Default for Array
 	{
-		in:              `["foo", "bar"]`,
-		want:            gomega.And(gomega.ContainElement("foo"), gomega.ContainElement("bar")),
+		in: `["foo", "bar"]`,
+		want: matchers.ContainElements(
+			matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo")),
+			matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("bar"))),
 		useNegateTester: true,
 	},
 
@@ -42,91 +39,103 @@ var gomegaTests = []struct {
 	// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
 	{
 		in:   `{"gt": 1}`,
-		want: gomega.BeNumerically(">", float64(1)),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("gt", float64(1))),
 	},
 	{
 		in:   `{"ge": 1}`,
-		want: gomega.BeNumerically(">=", float64(1)),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("ge", float64(1))),
 	},
 	{
 		in:   `{"lt": 1}`,
-		want: gomega.BeNumerically("<", float64(1)),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("lt", float64(1))),
 	},
 	{
 		in:   `{"le": 1}`,
-		want: gomega.BeNumerically("<=", float64(1)),
+		want: matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("le", float64(1))),
 	},
 
 	// String
 	{
 		in:   `{"have-prefix": "foo"}`,
-		want: gomega.HavePrefix("foo"),
+		want: matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePrefix("foo")),
 	},
 	{
 		in:   `{"have-suffix": "foo"}`,
-		want: gomega.HaveSuffix("foo"),
+		want: matchers.WithSafeTransform(matchers.ToString{}, matchers.HaveSuffix("foo")),
 	},
 	// Regex support is based on golangs regex engine https://golang.org/pkg/regexp/syntax/
 	{
 		in:   `{"match-regexp": "foo"}`,
-		want: gomega.MatchRegexp("foo"),
+		want: matchers.WithSafeTransform(matchers.ToString{}, matchers.MatchRegexp("foo")),
 	},
 
 	// Collection
 	{
 		in:   `{"consist-of": ["foo"]}`,
-		want: gomega.ConsistOf(gomega.Equal("foo")),
+		want: matchers.ConsistOf(matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo"))),
 	},
 	{
-		in:   `{"contain-element": "foo"}`,
-		want: gomega.ContainElement(gomega.Equal("foo")),
+		in: `{"contain-element": "foo"}`,
+		want: matchers.WithSafeTransform(matchers.ToArray{},
+			matchers.ContainElement(
+				matchers.WithSafeTransform(matchers.ToString{},
+					matchers.Equal("foo")))),
 	},
 	{
 		in:   `{"have-len": 3}`,
-		want: gomega.HaveLen(3),
-	},
-	{
-		in: `{"have-key-with-value": { "foo": 1, "bar": "baz" }}`,
-		// Keys are sorted and then passed to gomega.And so the order
-		// of the conditions in this `want` is important
-		want: gomega.And(
-			gomega.HaveKeyWithValue("bar", gomega.Equal("baz")),
-			gomega.HaveKeyWithValue("foo", gomega.Equal(1)),
-		),
-		useNegateTester: true,
+		want: matchers.HaveLen(3),
 	},
 	{
 		in:   `{"have-key": "foo"}`,
-		want: gomega.HaveKey(gomega.Equal("foo")),
+		want: matchers.HaveKey(matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo"))),
 	},
 
 	// Negation
 	{
 		in:   `{"not": "foo"}`,
-		want: gomega.Not(gomega.Equal("foo")),
+		want: matchers.Not(matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo"))),
 	},
 	// Complex logic
 	{
-		in:              `{"and": ["foo", "foo"]}`,
-		want:            gomega.And(gomega.Equal("foo"), gomega.Equal("foo")),
+		in: `{"and": ["foo", "foo"]}`,
+		want: matchers.And(
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.Equal("foo")),
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.Equal("foo")),
+		),
 		useNegateTester: true,
 	},
 	{
-		in:              `{"and": [{"have-prefix": "foo"}, "foo"]}`,
-		want:            gomega.And(gomega.HavePrefix("foo"), gomega.Equal("foo")),
+		in: `{"and": [{"have-prefix": "foo"}, "foo"]}`,
+		want: matchers.And(
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.HavePrefix("foo")),
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.Equal("foo")),
+		),
 		useNegateTester: true,
 	},
 	{
-		in:   `{"not": {"have-prefix": "foo"}}`,
-		want: gomega.Not(gomega.HavePrefix("foo")),
+		in: `{"not": {"have-prefix": "foo"}}`,
+		want: matchers.Not(
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.HavePrefix("foo"))),
 	},
 	{
-		in:   `{"or": ["foo", "foo"]}`,
-		want: gomega.Or(gomega.Equal("foo"), gomega.Equal("foo")),
+		in: `{"or": ["foo", "foo"]}`,
+		want: matchers.Or(
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.Equal("foo")),
+			matchers.WithSafeTransform(matchers.ToString{},
+				matchers.Equal("foo"))),
 	},
 	{
-		in:   `{"not": {"and": [{"have-prefix": "foo"}]}}`,
-		want: gomega.Not(gomega.And(gomega.HavePrefix("foo"))),
+		in: `{"not": {"and": [{"have-prefix": "foo"}]}}`,
+		want: matchers.Not(
+			matchers.And(
+				matchers.WithSafeTransform(matchers.ToString{},
+					matchers.HavePrefix("foo")))),
 	},
 
 	// Semver Constraint
@@ -151,34 +160,5 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 }
 
 func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
-	if !gomegaEqual(got, want, useNegateTester) {
-		t.Errorf("For input '%s': got %T %v, want %T %v", in, got, got, want, want)
-	}
-}
-func gomegaEqual(g, w any, negateTester bool) bool {
-	gotT := reflect.TypeOf(g)
-	wantT := reflect.TypeOf(w)
-	got := g.(types.GomegaMatcher)
-	want := w.(types.GomegaMatcher)
-	var gotMessage string
-	var wantMessage string
-	if negateTester {
-		gotMessage = got.NegatedFailureMessage("foo")
-		wantMessage = want.NegatedFailureMessage("foo")
-	} else {
-		gotMessage = got.FailureMessage("foo")
-		wantMessage = want.FailureMessage("foo")
-	}
-	gotMessage = sanitizeMatcherText(gotMessage)
-	wantMessage = sanitizeMatcherText(wantMessage)
-	fmt.Println("got:", gotMessage)
-	fmt.Println("want:", wantMessage)
-
-	return gotT == wantT &&
-		gotMessage == wantMessage
-}
-
-func sanitizeMatcherText(s string) string {
-	r := regexp.MustCompile("[0-9]x[a-z0-9]{10}")
-	return r.ReplaceAllString(s, "")
+	assert.Equal(t, got, want)
 }

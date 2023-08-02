@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"fmt"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
@@ -8,6 +10,8 @@ import (
 type KernelParam struct {
 	Title string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta  meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	id    string  `json:"-" yaml:"-"`
+	Name  string  `json:"name,omitempty" yaml:"name,omitempty"`
 	Key   string  `json:"-" yaml:"-"`
 	Value matcher `json:"value" yaml:"value"`
 	Skip  bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
@@ -22,22 +26,34 @@ func init() {
 	registerResource(KernelParamResourceKey, &KernelParam{})
 }
 
-func (a *KernelParam) ID() string       { return a.Key }
-func (a *KernelParam) SetID(id string)  { a.Key = id }
+func (k *KernelParam) ID() string {
+	if k.Name != "" && k.Name != k.id {
+		return fmt.Sprintf("%s: %s", k.id, k.Name)
+	}
+	return k.id
+}
+func (a *KernelParam) SetID(id string) { a.id = id }
+
 func (a *KernelParam) SetSkip()         { a.Skip = true }
 func (a *KernelParam) TypeKey() string  { return KernelParamResourceKey }
 func (a *KernelParam) TypeName() string { return KernelParamResourceName }
 
 // FIXME: Can this be refactored?
-func (a *KernelParam) GetTitle() string { return a.Title }
-func (a *KernelParam) GetMeta() meta    { return a.Meta }
+func (k *KernelParam) GetTitle() string { return k.Title }
+func (k *KernelParam) GetMeta() meta    { return k.Meta }
+func (k *KernelParam) GetName() string {
+	if k.Name != "" {
+		return k.Name
+	}
+	return k.id
+}
 
-func (a *KernelParam) Validate(sys *system.System) []TestResult {
-	skip := a.Skip
-	sysKernelParam := sys.NewKernelParam(a.Key, sys, util.Config{})
+func (k *KernelParam) Validate(sys *system.System) []TestResult {
+	skip := k.Skip
+	sysKernelParam := sys.NewKernelParam(k.GetName(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "value", a.Value, sysKernelParam.Value, skip))
+	results = append(results, ValidateValue(k, "value", k.Value, sysKernelParam.Value, skip))
 	return results
 }
 
@@ -45,7 +61,7 @@ func NewKernelParam(sysKernelParam system.KernelParam, config util.Config) (*Ker
 	key := sysKernelParam.Key()
 	value, err := sysKernelParam.Value()
 	a := &KernelParam{
-		Key:   key,
+		id:    key,
 		Value: value,
 	}
 	return a, err

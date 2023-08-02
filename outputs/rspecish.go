@@ -18,14 +18,28 @@ func (r Rspecish) ValidOptions() []*formatOption {
 }
 
 func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
 
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
+
+	var startTime time.Time
+	var endTime time.Time
 	testCount := 0
 	var failedOrSkipped [][]resource.TestResult
 	var skipped, failed int
 	for resultGroup := range results {
 		failedOrSkippedGroup := []resource.TestResult{}
 		for _, testResult := range resultGroup {
+			// Calculates the start and end times based on the start of the first test
+			// and end of the last test, this allows the time/duration to be stable
+			// FIXME: move this to shared code
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			switch testResult.Result {
 			case resource.SUCCESS:
 				logTrace("TRACE", "SUCCESS", testResult, false)
@@ -49,9 +63,11 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	fmt.Fprint(w, "\n\n")
-	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped))
+	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
-	outstr := summary(startTime, testCount, failed, skipped)
+	fmt.Fprint(w, failedOrSkippedSummary(failedOrSkipped, includeRaw))
+
+	outstr := summary(startTime, endTime, testCount, failed, skipped)
 	fmt.Fprint(w, outstr)
 	resstr := strings.ReplaceAll(outstr, "\n", " ")
 	if failed > 0 {

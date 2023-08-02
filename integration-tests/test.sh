@@ -9,19 +9,6 @@ arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
 
-seccomp_opts() {
-  local docker_ver minor_ver
-  docker_ver=$(docker version -f '{{.Client.Version}}')
-  minor_ver=$(cut -d'.' -f2 <<<$docker_ver)
-  major_ver=$(cut -d'.' -f1 <<<$docker_ver)
-  if ((minor_ver>=10))||((major_ver>18)); then
-    echo ' --security-opt seccomp:unconfined '
-  fi
-  if ((major_ver>18)); then
-    echo ' --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro '
-  fi
-}
-
 # setup places us inside repo-root; this preserves current behaviour with least change.
 cd integration-tests
 
@@ -43,10 +30,16 @@ docker_exec() {
 if docker ps -a | grep "$container_name";then
   docker rm -vf "$container_name"
 fi
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" $(seccomp_opts))
-id=$(docker run "${opts[@]}" "aelsabbahy/goss_$os" /sbin/init)
+
+# Setup local httbin
+# FIXME: this is a quick hack to fix intermittent CI issues
+network=goss-test
+docker network create --driver bridge  --subnet '172.19.0.0/16' $network
+docker run -d --name httpbin --network $network kennethreitz/httpbin
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable)
+id=$(docker run "${opts[@]}" --network $network "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
-trap "rv=\$?; docker rm -vf $id; exit \$rv" INT TERM EXIT
+trap "rv=\$?; docker rm -vf $id;docker rm -vf httpbin;docker network rm $network; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
@@ -55,23 +48,23 @@ out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-i
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 99, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 100, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 119, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 121, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
   docker_exec /goss/generate_goss.sh "$os" "$arch"
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected.yaml"
   docker_exec diff -wu "/goss/${os}/goss-expected.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
   docker_exec diff -wu "/goss/${os}/goss-aa-expected.yaml" "/goss/${os}/goss-aa-generated-$arch.yaml"
 
   docker_exec /goss/generate_goss.sh "$os" "$arch" -q
 
-  #docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected-q.yaml"
+  # docker exec $container_name bash -c "cp /goss/${os}/goss-generated-$arch.yaml /goss/${os}/goss-expected-q.yaml"
   docker_exec diff -wu "/goss/${os}/goss-expected-q.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 fi
 

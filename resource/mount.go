@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"fmt"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
@@ -8,9 +10,11 @@ import (
 type Mount struct {
 	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	MountPoint string  `json:"-" yaml:"-"`
+	id         string  `json:"-" yaml:"-"`
+	MountPoint string  `json:"mountpoint,omitempty" yaml:"mountpoint,omitempty"`
 	Exists     matcher `json:"exists" yaml:"exists"`
 	Opts       matcher `json:"opts,omitempty" yaml:"opts,omitempty"`
+	VfsOpts    matcher `json:"vfs-opts,omitempty" yaml:"vfs-opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
 	Filesystem matcher `json:"filesystem,omitempty" yaml:"filesystem,omitempty"`
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
@@ -26,8 +30,13 @@ func init() {
 	registerResource(MountResourceKey, &Mount{})
 }
 
-func (m *Mount) ID() string       { return m.MountPoint }
-func (m *Mount) SetID(id string)  { m.MountPoint = id }
+func (m *Mount) ID() string {
+	if m.MountPoint != "" && m.MountPoint != m.id {
+		return fmt.Sprintf("%s: %s", m.id, m.MountPoint)
+	}
+	return m.id
+}
+func (m *Mount) SetID(id string)  { m.id = id }
 func (m *Mount) SetSkip()         { m.Skip = true }
 func (m *Mount) TypeKey() string  { return MountResourceKey }
 func (m *Mount) TypeName() string { return MountResourceName }
@@ -35,10 +44,16 @@ func (m *Mount) TypeName() string { return MountResourceName }
 // FIXME: Can this be refactored?
 func (m *Mount) GetTitle() string { return m.Title }
 func (m *Mount) GetMeta() meta    { return m.Meta }
+func (m *Mount) GetMountPoint() string {
+	if m.MountPoint != "" {
+		return m.MountPoint
+	}
+	return m.id
+}
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	skip := m.Skip
-	sysMount := sys.NewMount(m.MountPoint, sys, util.Config{})
+	sysMount := sys.NewMount(m.GetMountPoint(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))
@@ -47,6 +62,9 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
 	}
 	if m.Opts != nil {
 		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
+	}
+	if m.VfsOpts != nil {
+		results = append(results, ValidateValue(m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
 	}
 	if m.Source != nil {
 		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip))
@@ -64,12 +82,17 @@ func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
 	mountPoint := sysMount.MountPoint()
 	exists, _ := sysMount.Exists()
 	m := &Mount{
-		MountPoint: mountPoint,
-		Exists:     exists,
+		id:     mountPoint,
+		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "opts") {
 		if opts, err := sysMount.Opts(); err == nil {
 			m.Opts = opts
+		}
+	}
+	if !contains(config.IgnoreList, "vfs-opts") {
+		if vfsOpts, err := sysMount.VfsOpts(); err == nil {
+			m.VfsOpts = vfsOpts
 		}
 	}
 	if !contains(config.IgnoreList, "source") {

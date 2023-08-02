@@ -3,7 +3,7 @@ set -euo pipefail
 
 command -v go
 
-go test -coverprofile="c.out" "${1}"
+go test -coverpkg=./... ./... -skip '^TestPrometheus' -coverprofile="c.out"
 
 sed 's|github.com/goss-org/goss/||' <"c.out" >"c.out.tmp"
 

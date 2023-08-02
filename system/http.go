@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -72,6 +73,7 @@ func HeaderToArray(header http.Header) (res []string) {
 			res = append(res, fmt.Sprintf("%s: %s", name, value))
 		}
 	}
+	sort.Strings(res)
 	return
 }
 

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/onsi/gomega/format"
 
 	"github.com/goss-org/goss/outputs"
 	"github.com/goss-org/goss/resource"
@@ -98,18 +99,26 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
-func Validate(c *util.Config, startTime time.Time) (code int, err error) {
+func Validate(c *util.Config) (code int, err error) {
 	err = setLogLevel(c)
 	if err != nil {
 		return 1, err
 	}
-	outputConfig := util.OutputConfig{
-		FormatOptions: c.FormatOptions,
-	}
-
 	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
-		return 1, err
+		return 78, err
+	}
+	return ValidateConfig(c, gossConfig)
+}
+
+func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
+	// Needed for contains-elements
+	// Maybe we don't use this and use custom
+	// contain_element_matcher is needed because it's single entry to avoid
+	// transform message
+	format.UseStringerRepresentation = true
+	outputConfig := util.OutputConfig{
+		FormatOptions: c.FormatOptions,
 	}
 
 	sys := system.New(c.PackageManager)
@@ -127,10 +136,10 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout
 	i := 1
+	startTime := time.Now()
 	for {
-		iStartTime := time.Now()
 		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
-		exitCode := outputer.Output(ofh, out, iStartTime, outputConfig)
+		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
 		}

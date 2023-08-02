@@ -1,0 +1,181 @@
+matching:
+  # Basic matchers
+  basic_string:
+    content: 'this is a test'
+    matches: 'this is a failing test'
+
+  basic_string_have_prefix:
+    content: 'foo'
+    matches:
+      have-prefix: 'g'
+
+  basic_string_have_suffix:
+    content: 'foo'
+    matches:
+      have-suffix: 'x'
+
+  basic_string_contain_substring:
+    content: 'foo'
+    matches:
+      contain-substring: 'x'
+
+  basic_string_regexp:
+    content: 'this is a test'
+    matches:
+      match-regexp: '^foo'
+
+  basic_semver:
+    content: '1.2.3'
+    matches:
+      or:
+       - semver-constraint: '>=9.9.0'
+
+  basic_len:
+    content: "123"
+    matches:
+      or:
+       - have-len: 2
+
+  basic_int:
+    content: 42
+    matches: 43
+
+  basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      - 'group1'
+      - 'group2'
+      - 'group2'
+      - 'group4'
+
+  basic_array_matchers:
+    content: [foo, bar, moo]
+    matches:
+      or:
+        - contain-elements: [fox, box]
+        - [fox, bax] # same as above
+        - equal: [fox, bax, mox] # order matters, exact match
+        - consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
+        - contain-element:
+            have-prefix: x
+        - contain-element:
+            have-suffix: x
+
+  basic_array_consists_of:
+    content: [foo, bar, moo]
+    matches:
+      consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
+
+  basic_reader:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      - 'fox'
+      - '/^t.*w$/'
+      - '!foo'
+      - '!/^foo/'
+
+  # Negated
+  negated_basic_string:
+    content: 'this is a test'
+    matches:
+      not: 'this is a test'
+
+  negatedbasic_string_regexp:
+    content: 'this is a test'
+    matches:
+      not:
+        match-regexp: '^this'
+
+  negatedbasic_string_have_prefix:
+    content: 'foo'
+    matches:
+      not:
+        have-prefix: 'f'
+
+  negatedbasic_string_have_suffix:
+    content: 'foo'
+    matches:
+      not:
+        have-suffix: 'o'
+
+  negatedbasic_string_contain_substring:
+    content: 'foo'
+    matches:
+      not:
+        contain-substring: 'oo'
+
+  negatedbasic_len:
+    content: '123'
+    matches:
+      not:
+        have-len: 3
+
+  negated_basic_int:
+    content: 42
+    matches:
+      not: 42
+
+  negated_and:
+    content: 42
+    matches:
+      not:
+        and:
+          - 42
+          - 42
+
+  negated_basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      not:
+        - 'group1'
+        - 'group2'
+        - 'group3'
+
+  negated_basic_array_matchers:
+    content: [foo, bar, moo]
+    matches:
+      or:
+        - not:
+            contain-elements: [foo, bar]
+        - not:
+            [foo, bar] # same as above
+        - not:
+            equal: [foo, bar, moo] # order matters, exact match
+        - not:
+            consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        - not:
+            contain-element:
+              have-prefix: b
+
+  negated_basic_array_contain_element:
+    content: [foo, bar, moo]
+    matches:
+      not:
+        contain-element: foo
+
+  negated_basic_array_consists_of:
+    content: [foo, bar, moo]
+    matches:
+      not:
+        consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+
+  negated_basic_reader:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      not:
+        - 'foo'
+        - '/^m.*w$/'
+        - '!ftw'
+        - '!/^ERROR:/'

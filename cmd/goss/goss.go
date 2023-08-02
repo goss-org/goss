@@ -67,7 +67,6 @@ func timeoutFlag(value time.Duration) cli.DurationFlag {
 }
 
 func main() {
-	startTime := time.Now()
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
 	app.Version = version
@@ -149,7 +148,7 @@ func main() {
 			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
-				code, err := goss.Validate(newRuntimeConfigFromCLI(c), startTime)
+				code, err := goss.Validate(newRuntimeConfigFromCLI(c))
 				if err != nil {
 					color.Red(fmt.Sprintf("Error: %v\n", err))
 				}
@@ -416,14 +415,14 @@ func addAlphaFlagIfNeeded(app *cli.App) {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
 		app.Flags = append(app.Flags, cli.StringFlag{
 			Name:   "use-alpha",
-			Usage:  fmt.Sprintf("goss is alpha-quality. Set to 1 to use anyway."),
+			Usage:  fmt.Sprintf("goss on macOS/Windows is alpha-quality. Set to 1 to use anyway."),
 			EnvVar: "GOSS_USE_ALPHA",
 			Value:  "0",
 		})
 	}
 }
 
-const msgFormat string = `WARNING: goss for this platform (%q) is alpha-quality, work-in-progress, and not yet exercised within continuous integration.
+const msgFormat string = `WARNING: goss for this platform (%q) is alpha-quality, work-in-progress and community-supported.
 
 You should not expect everything to work. Treat linux as the canonical behaviour to expect.
 
