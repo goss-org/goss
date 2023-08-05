@@ -28,4 +28,12 @@ GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
 
 chmod +x "${output}"
 
-(cd "$output_dir" && sha256sum "${output_fname}" > "${output_fname}.sha256")
+function __sha256sum {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    shasum -a 256 "$1"
+  else
+    sha256sum "$1"
+  fi
+}
+
+(cd "$output_dir" && __sha256sum "${output_fname}" > "${output_fname}.sha256")
