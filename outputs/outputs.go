@@ -127,11 +127,11 @@ func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
 	if !ok {
 		return ss
 	}
-	if strings.Count(want, "\n") <= 1 {
-		return ss
-	}
 	got, ok := actual.(string)
 	if !ok {
+		return ss
+	}
+	if want == got {
 		return ss
 	}
 	ss = append(ss, "diff")
