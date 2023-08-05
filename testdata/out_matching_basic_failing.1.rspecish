@@ -1,4 +1,4 @@
-FFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 Failures/Skipped:
 
@@ -75,6 +75,26 @@ Expected
     "foo"
 to have suffix
     "x"
+
+Matching: basic_string_multiline: matches:
+Expected
+    "this is a test1\nthis is a test2\nthis is a test3\n"
+to equal
+    "this is a test1\nthis is a test9\nthis is a test3\n"
+diff
+    --- test
+    +++ actual
+    @@ -1,3 +1,3 @@
+     this is a test1
+    -this is a test9
+    +this is a test2
+     this is a test3
+
+Matching: basic_string_oneline: matches:
+Expected
+    "this is a test1\n"
+to equal
+    "this is a test9\n"
 
 Matching: basic_string_regexp: matches:
 Expected
@@ -162,4 +182,4 @@ not to match regular expression
     "^this"
 
 Total Duration: 
-Count: 25, Failed: 25, Skipped: 0
+Count: 27, Failed: 27, Skipped: 0
