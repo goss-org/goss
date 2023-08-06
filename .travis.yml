@@ -19,6 +19,12 @@ osx_image: xcode12.2
 services:
   - docker
 
+# don't build any branch other than master (and prs) when git pushed
+branches:
+  only:
+    - master
+
+
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then choco install make; fi
   # bash from macOS is too old to have readarray. Install newer version.
