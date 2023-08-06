@@ -62,9 +62,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -this is a failing test
-    \ No newline at end of file
     +this is a test
-    \ No newline at end of file
 
 Matching: basic_string_contain_substring: matches:
 Expected
@@ -76,9 +74,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -x
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: basic_string_have_prefix: matches:
 Expected
@@ -90,9 +86,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -g
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: basic_string_have_suffix: matches:
 Expected
@@ -104,9 +98,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -x
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: basic_string_multiline: matches:
 Expected
@@ -130,9 +122,10 @@ to equal
 diff
     --- test
     +++ actual
-    @@ -1 +1 @@
+    @@ -1,2 +1,2 @@
     -this is a test9
     +this is a test1
+     
 
 Matching: basic_string_regexp: matches:
 Expected
@@ -144,9 +137,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -^foo
-    \ No newline at end of file
     +this is a test
-    \ No newline at end of file
 
 Matching: negated_and: matches:
 Expected
@@ -213,9 +204,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -oo
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: negatedbasic_string_have_prefix: matches:
 Expected
@@ -227,9 +216,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -f
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: negatedbasic_string_have_suffix: matches:
 Expected
@@ -241,9 +228,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -o
-    \ No newline at end of file
     +foo
-    \ No newline at end of file
 
 Matching: negatedbasic_string_regexp: matches:
 Expected
@@ -255,9 +240,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -^this
-    \ No newline at end of file
     +this is a test
-    \ No newline at end of file
 
 Total Duration: 
 Count: 27, Failed: 27, Skipped: 0

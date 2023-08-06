@@ -11,13 +11,13 @@ require (
 	github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d
 	github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5
 	github.com/hashicorp/logutils v1.0.0
-	github.com/hexops/gotextdiff v1.0.3
 	github.com/icza/dyno v0.0.0-20230330125955-09f820a8d9c0
 	github.com/miekg/dns v1.1.55
 	github.com/moby/sys/mountinfo v0.6.2
 	github.com/oleiade/reflections v1.0.1
 	github.com/onsi/gomega v1.27.8
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/pmezard/go-difflib v1.0.0
 	github.com/prometheus/client_golang v1.16.0
 	github.com/prometheus/common v0.44.0
 	github.com/samber/lo v1.38.1
@@ -46,7 +46,6 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/procfs v0.11.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

@@ -16,10 +16,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
-	"github.com/hexops/gotextdiff"
-	"github.com/hexops/gotextdiff/myers"
-	"github.com/hexops/gotextdiff/span"
 	"github.com/icza/dyno"
+	"github.com/pmezard/go-difflib/difflib"
 )
 
 type formatOption struct {
@@ -135,8 +133,15 @@ func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
 		return ss
 	}
 	ss = append(ss, "diff")
-	edits := myers.ComputeEdits(span.URIFromPath("test"), want, got)
-	diff := fmt.Sprint(gotextdiff.ToUnified("test", "actual", want, edits))
+	diff, _ := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A:        difflib.SplitLines(want),
+		B:        difflib.SplitLines(got),
+		FromFile: "test",
+		FromDate: "",
+		ToFile:   "actual",
+		ToDate:   "",
+		Context:  1,
+	})
 	ss = append(ss, indentLines(diff))
 	return ss
 }

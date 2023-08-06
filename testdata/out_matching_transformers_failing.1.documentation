@@ -65,9 +65,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -x
-    \ No newline at end of file
     +bar
-    \ No newline at end of file
 the transform chain was
     [{"gjson":{"Path":"foo"}}]
 the raw value was
@@ -100,9 +98,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -cowx
-    \ No newline at end of file
     +cow
-    \ No newline at end of file
 the transform chain was
     [{"gjson":{"Path":"moo.nested"}}]
 the raw value was
@@ -126,9 +122,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -129
-    \ No newline at end of file
     +128
-    \ No newline at end of file
 the transform chain was
     [{"to-string":{}}]
 the raw value was
@@ -143,9 +137,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -not-cool
-    \ No newline at end of file
     +cool
-    \ No newline at end of file
 Matching: test_reader_using_int_matchers: matches:
 Expected
     40
@@ -256,9 +248,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -x
-    \ No newline at end of file
     +bar
-    \ No newline at end of file
 the transform chain was
     [{"gjson":{"Path":"foo"}}]
 the raw value was
@@ -294,9 +284,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -cowx
-    \ No newline at end of file
     +cow
-    \ No newline at end of file
 the transform chain was
     [{"gjson":{"Path":"moo.nested"}}]
 the raw value was
@@ -322,9 +310,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -129
-    \ No newline at end of file
     +128
-    \ No newline at end of file
 the transform chain was
     [{"to-string":{}}]
 the raw value was
@@ -340,9 +326,7 @@ diff
     +++ actual
     @@ -1 +1 @@
     -not-cool
-    \ No newline at end of file
     +cool
-    \ No newline at end of file
 
 Matching: test_reader_using_int_matchers: matches:
 Expected
