@@ -210,7 +210,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "debug, d",
-					Usage: fmt.Sprintf("Print debugging info when rendering"),
+					Usage: "Print debugging info when rendering",
 				},
 			},
 			Action: func(c *cli.Context) error {
@@ -415,7 +415,7 @@ func addAlphaFlagIfNeeded(app *cli.App) {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
 		app.Flags = append(app.Flags, cli.StringFlag{
 			Name:   "use-alpha",
-			Usage:  fmt.Sprintf("goss on macOS/Windows is alpha-quality. Set to 1 to use anyway."),
+			Usage:  "goss on macOS/Windows is alpha-quality. Set to 1 to use anyway.",
 			EnvVar: "GOSS_USE_ALPHA",
 			Value:  "0",
 		})
