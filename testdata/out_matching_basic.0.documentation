@@ -4,6 +4,8 @@ Matching: basic_int: matches: matches expectation: 42
 Matching: basic_reader: matches: matches expectation: ["foo","/^m.*w$/","!ftw","!/^ERROR:/"]
 Matching: basic_semver: matches: matches expectation: {"semver-constraint":">=1.2.0"}
 Matching: basic_string: matches: matches expectation: "this is a test"
+Matching: basic_string_multiline: matches: matches expectation: "this is a test1\nthis is a test2\nthis is a test3\n"
+Matching: basic_string_oneline: matches: matches expectation: "this is a test1\n"
 Matching: basic_string_regexp: matches: matches expectation: {"match-regexp":"^this"}
 Matching: basic_string_skip: matches: skipped
 Matching: negated_basic_array: matches: matches expectation: {"not":["group1","group2","group2","group4"]}
@@ -19,4 +21,4 @@ Failures/Skipped:
 Matching: basic_string_skip: matches: skipped
 
 Total Duration: 
-Count: 14, Failed: 0, Skipped: 1
+Count: 16, Failed: 0, Skipped: 1

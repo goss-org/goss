@@ -960,26 +960,9 @@ kernel-param:
       value: {gt: 200}
 ```
 
-When a transformed test fails, it will detail the transformers used, the `-o include_raw` option can be used to include the raw, untransformed attribute value:
+When a transformed test fails, it will detail the transformers used, the `-o exclude_raw` option can be used to exclude the raw, untransformed attribute value:
 ```
 $ goss v
-F
-
-Failures/Skipped:
-
-KernelParam: net.core.somaxconn: value:
-Expected
-    128
-to be >
-    200
-the transform chain was
-    [{"to-numeric":{}}]
-
-Total Duration: 0.001s
-Count: 1, Failed: 1, Skipped: 0
-
-
-$ goss v -o include_raw
 F
 
 Failures/Skipped:
@@ -996,6 +979,23 @@ the raw value was
 
 Total Duration: 0.001s
 Count: 1, Failed: 1, Skipped: 0
+
+$ goss v -o exclude_raw
+F
+
+Failures/Skipped:
+
+KernelParam: net.core.somaxconn: value:
+Expected
+    128
+to be >
+    200
+the transform chain was
+    [{"to-numeric":{}}]
+
+Total Duration: 0.001s
+Count: 1, Failed: 1, Skipped: 0
+
 
 ```
 

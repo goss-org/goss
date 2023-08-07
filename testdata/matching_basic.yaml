@@ -4,6 +4,22 @@ matching:
     content: 'this is a test'
     matches: 'this is a test'
 
+  basic_string_oneline:
+    content: |
+      this is a test1
+    matches: |
+      this is a test1
+
+  basic_string_multiline:
+    content: |
+      this is a test1
+      this is a test2
+      this is a test3
+    matches: |
+      this is a test1
+      this is a test2
+      this is a test3
+
   basic_string_regexp:
     content: 'this is a test'
     matches:

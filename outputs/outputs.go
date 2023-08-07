@@ -17,6 +17,7 @@ import (
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 	"github.com/icza/dyno"
+	"github.com/pmezard/go-difflib/difflib"
 )
 
 type formatOption struct {
@@ -94,6 +95,7 @@ func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool)
 		ss = append(ss, prettyPrint(m.Actual, !compact))
 		ss = append(ss, m.Message)
 		ss = append(ss, prettyPrint(m.Expected, !compact))
+		ss = maybeAddDiff(ss, m.Expected, m.Actual, compact)
 	}
 
 	if reflect.ValueOf(m.MissingElements).IsValid() && !reflect.ValueOf(m.MissingElements).IsNil() {
@@ -113,6 +115,35 @@ func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool)
 		}
 	}
 	return strings.Join(ss, sep)
+}
+
+func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
+	if compact {
+		return ss
+	}
+	want, ok := expected.(string)
+	if !ok {
+		return ss
+	}
+	got, ok := actual.(string)
+	if !ok {
+		return ss
+	}
+	if want == got {
+		return ss
+	}
+	ss = append(ss, "diff")
+	diff, _ := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A:        difflib.SplitLines(want),
+		B:        difflib.SplitLines(got),
+		FromFile: "test",
+		FromDate: "",
+		ToFile:   "actual",
+		ToDate:   "",
+		Context:  1,
+	})
+	ss = append(ss, indentLines(diff))
+	return ss
 }
 
 func prettyPrint(i interface{}, indent bool) string {
