@@ -242,7 +242,7 @@ func summary(startTime, endTime time.Time, count, failed, skipped int) string {
 func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw bool) string {
 	var s string
 	if len(failedOrSkipped) > 0 {
-		s += fmt.Sprint("Failures/Skipped:\n\n")
+		s += "Failures/Skipped:\n\n"
 		sort.Slice(failedOrSkipped, func(i, j int) bool {
 			return failedOrSkipped[i][0].SortKey() < failedOrSkipped[j][0].SortKey()
 		})
@@ -255,7 +255,7 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw 
 			for _, testResult := range failedGroup {
 				s += fmt.Sprintln(humanizeResult(testResult, false, includeRaw))
 			}
-			s += fmt.Sprint("\n")
+			s += "\n"
 		}
 	}
 	return s
