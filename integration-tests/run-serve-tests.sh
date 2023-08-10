@@ -19,6 +19,8 @@ find_open_port() {
     # ss (see unix implementation below) doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
     # Thanks also to https://blog.netspi.com/15-ways-to-bypass-the-powershell-execution-policy/
     powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
+  elif [[ "$(go env GOOS)" == "darwin" ]]; then
+    jot -n -r 1 1025 65535
   else
     # Thanks to https://unix.stackexchange.com/questions/55913/whats-the-easiest-way-to-find-an-unused-local-port
     comm -23 \
@@ -58,9 +60,10 @@ args=(
   "serve"
   "--listen-addr=127.0.0.1:${open_port}"
 )
-log_action -e "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
+log_action "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
 "${GOSS_BINARY}" "${args[@]}" &
 base_url="http://127.0.0.1:${open_port}"
+[[ "$(go env GOOS)" == "darwin" ]] && sleep 2
 
 assert_response_contains() {
   local url="${1:?"1st arg: url"}"
