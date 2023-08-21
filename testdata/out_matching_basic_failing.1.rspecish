@@ -5,7 +5,7 @@ Failures/Skipped:
 Matching: basic_array: matches:
 Expected
     ["group1","group2","group3"]
-to contain elements
+to contain elements matching
     ["group1","group2","group2","group4"]
 the missing elements were
     ["group2","group4"]
@@ -148,7 +148,7 @@ not to satisfy all of these matchers
 Matching: negated_basic_array: matches:
 Expected
     ["group1","group2","group3"]
-not to contain elements
+not to contain elements matching
     ["group1","group2","group3"]
 
 Matching: negated_basic_array_consists_of: matches:

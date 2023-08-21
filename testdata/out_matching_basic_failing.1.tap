@@ -1,5 +1,5 @@
 1..27
-not ok 1 - Matching: basic_array: matches: Expected ["group1","group2","group3"] to contain elements ["group1","group2","group2","group4"] the missing elements were ["group2","group4"]
+not ok 1 - Matching: basic_array: matches: Expected ["group1","group2","group3"] to contain elements matching ["group1","group2","group2","group4"] the missing elements were ["group2","group4"]
 not ok 2 - Matching: basic_array_consists_of: matches: Expected ["foo","bar","moo"] to consist of ["fox",{"have-prefix":"t"},"box"] the missing elements were ["fox",{"have-prefix":"t"},"box"] the extra elements were ["foo","bar","moo"]
 not ok 3 - Matching: basic_array_matchers: matches: Expected ["foo","bar","moo"] to satisfy at least one of these matchers [{"contain-elements":["fox","box"]},{"contain-elements":["fox","bax"]},["fox","bax","mox"],{"consist-of":["fox",{"have-prefix":"t"},"box"]},{"contain-element":{"have-prefix":"x"}},{"contain-element":{"have-suffix":"x"}}]
 not ok 4 - Matching: basic_int: matches: Expected 42 to be numerically eq 43
@@ -14,7 +14,7 @@ not ok 12 - Matching: basic_string_multiline: matches: Expected "this is a test1
 not ok 13 - Matching: basic_string_oneline: matches: Expected "this is a test1\n" to equal "this is a test9\n"
 not ok 14 - Matching: basic_string_regexp: matches: Expected "this is a test" to match regular expression "^foo"
 not ok 15 - Matching: negated_and: matches: Expected 42 not to satisfy all of these matchers [{"eq":42},{"eq":42}]
-not ok 16 - Matching: negated_basic_array: matches: Expected ["group1","group2","group3"] not to contain elements ["group1","group2","group3"]
+not ok 16 - Matching: negated_basic_array: matches: Expected ["group1","group2","group3"] not to contain elements matching ["group1","group2","group3"]
 not ok 17 - Matching: negated_basic_array_consists_of: matches: Expected ["foo","bar","moo"] not to consist of ["foo",{"have-prefix":"m"},"bar"]
 not ok 18 - Matching: negated_basic_array_contain_element: matches: Expected ["foo","bar","moo"] not to contain element matching "foo"
 not ok 19 - Matching: negated_basic_array_matchers: matches: Expected ["foo","bar","moo"] to satisfy at least one of these matchers [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
