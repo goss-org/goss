@@ -21,7 +21,7 @@ func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult
 	missingElements := getUnexported(m, "missingElements")
 	return MatcherResult{
 		Actual:          actual,
-		Message:         "to contain elements",
+		Message:         "to contain elements matching",
 		Expected:        m.Elements,
 		MissingElements: missingElements,
 	}
@@ -30,7 +30,7 @@ func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult
 func (m *ContainElementsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  "not to contain elements",
+		Message:  "not to contain elements matching",
 		Expected: m.Elements,
 	}
 
