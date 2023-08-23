@@ -10,7 +10,7 @@ the raw value was
 Matching: test_array: matches:
 Expected
     ["45","46","47"]
-to contain elements
+to contain elements matching
     [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
 the missing elements were
     [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
@@ -187,7 +187,7 @@ the raw value was
 Matching: test_array: matches:
 Expected
     ["45","46","47"]
-to contain elements
+to contain elements matching
     [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
 the missing elements were
     [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]

@@ -1,6 +1,9 @@
 # goss manual
 
-**Note:** For macOS and Windows, see: [platform-feature-parity](https://github.com/goss-org/goss/blob/master/docs/platform-feature-parity.md)
+**Notes:**
+
+* For migration from v0.3.x to v0.4.x, see: [v4 migration](https://github.com/goss-org/goss/blob/master/docs/v4_migration.md)
+* For macOS and Windows, see: [platform-feature-parity](https://github.com/goss-org/goss/blob/master/docs/platform-feature-parity.md)
 
 ## Table of Contents
 
