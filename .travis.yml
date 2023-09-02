@@ -50,6 +50,8 @@ deploy:
   file:
     - release/goss-darwin-amd64
     - release/goss-darwin-amd64.sha256
+    - release/goss-darwin-arm64
+    - release/goss-darwin-arm64.sha256
     - release/goss-linux-amd64
     - release/goss-linux-amd64.sha256
     - release/goss-linux-386
