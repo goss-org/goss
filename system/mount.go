@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -28,7 +29,7 @@ type DefMount struct {
 	err        error
 }
 
-func NewDefMount(mountPoint string, system *System, config util.Config) Mount {
+func NewDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
 	return &DefMount{
 		mountPoint: mountPoint,
 	}

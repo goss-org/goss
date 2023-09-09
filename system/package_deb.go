@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -14,7 +15,7 @@ type DebPackage struct {
 	installed bool
 }
 
-func NewDebPackage(name string, system *System, config util.Config) Package {
+func NewDebPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &DebPackage{name: name}
 }
 

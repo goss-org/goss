@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -15,11 +16,11 @@ type ServiceInit struct {
 	runlevel string
 }
 
-func NewServiceInit(service string, system *System, config util.Config) Service {
+func NewServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service}
 }
 
-func NewAlpineServiceInit(service string, system *System, config util.Config) Service {
+func NewAlpineServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
 	runlevel := config.RunLevel
 	if runlevel == "" {
 		runlevel = "sysinit"

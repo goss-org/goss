@@ -5,6 +5,7 @@
 package resource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -14,13 +15,10 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type AddrMap map[string]*Addr
 
 func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Addr, error) {
-	sysres := sys.NewAddr(sr, sys, config)
+	sysres := sys.NewAddr(context.Background(), sr, sys, config)
 	res, err := NewAddr(sysres, config)
 	if err != nil {
 		return nil, err
@@ -34,7 +32,7 @@ func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool, error) {
-	sysres := sys.NewAddr(sr, sys, util.Config{})
+	sysres := sys.NewAddr(context.Background(), sr, sys, util.Config{})
 	res, err := NewAddr(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -52,7 +50,7 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 
 func (ret *AddrMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -87,7 +85,7 @@ func (ret *AddrMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *AddrMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *AddrMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Addr{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -116,13 +114,10 @@ func (ret *AddrMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type CommandMap map[string]*Command
 
 func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Command, error) {
-	sysres := sys.NewCommand(sr, sys, config)
+	sysres := sys.NewCommand(context.Background(), sr, sys, config)
 	res, err := NewCommand(sysres, config)
 	if err != nil {
 		return nil, err
@@ -136,7 +131,7 @@ func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool, error) {
-	sysres := sys.NewCommand(sr, sys, util.Config{})
+	sysres := sys.NewCommand(context.Background(), sr, sys, util.Config{})
 	res, err := NewCommand(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -154,7 +149,7 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 
 func (ret *CommandMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -189,7 +184,7 @@ func (ret *CommandMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *CommandMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *CommandMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Command{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -218,13 +213,10 @@ func (ret *CommandMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type DNSMap map[string]*DNS
 
 func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*DNS, error) {
-	sysres := sys.NewDNS(sr, sys, config)
+	sysres := sys.NewDNS(context.Background(), sr, sys, config)
 	res, err := NewDNS(sysres, config)
 	if err != nil {
 		return nil, err
@@ -238,7 +230,7 @@ func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Con
 }
 
 func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool, error) {
-	sysres := sys.NewDNS(sr, sys, util.Config{})
+	sysres := sys.NewDNS(context.Background(), sr, sys, util.Config{})
 	res, err := NewDNS(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -256,7 +248,7 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 
 func (ret *DNSMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -291,7 +283,7 @@ func (ret *DNSMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *DNSMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *DNSMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := DNS{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -320,13 +312,10 @@ func (ret *DNSMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type FileMap map[string]*File
 
 func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*File, error) {
-	sysres := sys.NewFile(sr, sys, config)
+	sysres := sys.NewFile(context.Background(), sr, sys, config)
 	res, err := NewFile(sysres, config)
 	if err != nil {
 		return nil, err
@@ -340,7 +329,7 @@ func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool, error) {
-	sysres := sys.NewFile(sr, sys, util.Config{})
+	sysres := sys.NewFile(context.Background(), sr, sys, util.Config{})
 	res, err := NewFile(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -358,7 +347,7 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 
 func (ret *FileMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -393,7 +382,7 @@ func (ret *FileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *FileMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *FileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := File{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -422,13 +411,10 @@ func (ret *FileMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type GossfileMap map[string]*Gossfile
 
 func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Gossfile, error) {
-	sysres := sys.NewGossfile(sr, sys, config)
+	sysres := sys.NewGossfile(context.Background(), sr, sys, config)
 	res, err := NewGossfile(sysres, config)
 	if err != nil {
 		return nil, err
@@ -442,7 +428,7 @@ func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config uti
 }
 
 func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool, error) {
-	sysres := sys.NewGossfile(sr, sys, util.Config{})
+	sysres := sys.NewGossfile(context.Background(), sr, sys, util.Config{})
 	res, err := NewGossfile(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -460,7 +446,7 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 
 func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -495,7 +481,7 @@ func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Gossfile{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -524,13 +510,10 @@ func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type GroupMap map[string]*Group
 
 func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Group, error) {
-	sysres := sys.NewGroup(sr, sys, config)
+	sysres := sys.NewGroup(context.Background(), sr, sys, config)
 	res, err := NewGroup(sysres, config)
 	if err != nil {
 		return nil, err
@@ -544,7 +527,7 @@ func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.C
 }
 
 func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool, error) {
-	sysres := sys.NewGroup(sr, sys, util.Config{})
+	sysres := sys.NewGroup(context.Background(), sr, sys, util.Config{})
 	res, err := NewGroup(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -562,7 +545,7 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 
 func (ret *GroupMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -597,7 +580,7 @@ func (ret *GroupMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *GroupMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *GroupMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Group{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -626,13 +609,10 @@ func (ret *GroupMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type PackageMap map[string]*Package
 
 func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Package, error) {
-	sysres := sys.NewPackage(sr, sys, config)
+	sysres := sys.NewPackage(context.Background(), sr, sys, config)
 	res, err := NewPackage(sysres, config)
 	if err != nil {
 		return nil, err
@@ -646,7 +626,7 @@ func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool, error) {
-	sysres := sys.NewPackage(sr, sys, util.Config{})
+	sysres := sys.NewPackage(context.Background(), sr, sys, util.Config{})
 	res, err := NewPackage(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -664,7 +644,7 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 
 func (ret *PackageMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -699,7 +679,7 @@ func (ret *PackageMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *PackageMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *PackageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Package{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -728,13 +708,10 @@ func (ret *PackageMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type PortMap map[string]*Port
 
 func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Port, error) {
-	sysres := sys.NewPort(sr, sys, config)
+	sysres := sys.NewPort(context.Background(), sr, sys, config)
 	res, err := NewPort(sysres, config)
 	if err != nil {
 		return nil, err
@@ -748,7 +725,7 @@ func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool, error) {
-	sysres := sys.NewPort(sr, sys, util.Config{})
+	sysres := sys.NewPort(context.Background(), sr, sys, util.Config{})
 	res, err := NewPort(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -766,7 +743,7 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 
 func (ret *PortMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -801,7 +778,7 @@ func (ret *PortMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *PortMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Port{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -830,13 +807,10 @@ func (ret *PortMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type ProcessMap map[string]*Process
 
 func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Process, error) {
-	sysres := sys.NewProcess(sr, sys, config)
+	sysres := sys.NewProcess(context.Background(), sr, sys, config)
 	res, err := NewProcess(sysres, config)
 	if err != nil {
 		return nil, err
@@ -850,7 +824,7 @@ func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool, error) {
-	sysres := sys.NewProcess(sr, sys, util.Config{})
+	sysres := sys.NewProcess(context.Background(), sr, sys, util.Config{})
 	res, err := NewProcess(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -868,7 +842,7 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 
 func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -903,7 +877,7 @@ func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Process{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -932,13 +906,10 @@ func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type ServiceMap map[string]*Service
 
 func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Service, error) {
-	sysres := sys.NewService(sr, sys, config)
+	sysres := sys.NewService(context.Background(), sr, sys, config)
 	res, err := NewService(sysres, config)
 	if err != nil {
 		return nil, err
@@ -952,7 +923,7 @@ func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool, error) {
-	sysres := sys.NewService(sr, sys, util.Config{})
+	sysres := sys.NewService(context.Background(), sr, sys, util.Config{})
 	res, err := NewService(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -970,7 +941,7 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 
 func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1005,7 +976,7 @@ func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Service{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1034,13 +1005,10 @@ func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type UserMap map[string]*User
 
 func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*User, error) {
-	sysres := sys.NewUser(sr, sys, config)
+	sysres := sys.NewUser(context.Background(), sr, sys, config)
 	res, err := NewUser(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1054,7 +1022,7 @@ func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool, error) {
-	sysres := sys.NewUser(sr, sys, util.Config{})
+	sysres := sys.NewUser(context.Background(), sr, sys, util.Config{})
 	res, err := NewUser(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1072,7 +1040,7 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 
 func (ret *UserMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1107,7 +1075,7 @@ func (ret *UserMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *UserMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := User{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1136,13 +1104,10 @@ func (ret *UserMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type KernelParamMap map[string]*KernelParam
 
 func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*KernelParam, error) {
-	sysres := sys.NewKernelParam(sr, sys, config)
+	sysres := sys.NewKernelParam(context.Background(), sr, sys, config)
 	res, err := NewKernelParam(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1156,7 +1121,7 @@ func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config 
 }
 
 func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System) (*KernelParam, system.KernelParam, bool, error) {
-	sysres := sys.NewKernelParam(sr, sys, util.Config{})
+	sysres := sys.NewKernelParam(context.Background(), sr, sys, util.Config{})
 	res, err := NewKernelParam(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1174,7 +1139,7 @@ func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System)
 
 func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1209,7 +1174,7 @@ func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := KernelParam{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1238,13 +1203,10 @@ func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type MountMap map[string]*Mount
 
 func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Mount, error) {
-	sysres := sys.NewMount(sr, sys, config)
+	sysres := sys.NewMount(context.Background(), sr, sys, config)
 	res, err := NewMount(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1258,7 +1220,7 @@ func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.C
 }
 
 func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mount, system.Mount, bool, error) {
-	sysres := sys.NewMount(sr, sys, util.Config{})
+	sysres := sys.NewMount(context.Background(), sr, sys, util.Config{})
 	res, err := NewMount(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1276,7 +1238,7 @@ func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mou
 
 func (ret *MountMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1311,7 +1273,7 @@ func (ret *MountMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *MountMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *MountMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Mount{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1340,13 +1302,10 @@ func (ret *MountMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type InterfaceMap map[string]*Interface
 
 func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Interface, error) {
-	sysres := sys.NewInterface(sr, sys, config)
+	sysres := sys.NewInterface(context.Background(), sr, sys, config)
 	res, err := NewInterface(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1360,7 +1319,7 @@ func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config ut
 }
 
 func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Interface, system.Interface, bool, error) {
-	sysres := sys.NewInterface(sr, sys, util.Config{})
+	sysres := sys.NewInterface(context.Background(), sr, sys, util.Config{})
 	res, err := NewInterface(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1378,7 +1337,7 @@ func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (
 
 func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1413,7 +1372,7 @@ func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := Interface{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1442,13 +1401,10 @@ func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type HTTPMap map[string]*HTTP
 
 func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*HTTP, error) {
-	sysres := sys.NewHTTP(sr, sys, config)
+	sysres := sys.NewHTTP(context.Background(), sr, sys, config)
 	res, err := NewHTTP(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1462,7 +1418,7 @@ func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP, system.HTTP, bool, error) {
-	sysres := sys.NewHTTP(sr, sys, util.Config{})
+	sysres := sys.NewHTTP(context.Background(), sr, sys, util.Config{})
 	res, err := NewHTTP(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1480,7 +1436,7 @@ func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP
 
 func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i any) error {
+	unmarshal := func(i interface{}) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1515,7 +1471,7 @@ func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v any) error) error {
+func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	// Validate configuration
 	zero := HTTP{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,8 +47,9 @@ func (g *Group) GetGroupname() string {
 }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", g.ID())
 	skip := g.Skip
-	sysgroup := sys.NewGroup(g.GetGroupname(), sys, util.Config{})
+	sysgroup := sys.NewGroup(ctx, g.GetGroupname(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))

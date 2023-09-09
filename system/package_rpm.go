@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -14,7 +15,7 @@ type RpmPackage struct {
 	installed bool
 }
 
-func NewRpmPackage(name string, system *System, config util.Config) Package {
+func NewRpmPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &RpmPackage{name: name}
 }
 

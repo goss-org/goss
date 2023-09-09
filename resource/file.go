@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -58,8 +59,9 @@ func (f *File) GetPath() string {
 }
 
 func (f *File) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", f.ID())
 	skip := f.Skip
-	sysFile := sys.NewFile(f.GetPath(), sys, util.Config{})
+	sysFile := sys.NewFile(ctx, f.GetPath(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))

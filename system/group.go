@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"os/user"
 	"strconv"
 
@@ -17,7 +18,7 @@ type DefGroup struct {
 	groupname string
 }
 
-func NewDefGroup(groupname string, system *System, config util.Config) Group {
+func NewDefGroup(_ context.Context, groupname string, system *System, config util.Config) Group {
 	return &DefGroup{groupname: groupname}
 }
 

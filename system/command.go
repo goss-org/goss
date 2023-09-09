@@ -2,8 +2,10 @@ package system
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
+	"log"
 	"os/exec"
 	"time"
 
@@ -19,6 +21,7 @@ type Command interface {
 }
 
 type DefCommand struct {
+	Ctx        context.Context
 	command    string
 	exitStatus int
 	stdout     io.Reader
@@ -28,8 +31,9 @@ type DefCommand struct {
 	err        error
 }
 
-func NewDefCommand(command string, system *System, config util.Config) Command {
+func NewDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
 	return &DefCommand{
+		Ctx:     ctx,
 		command: command,
 		Timeout: config.TimeOutMilliSeconds(),
 	}
@@ -49,10 +53,25 @@ func (c *DefCommand) setup() error {
 		c.err = err
 	}
 	c.exitStatus = cmd.Status
-	c.stdout = bytes.NewReader(cmd.Stdout.Bytes())
-	c.stderr = bytes.NewReader(cmd.Stderr.Bytes())
+	stdoutB := cmd.Stdout.Bytes()
+	stderrB := cmd.Stderr.Bytes()
+	id := c.Ctx.Value("id")
+	logBytes(stdoutB, fmt.Sprintf("Command: %s: stdout: ", id))
+	logBytes(stderrB, fmt.Sprintf("Command: %s: stderr: ", id))
+	c.stdout = bytes.NewReader(stdoutB)
+	c.stderr = bytes.NewReader(stderrB)
 
 	return c.err
+}
+
+func logBytes(b []byte, prefix string) {
+	if len(b) == 0 {
+		return
+	}
+	lines := bytes.Split(b, []byte("\n"))
+	for _, l := range lines {
+		log.Printf("[DEBUG] %s %s", prefix, l)
+	}
 }
 
 func (c *DefCommand) Command() string {

@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"os/exec"
 	"strconv"
@@ -19,21 +20,21 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage     func(string, *System, util2.Config) Package
-	NewFile        func(string, *System, util2.Config) File
-	NewAddr        func(string, *System, util2.Config) Addr
-	NewPort        func(string, *System, util2.Config) Port
-	NewService     func(string, *System, util2.Config) Service
-	NewUser        func(string, *System, util2.Config) User
-	NewGroup       func(string, *System, util2.Config) Group
-	NewCommand     func(string, *System, util2.Config) Command
-	NewDNS         func(string, *System, util2.Config) DNS
-	NewProcess     func(string, *System, util2.Config) Process
-	NewGossfile    func(string, *System, util2.Config) Gossfile
-	NewKernelParam func(string, *System, util2.Config) KernelParam
-	NewMount       func(string, *System, util2.Config) Mount
-	NewInterface   func(string, *System, util2.Config) Interface
-	NewHTTP        func(string, *System, util2.Config) HTTP
+	NewPackage     func(context.Context, string, *System, util2.Config) Package
+	NewFile        func(context.Context, string, *System, util2.Config) File
+	NewAddr        func(context.Context, string, *System, util2.Config) Addr
+	NewPort        func(context.Context, string, *System, util2.Config) Port
+	NewService     func(context.Context, string, *System, util2.Config) Service
+	NewUser        func(context.Context, string, *System, util2.Config) User
+	NewGroup       func(context.Context, string, *System, util2.Config) Group
+	NewCommand     func(context.Context, string, *System, util2.Config) Command
+	NewDNS         func(context.Context, string, *System, util2.Config) DNS
+	NewProcess     func(context.Context, string, *System, util2.Config) Process
+	NewGossfile    func(context.Context, string, *System, util2.Config) Gossfile
+	NewKernelParam func(context.Context, string, *System, util2.Config) KernelParam
+	NewMount       func(context.Context, string, *System, util2.Config) Mount
+	NewInterface   func(context.Context, string, *System, util2.Config) Interface
+	NewHTTP        func(context.Context, string, *System, util2.Config) HTTP
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -49,8 +50,9 @@ func (i *Interface) GetName() string {
 }
 
 func (i *Interface) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", i.ID())
 	skip := i.Skip
-	sysInterface := sys.NewInterface(i.GetName(), sys, util.Config{})
+	sysInterface := sys.NewInterface(ctx, i.GetName(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip))

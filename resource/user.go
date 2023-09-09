@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -50,8 +51,9 @@ func (u *User) GetUsername() string {
 }
 
 func (u *User) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", u.ID())
 	skip := u.Skip
-	sysuser := sys.NewUser(u.GetUsername(), sys, util.Config{})
+	sysuser := sys.NewUser(ctx, u.GetUsername(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))

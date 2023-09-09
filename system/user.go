@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"os/user"
 	"strconv"
 
@@ -21,7 +22,7 @@ type DefUser struct {
 	username string
 }
 
-func NewDefUser(username string, system *System, config util.Config) User {
+func NewDefUser(_ context.Context, username string, system *System, config util.Config) User {
 	return &DefUser{username: username}
 }
 

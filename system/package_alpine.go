@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -14,7 +15,7 @@ type AlpinePackage struct {
 	installed bool
 }
 
-func NewAlpinePackage(name string, system *System, config util.Config) Package {
+func NewAlpinePackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &AlpinePackage{name: name}
 }
 

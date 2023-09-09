@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,8 +47,9 @@ func (p *Port) GetPort() string {
 }
 
 func (p *Port) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", p.ID())
 	skip := p.Skip
-	sysPort := sys.NewPort(p.GetPort(), sys, util.Config{})
+	sysPort := sys.NewPort(ctx, p.GetPort(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))

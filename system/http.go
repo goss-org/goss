@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -44,7 +45,7 @@ type DefHTTP struct {
 	Proxy             string
 }
 
-func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
+func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
 	headers := http.Header{}
 	for _, r := range config.RequestHeader {
 		str := strings.SplitN(r, ": ", 2)
