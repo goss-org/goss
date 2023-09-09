@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"net"
 	"strings"
 	"time"
@@ -10,8 +11,8 @@ import (
 
 type Addr interface {
 	Address() string
-	Exists() (bool, error)
-	Reachable() (bool, error)
+	Exists(context.Context) (bool, error)
+	Reachable(context.Context) (bool, error)
 }
 
 type DefAddr struct {
@@ -32,12 +33,14 @@ func NewDefAddr(address string, system *System, config util.Config) Addr {
 func (a *DefAddr) ID() string {
 	return a.address
 }
+
 func (a *DefAddr) Address() string {
 	return a.address
 }
-func (a *DefAddr) Exists() (bool, error) { return a.Reachable() }
 
-func (a *DefAddr) Reachable() (bool, error) {
+func (a *DefAddr) Exists(ctx context.Context) (bool, error) { return a.Reachable(ctx) }
+
+func (a *DefAddr) Reachable(ctx context.Context) (bool, error) {
 	network, address := splitAddress(a.address)
 
 	var localAddr net.Addr

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"reflect"
@@ -111,11 +112,11 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
-	if f, ok := actual.(func() (io.Reader, error)); ok {
+func ValidateValue(ctx context.Context, res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+	if f, ok := actual.(func(ctx context.Context) (io.Reader, error)); ok {
 		if _, ok := expectedValue.([]any); !ok {
-			actual = func() (string, error) {
-				v, err := f()
+			actual = func(ctx context.Context) (string, error) {
+				v, err := f(ctx)
 				if err != nil {
 					return "", err
 				}
@@ -127,10 +128,10 @@ func ValidateValue(res ResourceRead, property string, expectedValue any, actual 
 			}
 		}
 	}
-	return ValidateGomegaValue(res, property, expectedValue, actual, skip)
+	return ValidateGomegaValue(ctx, res, property, expectedValue, actual, skip)
 }
 
-func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+func ValidateGomegaValue(ctx context.Context, res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -152,18 +153,18 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 	var gomegaMatcher matchers.GossMatcher
 	var err error
 	switch f := actual.(type) {
-	case func() (bool, error):
-		foundValue, err = f()
-	case func() (string, error):
-		foundValue, err = f()
-	case func() (int, error):
-		foundValue, err = f()
-	case func() ([]string, error):
-		foundValue, err = f()
-	case func() (any, error):
-		foundValue, err = f()
-	case func() (io.Reader, error):
-		foundValue, err = f()
+	case func(ctx context.Context) (bool, error):
+		foundValue, err = f(ctx)
+	case func(ctx context.Context) (string, error):
+		foundValue, err = f(ctx)
+	case func(ctx context.Context) (int, error):
+		foundValue, err = f(ctx)
+	case func(ctx context.Context) ([]string, error):
+		foundValue, err = f(ctx)
+	case func(ctx context.Context) (any, error):
+		foundValue, err = f(ctx)
+	case func(ctx context.Context) (io.Reader, error):
+		foundValue, err = f(ctx)
 		gomegaMatcher = matchers.HavePatterns(expectedValue)
 	default:
 		err = fmt.Errorf("Unknown method signature: %t", f)

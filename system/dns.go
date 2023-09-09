@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"regexp"
@@ -15,9 +16,9 @@ import (
 
 type DNS interface {
 	Host() string
-	Addrs() ([]string, error)
-	Resolvable() (bool, error)
-	Exists() (bool, error)
+	Addrs(context.Context) ([]string, error)
+	Resolvable(context.Context) (bool, error)
+	Exists(context.Context) (bool, error)
 	Server() string
 	Qtype() string
 }
@@ -92,20 +93,20 @@ func (d *DefDNS) setup() error {
 	return d.err
 }
 
-func (d *DefDNS) Addrs() ([]string, error) {
+func (d *DefDNS) Addrs(ctx context.Context) ([]string, error) {
 	err := d.setup()
 
 	return d.addrs, err
 }
 
-func (d *DefDNS) Resolvable() (bool, error) {
+func (d *DefDNS) Resolvable(ctx context.Context) (bool, error) {
 	err := d.setup()
 
 	return d.resolvable, err
 }
 
 // Stub out
-func (d *DefDNS) Exists() (bool, error) {
+func (d *DefDNS) Exists(ctx context.Context) (bool, error) {
 	return false, nil
 }
 

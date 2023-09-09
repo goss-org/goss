@@ -4,9 +4,10 @@
 package system
 
 import (
+	"context"
 	"fmt"
 )
 
-func (u *DefUser) Shell() (string, error) {
+func (u *DefUser) Shell(ctx context.Context) (string, error) {
 	return "", fmt.Errorf("unsupported operating system")
 }

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -51,6 +52,7 @@ func (d *DNS) GetResolve() string {
 }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500
@@ -63,17 +65,18 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	if d.Resolvable == nil {
 		d.Resolvable = d.Resolveable
 	}
-	results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
+	results = append(results, ValidateValue(ctx, d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if d.Addrs != nil {
-		results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs, skip))
+		results = append(results, ValidateValue(ctx, d, "addrs", d.Addrs, sysDNS.Addrs, skip))
 	}
 	return results
 }
 
 func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
+	ctx := context.Background()
 	var host string
 	if sysDNS.Qtype() != "" {
 		host = strings.Join([]string{sysDNS.Qtype(), sysDNS.Host()}, ":")
@@ -81,7 +84,7 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 		host = sysDNS.Host()
 	}
 
-	resolvable, err := sysDNS.Resolvable()
+	resolvable, err := sysDNS.Resolvable(ctx)
 	server := sysDNS.Server()
 
 	d := &DNS{
@@ -91,7 +94,7 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 		Server:     server,
 	}
 	if !contains(config.IgnoreList, "addrs") {
-		addrs, _ := sysDNS.Addrs()
+		addrs, _ := sysDNS.Addrs(ctx)
 		d.Addrs = addrs
 	}
 	return d, err

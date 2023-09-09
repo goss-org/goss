@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -49,37 +50,39 @@ func (i *Interface) GetName() string {
 }
 
 func (i *Interface) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := i.Skip
 	sysInterface := sys.NewInterface(i.GetName(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(i, "exists", i.Exists, sysInterface.Exists, skip))
+	results = append(results, ValidateValue(ctx, i, "exists", i.Exists, sysInterface.Exists, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if i.Addrs != nil {
-		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip))
+		results = append(results, ValidateValue(ctx, i, "addrs", i.Addrs, sysInterface.Addrs, skip))
 	}
 	if i.MTU != nil {
-		results = append(results, ValidateValue(i, "mtu", i.MTU, sysInterface.MTU, skip))
+		results = append(results, ValidateValue(ctx, i, "mtu", i.MTU, sysInterface.MTU, skip))
 	}
 	return results
 }
 
 func NewInterface(sysInterface system.Interface, config util.Config) (*Interface, error) {
+	ctx := context.Background()
 	name := sysInterface.Name()
-	exists, _ := sysInterface.Exists()
+	exists, _ := sysInterface.Exists(ctx)
 	i := &Interface{
 		id:     name,
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "addrs") {
-		if addrs, err := sysInterface.Addrs(); err == nil {
+		if addrs, err := sysInterface.Addrs(ctx); err == nil {
 			i.Addrs = addrs
 		}
 	}
 	if !contains(config.IgnoreList, "mtu") {
-		if mtu, err := sysInterface.MTU(); err == nil {
+		if mtu, err := sysInterface.MTU(ctx); err == nil {
 			i.MTU = mtu
 		}
 	}

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -35,15 +36,15 @@ func (p *RpmPackage) Name() string {
 	return p.name
 }
 
-func (p *RpmPackage) Exists() (bool, error) { return p.Installed() }
+func (p *RpmPackage) Exists(ctx context.Context) (bool, error) { return p.Installed(ctx) }
 
-func (p *RpmPackage) Installed() (bool, error) {
+func (p *RpmPackage) Installed(ctx context.Context) (bool, error) {
 	p.setup()
 
 	return p.installed, nil
 }
 
-func (p *RpmPackage) Versions() ([]string, error) {
+func (p *RpmPackage) Versions(ctx context.Context) ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
 		return p.versions, errors.New("Package version not found")

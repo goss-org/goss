@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -121,6 +122,7 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource
 func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
+	ctx := context.Background()
 	// file
 	if strings.Contains(key, "/") {
 		res, _, ok, err := gossConfig.Files.AppendSysResourceIfExists(key, sys)
@@ -163,7 +165,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 		ports := system.GetPorts(true)
-		pids, _ := sysres.Pids()
+		pids, _ := sysres.Pids(ctx)
 		for _, pid := range pids {
 			pidS := strconv.Itoa(pid)
 			for port, entries := range ports {

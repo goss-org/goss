@@ -2,6 +2,7 @@ package resource
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"strings"
@@ -48,6 +49,7 @@ func (c *Command) GetExec() string {
 }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := c.Skip
 
 	if c.Timeout == 0 {
@@ -58,19 +60,20 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 	sysCommand := sys.NewCommand(c.GetExec(), sys, util.Config{Timeout: time.Duration(c.Timeout) * time.Millisecond})
 
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.ID()))
-	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
+	results = append(results, ValidateValue(ctx, c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
 	if isSet(c.Stdout) {
-		results = append(results, ValidateValue(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
+		results = append(results, ValidateValue(ctx, c, "stdout", c.Stdout, sysCommand.Stdout, skip))
 	}
 	if isSet(c.Stderr) {
-		results = append(results, ValidateValue(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
+		results = append(results, ValidateValue(ctx, c, "stderr", c.Stderr, sysCommand.Stderr, skip))
 	}
 	return results
 }
 
 func NewCommand(sysCommand system.Command, config util.Config) (*Command, error) {
+	ctx := context.Background()
 	command := sysCommand.Command()
-	exitStatus, err := sysCommand.ExitStatus()
+	exitStatus, err := sysCommand.ExitStatus(ctx)
 	c := &Command{
 		id:         command,
 		ExitStatus: exitStatus,
@@ -80,11 +83,11 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 	}
 
 	if !contains(config.IgnoreList, "stdout") {
-		stdout, _ := sysCommand.Stdout()
+		stdout, _ := sysCommand.Stdout(ctx)
 		c.Stdout = readerToSlice(stdout)
 	}
 	if !contains(config.IgnoreList, "stderr") {
-		stderr, _ := sysCommand.Stderr()
+		stderr, _ := sysCommand.Stderr(ctx)
 		c.Stderr = readerToSlice(stderr)
 	}
 

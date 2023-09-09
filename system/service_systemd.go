@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -29,7 +30,7 @@ func (s *ServiceSystemd) Service() string {
 	return s.service
 }
 
-func (s *ServiceSystemd) Exists() (bool, error) {
+func (s *ServiceSystemd) Exists(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
@@ -41,14 +42,14 @@ func (s *ServiceSystemd) Exists() (bool, error) {
 	if s.legacy {
 		// Fallback on sysv
 		sysv := &ServiceInit{service: s.service}
-		if e, err := sysv.Exists(); e && err == nil {
+		if e, err := sysv.Exists(ctx); e && err == nil {
 			return true, nil
 		}
 	}
 	return false, nil
 }
 
-func (s *ServiceSystemd) Enabled() (bool, error) {
+func (s *ServiceSystemd) Enabled(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
@@ -60,14 +61,14 @@ func (s *ServiceSystemd) Enabled() (bool, error) {
 	if s.legacy {
 		// Fallback on sysv
 		sysv := &ServiceInit{service: s.service}
-		if en, err := sysv.Enabled(); en && err == nil {
+		if en, err := sysv.Enabled(ctx); en && err == nil {
 			return true, nil
 		}
 	}
 	return false, nil
 }
 
-func (s *ServiceSystemd) Running() (bool, error) {
+func (s *ServiceSystemd) Running(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
@@ -79,13 +80,13 @@ func (s *ServiceSystemd) Running() (bool, error) {
 	if s.legacy {
 		// Fallback on sysv
 		sysv := &ServiceInit{service: s.service}
-		if r, err := sysv.Running(); r && err == nil {
+		if r, err := sysv.Running(ctx); r && err == nil {
 			return true, nil
 		}
 	}
 	return false, nil
 }
 
-func (s *ServiceSystemd) RunLevels() ([]string, error) {
+func (s *ServiceSystemd) RunLevels(ctx context.Context) ([]string, error) {
 	return nil, nil
 }

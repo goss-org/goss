@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 
 	"github.com/goss-org/goss/util"
@@ -8,9 +9,9 @@ import (
 
 type Package interface {
 	Name() string
-	Exists() (bool, error)
-	Installed() (bool, error)
-	Versions() ([]string, error)
+	Exists(context.Context) (bool, error)
+	Installed(context.Context) (bool, error)
+	Versions(context.Context) ([]string, error)
 }
 
 var ErrNullPackage = errors.New("Could not detect Package type on this system, please use --package flag to explicity set it")
@@ -25,12 +26,12 @@ func NewNullPackage(name string, system *System, config util.Config) Package {
 
 func (p *NullPackage) Name() string { return p.name }
 
-func (p *NullPackage) Exists() (bool, error) { return p.Installed() }
+func (p *NullPackage) Exists(ctx context.Context) (bool, error) { return p.Installed(ctx) }
 
-func (p *NullPackage) Installed() (bool, error) {
+func (p *NullPackage) Installed(ctx context.Context) (bool, error) {
 	return false, ErrNullPackage
 }
 
-func (p *NullPackage) Versions() ([]string, error) {
+func (p *NullPackage) Versions(ctx context.Context) ([]string, error) {
 	return nil, ErrNullPackage
 }

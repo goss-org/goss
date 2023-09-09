@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -50,6 +51,7 @@ func (a *Addr) GetAddress() string {
 }
 
 func (a *Addr) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := a.Skip
 
 	if a.Timeout == 0 {
@@ -59,13 +61,14 @@ func (a *Addr) Validate(sys *system.System) []TestResult {
 	sysAddr := sys.NewAddr(a.GetAddress(), sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable, skip))
+	results = append(results, ValidateValue(ctx, a, "reachable", a.Reachable, sysAddr.Reachable, skip))
 	return results
 }
 
 func NewAddr(sysAddr system.Addr, config util.Config) (*Addr, error) {
+	ctx := context.Background()
 	address := sysAddr.Address()
-	reachable, err := sysAddr.Reachable()
+	reachable, err := sysAddr.Reachable(ctx)
 	a := &Addr{
 		id:           address,
 		Reachable:    reachable,

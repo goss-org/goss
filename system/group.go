@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"os/user"
 	"strconv"
 
@@ -9,8 +10,8 @@ import (
 
 type Group interface {
 	Groupname() string
-	Exists() (bool, error)
-	GID() (int, error)
+	Exists(context.Context) (bool, error)
+	GID(context.Context) (int, error)
 }
 
 type DefGroup struct {
@@ -25,7 +26,7 @@ func (u *DefGroup) Groupname() string {
 	return u.groupname
 }
 
-func (u *DefGroup) Exists() (bool, error) {
+func (u *DefGroup) Exists(ctx context.Context) (bool, error) {
 	_, err := user.LookupGroup(u.groupname)
 	if err != nil {
 		return false, nil
@@ -33,7 +34,7 @@ func (u *DefGroup) Exists() (bool, error) {
 	return true, nil
 }
 
-func (u *DefGroup) GID() (int, error) {
+func (u *DefGroup) GID(ctx context.Context) (int, error) {
 	group, err := user.LookupGroup(u.groupname)
 	if err != nil {
 		return 0, err

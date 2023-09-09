@@ -2,6 +2,7 @@ package system
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -25,20 +26,20 @@ func (s *ServiceUpstart) Service() string {
 	return s.service
 }
 
-func (s *ServiceUpstart) Exists() (bool, error) {
+func (s *ServiceUpstart) Exists(ctx context.Context) (bool, error) {
 	// upstart
 	if _, err := os.Stat(fmt.Sprintf("/etc/init/%s.conf", s.service)); err == nil {
 		return true, nil
 	}
 	// Fallback on sysv
 	sysv := &ServiceInit{service: s.service}
-	if e, err := sysv.Exists(); e && err == nil {
+	if e, err := sysv.Exists(ctx); e && err == nil {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (s *ServiceUpstart) Enabled() (bool, error) {
+func (s *ServiceUpstart) Enabled(ctx context.Context) (bool, error) {
 	if fh, err := os.Open(fmt.Sprintf("/etc/init/%s.override", s.service)); err == nil {
 		scanner := bufio.NewScanner(fh)
 		for scanner.Scan() {
@@ -62,13 +63,13 @@ func (s *ServiceUpstart) Enabled() (bool, error) {
 	}
 	// Fallback on sysv
 	sysv := &ServiceInit{service: s.service}
-	if en, err := sysv.Enabled(); en && err == nil {
+	if en, err := sysv.Enabled(ctx); en && err == nil {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (s *ServiceUpstart) Running() (bool, error) {
+func (s *ServiceUpstart) Running(ctx context.Context) (bool, error) {
 	cmd := util.NewCommand("service", s.service, "status")
 	cmd.Run()
 	out := cmd.Stdout.String()
@@ -77,7 +78,7 @@ func (s *ServiceUpstart) Running() (bool, error) {
 	}
 	return false, nil
 }
-func (s *ServiceUpstart) RunLevels() ([]string, error) {
+func (s *ServiceUpstart) RunLevels(ctx context.Context) ([]string, error) {
 	sysv := &ServiceInit{service: s.service}
-	return sysv.RunLevels()
+	return sysv.RunLevels(ctx)
 }

@@ -5,6 +5,7 @@ package system
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"os"
 	"sort"
@@ -57,14 +58,14 @@ func groupsForUser(user string, pgid int, grp io.Reader) ([]string, error) {
 	return out, nil
 }
 
-func (u *DefUser) Groups() ([]string, error) {
+func (u *DefUser) Groups(ctx context.Context) ([]string, error) {
 	grp, err := os.Open("/etc/group")
 	if err != nil {
 		return nil, err
 	}
 	defer grp.Close()
 
-	pgid, err := u.GID()
+	pgid, err := u.GID(ctx)
 	if err != nil {
 		return nil, err
 	}

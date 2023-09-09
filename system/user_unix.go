@@ -5,12 +5,13 @@ package system
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"strings"
 )
 
-func (u *DefUser) Shell() (string, error) {
+func (u *DefUser) Shell(ctx context.Context) (string, error) {
 	passwd, err := os.Open("/etc/passwd")
 	if err != nil {
 		return "", err

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ func (s *ServiceInit) Service() string {
 	return s.service
 }
 
-func (s *ServiceInit) Exists() (bool, error) {
+func (s *ServiceInit) Exists(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
@@ -41,7 +42,7 @@ func (s *ServiceInit) Exists() (bool, error) {
 	return false, nil
 }
 
-func (s *ServiceInit) Enabled() (bool, error) {
+func (s *ServiceInit) Enabled(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
@@ -55,7 +56,7 @@ func (s *ServiceInit) Enabled() (bool, error) {
 	return len(runLevels) != 0, err
 }
 
-func (s *ServiceInit) RunLevels() ([]string, error) {
+func (s *ServiceInit) RunLevels(ctx context.Context) ([]string, error) {
 	if invalidService(s.service) {
 		return nil, nil
 	}
@@ -66,7 +67,7 @@ func (s *ServiceInit) RunLevels() ([]string, error) {
 	}
 }
 
-func (s *ServiceInit) Running() (bool, error) {
+func (s *ServiceInit) Running(ctx context.Context) (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}

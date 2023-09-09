@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -10,9 +11,9 @@ import (
 
 type Port interface {
 	Port() string
-	Exists() (bool, error)
-	Listening() (bool, error)
-	IP() ([]string, error)
+	Exists(context.Context) (bool, error)
+	Listening(context.Context) (bool, error)
+	IP(context.Context) ([]string, error)
 }
 
 type DefPort struct {
@@ -46,16 +47,16 @@ func (p *DefPort) Port() string {
 	return p.port
 }
 
-func (p *DefPort) Exists() (bool, error) { return p.Listening() }
+func (p *DefPort) Exists(ctx context.Context) (bool, error) { return p.Listening(ctx) }
 
-func (p *DefPort) Listening() (bool, error) {
+func (p *DefPort) Listening(ctx context.Context) (bool, error) {
 	if _, ok := p.sysPorts[p.port]; ok {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (p *DefPort) IP() ([]string, error) {
+func (p *DefPort) IP(ctx context.Context) ([]string, error) {
 	var ips []string
 	for _, entry := range p.sysPorts[p.port] {
 		ips = append(ips, entry.Ip)

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -52,56 +53,58 @@ func (m *Mount) GetMountPoint() string {
 }
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := m.Skip
 	sysMount := sys.NewMount(m.GetMountPoint(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))
+	results = append(results, ValidateValue(ctx, m, "exists", m.Exists, sysMount.Exists, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if m.Opts != nil {
-		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
+		results = append(results, ValidateValue(ctx, m, "opts", m.Opts, sysMount.Opts, skip))
 	}
 	if m.VfsOpts != nil {
-		results = append(results, ValidateValue(m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
+		results = append(results, ValidateValue(ctx, m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
 	}
 	if m.Source != nil {
-		results = append(results, ValidateValue(m, "source", m.Source, sysMount.Source, skip))
+		results = append(results, ValidateValue(ctx, m, "source", m.Source, sysMount.Source, skip))
 	}
 	if m.Filesystem != nil {
-		results = append(results, ValidateValue(m, "filesystem", m.Filesystem, sysMount.Filesystem, skip))
+		results = append(results, ValidateValue(ctx, m, "filesystem", m.Filesystem, sysMount.Filesystem, skip))
 	}
 	if m.Usage != nil {
-		results = append(results, ValidateValue(m, "usage", m.Usage, sysMount.Usage, skip))
+		results = append(results, ValidateValue(ctx, m, "usage", m.Usage, sysMount.Usage, skip))
 	}
 	return results
 }
 
 func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
+	ctx := context.Background()
 	mountPoint := sysMount.MountPoint()
-	exists, _ := sysMount.Exists()
+	exists, _ := sysMount.Exists(ctx)
 	m := &Mount{
 		id:     mountPoint,
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "opts") {
-		if opts, err := sysMount.Opts(); err == nil {
+		if opts, err := sysMount.Opts(ctx); err == nil {
 			m.Opts = opts
 		}
 	}
 	if !contains(config.IgnoreList, "vfs-opts") {
-		if vfsOpts, err := sysMount.VfsOpts(); err == nil {
+		if vfsOpts, err := sysMount.VfsOpts(ctx); err == nil {
 			m.VfsOpts = vfsOpts
 		}
 	}
 	if !contains(config.IgnoreList, "source") {
-		if source, err := sysMount.Source(); err == nil {
+		if source, err := sysMount.Source(ctx); err == nil {
 			m.Source = source
 		}
 	}
 	if !contains(config.IgnoreList, "filesystem") {
-		if filesystem, err := sysMount.Filesystem(); err == nil {
+		if filesystem, err := sysMount.Filesystem(ctx); err == nil {
 			m.Filesystem = filesystem
 		}
 	}

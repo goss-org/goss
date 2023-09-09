@@ -1,12 +1,13 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"os/user"
 	"sort"
 )
 
-func (u *DefUser) Groups() ([]string, error) {
+func (u *DefUser) Groups(ctx context.Context) ([]string, error) {
 	usr, err := user.Lookup(u.username)
 	if err != nil {
 		return nil, err

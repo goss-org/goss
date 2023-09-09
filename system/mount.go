@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -11,12 +12,12 @@ import (
 
 type Mount interface {
 	MountPoint() string
-	Exists() (bool, error)
-	Opts() ([]string, error)
-	VfsOpts() ([]string, error)
-	Source() (string, error)
-	Filesystem() (string, error)
-	Usage() (int, error)
+	Exists(context.Context) (bool, error)
+	Opts(context.Context) ([]string, error)
+	VfsOpts(context.Context) ([]string, error)
+	Source(context.Context) (string, error)
+	Filesystem(context.Context) (string, error)
+	Usage(context.Context) (int, error)
 }
 
 type DefMount struct {
@@ -67,7 +68,7 @@ func (m *DefMount) MountPoint() string {
 	return m.mountPoint
 }
 
-func (m *DefMount) Exists() (bool, error) {
+func (m *DefMount) Exists(ctx context.Context) (bool, error) {
 	if err := m.setup(); err != nil {
 		return false, nil
 	}
@@ -75,7 +76,7 @@ func (m *DefMount) Exists() (bool, error) {
 	return m.exists, nil
 }
 
-func (m *DefMount) Opts() ([]string, error) {
+func (m *DefMount) Opts(ctx context.Context) ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
@@ -84,7 +85,7 @@ func (m *DefMount) Opts() ([]string, error) {
 	return lo.Uniq(allOpts), nil
 }
 
-func (m *DefMount) VfsOpts() ([]string, error) {
+func (m *DefMount) VfsOpts(ctx context.Context) ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
@@ -92,7 +93,7 @@ func (m *DefMount) VfsOpts() ([]string, error) {
 	return opts, nil
 }
 
-func (m *DefMount) Source() (string, error) {
+func (m *DefMount) Source(ctx context.Context) (string, error) {
 	if err := m.setup(); err != nil {
 		return "", err
 	}
@@ -100,7 +101,7 @@ func (m *DefMount) Source() (string, error) {
 	return m.mountInfo.Source, nil
 }
 
-func (m *DefMount) Filesystem() (string, error) {
+func (m *DefMount) Filesystem(ctx context.Context) (string, error) {
 	if err := m.setup(); err != nil {
 		return "", err
 	}
@@ -108,7 +109,7 @@ func (m *DefMount) Filesystem() (string, error) {
 	return m.mountInfo.FSType, nil
 }
 
-func (m *DefMount) Usage() (int, error) {
+func (m *DefMount) Usage(ctx context.Context) (int, error) {
 	if err := m.setup(); err != nil {
 		return -1, err
 	}

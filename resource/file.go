@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -58,54 +59,56 @@ func (f *File) GetPath() string {
 }
 
 func (f *File) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := f.Skip
 	sysFile := sys.NewFile(f.GetPath(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(f, "exists", f.Exists, sysFile.Exists, skip))
+	results = append(results, ValidateValue(ctx, f, "exists", f.Exists, sysFile.Exists, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if f.Mode != nil {
-		results = append(results, ValidateValue(f, "mode", f.Mode, sysFile.Mode, skip))
+		results = append(results, ValidateValue(ctx, f, "mode", f.Mode, sysFile.Mode, skip))
 	}
 	if f.Owner != nil {
-		results = append(results, ValidateValue(f, "owner", f.Owner, sysFile.Owner, skip))
+		results = append(results, ValidateValue(ctx, f, "owner", f.Owner, sysFile.Owner, skip))
 	}
 	if f.Group != nil {
-		results = append(results, ValidateValue(f, "group", f.Group, sysFile.Group, skip))
+		results = append(results, ValidateValue(ctx, f, "group", f.Group, sysFile.Group, skip))
 	}
 	if f.LinkedTo != nil {
-		results = append(results, ValidateValue(f, "linkedto", f.LinkedTo, sysFile.LinkedTo, skip))
+		results = append(results, ValidateValue(ctx, f, "linkedto", f.LinkedTo, sysFile.LinkedTo, skip))
 	}
 	if f.Filetype != nil {
-		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
+		results = append(results, ValidateValue(ctx, f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
 	if isSet(f.Contains) {
 		fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: file.contains has been renamed to file.contents\n")
-		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contents, skip))
+		results = append(results, ValidateValue(ctx, f, "contains", f.Contains, sysFile.Contents, skip))
 	}
 	if isSet(f.Contents) {
-		results = append(results, ValidateValue(f, "contents", f.Contents, sysFile.Contents, skip))
+		results = append(results, ValidateValue(ctx, f, "contents", f.Contents, sysFile.Contents, skip))
 	}
 	if f.Size != nil {
-		results = append(results, ValidateValue(f, "size", f.Size, sysFile.Size, skip))
+		results = append(results, ValidateValue(ctx, f, "size", f.Size, sysFile.Size, skip))
 	}
 	if f.Md5 != nil {
-		results = append(results, ValidateValue(f, "md5", f.Md5, sysFile.Md5, skip))
+		results = append(results, ValidateValue(ctx, f, "md5", f.Md5, sysFile.Md5, skip))
 	}
 	if f.Sha256 != nil {
-		results = append(results, ValidateValue(f, "sha256", f.Sha256, sysFile.Sha256, skip))
+		results = append(results, ValidateValue(ctx, f, "sha256", f.Sha256, sysFile.Sha256, skip))
 	}
 	if f.Sha512 != nil {
-		results = append(results, ValidateValue(f, "sha512", f.Sha512, sysFile.Sha512, skip))
+		results = append(results, ValidateValue(ctx, f, "sha512", f.Sha512, sysFile.Sha512, skip))
 	}
 	return results
 }
 
 func NewFile(sysFile system.File, config util.Config) (*File, error) {
+	ctx := context.Background()
 	path := sysFile.Path()
-	exists, err := sysFile.Exists()
+	exists, err := sysFile.Exists(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -115,27 +118,27 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 		Contents: []string{},
 	}
 	if !contains(config.IgnoreList, "mode") {
-		if mode, err := sysFile.Mode(); err == nil {
+		if mode, err := sysFile.Mode(ctx); err == nil {
 			f.Mode = mode
 		}
 	}
 	if !contains(config.IgnoreList, "owner") {
-		if owner, err := sysFile.Owner(); err == nil {
+		if owner, err := sysFile.Owner(ctx); err == nil {
 			f.Owner = owner
 		}
 	}
 	if !contains(config.IgnoreList, "group") {
-		if group, err := sysFile.Group(); err == nil {
+		if group, err := sysFile.Group(ctx); err == nil {
 			f.Group = group
 		}
 	}
 	if !contains(config.IgnoreList, "linked-to") {
-		if linkedTo, err := sysFile.LinkedTo(); err == nil {
+		if linkedTo, err := sysFile.LinkedTo(ctx); err == nil {
 			f.LinkedTo = linkedTo
 		}
 	}
 	if !contains(config.IgnoreList, "filetype") {
-		if filetype, err := sysFile.Filetype(); err == nil {
+		if filetype, err := sysFile.Filetype(ctx); err == nil {
 			f.Filetype = filetype
 		}
 	}

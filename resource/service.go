@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -47,29 +48,31 @@ func (s *Service) GetName() string {
 }
 
 func (s *Service) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := s.Skip
 	sysservice := sys.NewService(s.GetName(), sys, util.Config{})
 
 	var results []TestResult
 	if s.Enabled != nil {
-		results = append(results, ValidateValue(s, "enabled", s.Enabled, sysservice.Enabled, skip))
+		results = append(results, ValidateValue(ctx, s, "enabled", s.Enabled, sysservice.Enabled, skip))
 	}
 	if s.Running != nil {
-		results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
+		results = append(results, ValidateValue(ctx, s, "running", s.Running, sysservice.Running, skip))
 	}
 	if s.RunLevels != nil {
-		results = append(results, ValidateValue(s, "runlevels", s.RunLevels, sysservice.RunLevels, skip))
+		results = append(results, ValidateValue(ctx, s, "runlevels", s.RunLevels, sysservice.RunLevels, skip))
 	}
 	return results
 }
 
 func NewService(sysService system.Service, config util.Config) (*Service, error) {
+	ctx := context.Background()
 	service := sysService.Service()
-	enabled, err := sysService.Enabled()
+	enabled, err := sysService.Enabled(ctx)
 	if err != nil {
 		return nil, err
 	}
-	running, err := sysService.Running()
+	running, err := sysService.Running(ctx)
 	if err != nil {
 		return nil, err
 	}

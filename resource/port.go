@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,29 +47,31 @@ func (p *Port) GetPort() string {
 }
 
 func (p *Port) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := p.Skip
 	sysPort := sys.NewPort(p.GetPort(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(p, "listening", p.Listening, sysPort.Listening, skip))
+	results = append(results, ValidateValue(ctx, p, "listening", p.Listening, sysPort.Listening, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if p.IP != nil {
-		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip))
+		results = append(results, ValidateValue(ctx, p, "ip", p.IP, sysPort.IP, skip))
 	}
 	return results
 }
 
 func NewPort(sysPort system.Port, config util.Config) (*Port, error) {
+	ctx := context.Background()
 	port := sysPort.Port()
-	listening, _ := sysPort.Listening()
+	listening, _ := sysPort.Listening(ctx)
 	p := &Port{
 		id:        port,
 		Listening: listening,
 	}
 	if !contains(config.IgnoreList, "ip") {
-		if ip, err := sysPort.IP(); err == nil {
+		if ip, err := sysPort.IP(ctx); err == nil {
 			p.IP = ip
 		}
 	}

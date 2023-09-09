@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -39,6 +40,7 @@ func (r *Matching) GetTitle() string { return r.Title }
 func (r *Matching) GetMeta() meta    { return r.Meta }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := false
 	if a.Skip {
 		skip = true
@@ -48,18 +50,18 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 	if a.AsReader {
 		s := fmt.Sprintf("%v", a.Content)
 		// ValidateValue expects a function
-		stub = func() (io.Reader, error) {
+		stub = func(_ context.Context) (io.Reader, error) {
 			return strings.NewReader(s), nil
 		}
 	} else {
 		// ValidateValue expects a function
-		stub = func() (any, error) {
+		stub = func(_ context.Context) (any, error) {
 			return a.Content, nil
 		}
 	}
 
 	var results []TestResult
-	results = append(results, ValidateValue(a, "matches", a.Matches, stub, skip))
+	results = append(results, ValidateValue(ctx, a, "matches", a.Matches, stub, skip))
 	return results
 }
 

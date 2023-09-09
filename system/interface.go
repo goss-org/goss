@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"net"
 
 	"github.com/goss-org/goss/util"
@@ -8,9 +9,9 @@ import (
 
 type Interface interface {
 	Name() string
-	Exists() (bool, error)
-	Addrs() ([]string, error)
-	MTU() (int, error)
+	Exists(context.Context) (bool, error)
+	Addrs(context.Context) ([]string, error)
+	MTU(context.Context) (int, error)
 }
 
 type DefInterface struct {
@@ -52,7 +53,7 @@ func (i *DefInterface) Name() string {
 	return i.name
 }
 
-func (i *DefInterface) Exists() (bool, error) {
+func (i *DefInterface) Exists(ctx context.Context) (bool, error) {
 	if err := i.setup(); err != nil {
 		return false, nil
 	}
@@ -60,7 +61,7 @@ func (i *DefInterface) Exists() (bool, error) {
 	return i.exists, nil
 }
 
-func (i *DefInterface) Addrs() ([]string, error) {
+func (i *DefInterface) Addrs(ctx context.Context) ([]string, error) {
 	if err := i.setup(); err != nil {
 		return nil, err
 	}
@@ -77,7 +78,7 @@ func (i *DefInterface) Addrs() ([]string, error) {
 	return ret, nil
 }
 
-func (i *DefInterface) MTU() (int, error) {
+func (i *DefInterface) MTU(ctx context.Context) (int, error) {
 	if err := i.setup(); err != nil {
 		return 0, err
 	}

@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -38,15 +39,15 @@ func (p *PacmanPackage) Name() string {
 	return p.name
 }
 
-func (p *PacmanPackage) Exists() (bool, error) { return p.Installed() }
+func (p *PacmanPackage) Exists(ctx context.Context) (bool, error) { return p.Installed(ctx) }
 
-func (p *PacmanPackage) Installed() (bool, error) {
+func (p *PacmanPackage) Installed(ctx context.Context) (bool, error) {
 	p.setup()
 
 	return p.installed, nil
 }
 
-func (p *PacmanPackage) Versions() ([]string, error) {
+func (p *PacmanPackage) Versions(ctx context.Context) ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
 		return p.versions, errors.New("Package version not found")

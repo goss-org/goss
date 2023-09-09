@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"os/user"
 	"strconv"
 
@@ -9,12 +10,12 @@ import (
 
 type User interface {
 	Username() string
-	Exists() (bool, error)
-	UID() (int, error)
-	GID() (int, error)
-	Groups() ([]string, error)
-	Home() (string, error)
-	Shell() (string, error)
+	Exists(context.Context) (bool, error)
+	UID(context.Context) (int, error)
+	GID(context.Context) (int, error)
+	Groups(context.Context) ([]string, error)
+	Home(context.Context) (string, error)
+	Shell(context.Context) (string, error)
 }
 
 type DefUser struct {
@@ -29,7 +30,7 @@ func (u *DefUser) Username() string {
 	return u.username
 }
 
-func (u *DefUser) Exists() (bool, error) {
+func (u *DefUser) Exists(ctx context.Context) (bool, error) {
 	_, err := user.Lookup(u.username)
 	if err != nil {
 		return false, nil
@@ -37,7 +38,7 @@ func (u *DefUser) Exists() (bool, error) {
 	return true, nil
 }
 
-func (u *DefUser) UID() (int, error) {
+func (u *DefUser) UID(ctx context.Context) (int, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return 0, err
@@ -51,7 +52,7 @@ func (u *DefUser) UID() (int, error) {
 	return uid, nil
 }
 
-func (u *DefUser) GID() (int, error) {
+func (u *DefUser) GID(ctx context.Context) (int, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return 0, err
@@ -65,7 +66,7 @@ func (u *DefUser) GID() (int, error) {
 	return gid, nil
 }
 
-func (u *DefUser) Home() (string, error) {
+func (u *DefUser) Home(ctx context.Context) (string, error) {
 	user, err := user.Lookup(u.username)
 	if err != nil {
 		return "", err

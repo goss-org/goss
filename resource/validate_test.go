@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -31,11 +32,12 @@ var stringTests = []struct {
 }
 
 func TestValidateValue(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range stringTests {
-		inFunc := func() (any, error) {
+		inFunc := func(ctx context.Context) (any, error) {
 			return c.in2, nil
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
@@ -43,11 +45,12 @@ func TestValidateValue(t *testing.T) {
 }
 
 func TestValidateValueErr(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range stringTests {
-		inFunc := func() (any, error) {
+		inFunc := func(ctx context.Context) (any, error) {
 			return c.in2, fmt.Errorf("some err")
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != FAIL {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, FAIL)
 		}
@@ -55,11 +58,12 @@ func TestValidateValueErr(t *testing.T) {
 }
 
 func TestValidateValueSkip(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range stringTests {
-		inFunc := func() (any, error) {
+		inFunc := func(ctx context.Context) (any, error) {
 			return c.in2, nil
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, true)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, true)
 		if got.Result != SKIP {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, SKIP)
 		}
@@ -67,11 +71,12 @@ func TestValidateValueSkip(t *testing.T) {
 }
 
 func BenchmarkValidateValue(b *testing.B) {
-	inFunc := func() (any, error) {
+	ctx := context.Background()
+	inFunc := func(ctx context.Context) (any, error) {
 		return "foo", nil
 	}
 	for n := 0; n < b.N; n++ {
-		ValidateValue(&FakeResource{""}, "", "foo", inFunc, false)
+		ValidateValue(ctx, &FakeResource{""}, "", "foo", inFunc, false)
 	}
 }
 
@@ -92,12 +97,13 @@ var containsTests = []struct {
 }
 
 func TestValidateContains(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range containsTests {
-		inFunc := func() (io.Reader, error) {
+		inFunc := func(ctx context.Context) (io.Reader, error) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != c.want {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, c.want)
 		}
@@ -105,12 +111,13 @@ func TestValidateContains(t *testing.T) {
 }
 
 func TestValidateContainsErr(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range containsTests {
-		inFunc := func() (io.Reader, error) {
+		inFunc := func(ctx context.Context) (io.Reader, error) {
 			reader := strings.NewReader(c.in2)
 			return reader, fmt.Errorf("some err")
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != FAIL {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, FAIL)
 		}
@@ -118,23 +125,25 @@ func TestValidateContainsErr(t *testing.T) {
 }
 
 func TestValidateContainsBadRegexErr(t *testing.T) {
-	inFunc := func() (io.Reader, error) {
+	ctx := context.Background()
+	inFunc := func(ctx context.Context) (io.Reader, error) {
 		reader := strings.NewReader("dummy")
 		return reader, nil
 	}
-	got := ValidateValue(&FakeResource{""}, "", []interface{}{"/*\\.* @@.*/"}, inFunc, false)
+	got := ValidateValue(ctx, &FakeResource{""}, "", []interface{}{"/*\\.* @@.*/"}, inFunc, false)
 	if got.Err == nil {
 		t.Errorf("Expected bad regex to raise error, got nil")
 	}
 }
 
 func TestValidateContainsSkip(t *testing.T) {
+	ctx := context.Background()
 	for _, c := range containsTests {
-		inFunc := func() (io.Reader, error) {
+		inFunc := func(ctx context.Context) (io.Reader, error) {
 			reader := strings.NewReader(c.in2)
 			return reader, nil
 		}
-		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, true)
+		got := ValidateValue(ctx, &FakeResource{""}, "", c.in, inFunc, true)
 		if got.Result != SKIP {
 			t.Errorf("%+v: got %v, want %v", c, got.Result, SKIP)
 		}
@@ -142,10 +151,11 @@ func TestValidateContainsSkip(t *testing.T) {
 }
 
 func TestResultMarshaling(t *testing.T) {
-	inFunc := func() (io.Reader, error) {
+	ctx := context.Background()
+	inFunc := func(ctx context.Context) (io.Reader, error) {
 		return nil, fmt.Errorf("dummy error")
 	}
-	res := ValidateValue(&FakeResource{}, "", []string{"x"}, inFunc, false)
+	res := ValidateValue(ctx, &FakeResource{}, "", []string{"x"}, inFunc, false)
 	if res.Err == nil {
 		t.Fatalf("Expected to receive an error")
 	}

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,29 +47,31 @@ func (p *Package) GetName() string {
 }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := p.Skip
 	sysPkg := sys.NewPackage(p.GetName(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))
+	results = append(results, ValidateValue(ctx, p, "installed", p.Installed, sysPkg.Installed, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if p.Versions != nil {
-		results = append(results, ValidateValue(p, "version", p.Versions, sysPkg.Versions, skip))
+		results = append(results, ValidateValue(ctx, p, "version", p.Versions, sysPkg.Versions, skip))
 	}
 	return results
 }
 
 func NewPackage(sysPackage system.Package, config util.Config) (*Package, error) {
+	ctx := context.Background()
 	name := sysPackage.Name()
-	installed, _ := sysPackage.Installed()
+	installed, _ := sysPackage.Installed(ctx)
 	p := &Package{
 		id:        name,
 		Installed: installed,
 	}
 	if !contains(config.IgnoreList, "versions") {
-		if versions, err := sysPackage.Versions(); err == nil {
+		if versions, err := sysPackage.Versions(ctx); err == nil {
 			p.Versions = versions
 		}
 	}

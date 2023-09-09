@@ -4,13 +4,14 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
 	"syscall"
 )
 
-func (f *DefFile) Mode() (string, error) {
+func (f *DefFile) Mode(ctx context.Context) (string, error) {
 	mode, err := f.getFileInfo(func(fi os.FileInfo) string {
 		stat := fi.Sys().(*syscall.Stat_t)
 		return fmt.Sprintf("%04o", (stat.Mode & 07777))
@@ -22,7 +23,7 @@ func (f *DefFile) Mode() (string, error) {
 	return mode, nil
 }
 
-func (f *DefFile) Owner() (string, error) {
+func (f *DefFile) Owner(ctx context.Context) (string, error) {
 	uidS, err := f.getFileInfo(func(fi os.FileInfo) string {
 		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
 	})
@@ -37,7 +38,7 @@ func (f *DefFile) Owner() (string, error) {
 	return getUserForUid(uid)
 }
 
-func (f *DefFile) Group() (string, error) {
+func (f *DefFile) Group(ctx context.Context) (string, error) {
 	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
 		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
 	})

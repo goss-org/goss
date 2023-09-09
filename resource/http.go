@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -62,6 +63,7 @@ func (r *HTTP) getURL() string {
 }
 
 func (u *HTTP) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := u.Skip
 	if u.Timeout == 0 {
 		u.Timeout = 5000
@@ -78,23 +80,24 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 
 	var results []TestResult
-	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))
+	results = append(results, ValidateValue(ctx, u, "status", u.Status, sysHTTP.Status, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if isSet(u.Headers) {
-		results = append(results, ValidateValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
+		results = append(results, ValidateValue(ctx, u, "headers", u.Headers, sysHTTP.Headers, skip))
 	}
 	if isSet(u.Body) {
-		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
+		results = append(results, ValidateValue(ctx, u, "body", u.Body, sysHTTP.Body, skip))
 	}
 
 	return results
 }
 
 func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
+	ctx := context.Background()
 	http := sysHTTP.HTTP()
-	status, err := sysHTTP.Status()
+	status, err := sysHTTP.Status(ctx)
 	u := &HTTP{
 		id:                http,
 		Status:            status,

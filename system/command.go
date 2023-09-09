@@ -2,8 +2,10 @@ package system
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
+	"log"
 	"os/exec"
 	"time"
 
@@ -12,10 +14,10 @@ import (
 
 type Command interface {
 	Command() string
-	Exists() (bool, error)
-	ExitStatus() (int, error)
-	Stdout() (io.Reader, error)
-	Stderr() (io.Reader, error)
+	Exists(context.Context) (bool, error)
+	ExitStatus(context.Context) (int, error)
+	Stdout(context.Context) (io.Reader, error)
+	Stderr(context.Context) (io.Reader, error)
 }
 
 type DefCommand struct {
@@ -49,36 +51,50 @@ func (c *DefCommand) setup() error {
 		c.err = err
 	}
 	c.exitStatus = cmd.Status
-	c.stdout = bytes.NewReader(cmd.Stdout.Bytes())
-	c.stderr = bytes.NewReader(cmd.Stderr.Bytes())
+	stdoutB := cmd.Stdout.Bytes()
+	stderrB := cmd.Stderr.Bytes()
+	logBytes(stdoutB, fmt.Sprintf("Command: %s: stdout: ", "validate-pytorch"))
+	logBytes(stderrB, fmt.Sprintf("Command: %s: stderr: ", "validate-pytorch"))
+	c.stdout = bytes.NewReader(stdoutB)
+	c.stderr = bytes.NewReader(stderrB)
 
 	return c.err
+}
+
+func logBytes(b []byte, prefix string) {
+	if len(b) == 0 {
+		return
+	}
+	lines := bytes.Split(b, []byte("\n"))
+	for _, l := range lines {
+		log.Printf("[DEBUG] %s %s", prefix, l)
+	}
 }
 
 func (c *DefCommand) Command() string {
 	return c.command
 }
 
-func (c *DefCommand) ExitStatus() (int, error) {
+func (c *DefCommand) ExitStatus(ctx context.Context) (int, error) {
 	err := c.setup()
 
 	return c.exitStatus, err
 }
 
-func (c *DefCommand) Stdout() (io.Reader, error) {
+func (c *DefCommand) Stdout(ctx context.Context) (io.Reader, error) {
 	err := c.setup()
 
 	return c.stdout, err
 }
 
-func (c *DefCommand) Stderr() (io.Reader, error) {
+func (c *DefCommand) Stderr(ctx context.Context) (io.Reader, error) {
 	err := c.setup()
 
 	return c.stderr, err
 }
 
 // Stub out
-func (c *DefCommand) Exists() (bool, error) {
+func (c *DefCommand) Exists(ctx context.Context) (bool, error) {
 	return false, nil
 }
 

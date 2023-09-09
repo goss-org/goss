@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -45,17 +46,19 @@ func (p *Process) GetComm() string {
 }
 
 func (p *Process) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := p.Skip
 	sysProcess := sys.NewProcess(p.GetComm(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))
+	results = append(results, ValidateValue(ctx, p, "running", p.Running, sysProcess.Running, skip))
 	return results
 }
 
 func NewProcess(sysProcess system.Process, config util.Config) (*Process, error) {
+	ctx := context.Background()
 	executable := sysProcess.Executable()
-	running, err := sysProcess.Running()
+	running, err := sysProcess.Running(ctx)
 	if err != nil {
 		return nil, err
 	}

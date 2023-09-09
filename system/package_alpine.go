@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -44,15 +45,15 @@ func (p *AlpinePackage) Name() string {
 	return p.name
 }
 
-func (p *AlpinePackage) Exists() (bool, error) { return p.Installed() }
+func (p *AlpinePackage) Exists(ctx context.Context) (bool, error) { return p.Installed(ctx) }
 
-func (p *AlpinePackage) Installed() (bool, error) {
+func (p *AlpinePackage) Installed(ctx context.Context) (bool, error) {
 	p.setup()
 
 	return p.installed, nil
 }
 
-func (p *AlpinePackage) Versions() ([]string, error) {
+func (p *AlpinePackage) Versions(ctx context.Context) ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
 		return p.versions, errors.New("Package version not found")

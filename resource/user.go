@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -50,63 +51,65 @@ func (u *User) GetUsername() string {
 }
 
 func (u *User) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := u.Skip
 	sysuser := sys.NewUser(u.GetUsername(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(u, "exists", u.Exists, sysuser.Exists, skip))
+	results = append(results, ValidateValue(ctx, u, "exists", u.Exists, sysuser.Exists, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if u.UID != nil {
 		uUID := deprecateAtoI(u.UID, fmt.Sprintf("%s: user.uid", u.Username))
-		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID, skip))
+		results = append(results, ValidateValue(ctx, u, "uid", uUID, sysuser.UID, skip))
 	}
 	if u.GID != nil {
 		uGID := deprecateAtoI(u.GID, fmt.Sprintf("%s: user.gid", u.Username))
-		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID, skip))
+		results = append(results, ValidateValue(ctx, u, "gid", uGID, sysuser.GID, skip))
 	}
 	if u.Home != nil {
-		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip))
+		results = append(results, ValidateValue(ctx, u, "home", u.Home, sysuser.Home, skip))
 	}
 	if u.Groups != nil {
-		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip))
+		results = append(results, ValidateValue(ctx, u, "groups", u.Groups, sysuser.Groups, skip))
 	}
 	if u.Shell != nil {
-		results = append(results, ValidateValue(u, "shell", u.Shell, sysuser.Shell, skip))
+		results = append(results, ValidateValue(ctx, u, "shell", u.Shell, sysuser.Shell, skip))
 	}
 	return results
 }
 
 func NewUser(sysUser system.User, config util.Config) (*User, error) {
+	ctx := context.Background()
 	username := sysUser.Username()
-	exists, _ := sysUser.Exists()
+	exists, _ := sysUser.Exists(ctx)
 	u := &User{
 		id:     username,
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "uid") {
-		if uid, err := sysUser.UID(); err == nil {
+		if uid, err := sysUser.UID(ctx); err == nil {
 			u.UID = uid
 		}
 	}
 	if !contains(config.IgnoreList, "gid") {
-		if gid, err := sysUser.GID(); err == nil {
+		if gid, err := sysUser.GID(ctx); err == nil {
 			u.GID = gid
 		}
 	}
 	if !contains(config.IgnoreList, "groups") {
-		if groups, err := sysUser.Groups(); err == nil {
+		if groups, err := sysUser.Groups(ctx); err == nil {
 			u.Groups = groups
 		}
 	}
 	if !contains(config.IgnoreList, "home") {
-		if home, err := sysUser.Home(); err == nil {
+		if home, err := sysUser.Home(ctx); err == nil {
 			u.Home = home
 		}
 	}
 	if !contains(config.IgnoreList, "shell") {
-		if shell, err := sysUser.Shell(); err == nil {
+		if shell, err := sysUser.Shell(ctx); err == nil {
 			u.Shell = shell
 		}
 	}

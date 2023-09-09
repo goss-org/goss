@@ -1,10 +1,14 @@
 package system
 
-import "github.com/goss-org/goss/util"
+import (
+	"context"
+
+	"github.com/goss-org/goss/util"
+)
 
 type Gossfile interface {
 	Path() string
-	Exists() (bool, error)
+	Exists(context.Context) (bool, error)
 }
 
 type DefGossfile struct {
@@ -16,7 +20,7 @@ func (g *DefGossfile) Path() string {
 }
 
 // Stub out
-func (g *DefGossfile) Exists() (bool, error) {
+func (g *DefGossfile) Exists(ctx context.Context) (bool, error) {
 	return false, nil
 }
 

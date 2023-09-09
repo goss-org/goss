@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
@@ -18,17 +19,17 @@ import (
 
 type File interface {
 	Path() string
-	Exists() (bool, error)
-	Contents() (io.Reader, error)
-	Mode() (string, error)
-	Size() (int, error)
-	Filetype() (string, error)
-	Owner() (string, error)
-	Group() (string, error)
-	LinkedTo() (string, error)
-	Md5() (string, error)
-	Sha256() (string, error)
-	Sha512() (string, error)
+	Exists(context.Context) (bool, error)
+	Contents(context.Context) (io.Reader, error)
+	Mode(context.Context) (string, error)
+	Size(context.Context) (int, error)
+	Filetype(context.Context) (string, error)
+	Owner(context.Context) (string, error)
+	Group(context.Context) (string, error)
+	LinkedTo(context.Context) (string, error)
+	Md5(context.Context) (string, error)
+	Sha256(context.Context) (string, error)
+	Sha512(context.Context) (string, error)
 }
 
 type hashFuncType string
@@ -71,7 +72,7 @@ func (f *DefFile) Path() string {
 	return f.path
 }
 
-func (f *DefFile) Exists() (bool, error) {
+func (f *DefFile) Exists(ctx context.Context) (bool, error) {
 	if err := f.setup(); err != nil {
 		return false, err
 	}
@@ -83,7 +84,7 @@ func (f *DefFile) Exists() (bool, error) {
 	return true, err
 }
 
-func (f *DefFile) Contents() (io.Reader, error) {
+func (f *DefFile) Contents(ctx context.Context) (io.Reader, error) {
 	if err := f.setup(); err != nil {
 		return nil, err
 	}
@@ -95,7 +96,7 @@ func (f *DefFile) Contents() (io.Reader, error) {
 	return fh, nil
 }
 
-func (f *DefFile) Size() (int, error) {
+func (f *DefFile) Size(ctx context.Context) (int, error) {
 	if err := f.setup(); err != nil {
 		return 0, err
 	}
@@ -109,7 +110,7 @@ func (f *DefFile) Size() (int, error) {
 	return int(size), nil
 }
 
-func (f *DefFile) Filetype() (string, error) {
+func (f *DefFile) Filetype(ctx context.Context) (string, error) {
 	if err := f.setup(); err != nil {
 		return "", err
 	}
@@ -140,7 +141,7 @@ func (f *DefFile) Filetype() (string, error) {
 	return "file", nil
 }
 
-func (f *DefFile) LinkedTo() (string, error) {
+func (f *DefFile) LinkedTo(ctx context.Context) (string, error) {
 	if err := f.setup(); err != nil {
 		return "", err
 	}
@@ -209,15 +210,15 @@ func (f *DefFile) hash(hashFunc hashFuncType) (string, error) {
 	return fmt.Sprintf("%x", hash.Sum(nil)), nil
 }
 
-func (f *DefFile) Md5() (string, error) {
+func (f *DefFile) Md5(ctx context.Context) (string, error) {
 	return f.hash(md5Hash)
 }
 
-func (f *DefFile) Sha256() (string, error) {
+func (f *DefFile) Sha256(ctx context.Context) (string, error) {
 	return f.hash(sha256Hash)
 }
 
-func (f *DefFile) Sha512() (string, error) {
+func (f *DefFile) Sha512(ctx context.Context) (string, error) {
 	return f.hash(sha512Hash)
 }
 

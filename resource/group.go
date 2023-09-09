@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,30 +47,32 @@ func (g *Group) GetGroupname() string {
 }
 
 func (g *Group) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := g.Skip
 	sysgroup := sys.NewGroup(g.GetGroupname(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))
+	results = append(results, ValidateValue(ctx, g, "exists", g.Exists, sysgroup.Exists, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
 	if g.GID != nil {
 		gGID := deprecateAtoI(g.GID, fmt.Sprintf("%s: group.gid", g.ID()))
-		results = append(results, ValidateValue(g, "gid", gGID, sysgroup.GID, skip))
+		results = append(results, ValidateValue(ctx, g, "gid", gGID, sysgroup.GID, skip))
 	}
 	return results
 }
 
 func NewGroup(sysGroup system.Group, config util.Config) (*Group, error) {
+	ctx := context.Background()
 	groupname := sysGroup.Groupname()
-	exists, _ := sysGroup.Exists()
+	exists, _ := sysGroup.Exists(ctx)
 	g := &Group{
 		id:     groupname,
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "stderr") {
-		if gid, err := sysGroup.GID(); err == nil {
+		if gid, err := sysGroup.GID(ctx); err == nil {
 			g.GID = gid
 		}
 	}

@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -49,17 +50,19 @@ func (k *KernelParam) GetName() string {
 }
 
 func (k *KernelParam) Validate(sys *system.System) []TestResult {
+	ctx := context.Background()
 	skip := k.Skip
 	sysKernelParam := sys.NewKernelParam(k.GetName(), sys, util.Config{})
 
 	var results []TestResult
-	results = append(results, ValidateValue(k, "value", k.Value, sysKernelParam.Value, skip))
+	results = append(results, ValidateValue(ctx, k, "value", k.Value, sysKernelParam.Value, skip))
 	return results
 }
 
 func NewKernelParam(sysKernelParam system.KernelParam, config util.Config) (*KernelParam, error) {
+	ctx := context.Background()
 	key := sysKernelParam.Key()
-	value, err := sysKernelParam.Value()
+	value, err := sysKernelParam.Value(ctx)
 	a := &KernelParam{
 		id:    key,
 		Value: value,

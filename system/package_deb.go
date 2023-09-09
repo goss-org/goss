@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -44,15 +45,15 @@ func (p *DebPackage) Name() string {
 	return p.name
 }
 
-func (p *DebPackage) Exists() (bool, error) { return p.Installed() }
+func (p *DebPackage) Exists(ctx context.Context) (bool, error) { return p.Installed(ctx) }
 
-func (p *DebPackage) Installed() (bool, error) {
+func (p *DebPackage) Installed(ctx context.Context) (bool, error) {
 	p.setup()
 
 	return p.installed, nil
 }
 
-func (p *DebPackage) Versions() ([]string, error) {
+func (p *DebPackage) Versions(ctx context.Context) ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
 		return p.versions, errors.New("Package version not found")

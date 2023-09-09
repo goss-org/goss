@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -17,10 +18,10 @@ import (
 
 type HTTP interface {
 	HTTP() string
-	Status() (int, error)
-	Headers() (io.Reader, error)
-	Body() (io.Reader, error)
-	Exists() (bool, error)
+	Status(context.Context) (int, error)
+	Headers(context.Context) (io.Reader, error)
+	Body(context.Context) (io.Reader, error)
+	Exists(context.Context) (bool, error)
 	SetAllowInsecure(bool)
 	SetNoFollowRedirects(bool)
 }
@@ -155,8 +156,8 @@ func (u *DefHTTP) setup() error {
 	return u.err
 }
 
-func (u *DefHTTP) Exists() (bool, error) {
-	if _, err := u.Status(); err != nil {
+func (u *DefHTTP) Exists(ctx context.Context) (bool, error) {
+	if _, err := u.Status(ctx); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -178,7 +179,7 @@ func (u *DefHTTP) HTTP() string {
 	return u.http
 }
 
-func (u *DefHTTP) Status() (int, error) {
+func (u *DefHTTP) Status(ctx context.Context) (int, error) {
 	if err := u.setup(); err != nil {
 		return 0, err
 	}
@@ -186,7 +187,7 @@ func (u *DefHTTP) Status() (int, error) {
 	return u.resp.StatusCode, nil
 }
 
-func (u *DefHTTP) Headers() (io.Reader, error) {
+func (u *DefHTTP) Headers(ctx context.Context) (io.Reader, error) {
 	if err := u.setup(); err != nil {
 		return nil, err
 	}
@@ -195,7 +196,7 @@ func (u *DefHTTP) Headers() (io.Reader, error) {
 	return strings.NewReader(headerString), nil
 }
 
-func (u *DefHTTP) Body() (io.Reader, error) {
+func (u *DefHTTP) Body(ctx context.Context) (io.Reader, error) {
 	if err := u.setup(); err != nil {
 		return nil, err
 	}

@@ -1,13 +1,16 @@
 package system
 
-import "strings"
+import (
+	"context"
+	"strings"
+)
 
 type Service interface {
 	Service() string
-	Exists() (bool, error)
-	Enabled() (bool, error)
-	Running() (bool, error)
-	RunLevels() ([]string, error)
+	Exists(context.Context) (bool, error)
+	Enabled(context.Context) (bool, error)
+	Running(context.Context) (bool, error)
+	RunLevels(context.Context) ([]string, error)
 }
 
 func invalidService(s string) bool {
