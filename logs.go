@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/goss-org/goss/util"
 	"github.com/hashicorp/logutils"
@@ -15,18 +16,14 @@ func setLogLevel(c *util.Config) error {
 		MinLevel: logutils.LogLevel("WARN"),
 		Writer:   os.Stderr,
 	}
-	logLevelFound := false
+	log.SetOutput(filter)
 	for _, lvl := range filter.Levels {
-		if string(lvl) == c.LogLevel {
-			logLevelFound = true
-			break
+		cLvl := strings.ToUpper(c.LogLevel)
+		if string(lvl) == cLvl {
+			filter.MinLevel = lvl
+			log.Printf("[DEBUG] Setting log level to %v", cLvl)
+			return nil
 		}
 	}
-	if !logLevelFound {
-		return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
-	}
-	filter.MinLevel = logutils.LogLevel(c.LogLevel)
-	log.SetOutput(filter)
-	log.Printf("[DEBUG] Setting log level to %v", c.LogLevel)
-	return nil
+	return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
 }

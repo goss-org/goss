@@ -26,7 +26,8 @@ type ResourceType generic.Type
 type ResourceTypeMap map[string]*ResourceType
 
 func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*ResourceType, error) {
-	sysres := sys.NewResourceType(context.Background(), sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewResourceType(ctx, sr, sys, config)
 	res, err := NewResourceType(sysres, config)
 	if err != nil {
 		return nil, err
@@ -40,7 +41,8 @@ func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config
 }
 
 func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool, error) {
-	sysres := sys.NewResourceType(context.Background(), sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewResourceType(ctx, sr, sys, util.Config{})
 	res, err := NewResourceType(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
