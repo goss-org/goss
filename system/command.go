@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"os/exec"
 	"time"
 
@@ -62,16 +61,6 @@ func (c *DefCommand) setup() error {
 	c.stderr = bytes.NewReader(stderrB)
 
 	return c.err
-}
-
-func logBytes(b []byte, prefix string) {
-	if len(b) == 0 {
-		return
-	}
-	lines := bytes.Split(b, []byte("\n"))
-	for _, l := range lines {
-		log.Printf("[DEBUG] %s %s", prefix, l)
-	}
 }
 
 func (c *DefCommand) Command() string {
