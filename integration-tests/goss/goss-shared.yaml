@@ -70,13 +70,13 @@ service:
     runlevels: {{toJson $runlevels}}
 {{end}}
 addr:
-  tcp://google.com:22:
+  tcp://httpbin:22:
     reachable: false
     timeout: 1000
-  tcp://google.com:443:
+  tcp://httpbin:80:
     reachable: true
     timeout: 5000
-  tcp://google.com:80:
+  tcp://httpbin:999:
     reachable: false
     timeout: 5000
     local-address: 127.0.0.1
