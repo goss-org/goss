@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/goss-org/goss/matchers"
+	"github.com/samber/lo"
 )
 
 func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
@@ -16,7 +17,7 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	case bool:
 		return matchers.Equal(x), nil
 	case []any:
-		subMatchers, err := sliceToGomega(x)
+		subMatchers, err := sliceToGomega(x, "")
 		if err != nil {
 			return nil, err
 		}
@@ -28,54 +29,59 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	}
 	matcher = sanitizeExpectedValue(matcher)
 	if matcher == nil {
-		return nil, fmt.Errorf("Missing Required Attribute")
+		return nil, fmt.Errorf("Syntax Error: Missing required attribute")
 	}
 	matcherMap, ok := matcher.(map[string]any)
 	if !ok {
-		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))
+		return nil, invalidArgSyntaxError("matcher", "map", matcher)
+		//panic(fmt.Sprintf("Syntax Error: Unexpected matcher type: %T\n\n", matcher))
 	}
-	var matchType string
-	var value any
-	for matchType, value = range matcherMap {
-		break
+	keys := lo.Keys(matcherMap)
+	if len(keys) > 1 {
+		return nil, fmt.Errorf("Syntax Error: Invalid matcher configuration. At a given nesting level, only one matcher is allowed. Found multiple matchers: %q", keys)
 	}
+	matchType := keys[0]
+	value := matcherMap[matchType]
 	switch matchType {
 	case "equal":
 		return matchers.Equal(value), nil
 	case "have-prefix":
 		v, isStr := value.(string)
 		if !isStr {
-			return nil, fmt.Errorf("have-prefix: syntax error: incorrect expectation type. expected string, got: %#v", value)
+			return nil, invalidArgSyntaxError("have-prefix", "string", value)
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePrefix(v)), nil
 	case "have-suffix":
 		v, isStr := value.(string)
 		if !isStr {
-			return nil, fmt.Errorf("have-suffix: syntax error: incorrect expectation type. expected string, got: %#v", value)
+			return nil, invalidArgSyntaxError("have-suffix", "string", value)
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HaveSuffix(v)), nil
 	case "match-regexp":
 		v, isStr := value.(string)
 		if !isStr {
-			return nil, fmt.Errorf("match-regexp: syntax error: incorrect expectation type. expected string, got: %#v", value)
+			return nil, invalidArgSyntaxError("match-regexp", "string", value)
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.MatchRegexp(v)), nil
 	case "contain-substring":
 		v, isStr := value.(string)
 		if !isStr {
-			return nil, fmt.Errorf("contain-substring: syntax error: incorrect expectation type. expected string, got: %#v", value)
+			return nil, invalidArgSyntaxError("contain-substring", "string", value)
+
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(v)), nil
 	case "have-len":
 		v, isFloat := value.(float64)
 		if !isFloat {
-			return nil, fmt.Errorf("have-len: syntax error: incorrect expectation type. expected numeric, got: %#v", value)
+			return nil, invalidArgSyntaxError("have-len", "numeric", value)
+
 		}
 		return matchers.HaveLen(int(v)), nil
 	case "have-patterns":
 		_, isArr := value.([]any)
 		if !isArr {
-			return nil, fmt.Errorf("have-patterns: syntax error: incorrect expectation type. expected array, got: %#v", value)
+			return nil, invalidArgSyntaxError("have-patterns", "array", value)
+
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePatterns(value)), nil
 	case "have-key":
@@ -88,7 +94,8 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		switch value.(type) {
 		case map[string]any, string, float64:
 		default:
-			return nil, fmt.Errorf("contain-element: syntax error: incorrect expectation type. expected matcher or value, got: %#v", value)
+			return nil, invalidArgSyntaxError("contain-element", "matcher, string or numeric", value)
+
 		}
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -96,7 +103,7 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.WithSafeTransform(matchers.ToArray{}, matchers.ContainElement(subMatcher)), nil
 	case "contain-elements":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "contains-elements")
 		if err != nil {
 			return nil, err
 		}
@@ -112,7 +119,7 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.Not(subMatcher), nil
 	case "consist-of":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "consist-of")
 		if err != nil {
 			return nil, err
 		}
@@ -122,13 +129,13 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.ConsistOf(interfaceSlice...), nil
 	case "and":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "and")
 		if err != nil {
 			return nil, err
 		}
 		return matchers.And(subMatchers...), nil
 	case "or":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "or")
 		if err != nil {
 			return nil, err
 		}
@@ -139,14 +146,15 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	case "semver-constraint":
 		v, isStr := value.(string)
 		if !isStr {
-			return nil, fmt.Errorf("semver-contstraint: syntax error: incorrect expectation type. expected string, got: %#v", value)
+			return nil, invalidArgSyntaxError("semver-constraint", "string", value)
+
 		}
 		return matchers.BeSemverConstraint(v), nil
 	case "gjson":
 		var subMatchers []matchers.GossMatcher
 		valueI, ok := value.(map[string]any)
 		if !ok {
-			return nil, fmt.Errorf("Matcher expected map, got: %t", value)
+			return nil, invalidArgSyntaxError("gjson", "map", value)
 		}
 		for key, val := range valueI {
 			subMatcher, err := matcherToGomegaMatcher(val)
@@ -158,15 +166,15 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.And(subMatchers...), nil
 	default:
-		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
+		return nil, fmt.Errorf("Syntax Error: Unknown matcher: %s", matchType)
 
 	}
 }
 
-func sliceToGomega(value any) ([]matchers.GossMatcher, error) {
+func sliceToGomega(value any, name string) ([]matchers.GossMatcher, error) {
 	valueI, ok := value.([]any)
 	if !ok {
-		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
+		return nil, invalidArgSyntaxError(name, "array", value)
 	}
 	var subMatchers []matchers.GossMatcher
 	for _, v := range valueI {
@@ -197,4 +205,8 @@ func sanitizeExpectedValue(i any) any {
 		return out
 	}
 	return i
+}
+
+func invalidArgSyntaxError(name, expected string, value any) error {
+	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received: %q", name, expected, value)
 }
