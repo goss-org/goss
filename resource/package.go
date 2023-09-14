@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/goss-org/goss/system"
@@ -46,8 +47,9 @@ func (p *Package) GetName() string {
 }
 
 func (p *Package) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", p.ID())
 	skip := p.Skip
-	sysPkg := sys.NewPackage(p.GetName(), sys, util.Config{})
+	sysPkg := sys.NewPackage(ctx, p.GetName(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))

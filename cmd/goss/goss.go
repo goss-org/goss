@@ -27,7 +27,7 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		AnnounceToCLI:     true,
 		Cache:             c.Duration("cache"),
 		Debug:             c.Bool("debug"),
-		LogLevel:          c.GlobalString("loglevel"),
+		LogLevel:          c.GlobalString("log-level"),
 		Endpoint:          c.String("endpoint"),
 		FormatOptions:     c.StringSlice("format-options"),
 		IgnoreList:        c.GlobalStringSlice("exclude-attr"),
@@ -74,7 +74,7 @@ func main() {
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:   "loglevel, L",
+			Name:   "log-level, loglevel, L, l",
 			Value:  "FATAL",
 			Usage:  "Goss log verbosity level",
 			EnvVar: "GOSS_LOGLEVEL",

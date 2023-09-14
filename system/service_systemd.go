@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -12,13 +13,13 @@ type ServiceSystemd struct {
 	legacy  bool
 }
 
-func NewServiceSystemd(service string, system *System, config util.Config) Service {
+func NewServiceSystemd(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 	}
 }
 
-func NewServiceSystemdLegacy(service string, system *System, config util.Config) Service {
+func NewServiceSystemdLegacy(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 		legacy:  true,

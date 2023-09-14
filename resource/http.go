@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -62,11 +63,12 @@ func (r *HTTP) getURL() string {
 }
 
 func (u *HTTP) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", u.ID())
 	skip := u.Skip
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(u.getURL(), sys, util.Config{
+	sysHTTP := sys.NewHTTP(ctx, u.getURL(), sys, util.Config{
 		AllowInsecure:     u.AllowInsecure,
 		CAFile:            u.CAFile,
 		CertFile:          u.CertFile,

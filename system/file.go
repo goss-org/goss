@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
@@ -47,7 +48,7 @@ type DefFile struct {
 	err      error
 }
 
-func NewDefFile(path string, system *System, config util.Config) File {
+func NewDefFile(_ context.Context, path string, system *System, config util.Config) File {
 	var err error
 	if !strings.HasPrefix(path, "~") {
 		path, err = filepath.Abs(path)

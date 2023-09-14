@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -20,7 +21,7 @@ type DefPort struct {
 	sysPorts map[string][]GOnetstat.Process
 }
 
-func NewDefPort(port string, system *System, config util.Config) Port {
+func NewDefPort(_ context.Context, port string, system *System, config util.Config) Port {
 	p := normalizePort(port)
 	return &DefPort{
 		port:     p,

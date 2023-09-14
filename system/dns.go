@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"regexp"
@@ -33,7 +34,7 @@ type DefDNS struct {
 	qtype      string
 }
 
-func NewDefDNS(host string, system *System, config util.Config) DNS {
+func NewDefDNS(_ context.Context, host string, system *System, config util.Config) DNS {
 	var h string
 	var t string
 

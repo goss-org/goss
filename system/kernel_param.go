@@ -1,6 +1,8 @@
 package system
 
 import (
+	"context"
+
 	"github.com/achanda/go-sysctl"
 	"github.com/goss-org/goss/util"
 )
@@ -16,7 +18,7 @@ type DefKernelParam struct {
 	value string
 }
 
-func NewDefKernelParam(key string, system *System, config util.Config) KernelParam {
+func NewDefKernelParam(_ context.Context, key string, system *System, config util.Config) KernelParam {
 	return &DefKernelParam{
 		key: key,
 	}

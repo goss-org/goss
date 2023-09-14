@@ -2,8 +2,11 @@ package goss
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/goss-org/goss/util"
 	"github.com/hashicorp/logutils"
@@ -15,18 +18,24 @@ func setLogLevel(c *util.Config) error {
 		MinLevel: logutils.LogLevel("WARN"),
 		Writer:   os.Stderr,
 	}
-	logLevelFound := false
+	log.SetFlags(0) // Turn off standard timestamp flags
+	log.SetOutput(&timestampedWriter{filter})
 	for _, lvl := range filter.Levels {
-		if string(lvl) == c.LogLevel {
-			logLevelFound = true
-			break
+		cLvl := strings.ToUpper(c.LogLevel)
+		if string(lvl) == cLvl {
+			filter.MinLevel = lvl
+			log.Printf("[DEBUG] Setting log level to %v", cLvl)
+			return nil
 		}
 	}
-	if !logLevelFound {
-		return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
-	}
-	filter.MinLevel = logutils.LogLevel(c.LogLevel)
-	log.SetOutput(filter)
-	log.Printf("[DEBUG] Setting log level to %v", c.LogLevel)
-	return nil
+	return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
+}
+
+type timestampedWriter struct {
+	wrappedWriter io.Writer
+}
+
+func (t *timestampedWriter) Write(b []byte) (int, error) {
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	return fmt.Fprintf(t.wrappedWriter, "%s %s", timestamp, b)
 }

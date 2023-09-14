@@ -14,6 +14,10 @@ import (
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
 	var err error
+	err = setLogLevel(c)
+	if err != nil {
+		return err
+	}
 	outStoreFormat, err = getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
@@ -42,8 +46,8 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 
 // AddResource adds a single resource to fileName
 func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
-	var res resource.ResourceRead
 	var err error
+	var res resource.ResourceRead
 
 	// Need to figure out a good way to refactor this
 	switch resourceName {

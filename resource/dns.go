@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -51,12 +52,13 @@ func (d *DNS) GetResolve() string {
 }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
+	ctx := context.WithValue(context.Background(), "id", d.ID())
 	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500
 	}
 
-	sysDNS := sys.NewDNS(d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+	sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
 	// Backwards compatibility hack for now

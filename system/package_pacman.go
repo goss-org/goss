@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -14,7 +15,7 @@ type PacmanPackage struct {
 	installed bool
 }
 
-func NewPacmanPackage(name string, system *System, config util.Config) Package {
+func NewPacmanPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &PacmanPackage{name: name}
 }
 
