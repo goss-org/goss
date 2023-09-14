@@ -22,7 +22,7 @@ done
 [[ $OS == "centos7" ]] && user="apache" || user="www-data"
 goss a "${args[@]}" package $package foobar vim-tiny
 
-goss a "${args[@]}" addr --timeout 1s google.com:443 google.com:22
+goss a "${args[@]}" addr --timeout 1s httpbin:80 httpbin:22
 
 goss a "${args[@]}" addr --timeout 1s udp://8.8.8.8:53
 

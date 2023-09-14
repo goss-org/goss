@@ -76,18 +76,24 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 	c := &Command{
 		id:         command,
 		ExitStatus: exitStatus,
-		Stdout:     []string{},
-		Stderr:     []string{},
+		Stdout:     "",
+		Stderr:     "",
 		Timeout:    config.TimeOutMilliSeconds(),
 	}
 
 	if !contains(config.IgnoreList, "stdout") {
 		stdout, _ := sysCommand.Stdout()
-		c.Stdout = readerToSlice(stdout)
+		outSlice := readerToSlice(stdout)
+		if len(outSlice) != 0 {
+			c.Stdout = outSlice
+		}
 	}
 	if !contains(config.IgnoreList, "stderr") {
 		stderr, _ := sysCommand.Stderr()
-		c.Stderr = readerToSlice(stderr)
+		errSlice := readerToSlice(stderr)
+		if len(errSlice) != 0 {
+			c.Stderr = errSlice
+		}
 	}
 
 	return c, err

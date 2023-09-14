@@ -19,10 +19,10 @@ package:
   vim-tiny:
     installed: false
 addr:
-  tcp://google.com:22:
+  tcp://httpbin:22:
     reachable: false
     timeout: 1000
-  tcp://google.com:443:
+  tcp://httpbin:80:
     reachable: true
     timeout: 1000
   udp://8.8.8.8:53:
@@ -68,11 +68,11 @@ command:
     exit-status: 0
     stdout:
     - hi
-    stderr: []
+    stderr: ""
     timeout: 10000
   foobar:
     exit-status: 127
-    stdout: []
+    stdout: ""
     stderr:
     - 'sh: 1: foobar: not found'
     timeout: 10000
