@@ -56,6 +56,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 				skipped++
 			}
 			m := struct2map(testResult)
+			m["successful"] = testResult.Result != resource.FAIL
 			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
 			m["summary-line-compact"] = humanizeResult(testResult, true, includeRaw)
 			m["duration"] = int64(m["duration"].(float64))
