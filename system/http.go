@@ -89,6 +89,7 @@ func (u *DefHTTP) setup() error {
 		parseProxy, err := url.Parse(u.Proxy)
 
 		if err != nil {
+			u.err = err
 			return err
 		}
 
@@ -103,12 +104,15 @@ func (u *DefHTTP) setup() error {
 		// FIXME: iotutil
 		caCert, err := os.ReadFile(u.CAFile)
 		if err != nil {
+			u.err = err
 			return err
 		}
 		roots := x509.NewCertPool()
 		ok := roots.AppendCertsFromPEM(caCert)
 		if !ok {
-			return fmt.Errorf("Failed parse root certificate: %s", u.CAFile)
+			err := fmt.Errorf("Failed parse root certificate: %s", u.CAFile)
+			u.err = err
+			return err
 		}
 		tlsConfig.RootCAs = roots
 	}
@@ -116,6 +120,7 @@ func (u *DefHTTP) setup() error {
 	if u.CertFile != "" && u.KeyFile != "" {
 		cert, err := tls.LoadX509KeyPair(u.CertFile, u.KeyFile)
 		if err != nil {
+			u.err = err
 			return err
 		}
 
@@ -140,6 +145,7 @@ func (u *DefHTTP) setup() error {
 
 	req, err := http.NewRequest(u.Method, u.http, strings.NewReader(u.RequestBody))
 	if err != nil {
+		u.err = err
 		return u.err
 	}
 	req.Header = u.RequestHeader.Clone()
