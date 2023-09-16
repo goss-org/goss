@@ -3,25 +3,36 @@ package resource
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"reflect"
 	"strings"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Matching struct {
-	Title   string      `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta    meta        `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Content interface{} `json:"content,omitempty" yaml:"content,omitempty"`
-	Id      string      `json:"-" yaml:"-"`
-	Matches matcher     `json:"matches" yaml:"matches"`
+	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Content  any     `json:"content,omitempty" yaml:"content,omitempty"`
+	AsReader bool    `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
+	id       string  `json:"-" yaml:"-"`
+	Matches  matcher `json:"matches" yaml:"matches"`
+	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
+
+const (
+	MatchingResourceKey  = "mount"
+	MatchingResourceName = "Mount"
+)
 
 type MatchingMap map[string]*Matching
 
-func (a *Matching) ID() string      { return a.Id }
-func (a *Matching) SetID(id string) { a.Id = id }
+func (a *Matching) ID() string       { return a.id }
+func (a *Matching) SetID(id string)  { a.id = id }
+func (a *Matching) SetSkip()         {}
+func (a *Matching) TypeKey() string  { return MatchingResourceKey }
+func (a *Matching) TypeName() string { return MatchingResourceName }
 
 // FIXME: Can this be refactored?
 func (r *Matching) GetTitle() string { return r.Title }
@@ -29,10 +40,22 @@ func (r *Matching) GetMeta() meta    { return r.Meta }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false
+	if a.Skip {
+		skip = true
+	}
 
-	// ValidateValue expects a function
-	stub := func() (interface{}, error) {
-		return a.Content, nil
+	var stub interface{}
+	if a.AsReader {
+		s := fmt.Sprintf("%v", a.Content)
+		// ValidateValue expects a function
+		stub = func() (io.Reader, error) {
+			return strings.NewReader(s), nil
+		}
+	} else {
+		// ValidateValue expects a function
+		stub = func() (any, error) {
+			return a.Content, nil
+		}
 	}
 
 	var results []TestResult
@@ -42,7 +65,7 @@ func (a *Matching) Validate(sys *system.System) []TestResult {
 
 func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -77,7 +100,7 @@ func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Matching{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)

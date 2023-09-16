@@ -1,15 +1,19 @@
 package system
 
 import (
+	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"sort"
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type HTTP interface {
@@ -34,11 +38,14 @@ type DefHTTP struct {
 	err               error
 	Username          string
 	Password          string
+	CAFile            string
+	CertFile          string
+	KeyFile           string
 	Method            string
 	Proxy             string
 }
 
-func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
+func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
 	headers := http.Header{}
 	for _, r := range config.RequestHeader {
 		str := strings.SplitN(r, ": ", 2)
@@ -54,6 +61,9 @@ func NewDefHTTP(httpStr string, system *System, config util.Config) HTTP {
 		Timeout:           config.TimeOutMilliSeconds(),
 		Username:          config.Username,
 		Password:          config.Password,
+		CAFile:            config.CAFile,
+		CertFile:          config.CertFile,
+		KeyFile:           config.KeyFile,
 		Proxy:             config.Proxy,
 	}
 }
@@ -64,6 +74,7 @@ func HeaderToArray(header http.Header) (res []string) {
 			res = append(res, fmt.Sprintf("%s: %s", name, value))
 		}
 	}
+	sort.Strings(res)
 	return
 }
 
@@ -72,7 +83,13 @@ func (u *DefHTTP) setup() error {
 		return u.err
 	}
 	u.loaded = true
+	if err := u.setupReal(); err != nil {
+		u.err = err
+	}
+	return u.err
 
+}
+func (u *DefHTTP) setupReal() error {
 	proxyURL := http.ProxyFromEnvironment
 	if u.Proxy != "" {
 		parseProxy, err := url.Parse(u.Proxy)
@@ -84,8 +101,35 @@ func (u *DefHTTP) setup() error {
 		proxyURL = http.ProxyURL(parseProxy)
 	}
 
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: u.allowInsecure,
+		Renegotiation:      tls.RenegotiateFreelyAsClient,
+	}
+	if u.CAFile != "" {
+		// FIXME: iotutil
+		caCert, err := os.ReadFile(u.CAFile)
+		if err != nil {
+			return err
+		}
+		roots := x509.NewCertPool()
+		ok := roots.AppendCertsFromPEM(caCert)
+		if !ok {
+			return fmt.Errorf("Failed parse root certificate: %s", u.CAFile)
+		}
+		tlsConfig.RootCAs = roots
+	}
+
+	if u.CertFile != "" && u.KeyFile != "" {
+		cert, err := tls.LoadX509KeyPair(u.CertFile, u.KeyFile)
+		if err != nil {
+			return err
+		}
+
+		tlsConfig.Certificates = []tls.Certificate{cert}
+	}
+
 	tr := &http.Transport{
-		TLSClientConfig:   &tls.Config{InsecureSkipVerify: u.allowInsecure},
+		TLSClientConfig:   tlsConfig,
 		DisableKeepAlives: true,
 		Proxy:             proxyURL,
 	}
@@ -102,7 +146,7 @@ func (u *DefHTTP) setup() error {
 
 	req, err := http.NewRequest(u.Method, u.http, strings.NewReader(u.RequestBody))
 	if err != nil {
-		return u.err
+		return err
 	}
 	req.Header = u.RequestHeader.Clone()
 

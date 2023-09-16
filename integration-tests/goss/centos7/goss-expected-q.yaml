@@ -1,10 +1,10 @@
 file:
   /etc/passwd:
     exists: true
-    contains: []
+    contents: []
   /tmp/goss/foobar:
     exists: false
-    contains: []
+    contents: []
 package:
   foobar:
     installed: false
@@ -13,10 +13,10 @@ package:
   vim-tiny:
     installed: false
 addr:
-  tcp://google.com:22:
+  tcp://httpbin:22:
     reachable: false
     timeout: 1000
-  tcp://google.com:443:
+  tcp://httpbin:80:
     reachable: true
     timeout: 1000
   udp://8.8.8.8:53:
@@ -49,13 +49,13 @@ group:
 command:
   echo 'hi':
     exit-status: 0
-    stdout: []
-    stderr: []
+    stdout: ""
+    stderr: ""
     timeout: 10000
   foobar:
     exit-status: 127
-    stdout: []
-    stderr: []
+    stdout: ""
+    stderr: ""
     timeout: 10000
 dns:
   CAA:dnstest.io:
@@ -111,16 +111,16 @@ http:
     no-follow-redirects: true
     timeout: 5000
     body: []
-  https://www.google.com:
-    status: 200
-    allow-insecure: false
-    no-follow-redirects: false
-    timeout: 5000
-    body: []
-  https://www.microsoft.com:
+  https://www.apple.com:
     status: 200
     allow-insecure: false
     no-follow-redirects: false
     timeout: 5000
     body: []
     proxy: http://127.0.0.1:8888
+  https://www.google.com:
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 5000
+    body: []

@@ -1,11 +1,12 @@
 package system
 
 import (
+	"context"
 	"net"
 	"strings"
 	"time"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Addr interface {
@@ -20,7 +21,7 @@ type DefAddr struct {
 	Timeout      int
 }
 
-func NewDefAddr(address string, system *System, config util.Config) Addr {
+func NewDefAddr(_ context.Context, address string, system *System, config util.Config) Addr {
 	addr := normalizeAddress(address)
 	return &DefAddr{
 		address:      addr,

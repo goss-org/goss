@@ -2,12 +2,13 @@ package system
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type ServiceUpstart struct {
@@ -17,7 +18,7 @@ type ServiceUpstart struct {
 var upstartEnabled = regexp.MustCompile(`^\s*start on`)
 var upstartDisabled = regexp.MustCompile(`^manual`)
 
-func NewServiceUpstart(service string, system *System, config util.Config) Service {
+func NewServiceUpstart(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceUpstart{service: service}
 }
 
@@ -76,4 +77,8 @@ func (s *ServiceUpstart) Running() (bool, error) {
 		return true, cmd.Err
 	}
 	return false, nil
+}
+func (s *ServiceUpstart) RunLevels() ([]string, error) {
+	sysv := &ServiceInit{service: s.service}
+	return sysv.RunLevels()
 }

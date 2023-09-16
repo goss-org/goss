@@ -3,19 +3,27 @@ alpine3:
   proxy: http://127.0.0.1:8888
   packages:
     apache2: "2.4.46-r1"
+  services:
+    apache2: [sysinit]
 arch:
   packages:
 centos7:
   proxy: http://127.0.0.1:8888
   packages:
-    httpd: "2.4.6"
+    httpd: "2.4.6-95.el7.centos"
+  services:
+    httpd: []
 trusty:
   proxy: http://127.0.0.1:8888
   packages:
     apache2: "2.4.7-1ubuntu4.22"
+  services:
+    apache2: ["3"]
 wheezy:
   proxy: http://127.0.0.1:8888
   packages:
     apache2: "2.2.22-13+deb7u13"
+  services:
+    apache2: ["2", "3", "5", "4"]
 
 overwrite: foo

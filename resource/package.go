@@ -1,32 +1,55 @@
 package resource
 
 import (
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"context"
+	"fmt"
+
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 type Package struct {
 	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Name      string  `json:"-" yaml:"-"`
+	id        string  `json:"-" yaml:"-"`
+	Name      string  `json:"name,omitempty" yaml:"name,omitempty"`
 	Installed matcher `json:"installed" yaml:"installed"`
 	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
 	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
-func (p *Package) ID() string      { return p.Name }
-func (p *Package) SetID(id string) { p.Name = id }
+const (
+	PackageResourceKey  = "package"
+	PackageResourceName = "Package"
+)
 
+func init() {
+	registerResource(PackageResourceKey, &Package{})
+}
+
+func (p *Package) ID() string {
+	if p.Name != "" && p.Name != p.id {
+		return fmt.Sprintf("%s: %s", p.id, p.Name)
+	}
+	return p.id
+}
+func (p *Package) SetID(id string)  { p.id = id }
+func (p *Package) SetSkip()         { p.Skip = true }
+func (p *Package) TypeKey() string  { return PackageResourceKey }
+func (p *Package) TypeName() string { return PackageResourceName }
 func (p *Package) GetTitle() string { return p.Title }
 func (p *Package) GetMeta() meta    { return p.Meta }
+func (p *Package) GetName() string {
+	if p.Name != "" {
+		return p.Name
+	}
+	return p.id
+}
 
 func (p *Package) Validate(sys *system.System) []TestResult {
-	skip := false
-	sysPkg := sys.NewPackage(p.Name, sys, util.Config{})
-
-	if p.Skip {
-		skip = true
-	}
+	ctx := context.WithValue(context.Background(), "id", p.ID())
+	skip := p.Skip
+	sysPkg := sys.NewPackage(ctx, p.GetName(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "installed", p.Installed, sysPkg.Installed, skip))
@@ -43,7 +66,7 @@ func NewPackage(sysPackage system.Package, config util.Config) (*Package, error)
 	name := sysPackage.Name()
 	installed, _ := sysPackage.Installed()
 	p := &Package{
-		Name:      name,
+		id:        name,
 		Installed: installed,
 	}
 	if !contains(config.IgnoreList, "versions") {

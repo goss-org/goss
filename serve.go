@@ -9,22 +9,28 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 	"github.com/patrickmn/go-cache"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Serve(c *util.Config) error {
+	err := setLogLevel(c)
+	if err != nil {
+		return err
+	}
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
 		return err
 	}
 	http.Handle(endpoint, health)
-	log.Printf("Starting to listen on: %s", c.ListenAddress)
+	http.Handle("/metrics", promhttp.Handler())
+	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
 	return http.ListenAndServe(c.ListenAddress, nil)
 }
 
@@ -71,13 +77,13 @@ type healthHandler struct {
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	outputFormat, outputer, err := h.negotiateResponseContentType(r)
 	if err != nil {
-		log.Printf("Warn: Using process-level output-format. %s", err)
+		log.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
 		outputFormat = h.c.OutputFormat
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
 
-	log.Printf("%v: requesting health probe", r.RemoteAddr)
+	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
 	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
@@ -86,39 +92,32 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logBody = " - " + resp.body.String()
 	}
 	resp.body.WriteTo(w)
-	log.Printf("%v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
+	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
-	cacheKey := fmt.Sprintf("res:%s", negotiatedContentType)
+	var tra [][]resource.TestResult
+	cacheKey := "res"
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		return tmp.(res)
+		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+		tra = tmp.([][]resource.TestResult)
+	} else {
+		log.Printf("Stale cache[%s], running tests", cacheKey)
+		h.sys = system.New(h.c.PackageManager)
+		tra = h.validate()
+		h.cache.SetDefault(cacheKey, tra)
 	}
-
-	h.gossMu.Lock()
-	defer h.gossMu.Unlock()
-	tmp, found = h.cache.Get(cacheKey)
-	if found {
-		log.Printf("Returning cached[%s].", cacheKey)
-		return tmp.(res)
-	}
-
-	log.Printf("Stale cache[%s], running tests", cacheKey)
-	resp := h.runValidate(outputer)
-	h.cache.SetDefault(cacheKey, resp)
-	return resp
+	trc := testResultArrayToChan(tra)
+	return h.output(trc, outputer)
 }
 
-func (h healthHandler) runValidate(outputer outputs.Outputer) res {
-	h.sys = system.New(h.c.PackageManager)
-	iStartTime := time.Now()
-	out := validate(h.sys, h.gossConfig, h.maxConcurrent)
+func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs.Outputer) res {
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
 	}
-	exitCode := outputer.Output(&b, out, iStartTime, outputConfig)
+	exitCode := outputer.Output(&b, trc, outputConfig)
 	resp := res{
 		body: b,
 	}
@@ -128,6 +127,28 @@ func (h healthHandler) runValidate(outputer outputs.Outputer) res {
 		resp.statusCode = http.StatusServiceUnavailable
 	}
 	return resp
+}
+func (h healthHandler) validate() [][]resource.TestResult {
+	h.sys = system.New(h.c.PackageManager)
+	res := make([][]resource.TestResult, 0)
+	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
+	for i := range tr {
+		res = append(res, i)
+	}
+	return res
+}
+
+func testResultArrayToChan(tra [][]resource.TestResult) <-chan []resource.TestResult {
+	c := make(chan []resource.TestResult)
+	go func(c chan []resource.TestResult) {
+		defer close(c)
+
+		for _, i := range tra {
+			c <- i
+		}
+	}(c)
+
+	return c
 }
 
 const (
@@ -166,13 +187,4 @@ func (h healthHandler) responseContentType(outputName string) string {
 		return "application/json"
 	}
 	return fmt.Sprintf("%s%s", mediaTypePrefix, outputName)
-}
-
-func (h healthHandler) renderBody(results <-chan []resource.TestResult, outputer outputs.Outputer) (int, bytes.Buffer) {
-	outputConfig := util.OutputConfig{
-		FormatOptions: h.c.FormatOptions,
-	}
-	var b bytes.Buffer
-	exitCode := outputer.Output(&b, results, time.Now(), outputConfig)
-	return exitCode, b
 }

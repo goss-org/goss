@@ -1,10 +1,11 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type ServiceSystemd struct {
@@ -12,13 +13,13 @@ type ServiceSystemd struct {
 	legacy  bool
 }
 
-func NewServiceSystemd(service string, system *System, config util.Config) Service {
+func NewServiceSystemd(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 	}
 }
 
-func NewServiceSystemdLegacy(service string, system *System, config util.Config) Service {
+func NewServiceSystemdLegacy(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 		legacy:  true,
@@ -84,4 +85,8 @@ func (s *ServiceSystemd) Running() (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (s *ServiceSystemd) RunLevels() ([]string, error) {
+	return nil, nil
 }

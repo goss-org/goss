@@ -1,10 +1,11 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type PacmanPackage struct {
@@ -14,7 +15,7 @@ type PacmanPackage struct {
 	installed bool
 }
 
-func NewPacmanPackage(name string, system *System, config util.Config) Package {
+func NewPacmanPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &PacmanPackage{name: name}
 }
 

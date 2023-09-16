@@ -8,19 +8,25 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 )
 
 type JUnit struct{}
 
 func (r JUnit) ValidOptions() []*formatOption {
-	return []*formatOption{}
+	return []*formatOption{
+		{name: foSort},
+	}
 }
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
-	startTime time.Time, outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig) (exitCode int) {
+	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
+
+	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
+	results = getResults(results, sort)
 
 	color.NoColor = true
 	var testCount, failed, skipped int
@@ -31,8 +37,16 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	var summary map[int]string
 	summary = make(map[int]string)
 
+	var startTime time.Time
+	var endTime time.Time
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
+			if startTime.IsZero() || testResult.StartTime.Before(startTime) {
+				startTime = testResult.StartTime
+			}
+			if endTime.IsZero() || testResult.EndTime.After(endTime) {
+				endTime = testResult.EndTime
+			}
 			m := struct2map(testResult)
 			duration := strconv.FormatFloat(m["duration"].(float64)/1000/1000/1000, 'f', 3, 64)
 			summary[testCount] = "<testcase name=\"" +
@@ -42,10 +56,10 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 				"time=\"" + duration + "\">\n"
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</system-err>\n"
 				summary[testCount] += "<failure>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</failure>\n</testcase>\n"
 
 				failed++
@@ -55,14 +69,14 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 					skipped++
 				}
 				summary[testCount] += "<system-out>" +
-					escapeString(humanizeResult2(testResult)) +
+					escapeString(humanizeResult(testResult, true, includeRaw)) +
 					"</system-out>\n</testcase>\n"
 			}
 			testCount++
 		}
 	}
 
-	duration := time.Since(startTime)
+	duration := endTime.Sub(startTime)
 	fmt.Fprintln(w, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 	fmt.Fprintf(w, "<testsuite name=\"goss\" errors=\"0\" tests=\"%d\" "+
 		"failures=\"%d\" skipped=\"%d\" time=\"%.3f\" timestamp=\"%s\">\n",

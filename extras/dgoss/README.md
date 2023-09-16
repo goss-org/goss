@@ -3,25 +3,25 @@
 dgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker containers.
 
 ## Examples and Tutorials
-* [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Introduction to dgoss tutorial
-* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) - Same as above, but in written format
+* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) - Introduction to dgoss tutorial
+* [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Same as above, but in video format
 * [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate docker images
 
 ## Installation
 #### Linux:
 
-Follow the goss [installation instructions](https://github.com/aelsabbahy/goss#installation)
+Follow the goss [installation instructions](https://github.com/goss-org/goss#installation)
 
 #### Mac OSX
 
 Since goss runs on the target container, dgoss can be used on a Mac OSX system by doing the following:
 ```
 # Install dgoss
-curl -L https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
+curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
 # Download desired goss version to your preferred location (e.g. v0.3.6)
-curl -L https://github.com/aelsabbahy/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+curl -L https://github.com/goss-org/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
 
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64
@@ -104,3 +104,6 @@ Location of the file that contains tested container logs. Logs are retained only
 
 ##### DGOSS_TEMP_DIR
 Location of the temporary directory used by dgoss. (Default `'$(mktemp -d /tmp/tmp.XXXXXXXXXX)'`)
+
+##### CONTAINER_RUNTIME
+Container runtime to use - `docker` or `podman`. Defaults to `docker`. Note that `podman` requires a run command to keep the container running. This defaults to `sleep infinity` in case only an image is passed to `dgoss` commands.

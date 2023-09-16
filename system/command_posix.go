@@ -1,8 +1,9 @@
+//go:build linux || darwin || !windows
 // +build linux darwin !windows
 
 package system
 
-import "github.com/aelsabbahy/goss/util"
+import "github.com/goss-org/goss/util"
 
 const linuxShell string = "sh"
 

@@ -1,0 +1,129 @@
+matching:
+  basic_reader_as_array:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      and:
+        - contain-element: {contain-substring: 'foo'}
+        - contain-element: {match-regexp: '^m.*w$'}
+        - not: {contain-substring: 'ftw'}
+        - not: {match-regexp: '^ERROR:'}
+
+  test_numeric_string:
+    content: 128
+    matches:
+      and:
+        - '128'
+        - have-prefix: '1'
+        - have-suffix: '8'
+        - match-regexp: '\d{3}'
+
+  test_string_numeric:
+    content: '128'
+    matches:
+      and:
+        - 128
+        - 128.0
+        - le: 128
+        - gt: 120
+
+  test_string_float:
+    content: '128.3'
+    matches:
+      and:
+        - 128.3
+        - le: 129
+        - gt: 120.2
+
+  test_array:
+    content:
+      - '45'
+      - '46'
+      - '47'
+    matches:
+      - contain-element: {match-regexp: "4."}
+      - '45'
+      - and: [{ge: 46}, {le: 50}]
+
+  test_reader_using_string_matchers:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      and:
+        - have-len: 19
+        - |
+          foo bar
+          15
+          moo cow
+        - have-prefix: 'foo'
+        - have-suffix: "cow\n"
+        - contain-element:
+            have-prefix: 'moo'
+        - contain-elements:
+          - not: 'this_doesnt_exist'
+          - lt: 20
+          - have-prefix: 'moo'
+
+  test_reader_using_array:
+    content: |
+      foo bar
+      15
+      moo cow
+    as-reader: true
+    matches:
+      - "foo bar"
+      - "15"
+      - "moo cow"
+
+
+  test_reader_as_single_string:
+    content: 'cool'
+    as-reader: true
+    matches: 'cool'
+
+  test_reader_using_int_matchers:
+    content: '40'
+    as-reader: true
+    matches:
+      and:
+       - le: 250
+       - ge: 20
+
+
+  test_gjson_transform:
+    content: '{"foo": "bar", "moo": {"nested": "cow"}, "count": "15"}'
+    as-reader: true
+    matches:
+      gjson:
+        moo.nested: cow
+        foo: {have-prefix: b}
+        count: {le: 25}
+        '@this': {have-key: "foo"}
+        moo:
+          and:
+            - have-key: "nested"
+            - {not: {have-key: "nested2"}}
+
+  test_gjson_using_this_and_equal:
+    content: '{"foo": "bar", "baz": "bing"}'
+    matches:
+      gjson:
+        '@this':
+          equal:
+            foo: bar
+            baz: bing
+
+  test_gjson_have_key_array:
+    content: '{"arr": [{"nested": "cow"}, {"nested2": "moo"}]}'
+    matches:
+      gjson:
+        arr:
+          # or tests MarshalJSON
+          or:
+            - contain-elements:
+              - have-key: 'nested'

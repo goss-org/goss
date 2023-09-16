@@ -1,10 +1,11 @@
 package system
 
 import (
+	"context"
 	"errors"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type RpmPackage struct {
@@ -14,7 +15,7 @@ type RpmPackage struct {
 	installed bool
 }
 
-func NewRpmPackage(name string, system *System, config util.Config) Package {
+func NewRpmPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &RpmPackage{name: name}
 }
 
@@ -23,7 +24,7 @@ func (p *RpmPackage) setup() {
 		return
 	}
 	p.loaded = true
-	cmd := util.NewCommand("rpm", "-q", "--nosignature", "--nohdrchk", "--nodigest", "--qf", "%{VERSION}\n", p.name)
+	cmd := util.NewCommand("rpm", "-q", "--nosignature", "--nohdrchk", "--nodigest", "--qf", "%|EPOCH?{%{EPOCH}:}:{}|%{VERSION}-%{RELEASE}\n", p.name)
 	if err := cmd.Run(); err != nil {
 		return
 	}

@@ -39,6 +39,7 @@ If -p, -c and -a are not specified, container will run its ENTRYPOINT.
 ## Environment variables and default values:
 
 GOSS_KUBECTL_BIN="$(which kubectl)": location of kubectl-compatible binary
+GOSS_KUBECTL_OPTS="": hook to inject more options such as "--namespace=default"
 GOSS_PATH="$(which goss)": location of goss binary
 GOSS_FILES_PATH=".": location of goss.yaml and other configuration files
 GOSS_VARS="": path to a goss.vars file
@@ -72,6 +73,7 @@ GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
 GOSS_OPTS=${GOSS_OPTS:-"--color --format documentation"}
 GOSS_WAIT_OPTS=${GOSS_WAIT_OPTS:-"-r 30s -s 1s > /dev/null"}
 GOSS_CONTAINER_PATH=${GOSS_CONTAINER_PATH:-/tmp/goss}
+GOSS_KUBECTL_OPTS=${GOSS_KUBECTL_OPTS:-""}
 
 kgoss_cmd=run
 image=
@@ -88,7 +90,7 @@ cleanup() {
     rm -rf "$tmp_dir"
     if [[ -n "$id" ]]; then
         info "Deleting pod/container"
-        ${k} delete pod "$id" > /dev/null
+        ${k} delete pod "$id" ${GOSS_KUBECTL_OPTS} > /dev/null
     fi
 }
 
@@ -198,16 +200,16 @@ initialize () {
         info "Creating Kubernetes pod/container to test"
         test_pod_name=kgoss-tester-${RANDOM}
         set -x
-        id=$(${k} run $test_pod_name --image-pull-policy=Always --generator=run-pod/v1 --restart=Never \
+        id=$(${k} run ${GOSS_KUBECTL_OPTS}  $test_pod_name --image-pull-policy=Always --restart=Never \
           --labels='app=kgoss-test' --output=jsonpath={.metadata.name} ${envs} \
-          --image=${image} ${to_exec})
+          --image=${image} ${to_exec} )
         set +x
         info "Waiting for container to be ready"
-        ${k} wait pod/${test_pod_name} --for=condition=Ready --timeout=60s
+        ${k} wait pod/${test_pod_name} --for=condition=Ready --timeout=60s  ${GOSS_KUBECTL_OPTS}
         info "Copying goss files into pod/container"
-        ${k} cp $tmp_dir/. ${id}:${GOSS_CONTAINER_PATH}/
+        ${k} cp ${GOSS_KUBECTL_OPTS} $tmp_dir/. ${id}:${GOSS_CONTAINER_PATH}/
         info "Marking copied files as executable"
-        ${k} exec "$id" -- sh -c "chmod --recursive --changes a+x ${GOSS_CONTAINER_PATH}/"
+         ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "chmod --recursive --changes a+x ${GOSS_CONTAINER_PATH}/"
         ;;
       *) error "Wrong kgoss files strategy used! Only \"cp\" is supported."
     esac
@@ -217,10 +219,10 @@ initialize () {
 
 # get_pod_file copies the specified file from the pod to a local path
 get_pod_file() {
-    if ${k} exec "$id" -- sh -c "test -e ${GOSS_CONTAINER_PATH}/$1" &> /dev/null; then
+    if  ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "test -e ${GOSS_CONTAINER_PATH}/$1" &> /dev/null; then
         mkdir -p "${GOSS_FILES_PATH}"
         info "Copied '$1' from pod/container to '${GOSS_FILES_PATH}'"
-        ${k} cp "${id}:${GOSS_CONTAINER_PATH}/$1" "${GOSS_FILES_PATH}"
+        ${k} cp ${GOSS_KUBECTL_OPTS} "${id}:${GOSS_CONTAINER_PATH}/$1" "${GOSS_FILES_PATH}/$1"
     fi
 }
 
@@ -245,11 +247,11 @@ main() {
             if [[ -e "${GOSS_FILES_PATH}/goss_wait.yaml" ]]; then
                 info "Found goss_wait.yaml, waiting for it to pass before running tests"
                 if [[ -z "${GOSS_VARS}" ]]; then
-                    if ! ${k} exec "$id" -- sh -c "${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss_wait.yaml validate $GOSS_WAIT_OPTS"; then
+                    if !  ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss_wait.yaml validate $GOSS_WAIT_OPTS" ; then
                         error "goss_wait.yaml never passed"
                     fi
                 else
-                    if ! ${k} exec "$id" -- sh -c "${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss_wait.yaml --vars='${GOSS_CONTAINER_PATH}/${GOSS_VARS}' validate $GOSS_WAIT_OPTS"; then
+                    if !  ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss_wait.yaml --vars='${GOSS_CONTAINER_PATH}/${GOSS_VARS}' validate $GOSS_WAIT_OPTS" ; then
                         error "goss_wait.yaml never passed"
                     fi
                 fi
@@ -258,14 +260,14 @@ main() {
             # running tests in pod/container
             info "Running tests within pod/container"
             if [[ -z "${GOSS_VARS}" ]]; then
-                ${k} exec "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; ${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss.yaml validate $GOSS_OPTS"
+                 ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; ${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss.yaml validate $GOSS_OPTS"
             else
-                ${k} exec "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; ${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss.yaml --vars='${GOSS_CONTAINER_PATH}/${GOSS_VARS}' validate $GOSS_OPTS"
+                 ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; ${GOSS_CONTAINER_PATH}/goss -g ${GOSS_CONTAINER_PATH}/goss.yaml --vars='${GOSS_CONTAINER_PATH}/${GOSS_VARS}' validate $GOSS_OPTS"
             fi
             ;;
         edit)
             info "When prompt appears you can run \`goss add\` to add resources"
-            ${prefix} ${k} exec -it "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; PATH=\"${GOSS_CONTAINER_PATH}:$PATH\" exec sh" || true
+            ${prefix}  ${k} exec ${GOSS_KUBECTL_OPTS} -it "$id" -- sh -c "cd ${GOSS_CONTAINER_PATH}; PATH=\"${GOSS_CONTAINER_PATH}:$PATH\" exec sh" || true
             echo "Copying goss.yaml and goss_wait.yaml files back to local dir"
             get_pod_file "goss.yaml"
             get_pod_file "goss_wait.yaml"

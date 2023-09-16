@@ -1,0 +1,169 @@
+file:
+  /ect/password/static:
+    exists: true
+    mode: "0644"
+    size: 2118
+    owner: root
+    group: root
+    linked-to: /usr/sbin/sendmail.sendmail
+    filetype: file
+    contains:
+    - hrll
+    md5: 7c9bb14b3bf178e82c00c2a4398c93cd
+    sha256: 7f78ce27859049f725936f7b52c6e25d774012947d915e7b394402cfceb70c4c
+    sha512: cb71b1940dc879a3688bd502846bff6316dd537bbe917484964fe0f098e9245d80958258dc3bd6297bf42d5bd978cbe2c03d077d4ed45b2b1ed9cd831ceb1bd0
+  /etc/group:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+  /etc/passwd:
+    exists: true
+    mode: "0644"
+    owner: root
+    group: root
+    filetype: file
+    contains: []
+package:
+  httpd:
+    installed: true
+    versions:
+    - "2.1"
+  kernel:
+    installed: true
+    versions:
+      and:
+      - have-len: 3
+      - not:
+          contain-element: 4.1.0
+addr:
+  tcp:
+    local-address: 127.0.0.1
+    reachable: true
+    timeout: 500
+port:
+  tcp:22:
+    listening: true
+    ip:
+    - "1"
+service:
+  sshd:
+    enabled: true
+    running: true
+user:
+  nfsbody:
+    exists: true
+    uid: 65534
+    gid: 65534
+    groups:
+    - nfsnobody
+    home: /var/lib/nfs
+    shell: /sbin/nologin
+  nobody:
+    exists: true
+    uid:
+      lt: 500
+    groups:
+      consist-of:
+      - nobody
+  sshd:
+    title: UID must be between 50-100, GID doesn't matter. home is flexible
+    meta:
+      desc: Ensure sshd is enabled and running since it's needed for system management
+      sev: 5
+    exists: true
+    uid:
+      and:
+        gt: 50
+        lt: 100
+    home:
+      or:
+      - /var/empty/sshd
+      - /var/run/sshd
+group:
+  nfsnobody:
+    exists: true
+    gid: 65534
+  nobody:
+    exists: true
+command:
+  version:
+    exec: go version
+    exit-status: 0
+    stdout:
+    - go version go1.6 linux/amd64
+    stderr: []
+    timeout: 10000
+dns:
+  localhost:
+    resolvable: true
+    addrs:
+    - ::1
+    timeout: 0
+process:
+  chrome:
+    running: true
+kernel-param:
+  kernel.ostype:
+    value: Linux
+mount:
+  /home:
+    exists: true
+    opts:
+    - rw
+    source: /dev/mapper/fedora-home
+    filesystem: xfs
+    usage:
+      lt: 95
+interface:
+  eth0:
+    exists: true
+    addrs:
+    - ' 1'
+    mtu: 1500
+http:
+  https://www.google.com:
+    method: GET
+    status: 200
+    allow-insecure: false
+    no-follow-redirects: false
+    timeout: 1000
+    body: []
+matching:
+  check_failure_count_from_all_instance:
+    content: 0
+    matches: 0
+  check_instance_count:
+    content: 1
+    matches:
+      gt: 0
+  check_status:
+    content: PASS
+    matches:
+    - not: FAIL
+  example:
+    content:
+    - 1.0.1
+    - 1.9.9
+    matches:
+      semver-constraint: '>1.0.0 <2.0.0 !=1.5.0'
+  has_2:
+    content:
+    - 2
+    matches:
+      contain-element: 2
+  has_foo_bar_and_baz:
+    content:
+      baz: bing
+      foo: bar
+    matches:
+      and:
+      - have-key-with-value:
+          foo: bar
+      - have-key: baz
+  has_substr:
+    content: some string
+    matches:
+      match-regexp: some str

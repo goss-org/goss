@@ -1,20 +1,24 @@
+//go:build genny
 // +build genny
 
 package resource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/cheekybits/genny/generic"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 //go:generate genny -in=$GOFILE -out=resource_list.go gen "ResourceType=Addr,Command,DNS,File,Gossfile,Group,Package,Port,Process,Service,User,KernelParam,Mount,Interface,HTTP"
 //go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
+//go:generate sed -i -e "/^\\/\\/go:.*/d" resource_list.go
+//go:generate sed -i -e "s/aelsabbahy/goss-org/" resource_list.go
 //go:generate goimports -w resource_list.go resource_list.go
 
 type ResourceType generic.Type
@@ -22,7 +26,8 @@ type ResourceType generic.Type
 type ResourceTypeMap map[string]*ResourceType
 
 func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*ResourceType, error) {
-	sysres := sys.NewResourceType(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewResourceType(ctx, sr, sys, config)
 	res, err := NewResourceType(sysres, config)
 	if err != nil {
 		return nil, err
@@ -36,7 +41,8 @@ func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config
 }
 
 func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System) (*ResourceType, system.ResourceType, bool, error) {
-	sysres := sys.NewResourceType(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewResourceType(ctx, sr, sys, util.Config{})
 	res, err := NewResourceType(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err

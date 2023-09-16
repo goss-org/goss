@@ -1,9 +1,10 @@
 package system
 
 import (
+	"context"
 	"net"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Interface interface {
@@ -21,7 +22,7 @@ type DefInterface struct {
 	err    error
 }
 
-func NewDefInterface(name string, systei *System, config util.Config) Interface {
+func NewDefInterface(_ context.Context, name string, systei *System, config util.Config) Interface {
 	return &DefInterface{
 		name: name,
 	}

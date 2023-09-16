@@ -3,7 +3,6 @@ package goss
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,11 +10,12 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/onsi/gomega/format"
 
-	"github.com/aelsabbahy/goss/outputs"
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
@@ -32,7 +32,7 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	if specFile == "-" {
 		source = "STDIN"
 		fh = os.Stdin
-		data, err := ioutil.ReadAll(fh)
+		data, err := io.ReadAll(fh)
 		if err != nil {
 			return nil, err
 		}
@@ -92,21 +92,33 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 
 	sys := system.New(c.PackageManager)
 
-	return validate(sys, *gossConfig, c.MaxConcurrent), nil
+	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
 }
 
 // Validate performs validation, writes formatted output to stdout by default
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
-func Validate(c *util.Config, startTime time.Time) (code int, err error) {
-	outputConfig := util.OutputConfig{
-		FormatOptions: c.FormatOptions,
-	}
-
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+func Validate(c *util.Config) (code int, err error) {
+	err = setLogLevel(c)
 	if err != nil {
 		return 1, err
+	}
+	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	if err != nil {
+		return 78, err
+	}
+	return ValidateConfig(c, gossConfig)
+}
+
+func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
+	// Needed for contains-elements
+	// Maybe we don't use this and use custom
+	// contain_element_matcher is needed because it's single entry to avoid
+	// transform message
+	format.UseStringerRepresentation = true
+	outputConfig := util.OutputConfig{
+		FormatOptions: c.FormatOptions,
 	}
 
 	sys := system.New(c.PackageManager)
@@ -124,10 +136,10 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout
 	i := 1
+	startTime := time.Now()
 	for {
-		iStartTime := time.Now()
-		out := validate(sys, *gossConfig, c.MaxConcurrent)
-		exitCode := outputer.Output(ofh, out, iStartTime, outputConfig)
+		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
+		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
 		}
@@ -144,12 +156,16 @@ func Validate(c *util.Config, startTime time.Time) (code int, err error) {
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig, maxConcurrent int) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
 	go func() {
 		for _, t := range gossConfig.Resources() {
+			if util.IsValueInList(t.TypeName(), skipList) || util.IsValueInList(t.TypeKey(), skipList) {
+				t.SetSkip()
+			}
+
 			in <- t
 		}
 		close(in)
@@ -167,7 +183,6 @@ func validate(sys *system.System, gossConfig GossConfig, maxConcurrent int) <-ch
 			for f := range in {
 				out <- f.Validate(sys)
 			}
-
 		}()
 	}
 

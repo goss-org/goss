@@ -2,154 +2,181 @@ package resource
 
 import (
 	"fmt"
-	"sort"
 
-	"github.com/aelsabbahy/goss/matchers"
-
-	"github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
+	"github.com/goss-org/goss/matchers"
+	"github.com/samber/lo"
 )
 
-func matcherToGomegaMatcher(matcher interface{}) (types.GomegaMatcher, error) {
+func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
+	// Default matchers
 	switch x := matcher.(type) {
-	case string, int, bool, float64:
-		return gomega.Equal(x), nil
-	case []interface{}:
-		var matchers []types.GomegaMatcher
-		for _, valueI := range x {
-			if subMatcher, ok := valueI.(types.GomegaMatcher); ok {
-				matchers = append(matchers, subMatcher)
-			} else {
-				matchers = append(matchers, gomega.ContainElement(valueI))
-			}
-		}
-		return gomega.And(matchers...), nil
-	}
-	matcher = sanitizeExpectedValue(matcher)
-	if matcher == nil {
-		return nil, fmt.Errorf("Missing Required Attribute")
-	}
-	matcherMap, ok := matcher.(map[string]interface{})
-	if !ok {
-		panic(fmt.Sprintf("Unexpected matcher type: %T\n\n", matcher))
-	}
-	var matchType string
-	var value interface{}
-	for matchType, value = range matcherMap {
-		break
-	}
-	switch matchType {
-	case "have-prefix":
-		return gomega.HavePrefix(value.(string)), nil
-	case "have-suffix":
-		return gomega.HaveSuffix(value.(string)), nil
-	case "match-regexp":
-		return gomega.MatchRegexp(value.(string)), nil
-	case "have-len":
-		value = sanitizeExpectedValue(value)
-		return gomega.HaveLen(value.(int)), nil
-	case "have-key-with-value":
-		subMatchers, err := mapToGomega(value)
+	case string:
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal(x)), nil
+	case float64, int:
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically("eq", x)), nil
+	case bool:
+		return matchers.Equal(x), nil
+	case []any:
+		subMatchers, err := sliceToGomega(x, "")
 		if err != nil {
 			return nil, err
 		}
-		for key, val := range subMatchers {
-			if val == nil {
-				fmt.Printf("%d is nil", key)
-			}
+		var interfaceSlice []any
+		for _, d := range subMatchers {
+			interfaceSlice = append(interfaceSlice, d)
 		}
-		return gomega.And(subMatchers...), nil
+		return matchers.ContainElements(interfaceSlice...), nil
+	}
+	matcher = sanitizeExpectedValue(matcher)
+	if matcher == nil {
+		return nil, fmt.Errorf("Syntax Error: Missing required attribute")
+	}
+	matcherMap, ok := matcher.(map[string]any)
+	if !ok {
+		return nil, invalidArgSyntaxError("matcher", "map", matcher)
+		//panic(fmt.Sprintf("Syntax Error: Unexpected matcher type: %T\n\n", matcher))
+	}
+	keys := lo.Keys(matcherMap)
+	if len(keys) > 1 {
+		return nil, fmt.Errorf("Syntax Error: Invalid matcher configuration. At a given nesting level, only one matcher is allowed. Found multiple matchers: %q", keys)
+	}
+	matchType := keys[0]
+	value := matcherMap[matchType]
+	switch matchType {
+	case "equal":
+		return matchers.Equal(value), nil
+	case "have-prefix":
+		v, isStr := value.(string)
+		if !isStr {
+			return nil, invalidArgSyntaxError("have-prefix", "string", value)
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePrefix(v)), nil
+	case "have-suffix":
+		v, isStr := value.(string)
+		if !isStr {
+			return nil, invalidArgSyntaxError("have-suffix", "string", value)
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HaveSuffix(v)), nil
+	case "match-regexp":
+		v, isStr := value.(string)
+		if !isStr {
+			return nil, invalidArgSyntaxError("match-regexp", "string", value)
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.MatchRegexp(v)), nil
+	case "contain-substring":
+		v, isStr := value.(string)
+		if !isStr {
+			return nil, invalidArgSyntaxError("contain-substring", "string", value)
+
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(v)), nil
+	case "have-len":
+		v, isFloat := value.(float64)
+		if !isFloat {
+			return nil, invalidArgSyntaxError("have-len", "numeric", value)
+
+		}
+		return matchers.HaveLen(int(v)), nil
+	case "have-patterns":
+		_, isArr := value.([]any)
+		if !isArr {
+			return nil, invalidArgSyntaxError("have-patterns", "array", value)
+
+		}
+		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePatterns(value)), nil
 	case "have-key":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
 			return nil, err
 		}
-		return gomega.HaveKey(subMatcher), nil
+		return matchers.HaveKey(subMatcher), nil
 	case "contain-element":
+		switch value.(type) {
+		case map[string]any, string, float64:
+		default:
+			return nil, invalidArgSyntaxError("contain-element", "matcher, string or numeric", value)
+
+		}
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
 			return nil, err
 		}
-		return gomega.ContainElement(subMatcher), nil
+		return matchers.WithSafeTransform(matchers.ToArray{}, matchers.ContainElement(subMatcher)), nil
+	case "contain-elements":
+		subMatchers, err := sliceToGomega(value, "contains-elements")
+		if err != nil {
+			return nil, err
+		}
+		var interfaceSlice []any
+		for _, d := range subMatchers {
+			interfaceSlice = append(interfaceSlice, d)
+		}
+		return matchers.WithSafeTransform(matchers.ToArray{}, matchers.ContainElements(interfaceSlice...)), nil
 	case "not":
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
 			return nil, err
 		}
-		return gomega.Not(subMatcher), nil
+		return matchers.Not(subMatcher), nil
 	case "consist-of":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "consist-of")
 		if err != nil {
 			return nil, err
 		}
-		var interfaceSlice []interface{}
+		var interfaceSlice []any
 		for _, d := range subMatchers {
 			interfaceSlice = append(interfaceSlice, d)
 		}
-		return gomega.ConsistOf(interfaceSlice...), nil
+		return matchers.ConsistOf(interfaceSlice...), nil
 	case "and":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "and")
 		if err != nil {
 			return nil, err
 		}
-		return gomega.And(subMatchers...), nil
+		return matchers.And(subMatchers...), nil
 	case "or":
-		subMatchers, err := sliceToGomega(value)
+		subMatchers, err := sliceToGomega(value, "or")
 		if err != nil {
 			return nil, err
 		}
-		return gomega.Or(subMatchers...), nil
+		return matchers.Or(subMatchers...), nil
 	case "gt", "ge", "lt", "le":
-		// Golang json escapes '>', '<' symbols, so we use 'gt', 'le' instead
-		comparator := map[string]string{
-			"gt": ">",
-			"ge": ">=",
-			"lt": "<",
-			"le": "<=",
-		}[matchType]
-		return gomega.BeNumerically(comparator, value), nil
+		return matchers.WithSafeTransform(matchers.ToNumeric{}, matchers.BeNumerically(matchType, value)), nil
 
 	case "semver-constraint":
-		return matchers.BeSemverConstraint(value.(string)), nil
-	default:
-		return nil, fmt.Errorf("Unknown matcher: %s", matchType)
+		v, isStr := value.(string)
+		if !isStr {
+			return nil, invalidArgSyntaxError("semver-constraint", "string", value)
 
-	}
-}
-
-func mapToGomega(value interface{}) (subMatchers []types.GomegaMatcher, err error) {
-	valueI, ok := value.(map[string]interface{})
-	if !ok {
-		return nil, fmt.Errorf("Matcher expected map, got: %t", value)
-	}
-
-	// Get keys
-	keys := []string{}
-	for key, _ := range valueI {
-		keys = append(keys, key)
-	}
-	// Iterate through keys in a deterministic way, since ranging over a map
-	// does not guarantee order
-	sort.Strings(keys)
-	for _, key := range keys {
-		val := valueI[key]
-		val, err = matcherToGomegaMatcher(val)
-		if err != nil {
-			return
 		}
+		return matchers.BeSemverConstraint(v), nil
+	case "gjson":
+		var subMatchers []matchers.GossMatcher
+		valueI, ok := value.(map[string]any)
+		if !ok {
+			return nil, invalidArgSyntaxError("gjson", "map", value)
+		}
+		for key, val := range valueI {
+			subMatcher, err := matcherToGomegaMatcher(val)
+			if err != nil {
+				return nil, err
+			}
+			subMatchers = append(subMatchers, matchers.WithSafeTransform(matchers.Gjson{Path: key}, subMatcher))
 
-		subMatcher := gomega.HaveKeyWithValue(key, val)
-		subMatchers = append(subMatchers, subMatcher)
+		}
+		return matchers.And(subMatchers...), nil
+	default:
+		return nil, fmt.Errorf("Syntax Error: Unknown matcher: %s", matchType)
+
 	}
-	return
 }
 
-func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
-	valueI, ok := value.([]interface{})
+func sliceToGomega(value any, name string) ([]matchers.GossMatcher, error) {
+	valueI, ok := value.([]any)
 	if !ok {
-		return nil, fmt.Errorf("Matcher expected array, got: %t", value)
+		return nil, invalidArgSyntaxError(name, "array", value)
 	}
-	var subMatchers []types.GomegaMatcher
+	var subMatchers []matchers.GossMatcher
 	for _, v := range valueI {
 		subMatcher, err := matcherToGomegaMatcher(v)
 		if err != nil {
@@ -160,16 +187,17 @@ func sliceToGomega(value interface{}) ([]types.GomegaMatcher, error) {
 	return subMatchers, nil
 }
 
-// Normalize expectedValue so json and yaml are the same
-func sanitizeExpectedValue(i interface{}) interface{} {
-	if e, ok := i.(float64); ok {
-		return int(e)
+// sanitizeExpectedValue normalizes the value so json and yaml are the same
+func sanitizeExpectedValue(i any) any {
+	if e, ok := i.(int); ok {
+		return float64(e)
 	}
-	if e, ok := i.(map[interface{}]interface{}); ok {
-		out := make(map[string]interface{})
+	if e, ok := i.(map[any]any); ok {
+		out := make(map[string]any)
 		for k, v := range e {
 			ks, ok := k.(string)
 			if !ok {
+				// We should never get here
 				panic(fmt.Sprintf("Matcher key type not string: %T\n\n", k))
 			}
 			out[ks] = sanitizeExpectedValue(v)
@@ -177,4 +205,8 @@ func sanitizeExpectedValue(i interface{}) interface{} {
 		return out
 	}
 	return i
+}
+
+func invalidArgSyntaxError(name, expected string, value any) error {
+	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received: %q", name, expected, value)
 }

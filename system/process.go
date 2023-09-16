@@ -1,8 +1,10 @@
 package system
 
 import (
-	"github.com/aelsabbahy/go-ps"
-	"github.com/aelsabbahy/goss/util"
+	"context"
+
+	"github.com/goss-org/go-ps"
+	"github.com/goss-org/goss/util"
 )
 
 type Process interface {
@@ -18,7 +20,7 @@ type DefProcess struct {
 	err        error
 }
 
-func NewDefProcess(executable string, system *System, config util.Config) Process {
+func NewDefProcess(_ context.Context, executable string, system *System, config util.Config) Process {
 	pmap, err := system.ProcMap()
 	return &DefProcess{
 		executable: executable,

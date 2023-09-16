@@ -5,22 +5,21 @@
 package resource
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
 
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
-
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
 
 type AddrMap map[string]*Addr
 
 func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Addr, error) {
-	sysres := sys.NewAddr(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewAddr(ctx, sr, sys, config)
 	res, err := NewAddr(sysres, config)
 	if err != nil {
 		return nil, err
@@ -34,7 +33,8 @@ func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr, system.Addr, bool, error) {
-	sysres := sys.NewAddr(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewAddr(ctx, sr, sys, util.Config{})
 	res, err := NewAddr(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -116,13 +116,11 @@ func (ret *AddrMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type CommandMap map[string]*Command
 
 func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Command, error) {
-	sysres := sys.NewCommand(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewCommand(ctx, sr, sys, config)
 	res, err := NewCommand(sysres, config)
 	if err != nil {
 		return nil, err
@@ -136,7 +134,8 @@ func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool, error) {
-	sysres := sys.NewCommand(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewCommand(ctx, sr, sys, util.Config{})
 	res, err := NewCommand(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -218,13 +217,11 @@ func (ret *CommandMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type DNSMap map[string]*DNS
 
 func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*DNS, error) {
-	sysres := sys.NewDNS(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewDNS(ctx, sr, sys, config)
 	res, err := NewDNS(sysres, config)
 	if err != nil {
 		return nil, err
@@ -238,7 +235,8 @@ func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Con
 }
 
 func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, system.DNS, bool, error) {
-	sysres := sys.NewDNS(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewDNS(ctx, sr, sys, util.Config{})
 	res, err := NewDNS(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -320,13 +318,11 @@ func (ret *DNSMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type FileMap map[string]*File
 
 func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*File, error) {
-	sysres := sys.NewFile(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewFile(ctx, sr, sys, config)
 	res, err := NewFile(sysres, config)
 	if err != nil {
 		return nil, err
@@ -340,7 +336,8 @@ func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File, system.File, bool, error) {
-	sysres := sys.NewFile(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewFile(ctx, sr, sys, util.Config{})
 	res, err := NewFile(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -422,13 +419,11 @@ func (ret *FileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type GossfileMap map[string]*Gossfile
 
 func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Gossfile, error) {
-	sysres := sys.NewGossfile(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewGossfile(ctx, sr, sys, config)
 	res, err := NewGossfile(sysres, config)
 	if err != nil {
 		return nil, err
@@ -442,7 +437,8 @@ func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config uti
 }
 
 func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gossfile, system.Gossfile, bool, error) {
-	sysres := sys.NewGossfile(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewGossfile(ctx, sr, sys, util.Config{})
 	res, err := NewGossfile(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -524,13 +520,11 @@ func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type GroupMap map[string]*Group
 
 func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Group, error) {
-	sysres := sys.NewGroup(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewGroup(ctx, sr, sys, config)
 	res, err := NewGroup(sysres, config)
 	if err != nil {
 		return nil, err
@@ -544,7 +538,8 @@ func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.C
 }
 
 func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Group, system.Group, bool, error) {
-	sysres := sys.NewGroup(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewGroup(ctx, sr, sys, util.Config{})
 	res, err := NewGroup(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -626,13 +621,11 @@ func (ret *GroupMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type PackageMap map[string]*Package
 
 func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Package, error) {
-	sysres := sys.NewPackage(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewPackage(ctx, sr, sys, config)
 	res, err := NewPackage(sysres, config)
 	if err != nil {
 		return nil, err
@@ -646,7 +639,8 @@ func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Package, system.Package, bool, error) {
-	sysres := sys.NewPackage(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewPackage(ctx, sr, sys, util.Config{})
 	res, err := NewPackage(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -728,13 +722,11 @@ func (ret *PackageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type PortMap map[string]*Port
 
 func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Port, error) {
-	sysres := sys.NewPort(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewPort(ctx, sr, sys, config)
 	res, err := NewPort(sysres, config)
 	if err != nil {
 		return nil, err
@@ -748,7 +740,8 @@ func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port, system.Port, bool, error) {
-	sysres := sys.NewPort(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewPort(ctx, sr, sys, util.Config{})
 	res, err := NewPort(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -830,13 +823,11 @@ func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type ProcessMap map[string]*Process
 
 func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Process, error) {
-	sysres := sys.NewProcess(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewProcess(ctx, sr, sys, config)
 	res, err := NewProcess(sysres, config)
 	if err != nil {
 		return nil, err
@@ -850,7 +841,8 @@ func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Process, system.Process, bool, error) {
-	sysres := sys.NewProcess(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewProcess(ctx, sr, sys, util.Config{})
 	res, err := NewProcess(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -932,13 +924,11 @@ func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type ServiceMap map[string]*Service
 
 func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Service, error) {
-	sysres := sys.NewService(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewService(ctx, sr, sys, config)
 	res, err := NewService(sysres, config)
 	if err != nil {
 		return nil, err
@@ -952,7 +942,8 @@ func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util
 }
 
 func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Service, system.Service, bool, error) {
-	sysres := sys.NewService(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewService(ctx, sr, sys, util.Config{})
 	res, err := NewService(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1034,13 +1025,11 @@ func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type UserMap map[string]*User
 
 func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*User, error) {
-	sysres := sys.NewUser(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewUser(ctx, sr, sys, config)
 	res, err := NewUser(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1054,7 +1043,8 @@ func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User, system.User, bool, error) {
-	sysres := sys.NewUser(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewUser(ctx, sr, sys, util.Config{})
 	res, err := NewUser(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1136,13 +1126,11 @@ func (ret *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type KernelParamMap map[string]*KernelParam
 
 func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*KernelParam, error) {
-	sysres := sys.NewKernelParam(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewKernelParam(ctx, sr, sys, config)
 	res, err := NewKernelParam(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1156,7 +1144,8 @@ func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config 
 }
 
 func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System) (*KernelParam, system.KernelParam, bool, error) {
-	sysres := sys.NewKernelParam(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewKernelParam(ctx, sr, sys, util.Config{})
 	res, err := NewKernelParam(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1238,13 +1227,11 @@ func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) er
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type MountMap map[string]*Mount
 
 func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Mount, error) {
-	sysres := sys.NewMount(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewMount(ctx, sr, sys, config)
 	res, err := NewMount(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1258,7 +1245,8 @@ func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.C
 }
 
 func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mount, system.Mount, bool, error) {
-	sysres := sys.NewMount(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewMount(ctx, sr, sys, util.Config{})
 	res, err := NewMount(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1340,13 +1328,11 @@ func (ret *MountMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type InterfaceMap map[string]*Interface
 
 func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Interface, error) {
-	sysres := sys.NewInterface(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewInterface(ctx, sr, sys, config)
 	res, err := NewInterface(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1360,7 +1346,8 @@ func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config ut
 }
 
 func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Interface, system.Interface, bool, error) {
-	sysres := sys.NewInterface(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewInterface(ctx, sr, sys, util.Config{})
 	res, err := NewInterface(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
@@ -1442,13 +1429,11 @@ func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v interface{}) error) erro
 	return nil
 }
 
-//go:generate sed -i -e "/^\\/\\/ +build genny/d" resource_list.go
-//go:generate goimports -w resource_list.go resource_list.go
-
 type HTTPMap map[string]*HTTP
 
 func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*HTTP, error) {
-	sysres := sys.NewHTTP(sr, sys, config)
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewHTTP(ctx, sr, sys, config)
 	res, err := NewHTTP(sysres, config)
 	if err != nil {
 		return nil, err
@@ -1462,7 +1447,8 @@ func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Co
 }
 
 func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP, system.HTTP, bool, error) {
-	sysres := sys.NewHTTP(sr, sys, util.Config{})
+	ctx := context.WithValue(context.Background(), "id", sr)
+	sysres := sys.NewHTTP(ctx, sr, sys, util.Config{})
 	res, err := NewHTTP(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err

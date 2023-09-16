@@ -6,18 +6,17 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/blang/semver"
-	"github.com/onsi/gomega/types"
+	"github.com/blang/semver/v4"
 )
 
 func TestBeSemverConstraint(t *testing.T) {
 	type args struct {
-		Constraint interface{}
+		Constraint any
 	}
 	tests := []struct {
 		name string
 		args args
-		want types.GomegaMatcher
+		want GossMatcher
 	}{
 		{
 			name: "sanity",
@@ -36,28 +35,26 @@ func TestBeSemverConstraint(t *testing.T) {
 
 func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	tests := []struct {
-		name        string
-		fields      fields
-		args        args
-		wantMessage string
+		name       string
+		fields     fields
+		args       args
+		wantResult MatcherResult
 	}{
 		{
-			name:        "string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: "1.0.0"},
-			wantMessage: "Expected\n    <string>: 1.0.0\nto be > 1.1.0",
-		},
-		{
-			name:        "slice_string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: []string{"1.0.0"}},
-			wantMessage: "Expected\n    <[]string | len:1, cap:1>: [\"1.0.0\"]\nto be > 1.1.0",
+			name:   "string",
+			fields: fields{Constraint: "> 1.1.0"},
+			args:   args{actual: "1.0.0"},
+			wantResult: MatcherResult{
+				Actual:   "1.0.0",
+				Message:  "to satisfy semver constraint",
+				Expected: "> 1.1.0",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -65,18 +62,18 @@ func TestBeSemverConstraintMatcher_FailureMessage(t *testing.T) {
 			matcher := &BeSemverConstraintMatcher{
 				Constraint: tt.fields.Constraint,
 			}
-			gotMessage := matcher.FailureMessage(tt.args.actual)
-			assert.Equal(t, tt.wantMessage, gotMessage)
+			gotResult := matcher.FailureResult(tt.args.actual)
+			assert.Equal(t, tt.wantResult, gotResult)
 		})
 	}
 }
 
 func TestBeSemverConstraintMatcher_Match(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	type want struct {
 		success    bool
@@ -165,28 +162,26 @@ func TestBeSemverConstraintMatcher_Match(t *testing.T) {
 
 func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 	type fields struct {
-		Constraint interface{}
+		Constraint any
 	}
 	type args struct {
-		actual interface{}
+		actual any
 	}
 	tests := []struct {
-		name        string
-		fields      fields
-		args        args
-		wantMessage string
+		name       string
+		fields     fields
+		args       args
+		wantResult MatcherResult
 	}{
 		{
-			name:        "string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: "1.0.0"},
-			wantMessage: "Expected\n    <string>: 1.0.0\nnot to be > 1.1.0",
-		},
-		{
-			name:        "slice_string",
-			fields:      fields{Constraint: "> 1.1.0"},
-			args:        args{actual: []string{"1.0.0"}},
-			wantMessage: "Expected\n    <[]string | len:1, cap:1>: [\"1.0.0\"]\nnot to be > 1.1.0",
+			name:   "string",
+			fields: fields{Constraint: "> 1.1.0"},
+			args:   args{actual: "1.0.0"},
+			wantResult: MatcherResult{
+				Actual:   "1.0.0",
+				Message:  "not to satisfy semver constraint",
+				Expected: "> 1.1.0",
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -195,15 +190,15 @@ func TestBeSemverConstraintMatcher_NegatedFailureMessage(t *testing.T) {
 				Constraint: tt.fields.Constraint,
 			}
 
-			gotMessage := matcher.NegatedFailureMessage(tt.args.actual)
-			assert.Equal(t, tt.wantMessage, gotMessage)
+			gotResult := matcher.NegatedFailureResult(tt.args.actual)
+			assert.Equal(t, tt.wantResult, gotResult)
 		})
 	}
 }
 
 func Test_toConstraint(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -254,7 +249,7 @@ func Test_toConstraint(t *testing.T) {
 
 func Test_toVersion(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -303,7 +298,7 @@ func Test_toVersion(t *testing.T) {
 
 func Test_toVersions(t *testing.T) {
 	type args struct {
-		in interface{}
+		in any
 	}
 	type want struct {
 		ok bool
@@ -325,7 +320,7 @@ func Test_toVersions(t *testing.T) {
 		},
 		{
 			name: "slice_interfaces",
-			args: args{in: []interface{}{"1.0.0"}},
+			args: args{in: []any{"1.0.0"}},
 			want: want{ok: true},
 		},
 		{
@@ -335,7 +330,7 @@ func Test_toVersions(t *testing.T) {
 		},
 		{
 			name: "invalid_object_in_slice",
-			args: args{in: []interface{}{want{}}},
+			args: args{in: []any{want{}}},
 			want: want{ok: false},
 		},
 	}
@@ -351,7 +346,7 @@ func Test_toVersions(t *testing.T) {
 				for i, version := range gotVersions {
 					if versions, ok := tt.args.in.([]string); ok {
 						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
-					} else if versions, ok := tt.args.in.([]interface{}); ok {
+					} else if versions, ok := tt.args.in.([]any); ok {
 						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
 					} else {
 						assert.Equal(t, fmt.Sprint(tt.args.in), version.String())

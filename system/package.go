@@ -1,9 +1,10 @@
 package system
 
 import (
+	"context"
 	"errors"
 
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/util"
 )
 
 type Package interface {
@@ -19,7 +20,7 @@ type NullPackage struct {
 	name string
 }
 
-func NewNullPackage(name string, system *System, config util.Config) Package {
+func NewNullPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &NullPackage{name: name}
 }
 

@@ -1,8 +1,11 @@
 package system
 
 import (
-	"github.com/aelsabbahy/goss/util"
-	"github.com/opencontainers/runc/libcontainer/user"
+	"context"
+	"os/user"
+	"strconv"
+
+	"github.com/goss-org/goss/util"
 )
 
 type Group interface {
@@ -15,7 +18,7 @@ type DefGroup struct {
 	groupname string
 }
 
-func NewDefGroup(groupname string, system *System, config util.Config) Group {
+func NewDefGroup(_ context.Context, groupname string, system *System, config util.Config) Group {
 	return &DefGroup{groupname: groupname}
 }
 
@@ -37,5 +40,10 @@ func (u *DefGroup) GID() (int, error) {
 		return 0, err
 	}
 
-	return group.Gid, nil
+	gid, err := strconv.Atoi(group.Gid)
+	if err != nil {
+		return 0, err
+	}
+
+	return gid, nil
 }

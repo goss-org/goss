@@ -1,4 +1,3 @@
----
 service:
   autofs:
     enabled: false
@@ -30,3 +29,5 @@ addr:
     local-address: 127.0.0.1
 gossfile:
   "../goss-s*.yaml": {}
+  bypath:
+    file: "../goss-dummy.yaml"

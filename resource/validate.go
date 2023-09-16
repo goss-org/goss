@@ -1,16 +1,13 @@
 package resource
 
 import (
-	"bufio"
-	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
-	"regexp"
 	"strings"
 	"time"
 
-	"github.com/onsi/gomega/types"
+	"github.com/goss-org/goss/matchers"
 )
 
 const (
@@ -23,43 +20,117 @@ const (
 	SUCCESS = iota
 	FAIL
 	SKIP
+	UNKNOWN
 )
+
+const (
+	OutcomePass    = "pass"
+	OutcomeFail    = "fail"
+	OutcomeSkip    = "skip"
+	OutcomeUnknown = "unknown"
+)
+
+var humanOutcomes map[int]string = map[int]string{
+	UNKNOWN: OutcomeUnknown,
+	SUCCESS: OutcomePass,
+	FAIL:    OutcomeFail,
+	SKIP:    OutcomeSkip,
+}
+
+func HumanOutcomes() map[int]string {
+	return humanOutcomes
+}
 
 const (
 	maxScanTokenSize = 10 * 1024 * 1024
 )
 
-type TestResult struct {
-	Successful   bool          `json:"successful" yaml:"successful"`
-	ResourceId   string        `json:"resource-id" yaml:"resource-id"`
-	ResourceType string        `json:"resource-type" yaml:"resource-type"`
-	Title        string        `json:"title" yaml:"title"`
-	Meta         meta          `json:"meta" yaml:"meta"`
-	TestType     int           `json:"test-type" yaml:"test-type"`
-	Result       int           `json:"result" yaml:"result"`
-	Property     string        `json:"property" yaml:"property"`
-	Err          error         `json:"err" yaml:"err"`
-	Expected     []string      `json:"expected" yaml:"expected"`
-	Found        []string      `json:"found" yaml:"found"`
-	Human        string        `json:"human" yaml:"human"`
-	Duration     time.Duration `json:"duration" yaml:"duration"`
+type ValidateError string
+
+func (g ValidateError) Error() string { return string(g) }
+func toValidateError(err error) *ValidateError {
+	if err == nil {
+		return nil
+	}
+	ve := ValidateError(err.Error())
+	return &ve
 }
 
-func skipResult(typeS string, testType int, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+type TestResult struct {
+	Successful bool `json:"successful" yaml:"successful"`
+	Skipped    bool `json:"skipped" yaml:"skipped"`
+	// Resource data
+	ResourceId   string `json:"resource-id" yaml:"resource-id"`
+	ResourceType string `json:"resource-type" yaml:"resource-type"`
+	Property     string `json:"property" yaml:"property"`
+
+	// User added info
+	Title string `json:"title" yaml:"title"`
+	Meta  meta   `json:"meta" yaml:"meta"`
+
+	// Result
+	Result        int                    `json:"result" yaml:"result"`
+	Err           *ValidateError         `json:"err" yaml:"err"`
+	MatcherResult matchers.MatcherResult `json:"matcher-result" yaml:"matcher-result"`
+	StartTime     time.Time              `json:"start-time" yaml:"start-time"`
+	EndTime       time.Time              `json:"end-time" yaml:"end-time"`
+	Duration      time.Duration          `json:"duration" yaml:"duration"`
+}
+
+// ToOutcome converts the enum to a human-friendly string.
+func (tr TestResult) ToOutcome() string {
+	switch tr.Result {
+	case SUCCESS:
+		return OutcomePass
+	case FAIL:
+		return OutcomeFail
+	case SKIP:
+		return OutcomeSkip
+	default:
+		return OutcomeUnknown
+	}
+}
+
+func (t TestResult) SortKey() string {
+	return fmt.Sprintf("%s:%s", t.ResourceType, t.ResourceId)
+}
+
+func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+	endTime := time.Now()
 	return TestResult{
-		Successful:   true,
 		Result:       SKIP,
+		Skipped:      true,
 		ResourceType: typeS,
-		TestType:     testType,
 		ResourceId:   id,
 		Title:        title,
 		Meta:         meta,
 		Property:     property,
-		Duration:     startTime.Sub(startTime),
+		StartTime:    startTime,
+		EndTime:      endTime,
+		Duration:     endTime.Sub(startTime),
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue interface{}, actual interface{}, skip bool) TestResult {
+func ValidateValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+	if f, ok := actual.(func() (io.Reader, error)); ok {
+		if _, ok := expectedValue.([]any); !ok {
+			actual = func() (string, error) {
+				v, err := f()
+				if err != nil {
+					return "", err
+				}
+				i, err := matchers.ReaderToString{}.Transform(v)
+				if err != nil {
+					return "", err
+				}
+				return i.(string), nil
+			}
+		}
+	}
+	return ValidateGomegaValue(res, property, expectedValue, actual, skip)
+}
+
+func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
@@ -69,7 +140,6 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 	if skip {
 		return skipResult(
 			typeS,
-			Values,
 			id,
 			title,
 			meta,
@@ -78,7 +148,8 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		)
 	}
 
-	var foundValue interface{}
+	var foundValue any
+	var gomegaMatcher matchers.GossMatcher
 	var err error
 	switch f := actual.(type) {
 	case func() (bool, error):
@@ -89,298 +160,64 @@ func ValidateValue(res ResourceRead, property string, expectedValue interface{},
 		foundValue, err = f()
 	case func() ([]string, error):
 		foundValue, err = f()
-	case func() (interface{}, error):
+	case func() (any, error):
 		foundValue, err = f()
+	case func() (io.Reader, error):
+		foundValue, err = f()
+		gomegaMatcher = matchers.HavePatterns(expectedValue)
 	default:
 		err = fmt.Errorf("Unknown method signature: %t", f)
 	}
 
+	foundValue = sanitizeExpectedValue(foundValue)
 	expectedValue = sanitizeExpectedValue(expectedValue)
-	var gomegaMatcher types.GomegaMatcher
 	var success bool
-	if err == nil {
+	if gomegaMatcher == nil && err == nil {
 		gomegaMatcher, err = matcherToGomegaMatcher(expectedValue)
 	}
-	if err == nil {
-		success, err = gomegaMatcher.Match(foundValue)
-	}
 	if err != nil {
+		endTime := time.Now()
 		return TestResult{
-			Successful:   false,
 			Result:       FAIL,
 			ResourceType: typeS,
-			TestType:     Values,
 			ResourceId:   id,
 			Title:        title,
 			Meta:         meta,
 			Property:     property,
-			Err:          err,
-			Duration:     time.Now().Sub(startTime),
+			Err:          toValidateError(err),
+			StartTime:    startTime,
+			EndTime:      endTime,
+			Duration:     endTime.Sub(startTime),
 		}
 	}
 
-	var failMessage string
-	var result int
-	if !success {
-		failMessage = gomegaMatcher.FailureMessage(foundValue)
+	success, err = gomegaMatcher.Match(foundValue)
+
+	var matcherResult matchers.MatcherResult
+	result := SUCCESS
+	if success {
+		matcherResult = matchers.MatcherResult{
+			Actual:   foundValue,
+			Message:  "matches expectation",
+			Expected: expectedValue,
+		}
+	} else {
+		matcherResult = gomegaMatcher.FailureResult(foundValue)
 		result = FAIL
 	}
 
-	expected, _ := json.Marshal(expectedValue)
-	found, _ := json.Marshal(foundValue)
-
+	endTime := time.Now()
 	return TestResult{
-		Successful:   success,
-		Result:       result,
-		ResourceType: typeS,
-		TestType:     Value,
-		ResourceId:   id,
-		Title:        title,
-		Meta:         meta,
-		Property:     property,
-		Expected:     []string{string(expected)},
-		Found:        []string{string(found)},
-		Human:        failMessage,
-		Err:          err,
-		Duration:     time.Now().Sub(startTime),
-	}
-}
-
-type patternMatcher interface {
-	Match(string) bool
-	Pattern() string
-	Inverse() bool
-}
-
-type stringPattern struct {
-	pattern      string
-	cleanPattern string
-	inverse      bool
-}
-
-func newStringPattern(str string) *stringPattern {
-	var inverse bool
-	if strings.HasPrefix(str, "!") {
-		inverse = true
-	}
-	cleanPattern := strings.TrimLeft(str, "\\/!")
-	return &stringPattern{
-		pattern:      str,
-		cleanPattern: cleanPattern,
-		inverse:      inverse,
-	}
-}
-
-func (s *stringPattern) Match(str string) bool {
-	return strings.Contains(str, s.cleanPattern)
-}
-
-func (s *stringPattern) Pattern() string { return s.pattern }
-func (s *stringPattern) Inverse() bool   { return s.inverse }
-
-type regexPattern struct {
-	pattern string
-	re      *regexp.Regexp
-	inverse bool
-}
-
-func newRegexPattern(str string) (*regexPattern, error) {
-	var inverse bool
-	cleanStr := str
-	if strings.HasPrefix(str, "!") {
-		inverse = true
-		cleanStr = cleanStr[1:]
-	}
-	trimLeft := []rune{'\\', '/'}
-	for _, r := range trimLeft {
-		if rune(cleanStr[0]) == r {
-			cleanStr = cleanStr[1:]
-			break
-		}
-	}
-	trimRight := []rune{'/'}
-	for _, r := range trimRight {
-		if rune(cleanStr[len(cleanStr)-1]) == r {
-			cleanStr = cleanStr[:len(cleanStr)-1]
-			break
-		}
-	}
-
-	re, err := regexp.Compile(cleanStr)
-
-	return &regexPattern{
-		pattern: str,
-		re:      re,
-		inverse: inverse,
-	}, err
-
-}
-
-func (re *regexPattern) Match(str string) bool {
-	return re.re.MatchString(str)
-}
-
-func (re *regexPattern) Pattern() string { return re.pattern }
-func (re *regexPattern) Inverse() bool   { return re.inverse }
-
-func sliceToPatterns(slice []string) ([]patternMatcher, error) {
-	var patterns []patternMatcher
-	for _, s := range slice {
-		if (strings.HasPrefix(s, "/") || strings.HasPrefix(s, "!/")) && strings.HasSuffix(s, "/") {
-			pat, err := newRegexPattern(s)
-			if err != nil {
-				return nil, err
-			}
-			patterns = append(patterns, pat)
-		} else {
-			patterns = append(patterns, newStringPattern(s))
-		}
-	}
-	return patterns, nil
-}
-
-func patternsToSlice(patterns []patternMatcher) []string {
-	var slice []string
-	for _, p := range patterns {
-		slice = append(slice, p.Pattern())
-	}
-	return slice
-}
-
-func ValidateContains(res ResourceRead, property string, expectedValues []string, method func() (io.Reader, error), skip bool) TestResult {
-	id := res.ID()
-	title := res.GetTitle()
-	meta := res.GetMeta()
-	typ := reflect.TypeOf(res)
-	typeS := strings.Split(typ.String(), ".")[1]
-	startTime := time.Now()
-	if skip {
-		return skipResult(
-			typeS,
-			Values,
-			id,
-			title,
-			meta,
-			property,
-			startTime,
-		)
-	}
-	var err error
-	var fh io.Reader
-	var notfound []patternMatcher
-	notfound, err = sliceToPatterns(expectedValues)
-	// short circuit
-	if len(notfound) == 0 && err == nil {
-		return TestResult{
-			Successful:   true,
-			Result:       SUCCESS,
-			ResourceType: typeS,
-			TestType:     Contains,
-			ResourceId:   id,
-			Title:        title,
-			Meta:         meta,
-			Property:     property,
-			Expected:     expectedValues,
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-	if err == nil {
-		fh, err = method()
-	}
-	if err != nil {
-		return TestResult{
-			Successful:   false,
-			Result:       FAIL,
-			ResourceType: typeS,
-			TestType:     Contains,
-			ResourceId:   id,
-			Title:        title,
-			Meta:         meta,
-			Property:     property,
-			Err:          err,
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-
-	defer func() {
-		//Do we need to close the stream?
-		if rc, ok := fh.(io.ReadCloser); ok {
-			rc.Close()
-		}
-	}()
-
-	scanner := bufio.NewScanner(fh)
-	scanner.Buffer(nil, maxScanTokenSize)
-	var found []patternMatcher
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		i := 0
-		for _, pat := range notfound {
-			if pat.Match(line) {
-				// Found it, but wasn't supposed to, don't mark it as found, but remove it from search
-				if !pat.Inverse() {
-					found = append(found, pat)
-				}
-				continue
-			}
-			notfound[i] = pat
-			i++
-		}
-		notfound = notfound[:i]
-		if len(notfound) == 0 {
-			break
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		return TestResult{
-			Successful:   false,
-			Result:       FAIL,
-			ResourceType: typeS,
-			TestType:     Contains,
-			ResourceId:   id,
-			Title:        title,
-			Meta:         meta,
-			Property:     property,
-			Err:          err,
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-
-	for _, pat := range notfound {
-		// Didn't find it, but we didn't want to.. so we mark it as found
-		// Empty pattern should match even if input to scanner is empty
-		if pat.Inverse() || pat.Pattern() == "" {
-			found = append(found, pat)
-		}
-	}
-
-	if len(expectedValues) != len(found) {
-		return TestResult{
-			Successful:   false,
-			Result:       FAIL,
-			ResourceType: typeS,
-			TestType:     Contains,
-			ResourceId:   id,
-			Title:        title,
-			Meta:         meta,
-			Property:     property,
-			Expected:     expectedValues,
-			Found:        patternsToSlice(found),
-			Duration:     time.Now().Sub(startTime),
-		}
-	}
-	return TestResult{
-		Successful:   true,
-		Result:       SUCCESS,
-		ResourceType: typeS,
-		TestType:     Contains,
-		ResourceId:   id,
-		Title:        title,
-		Meta:         meta,
-		Property:     property,
-		Expected:     expectedValues,
-		Found:        patternsToSlice(found),
-		Duration:     time.Now().Sub(startTime),
+		Result:        result,
+		ResourceType:  typeS,
+		ResourceId:    id,
+		Title:         title,
+		Meta:          meta,
+		Property:      property,
+		MatcherResult: matcherResult,
+		Err:           toValidateError(err),
+		StartTime:     startTime,
+		EndTime:       endTime,
+		Duration:      endTime.Sub(startTime),
 	}
 }

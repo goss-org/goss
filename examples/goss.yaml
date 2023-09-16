@@ -1,0 +1,25 @@
+gossfile:
+  goss_awesome_gomega.yaml: {}
+
+file:
+  test.txt:
+    exists: true
+    contains: |
+      test file
+      second line
+
+command:
+  echo '15':
+    exit-status: 0
+    stdout:
+      and:
+        - gt: 10
+        - lt: 50
+        - match-regexp: '\d{2}'
+    timeout: 10000
+
+http:
+  https://ifconfig.me:
+    status: 200
+    timeout: 5000
+    body: '{{.Vars.Ip}}'

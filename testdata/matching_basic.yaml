@@ -1,0 +1,130 @@
+matching:
+  # Basic matchers
+  basic_string:
+    content: 'this is a test'
+    matches: 'this is a test'
+
+  basic_string_oneline:
+    content: |
+      this is a test1
+    matches: |
+      this is a test1
+
+  basic_string_multiline:
+    content: |
+      this is a test1
+      this is a test2
+      this is a test3
+    matches: |
+      this is a test1
+      this is a test2
+      this is a test3
+
+  basic_string_regexp:
+    content: 'this is a test'
+    matches:
+      match-regexp: '^this'
+
+  basic_string_skip:
+    skip: true
+    content: 'this is a test'
+    matches: 'this is a test'
+
+  basic_semver:
+    content: '1.2.3'
+    matches:
+      semver-constraint: '>=1.2.0'
+
+  basic_int:
+    content: 42
+    matches: 42
+
+  basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      - 'group1'
+      - 'group2'
+
+  basic_array_matchers:
+    content: [foo, bar, moo]
+    matches:
+      and:
+        - contain-elements: [foo, bar]
+        - [foo, bar] # same as above
+        - equal: [foo, bar, moo] # order matters, exact match
+        - consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        - contain-element:
+            have-prefix: b
+        - contain-element:
+            have-suffix: r
+
+  basic_reader:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      - 'foo'
+      - '/^m.*w$/'
+      - '!ftw'
+      - '!/^ERROR:/'
+
+  # Negated
+  negated_basic_string:
+    content: 'this is a test'
+    matches:
+      not: 'this is a failing test'
+
+  negated_basic_string_regexp:
+    content: 'this is a test'
+    matches:
+      not:
+        match-regexp: '^foo'
+
+  negated_basic_int:
+    content: 42
+    matches:
+      not: 43
+
+  negated_basic_array:
+    content:
+      - 'group1'
+      - 'group2'
+      - 'group3'
+    matches:
+      not:
+        - 'group1'
+        - 'group2'
+        - 'group2'
+        - 'group4'
+
+  negated_basic_array_matchers:
+    content: [foo, bar, moo]
+    matches:
+      and:
+        - not:
+            contain-elements: [fox, box]
+        - not: [fox, bax] # same as above
+        - not:
+            equal: [fox, bax, mox] # order matters, exact match
+        - not:
+            consist-of: [have-suffix: x, have-prefix: t, box] # order doesn't matter, can use matchers
+        - not:
+            contain-element:
+              have-prefix: x
+
+  negated_basic_reader:
+    as-reader: true
+    content: |
+      foo bar
+      moo cow
+    matches:
+      not:
+        contain-elements:
+          - 'fox'
+          - '/^t.*w$/'
+          - '!foo'
+          - '!/^foo/'

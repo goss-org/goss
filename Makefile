@@ -1,6 +1,6 @@
 export GO15VENDOREXPERIMENT=1
 
-exe = github.com/aelsabbahy/goss/cmd/goss
+exe = github.com/goss-org/goss/cmd/goss
 pkgs = $(shell ./novendor.sh)
 cmd = goss
 GO111MODULE=on
@@ -18,7 +18,20 @@ install: release/goss-linux-amd64
 
 test:
 	$(info INFO: Starting build $@)
-	./ci/go-test.sh $(pkgs)
+	./ci/go-test.sh
+
+cov:
+	go test -coverpkg=./... -coverprofile=c.out ./...
+	# go tool cover -func ./c.out
+
+funcov:
+	go test -coverpkg=./... -coverprofile=c.out ./...
+	go tool cover -func ./c.out
+
+htmlcov:
+	go test -v -coverpkg=./... -coverprofile=c.out ./...
+	go tool cover -html ./c.out
+
 
 lint:
 	$(info INFO: Starting build $@)
@@ -36,15 +49,13 @@ bench:
 	$(info INFO: Starting build $@)
 	go test -bench=.
 
-alpha-test-%: release/goss-%
+test-int-validate-%: release/goss-%
 	$(info INFO: Starting build $@)
-	./integration-tests/run-tests-alpha.sh $*
+	./integration-tests/run-validate-tests.sh $*
 
 test-int-serve-%: release/goss-%
 	$(info INFO: Starting build $@)
 	./integration-tests/run-serve-tests.sh $*
-# shim to account for linux being not in alpha
-test-int-serve-linux-amd64: test-int-serve-alpha-linux-amd64
 
 release/goss-%: $(GO_FILES)
 	./release-build.sh $*
@@ -53,7 +64,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-alpha-darwin-amd64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-alpha-windows-amd64
+build: release/goss-darwin-amd64 release/goss-darwin-arm64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-linux-arm64 release/goss-windows-amd64
 
 gen:
 	$(info INFO: Starting build $@)
@@ -71,6 +82,10 @@ push-images:
 	$(info INFO: Starting build $@)
 	development/push_images.sh
 
+# Update the matcher test golden files
+update-matcher-tests:
+	go test -v -run '^TestMatchers' . -update
+
 test-darwin-all: test-short-all test-int-darwin-all
 # linux _does_ have the docker-style testing, but does _not_ currently have the same style integration tests darwin+windows do, _because_ of the docker-style testing.
 test-linux-all: test-short-all test-int-64 test-int-32
@@ -78,8 +93,8 @@ test-windows-all: test-short-all test-int-windows-all
 
 test-int-64: centos7 wheezy trusty alpine3 arch test-int-serve-linux-amd64
 test-int-32: centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
-test-int-darwin-all: alpha-test-alpha-darwin-amd64 test-int-serve-alpha-darwin-amd64
-test-int-windows-all: alpha-test-alpha-windows-amd64 test-int-serve-alpha-windows-amd64
+test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
+test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
 test-int-all: test-int-32 test-int-64
 
 centos7-32: build

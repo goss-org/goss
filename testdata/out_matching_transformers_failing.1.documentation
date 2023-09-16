@@ -1,0 +1,368 @@
+Matching: basic_reader_as_array: matches:
+Expected
+    ["foo bar","moo cow",""]
+to contain element matching
+    {"contain-substring":"fox"}
+the transform chain was
+    [{"to-array":{}}]
+the raw value was
+    "foo bar\nmoo cow\n"
+Matching: test_array: matches:
+Expected
+    ["45","46","47"]
+to contain elements matching
+    [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
+the missing elements were
+    [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
+Matching: test_gjson_have_key_array: matches:
+Expected
+    {"arr":[{"nested":"cow"},{"nested2":"moo"}]}
+to satisfy at least one of these matchers
+    [{"have-key":"fail"}]
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"arr\": [{\"nested\": \"cow\"}, {\"nested2\": \"moo\"}]}"
+Matching: test_gjson_invalid: matches:
+Error
+    matchers.Gjson{Path:"@this"}: Invalid json
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"arr\""
+Matching: test_gjson_not_found: matches:
+Error
+    matchers.Gjson{Path:"foo"}: Path not found: foo
+the transform chain was
+    [{"gjson":{"Path":"foo"}}]
+the raw value was
+    "{\"arr\": [{\"nested\": \"cow\"}, {\"nested2\": \"moo\"}]}"
+Matching: test_gjson_transform_nested_and: matches:
+Expected
+    {"nested":"cow"}
+to have key matching
+    "nope"
+the transform chain was
+    [{"gjson":{"Path":"moo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_transform_nested_count: matches:
+Expected
+    15
+to be numerically le
+    10
+the transform chain was
+    [{"gjson":{"Path":"count"}},{"to-numeric":{}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_transform_nested_prefix: matches:
+Expected
+    "bar"
+to have prefix
+    "x"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -x
+    +bar
+the transform chain was
+    [{"gjson":{"Path":"foo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_transform_nested_this: matches:
+Expected
+    {"count":"15","foo":"bar","moo":{"nested":"cow"}}
+to have key matching
+    "nope"
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_transform_not_key: matches:
+Expected
+    {"nested":"cow"}
+not to have key matching
+    "nested"
+the transform chain was
+    [{"gjson":{"Path":"moo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_transform_simple: matches:
+Expected
+    "cow"
+to equal
+    "cowx"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -cowx
+    +cow
+the transform chain was
+    [{"gjson":{"Path":"moo.nested"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+Matching: test_gjson_using_this_and_equal: matches:
+Expected
+    {"baz":"bing","foo":"bar"}
+to equal
+    {"baz":"bing","fox":"bar"}
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"baz\": \"bing\"}"
+Matching: test_numeric_string: matches:
+Expected
+    "128"
+to equal
+    "129"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -129
+    +128
+the transform chain was
+    [{"to-string":{}}]
+the raw value was
+    128
+Matching: test_reader_as_single_string: matches:
+Expected
+    "cool"
+to equal
+    "not-cool"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -not-cool
+    +cool
+Matching: test_reader_using_int_matchers: matches:
+Expected
+    40
+to be numerically le
+    20
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "40"
+Matching: test_reader_using_string_matchers: matches:
+Expected
+    "foo bar\n15\nmoo cow\n"
+to have length
+    15
+Matching: test_string_float: matches:
+Expected
+    128.3
+to be numerically eq
+    129.3
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "128.3"
+Matching: test_string_numeric: matches:
+Expected
+    128
+to be numerically eq
+    129
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "128"
+
+
+Failures/Skipped:
+
+Matching: basic_reader_as_array: matches:
+Expected
+    ["foo bar","moo cow",""]
+to contain element matching
+    {"contain-substring":"fox"}
+the transform chain was
+    [{"to-array":{}}]
+the raw value was
+    "foo bar\nmoo cow\n"
+
+Matching: test_array: matches:
+Expected
+    ["45","46","47"]
+to contain elements matching
+    [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
+the missing elements were
+    [{"contain-element":{"match-regexp":"5."}},"55",{"and":[{"ge":56},{"le":30}]}]
+
+Matching: test_gjson_have_key_array: matches:
+Expected
+    {"arr":[{"nested":"cow"},{"nested2":"moo"}]}
+to satisfy at least one of these matchers
+    [{"have-key":"fail"}]
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"arr\": [{\"nested\": \"cow\"}, {\"nested2\": \"moo\"}]}"
+
+Matching: test_gjson_invalid: matches:
+Error
+    matchers.Gjson{Path:"@this"}: Invalid json
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"arr\""
+
+Matching: test_gjson_not_found: matches:
+Error
+    matchers.Gjson{Path:"foo"}: Path not found: foo
+the transform chain was
+    [{"gjson":{"Path":"foo"}}]
+the raw value was
+    "{\"arr\": [{\"nested\": \"cow\"}, {\"nested2\": \"moo\"}]}"
+
+Matching: test_gjson_transform_nested_and: matches:
+Expected
+    {"nested":"cow"}
+to have key matching
+    "nope"
+the transform chain was
+    [{"gjson":{"Path":"moo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_transform_nested_count: matches:
+Expected
+    15
+to be numerically le
+    10
+the transform chain was
+    [{"gjson":{"Path":"count"}},{"to-numeric":{}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_transform_nested_prefix: matches:
+Expected
+    "bar"
+to have prefix
+    "x"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -x
+    +bar
+the transform chain was
+    [{"gjson":{"Path":"foo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_transform_nested_this: matches:
+Expected
+    {"count":"15","foo":"bar","moo":{"nested":"cow"}}
+to have key matching
+    "nope"
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_transform_not_key: matches:
+Expected
+    {"nested":"cow"}
+not to have key matching
+    "nested"
+the transform chain was
+    [{"gjson":{"Path":"moo"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_transform_simple: matches:
+Expected
+    "cow"
+to equal
+    "cowx"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -cowx
+    +cow
+the transform chain was
+    [{"gjson":{"Path":"moo.nested"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"moo\": {\"nested\": \"cow\"}, \"count\": \"15\"}"
+
+Matching: test_gjson_using_this_and_equal: matches:
+Expected
+    {"baz":"bing","foo":"bar"}
+to equal
+    {"baz":"bing","fox":"bar"}
+the transform chain was
+    [{"gjson":{"Path":"@this"}}]
+the raw value was
+    "{\"foo\": \"bar\", \"baz\": \"bing\"}"
+
+Matching: test_numeric_string: matches:
+Expected
+    "128"
+to equal
+    "129"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -129
+    +128
+the transform chain was
+    [{"to-string":{}}]
+the raw value was
+    128
+
+Matching: test_reader_as_single_string: matches:
+Expected
+    "cool"
+to equal
+    "not-cool"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -not-cool
+    +cool
+
+Matching: test_reader_using_int_matchers: matches:
+Expected
+    40
+to be numerically le
+    20
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "40"
+
+Matching: test_reader_using_string_matchers: matches:
+Expected
+    "foo bar\n15\nmoo cow\n"
+to have length
+    15
+
+Matching: test_string_float: matches:
+Expected
+    128.3
+to be numerically eq
+    129.3
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "128.3"
+
+Matching: test_string_numeric: matches:
+Expected
+    128
+to be numerically eq
+    129
+the transform chain was
+    [{"to-numeric":{}}]
+the raw value was
+    "128"
+
+Total Duration: 
+Count: 18, Failed: 18, Skipped: 0

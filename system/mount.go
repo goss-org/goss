@@ -1,17 +1,20 @@
 package system
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
-	"github.com/docker/docker/pkg/mount"
+	"github.com/goss-org/goss/util"
+	"github.com/moby/sys/mountinfo"
+	"github.com/samber/lo"
 )
 
 type Mount interface {
 	MountPoint() string
 	Exists() (bool, error)
 	Opts() ([]string, error)
+	VfsOpts() ([]string, error)
 	Source() (string, error)
 	Filesystem() (string, error)
 	Usage() (int, error)
@@ -21,12 +24,12 @@ type DefMount struct {
 	mountPoint string
 	loaded     bool
 	exists     bool
-	mountInfo  *mount.Info
+	mountInfo  *mountinfo.Info
 	usage      int
 	err        error
 }
 
-func NewDefMount(mountPoint string, system *System, config util.Config) Mount {
+func NewDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
 	return &DefMount{
 		mountPoint: mountPoint,
 	}
@@ -77,8 +80,17 @@ func (m *DefMount) Opts() ([]string, error) {
 	if err := m.setup(); err != nil {
 		return nil, err
 	}
+	allOpts := splitMountInfo(m.mountInfo.Options)
 
-	return strings.Split(m.mountInfo.Opts, ","), nil
+	return lo.Uniq(allOpts), nil
+}
+
+func (m *DefMount) VfsOpts() ([]string, error) {
+	if err := m.setup(); err != nil {
+		return nil, err
+	}
+	opts := splitMountInfo(m.mountInfo.VFSOptions)
+	return opts, nil
 }
 
 func (m *DefMount) Source() (string, error) {
@@ -94,7 +106,7 @@ func (m *DefMount) Filesystem() (string, error) {
 		return "", err
 	}
 
-	return m.mountInfo.Fstype, nil
+	return m.mountInfo.FSType, nil
 }
 
 func (m *DefMount) Usage() (int, error) {
@@ -105,17 +117,23 @@ func (m *DefMount) Usage() (int, error) {
 	return m.usage, nil
 }
 
-func getMount(mountpoint string) (*mount.Info, error) {
-	entries, err := mount.GetMounts()
+func getMount(mountpoint string) (*mountinfo.Info, error) {
+	entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
 	if err != nil {
 		return nil, err
 	}
-
-	// Search the table for the mountpoint
-	for _, e := range entries {
-		if e.Mountpoint == mountpoint {
-			return e, nil
-		}
+	if len(entries) == 0 {
+		return nil, fmt.Errorf("Mountpoint not found")
 	}
-	return nil, fmt.Errorf("Mountpoint not found")
+	return entries[0], nil
+}
+
+func splitMountInfo(s string) []string {
+	quoted := false
+	return strings.FieldsFunc(s, func(r rune) bool {
+		if r == '"' {
+			quoted = !quoted
+		}
+		return !quoted && r == ','
+	})
 }

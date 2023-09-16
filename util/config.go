@@ -21,34 +21,40 @@ type ConfigOption func(c *Config) error
 // NewConfig can be used to create this which will default to what the CLI assumes
 // and allow manipulation via ConfigOption functions
 type Config struct {
-	AllowInsecure     bool
-	AnnounceToCLI     bool
-	Cache             time.Duration
-	Debug             bool
-	Endpoint          string
-	FormatOptions     []string
-	IgnoreList        []string
-	ListenAddress     string
-	LocalAddress      string
-	MaxConcurrent     int
-	Method            string
-	NoColor           *bool
-	NoFollowRedirects bool
-	OutputFormat      string
-	OutputWriter      io.Writer
-	PackageManager    string
-	Password          string
-	RequestBody       string
-	Proxy             string
-	RequestHeader     []string
-	RetryTimeout      time.Duration
-	Server            string
-	Sleep             time.Duration
-	Spec              string
-	Timeout           time.Duration
-	Username          string
-	Vars              string
-	VarsInline        string
+	AllowInsecure         bool
+	AnnounceToCLI         bool
+	Cache                 time.Duration
+	Debug                 bool
+	Endpoint              string
+	FormatOptions         []string
+	IgnoreList            []string
+	ListenAddress         string
+	LocalAddress          string
+	LogLevel              string
+	MaxConcurrent         int
+	Method                string
+	NoColor               *bool
+	NoFollowRedirects     bool
+	OutputFormat          string
+	OutputWriter          io.Writer
+	PackageManager        string
+	Password              string
+	RequestBody           string
+	Proxy                 string
+	RequestHeader         []string
+	RetryTimeout          time.Duration
+	RunLevel              string
+	Server                string
+	Sleep                 time.Duration
+	Spec                  string
+	Timeout               time.Duration
+	Username              string
+	CAFile                string
+	CertFile              string
+	KeyFile               string
+	Vars                  string
+	VarsInline            string
+	DisabledResourceTypes []string
 }
 
 // TimeOutMilliSeconds is the timeout as milliseconds
@@ -59,31 +65,33 @@ func (c *Config) TimeOutMilliSeconds() int {
 // NewConfig creates a default configuration modeled on the defaults the CLI sets, modified using opts
 func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 	rc = &Config{
-		AllowInsecure:     false,
-		AnnounceToCLI:     false,
-		Cache:             5 * time.Second,
-		Debug:             false,
-		Endpoint:          "/healthz",
-		FormatOptions:     []string{},
-		IgnoreList:        []string{},
-		ListenAddress:     ":8080",
-		LocalAddress:      "",
-		MaxConcurrent:     50,
-		NoColor:           nil,
-		NoFollowRedirects: false,
-		OutputFormat:      "structured", // most appropriate for package usage
-		PackageManager:    "",
-		Password:          "",
-		Proxy:             "",
-		RequestHeader:     nil,
-		RetryTimeout:      0,
-		Server:            "",
-		Sleep:             time.Second,
-		Spec:              "",
-		Timeout:           0,
-		Username:          "",
-		Vars:              "",
-		VarsInline:        "",
+		AllowInsecure:         false,
+		AnnounceToCLI:         false,
+		Cache:                 5 * time.Second,
+		Debug:                 false,
+		Endpoint:              "/healthz",
+		FormatOptions:         []string{},
+		IgnoreList:            []string{},
+		DisabledResourceTypes: []string{},
+		ListenAddress:         ":8080",
+		LocalAddress:          "",
+		LogLevel:              "FATAL",
+		MaxConcurrent:         50,
+		NoColor:               nil,
+		NoFollowRedirects:     false,
+		OutputFormat:          "structured", // most appropriate for package usage
+		PackageManager:        "",
+		Password:              "",
+		Proxy:                 "",
+		RequestHeader:         nil,
+		RetryTimeout:          0,
+		Server:                "",
+		Sleep:                 time.Second,
+		Spec:                  "",
+		Timeout:               0,
+		Username:              "",
+		Vars:                  "",
+		VarsInline:            "",
 	}
 
 	// NewConfig() is likely to be used when embedding goss or using as a package
@@ -120,10 +128,7 @@ func WithOutputFormat(f string) ConfigOption {
 // WithFormatOptions sets options used by the output format plugins, valid options are output.WithFormatOptions
 func WithFormatOptions(opts ...string) ConfigOption {
 	return func(c *Config) error {
-		for _, o := range opts {
-			c.FormatOptions = append(c.FormatOptions, o)
-		}
-
+		c.FormatOptions = append(c.FormatOptions, opts...)
 		return nil
 	}
 }
@@ -210,7 +215,7 @@ func WithVarsFile(file string) ConfigOption {
 }
 
 // WithVarsData uses v as variables to pass to the Validator
-func WithVarsData(v interface{}) ConfigOption {
+func WithVarsData(v any) ConfigOption {
 	return func(c *Config) error {
 		jv, err := json.Marshal(v)
 		if err != nil {
@@ -236,6 +241,14 @@ func WithVarsString(v string) ConfigOption {
 	}
 }
 
+// WithDisabledResourceTypes ensures that any resource matching types listed will be skipped when validating
+func WithDisabledResourceTypes(t ...string) ConfigOption {
+	return func(c *Config) error {
+		c.DisabledResourceTypes = append(c.DisabledResourceTypes, t...)
+		return nil
+	}
+}
+
 type OutputConfig struct {
 	FormatOptions []string
 }
@@ -247,9 +260,9 @@ const (
 	YAML format = "yaml"
 )
 
-func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelist map[string]bool) error {
+func ValidateSections(unmarshal func(any) error, i any, whitelist map[string]bool) error {
 	// Get generic input
-	var toValidate map[string]map[string]interface{}
+	var toValidate map[string]map[string]any
 	if err := unmarshal(&toValidate); err != nil {
 		return err
 	}
@@ -268,7 +281,7 @@ func ValidateSections(unmarshal func(interface{}) error, i interface{}, whitelis
 	return nil
 }
 
-func WhitelistAttrs(i interface{}, format format) (map[string]bool, error) {
+func WhitelistAttrs(i any, format format) (map[string]bool, error) {
 	validAttrs := make(map[string]bool)
 	tags, err := reflections.Tags(i, string(format))
 	if err != nil {

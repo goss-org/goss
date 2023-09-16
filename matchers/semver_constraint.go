@@ -1,28 +1,30 @@
 package matchers
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"reflect"
 
-	"github.com/blang/semver"
+	"github.com/blang/semver/v4"
 	"github.com/onsi/gomega/format"
-	"github.com/onsi/gomega/types"
 )
 
-func BeSemverConstraint(constraint interface{}) types.GomegaMatcher {
+type BeSemverConstraintMatcher struct {
+	fakeOmegaMatcher
+
+	Constraint any
+}
+
+func BeSemverConstraint(constraint any) GossMatcher {
 	return &BeSemverConstraintMatcher{
 		Constraint: constraint,
 	}
 }
-
-type BeSemverConstraintMatcher struct {
-	Constraint interface{}
-}
-
-func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success bool, err error) {
-	constraint, ok := toConstraint(matcher.Constraint)
+func (m *BeSemverConstraintMatcher) Match(actual any) (success bool, err error) {
+	constraint, ok := toConstraint(m.Constraint)
 	if !ok {
-		return false, fmt.Errorf("Expected a valid semver constraint.  Got:\n%s", format.Object(matcher.Constraint, 1))
+		return false, fmt.Errorf("Expected a valid semver constraint.  Got:\n%s", format.Object(m.Constraint, 1))
 	}
 
 	actualSlice, ok := toVersions(actual)
@@ -39,15 +41,23 @@ func (matcher *BeSemverConstraintMatcher) Match(actual interface{}) (success boo
 	return true, nil
 }
 
-func (matcher *BeSemverConstraintMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("to be %s", matcher.Constraint))
+func (m *BeSemverConstraintMatcher) FailureResult(actual any) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "to satisfy semver constraint",
+		Expected: m.Constraint,
+	}
 }
 
-func (matcher *BeSemverConstraintMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, fmt.Sprintf("not to be %s", matcher.Constraint))
+func (m *BeSemverConstraintMatcher) NegatedFailureResult(actual any) MatcherResult {
+	return MatcherResult{
+		Actual:   actual,
+		Message:  "not to satisfy semver constraint",
+		Expected: m.Constraint,
+	}
 }
 
-func toConstraint(in interface{}) (semver.Range, bool) {
+func toConstraint(in any) (semver.Range, bool) {
 	str, ok := in.(string)
 	if !ok {
 		return nil, false
@@ -57,7 +67,7 @@ func toConstraint(in interface{}) (semver.Range, bool) {
 	return out, err == nil
 }
 
-func toVersion(in interface{}) (*semver.Version, bool) {
+func toVersion(in any) (*semver.Version, bool) {
 	str, ok := in.(string)
 	if !ok {
 		return nil, false
@@ -71,7 +81,7 @@ func toVersion(in interface{}) (*semver.Version, bool) {
 	return &v, true
 }
 
-func toVersions(in interface{}) ([]*semver.Version, bool) {
+func toVersions(in any) ([]*semver.Version, bool) {
 	if v, ok := toVersion(in); ok {
 		return []*semver.Version{v}, ok
 	}
@@ -82,7 +92,7 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 
 	out := make([]*semver.Version, 0)
 
-	if slice, ok := in.([]interface{}); ok {
+	if slice, ok := in.([]any); ok {
 		for _, ele := range slice {
 			if v, ok := toVersion(ele); ok {
 				out = append(out, v)
@@ -101,4 +111,18 @@ func toVersions(in interface{}) ([]*semver.Version, bool) {
 	}
 
 	return out, len(out) > 0
+}
+
+func (m *BeSemverConstraintMatcher) MarshalJSON() ([]byte, error) {
+	j := make(map[string]any)
+	j["semver-constraint"] = m.Constraint
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(j)
+	if err != nil {
+		return nil, nil
+	}
+	b := buffer.Bytes()
+	return b, nil
 }

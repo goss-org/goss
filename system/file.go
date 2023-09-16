@@ -1,6 +1,7 @@
 package system
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
@@ -8,18 +9,18 @@ import (
 	"hash"
 	"io"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/aelsabbahy/goss/util"
-	"github.com/opencontainers/runc/libcontainer/user"
+	"github.com/goss-org/goss/util"
 )
 
 type File interface {
 	Path() string
 	Exists() (bool, error)
-	Contains() (io.Reader, error)
+	Contents() (io.Reader, error)
 	Mode() (string, error)
 	Size() (int, error)
 	Filetype() (string, error)
@@ -47,7 +48,7 @@ type DefFile struct {
 	err      error
 }
 
-func NewDefFile(path string, system *System, config util.Config) File {
+func NewDefFile(_ context.Context, path string, system *System, config util.Config) File {
 	var err error
 	if !strings.HasPrefix(path, "~") {
 		path, err = filepath.Abs(path)
@@ -83,7 +84,7 @@ func (f *DefFile) Exists() (bool, error) {
 	return true, err
 }
 
-func (f *DefFile) Contains() (io.Reader, error) {
+func (f *DefFile) Contents() (io.Reader, error) {
 	if err := f.setup(); err != nil {
 		return nil, err
 	}
@@ -159,17 +160,17 @@ func realPath(path string) (string, error) {
 	pathS := strings.Split(path, "/")
 	f := pathS[0]
 
-	var usr user.User
+	var usr *user.User
 	var err error
 	if f == "~" {
-		usr, err = user.CurrentUser()
+		usr, err = user.Current()
 	} else {
-		usr, err = user.LookupUser(f[1:len(f)])
+		usr, err = user.Lookup(f[1:len(f)])
 	}
 	if err != nil {
 		return "", err
 	}
-	pathS[0] = usr.Home
+	pathS[0] = usr.HomeDir
 
 	realPath := strings.Join(pathS, "/")
 	realPath, err = filepath.Abs(realPath)
@@ -222,8 +223,8 @@ func (f *DefFile) Sha512() (string, error) {
 }
 
 func getUserForUid(uid int) (string, error) {
-	if user, err := user.LookupUid(uid); err == nil {
-		return user.Name, nil
+	if user, err := user.LookupId(strconv.Itoa(uid)); err == nil {
+		return user.Username, nil
 	}
 
 	cmd := util.NewCommand("getent", "passwd", strconv.Itoa(uid))
@@ -236,7 +237,7 @@ func getUserForUid(uid int) (string, error) {
 }
 
 func getGroupForGid(gid int) (string, error) {
-	if group, err := user.LookupGid(gid); err == nil {
+	if group, err := user.LookupGroupId(strconv.Itoa(gid)); err == nil {
 		return group.Name, nil
 	}
 

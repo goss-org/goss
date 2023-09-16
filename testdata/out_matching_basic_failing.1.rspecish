@@ -1,0 +1,246 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+Failures/Skipped:
+
+Matching: basic_array: matches:
+Expected
+    ["group1","group2","group3"]
+to contain elements matching
+    ["group1","group2","group2","group4"]
+the missing elements were
+    ["group2","group4"]
+
+Matching: basic_array_consists_of: matches:
+Expected
+    ["foo","bar","moo"]
+to consist of
+    ["fox",{"have-prefix":"t"},"box"]
+the missing elements were
+    ["fox",{"have-prefix":"t"},"box"]
+the extra elements were
+    ["foo","bar","moo"]
+
+Matching: basic_array_matchers: matches:
+Expected
+    ["foo","bar","moo"]
+to satisfy at least one of these matchers
+    [{"contain-elements":["fox","box"]},{"contain-elements":["fox","bax"]},["fox","bax","mox"],{"consist-of":["fox",{"have-prefix":"t"},"box"]},{"contain-element":{"have-prefix":"x"}},{"contain-element":{"have-suffix":"x"}}]
+
+Matching: basic_int: matches:
+Expected
+    42
+to be numerically eq
+    43
+
+Matching: basic_len: matches:
+Expected
+    "123"
+to satisfy at least one of these matchers
+    [{"have-len":2}]
+
+Matching: basic_reader: matches:
+Expected
+    "object: *strings.Reader"
+to have patterns
+    ["fox","/^t.*w$/","!foo","!/^foo/"]
+the missing elements were
+    ["fox","/^t.*w$/","!foo","!/^foo/"]
+
+Matching: basic_semver: matches:
+Expected
+    "1.2.3"
+to satisfy at least one of these matchers
+    [{"semver-constraint":">=9.9.0"}]
+
+Matching: basic_string: matches:
+Expected
+    "this is a test"
+to equal
+    "this is a failing test"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -this is a failing test
+    +this is a test
+
+Matching: basic_string_contain_substring: matches:
+Expected
+    "foo"
+to contain substring
+    "x"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -x
+    +foo
+
+Matching: basic_string_have_prefix: matches:
+Expected
+    "foo"
+to have prefix
+    "g"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -g
+    +foo
+
+Matching: basic_string_have_suffix: matches:
+Expected
+    "foo"
+to have suffix
+    "x"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -x
+    +foo
+
+Matching: basic_string_multiline: matches:
+Expected
+    "this is a test1\nthis is a test2\nthis is a test3\n"
+to equal
+    "this is a test1\nthis is a test9\nthis is a test3\n"
+diff
+    --- test
+    +++ actual
+    @@ -1,3 +1,3 @@
+     this is a test1
+    -this is a test9
+    +this is a test2
+     this is a test3
+
+Matching: basic_string_oneline: matches:
+Expected
+    "this is a test1\n"
+to equal
+    "this is a test9\n"
+diff
+    --- test
+    +++ actual
+    @@ -1,2 +1,2 @@
+    -this is a test9
+    +this is a test1
+     
+
+Matching: basic_string_regexp: matches:
+Expected
+    "this is a test"
+to match regular expression
+    "^foo"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -^foo
+    +this is a test
+
+Matching: negated_and: matches:
+Expected
+    42
+not to satisfy all of these matchers
+    [{"eq":42},{"eq":42}]
+
+Matching: negated_basic_array: matches:
+Expected
+    ["group1","group2","group3"]
+not to contain elements matching
+    ["group1","group2","group3"]
+
+Matching: negated_basic_array_consists_of: matches:
+Expected
+    ["foo","bar","moo"]
+not to consist of
+    ["foo",{"have-prefix":"m"},"bar"]
+
+Matching: negated_basic_array_contain_element: matches:
+Expected
+    ["foo","bar","moo"]
+not to contain element matching
+    "foo"
+
+Matching: negated_basic_array_matchers: matches:
+Expected
+    ["foo","bar","moo"]
+to satisfy at least one of these matchers
+    [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
+
+Matching: negated_basic_int: matches:
+Expected
+    42
+not to be numerically eq
+    42
+
+Matching: negated_basic_reader: matches:
+Error
+    ContainElements matcher expects an array/slice/map.  Got:
+        <string>: foo bar
+        moo cow
+        
+
+Matching: negated_basic_string: matches:
+Expected
+    "this is a test"
+not to equal
+    "this is a test"
+
+Matching: negatedbasic_len: matches:
+Expected
+    "123"
+not to have length
+    3
+
+Matching: negatedbasic_string_contain_substring: matches:
+Expected
+    "foo"
+not to contain substring
+    "oo"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -oo
+    +foo
+
+Matching: negatedbasic_string_have_prefix: matches:
+Expected
+    "foo"
+not to have prefix
+    "f"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -f
+    +foo
+
+Matching: negatedbasic_string_have_suffix: matches:
+Expected
+    "foo"
+not to have suffix
+    "o"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -o
+    +foo
+
+Matching: negatedbasic_string_regexp: matches:
+Expected
+    "this is a test"
+not to match regular expression
+    "^this"
+diff
+    --- test
+    +++ actual
+    @@ -1 +1 @@
+    -^this
+    +this is a test
+
+Total Duration: 
+Count: 27, Failed: 27, Skipped: 0

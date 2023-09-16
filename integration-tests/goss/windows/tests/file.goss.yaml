@@ -9,6 +9,6 @@ file:
     filetype: file
     md5: dc9a07ca9789f866d21d544fe5651954
     sha256: aa8b1b4a0d9bf174f5019c8f8a9568858ee2bdf8e0ad16aec54417d49b48df49
-    contains:
+    contents:
       - "nothing to see here"
       - "/nothing.*here/"

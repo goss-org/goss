@@ -6,14 +6,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/system"
-	"github.com/aelsabbahy/goss/util"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/system"
+	"github.com/goss-org/goss/util"
 )
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
 	var err error
+	err = setLogLevel(c)
+	if err != nil {
+		return err
+	}
 	outStoreFormat, err = getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
@@ -42,40 +46,40 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 
 // AddResource adds a single resource to fileName
 func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
-	var res resource.ResourceRead
 	var err error
+	var res resource.ResourceRead
 
 	// Need to figure out a good way to refactor this
 	switch resourceName {
-	case "Addr":
+	case resource.AddResourceName:
 		res, err = gossConfig.Addrs.AppendSysResource(key, sys, config)
-	case "Command":
+	case resource.CommandResourceName:
 		res, err = gossConfig.Commands.AppendSysResource(key, sys, config)
-	case "DNS":
+	case resource.DNSResourceName:
 		res, err = gossConfig.DNS.AppendSysResource(key, sys, config)
-	case "File":
+	case resource.FileResourceName:
 		res, err = gossConfig.Files.AppendSysResource(key, sys, config)
-	case "Group":
+	case resource.GroupResourceName:
 		res, err = gossConfig.Groups.AppendSysResource(key, sys, config)
-	case "Package":
+	case resource.PackageResourceName:
 		res, err = gossConfig.Packages.AppendSysResource(key, sys, config)
-	case "Port":
+	case resource.PortResourceName:
 		res, err = gossConfig.Ports.AppendSysResource(key, sys, config)
-	case "Process":
+	case resource.ProcessResourceName:
 		res, err = gossConfig.Processes.AppendSysResource(key, sys, config)
-	case "Service":
+	case resource.ServiceResourceName:
 		res, err = gossConfig.Services.AppendSysResource(key, sys, config)
-	case "User":
+	case resource.UserResourceName:
 		res, err = gossConfig.Users.AppendSysResource(key, sys, config)
-	case "Gossfile":
+	case resource.GossFileResourceName:
 		res, err = gossConfig.Gossfiles.AppendSysResource(key, sys, config)
-	case "KernelParam":
+	case resource.KernelParamResourceName:
 		res, err = gossConfig.KernelParams.AppendSysResource(key, sys, config)
-	case "Mount":
+	case resource.MountResourceName:
 		res, err = gossConfig.Mounts.AppendSysResource(key, sys, config)
-	case "Interface":
+	case resource.InterfaceResourceName:
 		res, err = gossConfig.Interfaces.AppendSysResource(key, sys, config)
-	case "HTTP":
+	case resource.HTTPResourceName:
 		res, err = gossConfig.HTTPs.AppendSysResource(key, sys, config)
 	default:
 		err = fmt.Errorf("undefined resource name: %s", resourceName)

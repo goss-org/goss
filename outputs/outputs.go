@@ -1,16 +1,23 @@
 package outputs
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
+	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+	"unicode"
 
-	"github.com/aelsabbahy/goss/resource"
-	"github.com/aelsabbahy/goss/util"
 	"github.com/fatih/color"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
+	"github.com/icza/dyno"
+	"github.com/pmezard/go-difflib/difflib"
 )
 
 type formatOption struct {
@@ -18,7 +25,7 @@ type formatOption struct {
 }
 
 type Outputer interface {
-	Output(io.Writer, <-chan []resource.TestResult, time.Time, util.OutputConfig) int
+	Output(io.Writer, <-chan []resource.TestResult, util.OutputConfig) int
 	ValidOptions() []*formatOption
 }
 
@@ -26,77 +33,149 @@ var (
 	outputersMu sync.Mutex
 	outputers   = map[string]Outputer{
 		"documentation": &Documentation{},
-		"json_oneline":  &JsonOneline{},
 		"json":          &Json{},
 		"junit":         &JUnit{},
 		"nagios":        &Nagios{},
+		"prometheus":    &Prometheus{},
 		"rspecish":      &Rspecish{},
 		"structured":    &Structured{},
 		"tap":           &Tap{},
 		"silent":        &Silent{},
 	}
-	foPerfData = "perfdata"
-	foVerbose  = "verbose"
-	foPretty   = "pretty"
+	foPerfData   = "perfdata"
+	foVerbose    = "verbose"
+	foPretty     = "pretty"
+	foExcludeRaw = "exclude_raw"
+	foSort       = "sort"
 )
 
 var green = color.New(color.FgGreen).SprintfFunc()
 var red = color.New(color.FgRed).SprintfFunc()
 var yellow = color.New(color.FgYellow).SprintfFunc()
+var multiple_space = regexp.MustCompile(`\s+`)
 
-func humanizeResult(r resource.TestResult) string {
-	if r.Err != nil {
-		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
+func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
+	sep := "\n"
+	if compact {
+		sep = " "
 	}
 
 	switch r.Result {
 	case resource.SUCCESS:
-		return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
+		return green("%s: %s: %s: %s: %s", r.ResourceType, r.ResourceId, r.Property, r.MatcherResult.Message, prettyPrint(r.MatcherResult.Expected, false))
+	case resource.FAIL:
+		matcherResult := prettyPrintTestResult(r, compact, includeRaw)
+		return red("%s: %s: %s:%s%s", r.ResourceType, r.ResourceId, r.Property, sep, matcherResult)
 	case resource.SKIP:
 		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
-	case resource.FAIL:
-		if r.Human != "" {
-			return red("%s: %s: %s:\n%s", r.ResourceType, r.ResourceId, r.Property, r.Human)
-		}
-		return humanizeResult2(r)
 	default:
 		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
 	}
 }
 
-func humanizeResult2(r resource.TestResult) string {
-	if r.Err != nil {
-		return red("%s: %s: Error: %s", r.ResourceId, r.Property, r.Err)
+func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool) string {
+	sep := "\n"
+	if compact {
+		sep = " "
+	}
+	m := t.MatcherResult
+	var ss []string
+	//var s string
+	if t.Err != nil {
+		e := fmt.Sprint(t.Err)
+		if compact {
+			e = multiple_space.ReplaceAllString(e, " ")
+		} else {
+			e = indentLines(e)
+		}
+		ss = append(ss, "Error")
+		ss = append(ss, e)
+	} else {
+		ss = append(ss, "Expected")
+		ss = append(ss, prettyPrint(m.Actual, !compact))
+		ss = append(ss, m.Message)
+		ss = append(ss, prettyPrint(m.Expected, !compact))
+		ss = maybeAddDiff(ss, m.Expected, m.Actual, compact)
 	}
 
-	switch r.Result {
-	case resource.SUCCESS:
-		switch r.TestType {
-		case resource.Value:
-			return green("%s: %s: %s: matches expectation: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected)
-		case resource.Values:
-			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		case resource.Contains:
-			return green("%s: %s: %s: all expectations found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(r.Expected, ", "))
-		default:
-			return red("Unexpected type %d", r.TestType)
-		}
-	case resource.FAIL:
-		switch r.TestType {
-		case resource.Value:
-			return red("%s: %s: %s: doesn't match, expect: %s found: %s", r.ResourceType, r.ResourceId, r.Property, r.Expected, r.Found)
-		case resource.Values:
-			return red("%s: %s: %s: expectations not found [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-		case resource.Contains:
-			return red("%s: %s: %s: patterns not found: [%s]", r.ResourceType, r.ResourceId, r.Property, strings.Join(subtractSlice(r.Expected, r.Found), ", "))
-		default:
-			return red("Unexpected type %d", r.TestType)
-		}
-	case resource.SKIP:
-		return yellow("%s: %s: %s: skipped", r.ResourceType, r.ResourceId, r.Property)
-	default:
-		panic(fmt.Sprintf("Unexpected Result Code: %v\n", r.Result))
+	if reflect.ValueOf(m.MissingElements).IsValid() && !reflect.ValueOf(m.MissingElements).IsNil() {
+		ss = append(ss, "the missing elements were")
+		ss = append(ss, prettyPrint(m.MissingElements, !compact))
 	}
+	if reflect.ValueOf(m.ExtraElements).IsValid() && !reflect.ValueOf(m.ExtraElements).IsNil() {
+		ss = append(ss, "the extra elements were")
+		ss = append(ss, prettyPrint(m.ExtraElements, !compact))
+	}
+	if len(m.TransformerChain) != 0 {
+		ss = append(ss, "the transform chain was")
+		ss = append(ss, prettyPrint(m.TransformerChain, !compact))
+		if includeRaw {
+			ss = append(ss, "the raw value was")
+			ss = append(ss, prettyPrint(m.UntransformedValue, !compact))
+		}
+	}
+	return strings.Join(ss, sep)
+}
+
+func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
+	if compact {
+		return ss
+	}
+	want, ok := expected.(string)
+	if !ok {
+		return ss
+	}
+	got, ok := actual.(string)
+	if !ok {
+		return ss
+	}
+	if want == got {
+		return ss
+	}
+	ss = append(ss, "diff")
+	diff, _ := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
+		A:        difflib.SplitLines(want),
+		B:        difflib.SplitLines(got),
+		FromFile: "test",
+		FromDate: "",
+		ToFile:   "actual",
+		ToDate:   "",
+		Context:  1,
+	})
+	ss = append(ss, indentLines(diff))
+	return ss
+}
+
+func prettyPrint(i interface{}, indent bool) string {
+	// JSON doesn't like non-string keys
+	i = dyno.ConvertMapI2MapS(i)
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	var b []byte
+	err := encoder.Encode(i)
+	if err == nil {
+		b = buffer.Bytes()
+	} else {
+		// FIXME: Is this the right thing to do?
+		b = []byte(err.Error())
+	}
+	b = bytes.TrimRightFunc(b, unicode.IsSpace)
+	if indent {
+		return indentLines(string(b))
+	} else {
+		return string(b)
+	}
+}
+
+// indents a block of text with an indent string
+func indentLines(text string) string {
+	indent := "    "
+	result := ""
+	for _, j := range strings.Split(strings.TrimRight(text, "\n"), "\n") {
+		result += indent + j + "\n"
+	}
+	return result[:len(result)-1]
 }
 
 func RegisterOutputer(name string, outputer Outputer) {
@@ -160,24 +239,6 @@ func GetOutputer(name string) (Outputer, error) {
 	return outputers[name], nil
 }
 
-func subtractSlice(x, y []string) []string {
-	m := make(map[string]bool)
-
-	for _, y := range y {
-		m[y] = true
-	}
-
-	var ret []string
-	for _, x := range x {
-		if m[x] {
-			continue
-		}
-		ret = append(ret, x)
-	}
-
-	return ret
-}
-
 func header(t resource.TestResult) string {
 	var out string
 	if t.Title != "" {
@@ -198,9 +259,9 @@ func header(t resource.TestResult) string {
 	return out
 }
 
-func summary(startTime time.Time, count, failed, skipped int) string {
+func summary(startTime, endTime time.Time, count, failed, skipped int) string {
 	var s string
-	s += fmt.Sprintf("Total Duration: %.3fs\n", time.Since(startTime).Seconds())
+	s += fmt.Sprintf("Total Duration: %.3fs\n", endTime.Sub(startTime).Seconds())
 	f := green
 	if failed > 0 {
 		f = red
@@ -209,10 +270,13 @@ func summary(startTime time.Time, count, failed, skipped int) string {
 	return s
 }
 
-func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
+func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw bool) string {
 	var s string
 	if len(failedOrSkipped) > 0 {
-		s += fmt.Sprint("Failures/Skipped:\n\n")
+		s += "Failures/Skipped:\n\n"
+		sort.Slice(failedOrSkipped, func(i, j int) bool {
+			return failedOrSkipped[i][0].SortKey() < failedOrSkipped[j][0].SortKey()
+		})
 		for _, failedGroup := range failedOrSkipped {
 			first := failedGroup[0]
 			header := header(first)
@@ -220,10 +284,35 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult) string {
 				s += fmt.Sprint(header)
 			}
 			for _, testResult := range failedGroup {
-				s += fmt.Sprintln(humanizeResult(testResult))
+				s += fmt.Sprintln(humanizeResult(testResult, false, includeRaw))
 			}
-			s += fmt.Sprint("\n")
+			s += "\n"
 		}
 	}
 	return s
+}
+
+func getResults(tr <-chan []resource.TestResult, doSort bool) <-chan []resource.TestResult {
+	if !doSort {
+		return tr
+	}
+	str := make([][]resource.TestResult, 0)
+	for i := range tr {
+		str = append(str, i)
+	}
+
+	sort.Slice(str, func(i, j int) bool {
+		return str[i][0].SortKey() < str[j][0].SortKey()
+	})
+
+	c := make(chan []resource.TestResult)
+	go func(c chan []resource.TestResult) {
+		defer close(c)
+
+		for _, i := range str {
+			c <- i
+		}
+	}(c)
+
+	return c
 }
