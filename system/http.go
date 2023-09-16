@@ -83,7 +83,13 @@ func (u *DefHTTP) setup() error {
 		return u.err
 	}
 	u.loaded = true
+	if err := u.setupReal(); err != nil {
+		u.err = err
+	}
+	return u.err
 
+}
+func (u *DefHTTP) setupReal() error {
 	proxyURL := http.ProxyFromEnvironment
 	if u.Proxy != "" {
 		parseProxy, err := url.Parse(u.Proxy)
@@ -140,7 +146,7 @@ func (u *DefHTTP) setup() error {
 
 	req, err := http.NewRequest(u.Method, u.http, strings.NewReader(u.RequestBody))
 	if err != nil {
-		return u.err
+		return err
 	}
 	req.Header = u.RequestHeader.Clone()
 
