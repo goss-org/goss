@@ -50,7 +50,7 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				logTrace("WARN", "FAIL", testResult, false)
+				logTrace("TRACE", "FAIL", testResult, false)
 				fmt.Fprintf(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
@@ -71,9 +71,9 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprint(w, outstr)
 	resstr := strings.ReplaceAll(outstr, "\n", " ")
 	if failed > 0 {
-		log.Printf("[WARN] FAIL SUMMARY: %s", resstr)
+		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
-	log.Printf("[INFO] OK SUMMARY: %s", resstr)
+	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
 	return 0
 }

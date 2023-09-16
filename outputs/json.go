@@ -48,7 +48,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			if testResult.Result == resource.FAIL {
 				failed++
-				logTrace("WARN", "FAIL", testResult, true)
+				logTrace("TRACE", "FAIL", testResult, true)
 			} else {
 				logTrace("TRACE", "SUCCESS", testResult, true)
 			}
@@ -88,11 +88,11 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprintln(w, resstr)
 
 	if failed > 0 {
-		log.Printf("[WARN] FAIL SUMMARY: %s", resstr)
+		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
 
-	log.Printf("[INFO] OK SUMMARY: %s", resstr)
+	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
 	return 0
 }
 
