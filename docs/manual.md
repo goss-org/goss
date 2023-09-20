@@ -229,13 +229,12 @@ service:
 * `--endpoint <value>`, `-e <value>` - Endpoint to expose (default: `/healthz`)
 * `--format`, `-f` - output format, same as [validate](#validate-v---validate-the-system)
 * `--listen-addr [ip]:port`, `-l [ip]:port` - Address to listen on (default: `:8080`)
-* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
-  * `TRACE` - Print details for each check, successful or not and all incoming healthchecks
-  * `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
-  * `INFO` - Print summary when all checks run OK
-  * `WARN` - Print summary and corresponding checks when encountering some failures
-  * `ERROR` - Not used for now (will not print anything)
-  * `FATAL` - Not used for now (will not print anything)
+* `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN and ERROR).
+  * `ERROR` - Critical errors that halt goss or significantly affect its functionality, requiring immediate intervention.
+  * `WARN` - Non-critical issues that may require attention, such as overwritten keys or deprecated features.
+  * `INFO` - General operational messages, useful for tasks where a more structured output is needed (e.g. goss serve).
+  * `DEBUG` - Information useful for the goss user to debug.
+  * `TRACE` - Detailed internal system activities useful for goss developers to debug.
 * `--max-concurrent` - Max number of tests to run concurrently
 
 #### Example:

@@ -14,8 +14,8 @@ import (
 
 func setLogLevel(c *util.Config) error {
 	filter := &logutils.LevelFilter{
-		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"},
-		MinLevel: logutils.LogLevel("WARN"),
+		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR"},
+		MinLevel: logutils.LogLevel("INFO"),
 		Writer:   os.Stderr,
 	}
 	log.SetFlags(0) // Turn off standard timestamp flags

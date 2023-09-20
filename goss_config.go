@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"log"
 	"reflect"
 
 	"github.com/goss-org/goss/resource"
@@ -50,65 +51,73 @@ func NewGossConfig() *GossConfig {
 // will be overwritten with the ones in g2
 func (c *GossConfig) Merge(g2 GossConfig) {
 	for k, v := range g2.Files {
-		c.Files[k] = v
+		mergeType(c.Files, "file", k, v)
 	}
 
 	for k, v := range g2.Packages {
-		c.Packages[k] = v
+		mergeType(c.Packages, "package", k, v)
 	}
 
 	for k, v := range g2.Addrs {
-		c.Addrs[k] = v
+		mergeType(c.Addrs, "addr", k, v)
 	}
 
 	for k, v := range g2.Ports {
-		c.Ports[k] = v
+		mergeType(c.Ports, "port", k, v)
 	}
 
 	for k, v := range g2.Services {
-		c.Services[k] = v
+		mergeType(c.Services, "service", k, v)
 	}
 
 	for k, v := range g2.Users {
-		c.Users[k] = v
+		mergeType(c.Users, "user", k, v)
 	}
 
 	for k, v := range g2.Groups {
-		c.Groups[k] = v
+		mergeType(c.Groups, "group", k, v)
 	}
 
 	for k, v := range g2.Commands {
-		c.Commands[k] = v
+		mergeType(c.Commands, "command", k, v)
 	}
 
 	for k, v := range g2.DNS {
-		c.DNS[k] = v
+		mergeType(c.DNS, "dns", k, v)
 	}
 
 	for k, v := range g2.Processes {
-		c.Processes[k] = v
+		mergeType(c.Processes, "process", k, v)
 	}
 
 	for k, v := range g2.KernelParams {
-		c.KernelParams[k] = v
+		mergeType(c.KernelParams, "kernel-param", k, v)
 	}
 
 	for k, v := range g2.Mounts {
-		c.Mounts[k] = v
+		mergeType(c.Mounts, "mount", k, v)
 	}
 
 	for k, v := range g2.Interfaces {
-		c.Interfaces[k] = v
+		mergeType(c.Interfaces, "interface", k, v)
 	}
 
 	for k, v := range g2.HTTPs {
-		c.HTTPs[k] = v
+		mergeType(c.HTTPs, "http", k, v)
 	}
 
 	for k, v := range g2.Matchings {
-		c.Matchings[k] = v
+		mergeType(c.Matchings, "matching", k, v)
 	}
 }
+
+func mergeType[V any](m map[string]V, t, k string, v V) {
+		if _, ok := m[k]; ok {
+			log.Printf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
+		}
+		m[k] = v
+}
+
 
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource

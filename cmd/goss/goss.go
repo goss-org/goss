@@ -75,7 +75,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "log-level, loglevel, L, l",
-			Value:  "FATAL",
+			Value:  "INFO",
 			Usage:  "Goss log verbosity level",
 			EnvVar: "GOSS_LOGLEVEL",
 		},
