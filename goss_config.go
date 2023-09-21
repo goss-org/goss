@@ -112,12 +112,11 @@ func (c *GossConfig) Merge(g2 GossConfig) {
 }
 
 func mergeType[V any](m map[string]V, t, k string, v V) {
-		if _, ok := m[k]; ok {
-			log.Printf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
-		}
-		m[k] = v
+	if _, ok := m[k]; ok {
+		log.Printf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
+	}
+	m[k] = v
 }
-
 
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
