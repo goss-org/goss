@@ -11,6 +11,6 @@ func logBytes(b []byte, prefix string) {
 	}
 	lines := bytes.Split(b, []byte("\n"))
 	for _, l := range lines {
-		log.Printf("[DEBUG] %s %s", prefix, l)
+		log.Printf("[DEBUG]%s %s", prefix, l)
 	}
 }

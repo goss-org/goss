@@ -55,8 +55,8 @@ func (c *DefCommand) setup() error {
 	stdoutB := cmd.Stdout.Bytes()
 	stderrB := cmd.Stderr.Bytes()
 	id := c.Ctx.Value("id")
-	logBytes(stdoutB, fmt.Sprintf("Command: %s: stdout: ", id))
-	logBytes(stderrB, fmt.Sprintf("Command: %s: stderr: ", id))
+	logBytes(stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
+	logBytes(stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
 	c.stdout = bytes.NewReader(stdoutB)
 	c.stderr = bytes.NewReader(stderrB)
 
