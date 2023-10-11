@@ -27,7 +27,6 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.ContainElements(interfaceSlice...), nil
 	}
-	matcher = sanitizeExpectedValue(matcher)
 	if matcher == nil {
 		return nil, fmt.Errorf("Syntax Error: Missing required attribute")
 	}
@@ -71,12 +70,16 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(v)), nil
 	case "have-len":
-		v, isFloat := value.(float64)
-		if !isFloat {
+		var v int
+		switch val := value.(type) {
+		case float64:
+			v = int(val)
+		case int:
+			v = val
+		default:
 			return nil, invalidArgSyntaxError("have-len", "numeric", value)
-
 		}
-		return matchers.HaveLen(int(v)), nil
+		return matchers.HaveLen(v), nil
 	case "have-patterns":
 		_, isArr := value.([]any)
 		if !isArr {
@@ -92,7 +95,7 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		return matchers.HaveKey(subMatcher), nil
 	case "contain-element":
 		switch value.(type) {
-		case map[string]any, string, float64:
+		case map[string]any, string, float64, int:
 		default:
 			return nil, invalidArgSyntaxError("contain-element", "matcher, string or numeric", value)
 
@@ -187,26 +190,6 @@ func sliceToGomega(value any, name string) ([]matchers.GossMatcher, error) {
 	return subMatchers, nil
 }
 
-// sanitizeExpectedValue normalizes the value so json and yaml are the same
-func sanitizeExpectedValue(i any) any {
-	if e, ok := i.(int); ok {
-		return float64(e)
-	}
-	if e, ok := i.(map[any]any); ok {
-		out := make(map[string]any)
-		for k, v := range e {
-			ks, ok := k.(string)
-			if !ok {
-				// We should never get here
-				panic(fmt.Sprintf("Matcher key type not string: %T\n\n", k))
-			}
-			out[ks] = sanitizeExpectedValue(v)
-		}
-		return out
-	}
-	return i
-}
-
 func invalidArgSyntaxError(name, expected string, value any) error {
-	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received: %q", name, expected, value)
+	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received: %T: %q", name, expected, value, value)
 }

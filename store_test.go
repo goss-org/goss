@@ -102,9 +102,9 @@ func Test_varsFromString(t *testing.T) {
 			name: "YAML_object",
 			arg:  `{o: {oa: a, oo: { oo1: 1 } } }`,
 			want: map[string]any{
-				"o": map[any]any{
+				"o": map[string]any{
 					"oa": "a",
-					"oo": map[any]any{
+					"oo": map[string]any{
 						"oo1": 1,
 					},
 				},

@@ -169,8 +169,6 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 		err = fmt.Errorf("Unknown method signature: %t", f)
 	}
 
-	foundValue = sanitizeExpectedValue(foundValue)
-	expectedValue = sanitizeExpectedValue(expectedValue)
 	var success bool
 	if gomegaMatcher == nil && err == nil {
 		gomegaMatcher, err = matcherToGomegaMatcher(expectedValue)

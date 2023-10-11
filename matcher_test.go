@@ -58,6 +58,9 @@ func TestMatchers(t *testing.T) {
 				t.Fatal(err)
 			}
 			exitCode, err := Validate(cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
 			actualOut := output.String()
 			actualOut = sanitizeOutput(actualOut)
 

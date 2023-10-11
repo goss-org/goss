@@ -47,8 +47,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 			if endTime.IsZero() || testResult.EndTime.After(endTime) {
 				endTime = testResult.EndTime
 			}
-			m := struct2map(testResult)
-			duration := strconv.FormatFloat(m["duration"].(float64)/1000/1000/1000, 'f', 3, 64)
+			duration := strconv.FormatFloat(testResult.Duration.Seconds(), 'f', 3, 64)
 			summary[testCount] = "<testcase name=\"" +
 				testResult.ResourceType + " " +
 				escapeString(testResult.ResourceId) + " " +

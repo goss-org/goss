@@ -16,7 +16,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
-	"github.com/icza/dyno"
 	"github.com/pmezard/go-difflib/difflib"
 )
 
@@ -147,8 +146,6 @@ func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
 }
 
 func prettyPrint(i interface{}, indent bool) string {
-	// JSON doesn't like non-string keys
-	i = dyno.ConvertMapI2MapS(i)
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
