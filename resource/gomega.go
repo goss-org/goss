@@ -70,14 +70,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(v)), nil
 	case "have-len":
-		var v int
-		switch val := value.(type) {
-		case float64:
-			v = int(val)
-		case int:
-			v = val
-		default:
-			return nil, invalidArgSyntaxError("have-len", "numeric", value)
+		v, isInt := value.(int)
+		if !isInt {
+			return nil, invalidArgSyntaxError("have-len", "int", value)
 		}
 		return matchers.HaveLen(v), nil
 	case "have-patterns":
@@ -191,5 +186,5 @@ func sliceToGomega(value any, name string) ([]matchers.GossMatcher, error) {
 }
 
 func invalidArgSyntaxError(name, expected string, value any) error {
-	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received: %T: %q", name, expected, value, value)
+	return fmt.Errorf("Syntax Error: Invalid '%s' argument. Expected %s value, but received %T: %q", name, expected, value, value)
 }
