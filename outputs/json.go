@@ -59,7 +59,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 			m["successful"] = testResult.Result != resource.FAIL
 			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
 			m["summary-line-compact"] = humanizeResult(testResult, true, includeRaw)
-			m["duration"] = int64(m["duration"].(float64))
+			m["duration"] = testResult.Duration.Nanoseconds()
 			resultsOut = append(resultsOut, m)
 			testCount++
 		}
