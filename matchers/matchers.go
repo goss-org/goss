@@ -19,13 +19,14 @@ type GossMatcher interface {
 }
 
 type MatcherResult struct {
-	Actual             interface{}
-	Message            string
-	Expected           interface{}
-	MissingElements    interface{}
-	ExtraElements      interface{}
-	TransformerChain   []Transformer
-	UntransformedValue interface{}
+	Actual             interface{}   `json:"actual"`
+	Message            string        `json:"message"`
+	Expected           interface{}   `json:"expected"`
+	MissingElements    interface{}   `json:"missing-elements"`
+	FoundElements      interface{}   `json:"found-elements"`
+	ExtraElements      interface{}   `json:"extra-elements"`
+	TransformerChain   []Transformer `json:"transform-chain"`
+	UntransformedValue interface{}   `json:"untransformed-value"`
 }
 
 func getUnexported(i interface{}, field string) interface{} {

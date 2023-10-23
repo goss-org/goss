@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/onsi/gomega/matchers"
+	"github.com/samber/lo"
 )
 
 type ConsistOfMatcher struct {
@@ -21,12 +22,18 @@ func ConsistOf(elements ...interface{}) GossMatcher {
 func (m *ConsistOfMatcher) FailureResult(actual interface{}) MatcherResult {
 	missingElements := getUnexported(m, "missingElements")
 	extraElements := getUnexported(m, "extraElements")
+	missingEl, ok := missingElements.([]interface{})
+	var foundElements any
+	if ok {
+		foundElements, _ = lo.Difference(m.Elements, missingEl)
+	}
 	return MatcherResult{
 		Actual:          actual,
 		Message:         "to consist of",
 		Expected:        m.Elements,
 		MissingElements: missingElements,
 		ExtraElements:   extraElements,
+		FoundElements:   foundElements,
 	}
 }
 
