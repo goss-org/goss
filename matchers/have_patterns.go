@@ -20,6 +20,7 @@ type HavePatternsMatcher struct {
 
 	Elements        interface{}
 	missingElements []string
+	foundElements   []string
 }
 
 func HavePatterns(elements interface{}) GossMatcher {
@@ -107,9 +108,10 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 		}
 	}
 
+	foundSlice := patternsToSlice(found)
+	m.foundElements = foundSlice
 	if len(elements) != len(found) {
-		found := patternsToSlice(found)
-		m.missingElements = subtractSlice(elements, found)
+		m.missingElements = subtractSlice(elements, foundSlice)
 		return false, nil
 	}
 	return true, nil
@@ -128,6 +130,7 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 		Message:         "to have patterns",
 		Expected:        m.Elements,
 		MissingElements: m.missingElements,
+		FoundElements:   m.foundElements,
 	}
 }
 

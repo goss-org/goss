@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/onsi/gomega/matchers"
+	"github.com/samber/lo"
 )
 
 type ContainElementsMatcher struct {
@@ -19,11 +20,17 @@ func ContainElements(elements ...interface{}) GossMatcher {
 }
 func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult {
 	missingElements := getUnexported(m, "missingElements")
+	missingEl, ok := missingElements.([]interface{})
+	var foundElements any
+	if ok {
+		foundElements, _ = lo.Difference(m.Elements, missingEl)
+	}
 	return MatcherResult{
 		Actual:          actual,
 		Message:         "to contain elements matching",
 		Expected:        m.Elements,
 		MissingElements: missingElements,
+		FoundElements:   foundElements,
 	}
 
 }
