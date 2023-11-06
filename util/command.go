@@ -36,7 +36,7 @@ func (c *Command) Run() error {
 
 	if err := c.Cmd.Start(); err != nil {
 		c.Err = err
-		//log.Fatalf("Cmd.Start: %v")
+		return c.Err
 	}
 
 	if err := c.Cmd.Wait(); err != nil {
@@ -44,7 +44,6 @@ func (c *Command) Run() error {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 				c.Status = status.ExitStatus()
-				//log.Printf("Exit Status: %d", status.ExitStatus())
 			}
 		}
 	} else {
