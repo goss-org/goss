@@ -17,7 +17,7 @@ Installing kgoss requires copying the kgoss file to a directory in your PATH
 and copying the goss file to your home folder (or a path set as `GOSS_PATH`),
 as follows.
 
-#### Manual / UI
+### Manual / UI
 
 You can manually install kgoss and goss by going through the Web UI, getting
 the files and putting them in the right path. To get each of them:
@@ -29,7 +29,7 @@ the files and putting them in the right path. To get each of them:
   in your HOME directory, e.g. C:\\Users\\<username> on Windows; or set the
   environment variable `GOSS_PATH` to its path.
 
-#### Automatic / CLI
+### Automatic / CLI
 
 To install from the command line or automatically, use the following commands.
 [jq][] is required to parse the API response and find the release asset's
@@ -41,7 +41,7 @@ First get a GitHub personal access token for accessing the GitHub API from
 <https://github.com/settings/tokens>. Input it in the first
 line below. Set `dest_dir` to a directory in your `PATH` env var.
 
-```
+```shell
 token=<personal_access_token>
 username=$(whoami)
 dest_dir=${HOME}/bin
@@ -94,7 +94,7 @@ in the target container's `GOSS_CONTAINER_PATH`.
 
 To find `goss.yaml` in another directory specify that directory's path in `GOSS_FILES_PATH`.
 
-#### Run
+### Run
 
 The `run` command is used to validate a docker container. It expects a
 `./goss.yaml` file to exist in the directory it was invoked from.
@@ -104,11 +104,12 @@ The `run` command is used to validate a docker container. It expects a
 `kgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine`
 
 `kgoss run` will do the following:
+
 * Run the container with the start commands specified by `-c`, `-a`, or `-p`.
 * Run `goss` with `$GOSS_WAIT_OPTS` if `./goss_wait.yaml` file exists in the current dir.
 * Run `goss` with `$GOSS_OPTS` using `./goss.yaml` from `GOSS_FILES_PATH`.
 
-#### Edit
+### Edit
 
 Edit will launch a docker container, install goss, and drop the user into an
 interactive shell. Once the user quits the interactive shell, any `goss.yaml`

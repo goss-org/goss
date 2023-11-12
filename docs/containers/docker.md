@@ -1,0 +1,1 @@
+--8<-- "extras/dgoss/README.md"

@@ -5,6 +5,9 @@ pkgs = $(shell ./novendor.sh)
 cmd = goss
 GO111MODULE=on
 GO_FILES = $(shell git ls-files -- '*.go' ':!:*vendor*_test.go')
+VENV := $(shell echo $${VIRTUAL_ENV-.venv})
+PYTHON := $(VENV)/bin/python
+DOCS_DEPS := $(VENV)/.docs.dependencies
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 
@@ -73,6 +76,8 @@ gen:
 clean:
 	$(info INFO: Starting build $@)
 	rm -rf ./release
+	rm -rf ./site
+	rm -rf ${VENV}
 
 build-images:
 	$(info INFO: Starting build $@)
@@ -130,3 +135,24 @@ arch: build
 
 dgoss-sha256:
 	cd extras/dgoss/ && sha256sum dgoss > dgoss.sha256
+
+$(PYTHON):
+	$(info Creating virtualenv in $(VENV))
+	@python -m venv $(VENV)
+
+$(DOCS_DEPS): $(PYTHON) docs/requirements.pip
+	$(info Installing dependencies)
+	@pip install --upgrade pip
+	@pip install --requirement docs/requirements.pip
+	@touch $(DOCS_DEPS)
+
+docs/setup: $(DOCS_DEPS)
+
+docs/serve: docs/setup
+	$(info Running documentation live development server)
+	@mkdocs serve --strict
+
+.PHONY: docs
+docs: docs/setup
+	$(info Building documentation)
+	@mkdocs build --strict
