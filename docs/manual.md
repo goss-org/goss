@@ -540,7 +540,7 @@ dns:
 ```
 
 ### file
-Validates the state of a file, directory, or symbolic link
+Validates the state of a file, directory, socket, or symbolic link
 
 ```yaml
 file:
@@ -554,7 +554,7 @@ file:
     size: 2118 # in bytes
     owner: root
     group: root
-    filetype: file # file, symlink, directory
+    filetype: file # file, symlink, directory, socket
     contents: [] # Check file content for these patterns
     md5: 7c9bb14b3bf178e82c00c2a4398c93cd # md5 checksum of file
     # A stronger checksum alternatives to md5 (recommended)
@@ -564,7 +564,7 @@ file:
     # required attributes
     exists: true
     # optional attributes
-    filetype: symlink # file, symlink, directory
+    filetype: symlink # file, symlink, directory, socket
     linked-to: /usr/sbin/sendmail.sendmail
     skip: false
 ```
