@@ -77,7 +77,7 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	overallOutcome := resource.OutcomeUnknown
 	var startTime time.Time
 	for resultGroup := range results {
-		for _, tr := range resultGroup {
+		for i, tr := range resultGroup {
 			if startTime.IsZero() || tr.StartTime.Before(startTime) {
 				startTime = tr.StartTime
 			}
@@ -85,8 +85,8 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 			outcome := tr.ToOutcome()
 			testOutcomes.WithLabelValues(resType, outcome).Inc()
 			testDurations.WithLabelValues(resType, outcome).Add(float64(tr.Duration.Milliseconds()))
-			if tr.Result != resource.SUCCESS {
-				overallOutcome = tr.ToOutcome()
+			if i == 0 || canChangeOverallOutcome(overallOutcome, outcome) {
+				overallOutcome = outcome
 			}
 		}
 	}
@@ -107,4 +107,17 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	return 0
+}
+
+func canChangeOverallOutcome(current, result string) bool {
+	switch current {
+	case resource.OutcomeSkip:
+		return true
+	case resource.OutcomeFail:
+		return false
+	case resource.OutcomePass:
+		return result != resource.OutcomeSkip
+	default:
+		return result == resource.OutcomeFail
+	}
 }
