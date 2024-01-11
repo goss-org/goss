@@ -64,7 +64,7 @@ release:
 	$(MAKE) clean
 	$(MAKE) build
 
-build: release/goss-darwin-amd64 release/goss-darwin-arm64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-linux-arm64 release/goss-windows-amd64
+build: release/goss-darwin-amd64 release/goss-darwin-arm64 release/goss-linux-386 release/goss-linux-amd64 release/goss-linux-arm release/goss-linux-arm64 release/goss-linux-s390x release/goss-windows-amd64
 
 gen:
 	$(info INFO: Starting build $@)
