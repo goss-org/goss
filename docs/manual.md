@@ -270,7 +270,7 @@ The `application/vnd.goss-{output format}` media type can be used in the `Accept
   * `silent` - No output. Avoids exposing system information (e.g. when serving tests as a healthcheck endpoint)
 * `--format-options`, `-o` (output format option)
   * `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
-  * `verbose`  - Gives verbose output. Applies to `nagios` output
+  * `verbose`  - Gives verbose output. Applies to `nagios` and `prometheus` output
   * `pretty`   - Pretty printing for the `json` output
   * `sort`     - Sorts the results
 * `--loglevel level`, `-L level` - Goss logging verbosity level (default: `INFO`). `level` can be one of `TRACE | DEBUG | INFO | WARN | ERROR | FATAL`. Lower levels of tracing include all upper levels traces also (ie. INFO include WARN, ERROR and FATAL outputs).
