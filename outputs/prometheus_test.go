@@ -15,6 +15,7 @@ import (
 func TestPrometheusOutput(t *testing.T) {
 	testCases := map[string]struct {
 		results         []resource.TestResult
+		formatOptions   []string
 		expectedMetrics []string
 	}{
 		"all-success-single-type": {
@@ -462,16 +463,52 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_outcomes_total{outcome="unknown"} 1`,
 			},
 		},
+		"verbose": {
+			results: []resource.TestResult{
+				{
+					ResourceType: "Command",
+					ResourceId:   "some command here",
+					Duration:     10 * time.Millisecond,
+					Result:       resource.SUCCESS,
+				},
+				{
+					ResourceType: "Command",
+					ResourceId:   "something else here",
+					Duration:     10 * time.Millisecond,
+					Result:       resource.SUCCESS,
+				},
+				{
+					ResourceType: "File",
+					ResourceId:   "/path/to/file",
+					Duration:     10 * time.Millisecond,
+					Result:       resource.FAIL,
+				},
+			},
+			formatOptions: []string{foVerbose},
+			expectedMetrics: []string{
+				`goss_tests_outcomes_duration_milliseconds{outcome="pass",resource_id="some command here",type="command"} 10`,
+				`goss_tests_outcomes_total{outcome="pass",resource_id="some command here",type="command"} 1`,
+				`goss_tests_outcomes_duration_milliseconds{outcome="pass",resource_id="something else here",type="command"} 10`,
+				`goss_tests_outcomes_total{outcome="pass",resource_id="something else here",type="command"} 1`,
+				`goss_tests_outcomes_duration_milliseconds{outcome="fail",resource_id="/path/to/file",type="file"} 10`,
+				`goss_tests_outcomes_total{outcome="fail",resource_id="/path/to/file",type="file"} 1`,
+				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
+				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
+			},
+		},
 	}
 
 	for name, testCase := range testCases {
 		t.Run(name, func(t *testing.T) {
 			buf := &bytes.Buffer{}
 			outputer := &Prometheus{}
+			config := util.OutputConfig{
+				FormatOptions: testCase.formatOptions,
+			}
 
 			defer resetMetrics()
 
-			exitCode := outputer.Output(buf, makeResults(testCase.results...), util.OutputConfig{})
+			exitCode := outputer.Output(buf, makeResults(testCase.results...), config)
 			assert.Equal(t, 0, exitCode)
 
 			output := buf.String()
@@ -500,10 +537,7 @@ func makeResults(results ...resource.TestResult) <-chan []resource.TestResult {
 }
 
 func resetMetrics() {
-	testOutcomes.Reset()
-	testDurations.Reset()
-	runOutcomes.Reset()
-	runDuration.Reset()
+	registry = nil
 }
 
 func TestCanChangeOverallOutcome(t *testing.T) {
