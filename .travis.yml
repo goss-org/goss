@@ -60,6 +60,8 @@ deploy:
     - release/goss-linux-arm.sha256
     - release/goss-linux-arm64
     - release/goss-linux-arm64.sha256
+    - release/goss-linux-s390x
+    - release/goss-linux-s390x.sha256
     - release/goss-windows-amd64.exe
     - release/goss-windows-amd64.exe.sha256
     - extras/dgoss/dgoss
