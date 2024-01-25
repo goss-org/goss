@@ -209,7 +209,7 @@ initialize () {
         info "Copying goss files into pod/container"
         ${k} cp ${GOSS_KUBECTL_OPTS} $tmp_dir/. ${id}:${GOSS_CONTAINER_PATH}/
         info "Marking copied files as executable"
-         ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "chmod --recursive --changes a+x ${GOSS_CONTAINER_PATH}/"
+         ${k} exec ${GOSS_KUBECTL_OPTS} "$id" -- sh -c "chmod -R a+x ${GOSS_CONTAINER_PATH}/"
         ;;
       *) error "Wrong kgoss files strategy used! Only \"cp\" is supported."
     esac
