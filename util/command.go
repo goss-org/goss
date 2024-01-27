@@ -34,6 +34,20 @@ func (e *ExecCommand) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
+func (e ExecCommand) MarshalJSON() ([]byte, error) {
+	if e.CmdStr != "" {
+		return json.Marshal(e.CmdStr)
+	}
+	return json.Marshal(e.CmdSlice)
+}
+
+func (e ExecCommand) MarshalYAML() (interface{}, error) {
+	if e.CmdStr != "" {
+		return e.CmdStr, nil
+	}
+	return e.CmdSlice, nil
+}
+
 type Command struct {
 	name           string
 	Cmd            *exec.Cmd
