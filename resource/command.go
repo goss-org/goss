@@ -80,7 +80,6 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 	exitStatus, err := sysCommand.ExitStatus()
 	c := &Command{
 		id:         id,
-		Exec:       sysCommand.Command(),
 		ExitStatus: exitStatus,
 		Stdout:     "",
 		Stderr:     "",
