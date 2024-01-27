@@ -27,7 +27,7 @@ type System struct {
 	NewService     func(context.Context, string, *System, util2.Config) Service
 	NewUser        func(context.Context, string, *System, util2.Config) User
 	NewGroup       func(context.Context, string, *System, util2.Config) Group
-	NewCommand     func(context.Context, string, *System, util2.Config) Command
+	NewCommand     func(context.Context, util2.ExecCommand, *System, util2.Config) Command
 	NewDNS         func(context.Context, string, *System, util2.Config) DNS
 	NewProcess     func(context.Context, string, *System, util2.Config) Process
 	NewGossfile    func(context.Context, string, *System, util2.Config) Gossfile

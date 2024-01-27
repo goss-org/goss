@@ -2,11 +2,37 @@ package util
 
 import (
 	"bytes"
+	"encoding/json"
 
 	//"fmt"
 	"os/exec"
 	"syscall"
 )
+
+// Allows passing a shell style command string
+// or an exec style slice of strings.
+type ExecCommand struct {
+	CmdStr   string
+	CmdSlice []string
+}
+
+func (e *ExecCommand) UnmarshalJSON(data []byte) error {
+	// Try to unmarshal as a string
+	if err := json.Unmarshal(data, &e.CmdStr); err != nil {
+		// If string unmarshalling fails, try as a slice
+		return json.Unmarshal(data, &e.CmdSlice)
+	}
+	return nil
+}
+
+func (e *ExecCommand) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	// Try to unmarshal as a string
+	if err := unmarshal(&e.CmdStr); err != nil {
+		// If string unmarshalling fails, try as a slice
+		return unmarshal(&e.CmdSlice)
+	}
+	return nil
+}
 
 type Command struct {
 	name           string
