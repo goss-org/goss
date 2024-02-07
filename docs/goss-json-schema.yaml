@@ -385,16 +385,12 @@ definitions:
   processTest:
     required:
       - running
-      - skip
     properties:
       title: { "$ref":"#/definitions/title" }
       meta: { "$ref":"#/definitions/meta" }
       running:
         type: boolean
         default: true
-      skip:
-        type: boolean
-        default: false
   serviceTest:
     required:
       - enabled
