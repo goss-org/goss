@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/goss-org/goss/util"
 	"github.com/moby/sys/mountinfo"
@@ -26,12 +27,14 @@ type DefMount struct {
 	exists     bool
 	mountInfo  *mountinfo.Info
 	usage      int
+    Timeout    int
 	err        error
 }
 
 func NewDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
 	return &DefMount{
 		mountPoint: mountPoint,
+                Timeout: config.TimeOutMilliSeconds(),
 	}
 }
 
@@ -41,7 +44,7 @@ func (m *DefMount) setup() error {
 	}
 	m.loaded = true
 
-	mountInfo, err := getMount(m.mountPoint)
+	mountInfo, err := getMount(m.mountPoint, m.Timeout)
 	if err != nil {
 		m.exists = false
 		m.err = err
@@ -69,11 +72,10 @@ func (m *DefMount) MountPoint() string {
 }
 
 func (m *DefMount) Exists() (bool, error) {
-	if err := m.setup(); err != nil {
-		return false, nil
-	}
-
-	return m.exists, nil
+    if err := m.setup(); err != nil {
+        return false, err
+    }
+    return m.exists, nil
 }
 
 func (m *DefMount) Opts() ([]string, error) {
@@ -117,15 +119,33 @@ func (m *DefMount) Usage() (int, error) {
 	return m.usage, nil
 }
 
-func getMount(mountpoint string) (*mountinfo.Info, error) {
-	entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
-	if err != nil {
+func getMount(mountpoint string, timeout int) (*mountinfo.Info, error) {
+	c1 := make(chan *mountinfo.Info, 1)
+	e1 := make(chan error, 1)
+	timeoutD := time.Duration(timeout) * time.Millisecond
+
+	go func() {
+		entries, err := mountinfo.GetMounts(mountinfo.SingleEntryFilter(mountpoint))
+		if err != nil {
+			e1 <- err
+			return
+		}
+		if len(entries) == 0 {
+			e1 <- fmt.Errorf("Mountpoint not found")
+			return
+		}
+		c1 <- entries[0]
+	}()
+
+	select {
+	case result := <-c1:
+		return result, nil
+	case err := <-e1:
 		return nil, err
+	case <-time.After(timeoutD):
+		return nil, fmt.Errorf("getMount operation timed out after %s milliseconds", timeoutD)
 	}
-	if len(entries) == 0 {
-		return nil, fmt.Errorf("Mountpoint not found")
-	}
-	return entries[0], nil
+
 }
 
 func splitMountInfo(s string) []string {
