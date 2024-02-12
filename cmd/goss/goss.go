@@ -387,6 +387,9 @@ func main() {
 				{
 					Name:  resource.MountResourceKey,
 					Usage: "add new mount",
+					Flags: []cli.Flag{
+						timeoutFlag(1000 * time.Millisecond),
+					},
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
 						return goss.AddResources(c.GlobalString("gossfile"), resource.MountResourceName, c.Args(), newRuntimeConfigFromCLI(c))

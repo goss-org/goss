@@ -322,6 +322,9 @@ definitions:
       exists:
         type: boolean
         default: true
+      timeout:
+        type: integer
+        default: 1000
       opts:
         type: array
         items:

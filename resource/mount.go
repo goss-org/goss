@@ -3,7 +3,8 @@ package resource
 import (
 	"context"
 	"fmt"
-    "time"
+	"time"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
@@ -56,11 +57,9 @@ func (m *Mount) GetMountPoint() string {
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", m.ID())
 	skip := m.Skip
-
 	if m.Timeout == 0 {
-    		m.Timeout = 1000
-    }
-
+		m.Timeout = 1000
+	}
 	sysMount := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{Timeout: time.Duration(m.Timeout) * time.Millisecond})
 
 	var results []TestResult

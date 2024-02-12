@@ -141,6 +141,7 @@ mount:
     exists: true
     opts:
       - rw
+    timeout: 1000
     source: /dev/mapper/fedora-home
     filesystem: xfs
     usage:

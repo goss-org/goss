@@ -682,6 +682,7 @@ mount:
     # optional attributes
     # defaults to hash key
     mountpoint: /home
+    timeout: 1000
     opts:
     - rw
     - relatime

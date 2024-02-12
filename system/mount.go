@@ -72,10 +72,10 @@ func (m *DefMount) MountPoint() string {
 }
 
 func (m *DefMount) Exists() (bool, error) {
-    if err := m.setup(); err != nil {
-        return false, err
-    }
-    return m.exists, nil
+	if err := m.setup(); err != nil {
+		return false, err
+	}
+	return m.exists, nil
 }
 
 func (m *DefMount) Opts() ([]string, error) {
