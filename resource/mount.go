@@ -58,7 +58,7 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
 	skip := m.Skip
 
 	if m.Timeout == 0 {
-    		m.Timeout = 10000
+    		m.Timeout = 1000
     }
 
 	sysMount := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{Timeout: time.Duration(m.Timeout) * time.Millisecond})
