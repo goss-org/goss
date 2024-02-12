@@ -104,6 +104,7 @@ kernel-param:
 mount:
   /dev:
     exists: true
+    timeout: 1000
 http:
   http://google.com:
     status: 301

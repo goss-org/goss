@@ -169,6 +169,7 @@ kernel-param:
 mount:
   "/dev":
     exists: true
+    timeout: 1000
     opts:
     - rw
     - nosuid
