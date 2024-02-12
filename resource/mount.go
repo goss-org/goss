@@ -3,7 +3,7 @@ package resource
 import (
 	"context"
 	"fmt"
-
+    "time"
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
@@ -18,6 +18,7 @@ type Mount struct {
 	VfsOpts    matcher `json:"vfs-opts,omitempty" yaml:"vfs-opts,omitempty"`
 	Source     matcher `json:"source,omitempty" yaml:"source,omitempty"`
 	Filesystem matcher `json:"filesystem,omitempty" yaml:"filesystem,omitempty"`
+	Timeout    int     `json:"timeout" yaml:"timeout"`
 	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 	Usage      matcher `json:"usage,omitempty" yaml:"usage,omitempty"`
 }
@@ -55,7 +56,12 @@ func (m *Mount) GetMountPoint() string {
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", m.ID())
 	skip := m.Skip
-	sysMount := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{})
+
+	if m.Timeout == 0 {
+    		m.Timeout = 10000
+    }
+
+	sysMount := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{Timeout: time.Duration(m.Timeout) * time.Millisecond})
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))
@@ -84,8 +90,9 @@ func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
 	mountPoint := sysMount.MountPoint()
 	exists, _ := sysMount.Exists()
 	m := &Mount{
-		id:     mountPoint,
-		Exists: exists,
+		id:      mountPoint,
+		Exists:  exists,
+		Timeout: config.TimeOutMilliSeconds(),
 	}
 	if !contains(config.IgnoreList, "opts") {
 		if opts, err := sysMount.Opts(); err == nil {
