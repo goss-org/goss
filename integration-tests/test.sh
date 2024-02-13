@@ -60,7 +60,7 @@ if [[ ! $os == "arch" ]]; then
   docker_exec diff -wu "/goss/${os}/goss-expected.yaml" "/goss/${os}/goss-generated-$arch.yaml"
 
   # docker exec $container_name bash -c "cp /goss/${os}/goss-aa-generated-$arch.yaml /goss/${os}/goss-aa-expected.yaml"
-  docker_exec cat "/goss/${os}/goss-aa-expected.yaml" && "/goss/${os}/goss-aa-generated-$arch.yaml" &&  diff -wu "/goss/${os}/goss-aa-expected.yaml" "/goss/${os}/goss-aa-generated-$arch.yaml"
+  docker_exec diff -wu "/goss/${os}/goss-aa-expected.yaml" "/goss/${os}/goss-aa-generated-$arch.yaml"
 
   docker_exec /goss/generate_goss.sh "$os" "$arch" -q
 
