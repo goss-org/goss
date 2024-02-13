@@ -27,14 +27,14 @@ type DefMount struct {
 	exists     bool
 	mountInfo  *mountinfo.Info
 	usage      int
-    Timeout    int
+	Timeout    int
 	err        error
 }
 
 func NewDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
 	return &DefMount{
 		mountPoint: mountPoint,
-                Timeout: config.TimeOutMilliSeconds(),
+		Timeout:    config.TimeOutMilliSeconds(),
 	}
 }
 
