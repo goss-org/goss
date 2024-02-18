@@ -48,7 +48,7 @@ func (c *Command) GetExec() interface{} {
 	} else if len(c.Exec.CmdSlice) > 0 {
 		return c.Exec.CmdSlice
 	} else {
-		return util.ExecCommand{CmdStr: c.id}
+		return c.id
 	}
 }
 
