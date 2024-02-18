@@ -48,7 +48,15 @@ type DefFile struct {
 	err      error
 }
 
-func NewDefFile(_ context.Context, path string, system *System, config util.Config) File {
+func NewDefFile(_ context.Context, path interface{}, system *System, config util.Config) (File, error) {
+	strPath, ok := path.(string)
+	if !ok {
+		return nil, fmt.Errorf("path must be of type string")
+	}
+	return newDefFile(nil, strPath, system, config), nil
+}
+
+func newDefFile(_ context.Context, path string, system *System, config util.Config) File {
 	var err error
 	if !strings.HasPrefix(path, "~") {
 		path, err = filepath.Abs(path)

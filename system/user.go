@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"os/user"
 	"strconv"
 
@@ -22,7 +23,15 @@ type DefUser struct {
 	username string
 }
 
-func NewDefUser(_ context.Context, username string, system *System, config util.Config) User {
+func NewDefUser(_ context.Context, username interface{}, system *System, config util.Config) (User, error) {
+	strUsername, ok := username.(string)
+	if !ok {
+		return nil, fmt.Errorf("username must be of type string")
+	}
+	return newDefUser(nil, strUsername, system, config), nil
+}
+
+func newDefUser(_ context.Context, username string, system *System, config util.Config) User {
 	return &DefUser{username: username}
 }
 

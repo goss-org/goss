@@ -68,7 +68,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if u.Timeout == 0 {
 		u.Timeout = 5000
 	}
-	sysHTTP := sys.NewHTTP(ctx, u.getURL(), sys, util.Config{
+	sysHTTP, _ := sys.NewHTTP(ctx, u.getURL(), sys, util.Config{
 		AllowInsecure:     u.AllowInsecure,
 		CAFile:            u.CAFile,
 		CertFile:          u.CertFile,

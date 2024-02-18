@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/goss-org/goss/util"
@@ -15,7 +16,15 @@ type AlpinePackage struct {
 	installed bool
 }
 
-func NewAlpinePackage(_ context.Context, name string, system *System, config util.Config) Package {
+func NewAlpinePackage(_ context.Context, name interface{}, system *System, config util.Config) (Package, error) {
+	strName, ok := name.(string)
+	if !ok {
+		return nil, fmt.Errorf("name must be of type string")
+	}
+	return newAlpinePackage(nil, strName, system, config), nil
+}
+
+func newAlpinePackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &AlpinePackage{name: name}
 }
 

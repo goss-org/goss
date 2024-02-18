@@ -29,7 +29,15 @@ type DefMount struct {
 	err        error
 }
 
-func NewDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
+func NewDefMount(_ context.Context, mountPoint interface{}, system *System, config util.Config) (Mount, error) {
+	strMountPoint, ok := mountPoint.(string)
+	if !ok {
+		return nil, fmt.Errorf("mountPoint must be of type string")
+	}
+	return newDefMount(nil, strMountPoint, system, config), nil
+}
+
+func newDefMount(_ context.Context, mountPoint string, system *System, config util.Config) Mount {
 	return &DefMount{
 		mountPoint: mountPoint,
 	}

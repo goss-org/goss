@@ -20,21 +20,21 @@ type Resource interface {
 }
 
 type System struct {
-	NewPackage     func(context.Context, string, *System, util2.Config) Package
-	NewFile        func(context.Context, string, *System, util2.Config) File
-	NewAddr        func(context.Context, string, *System, util2.Config) Addr
-	NewPort        func(context.Context, string, *System, util2.Config) Port
-	NewService     func(context.Context, string, *System, util2.Config) Service
-	NewUser        func(context.Context, string, *System, util2.Config) User
-	NewGroup       func(context.Context, string, *System, util2.Config) Group
-	NewCommand     func(context.Context, util2.ExecCommand, *System, util2.Config) Command
-	NewDNS         func(context.Context, string, *System, util2.Config) DNS
-	NewProcess     func(context.Context, string, *System, util2.Config) Process
-	NewGossfile    func(context.Context, string, *System, util2.Config) Gossfile
-	NewKernelParam func(context.Context, string, *System, util2.Config) KernelParam
-	NewMount       func(context.Context, string, *System, util2.Config) Mount
-	NewInterface   func(context.Context, string, *System, util2.Config) Interface
-	NewHTTP        func(context.Context, string, *System, util2.Config) HTTP
+	NewPackage     func(context.Context, interface{}, *System, util2.Config) (Package, error)
+	NewFile        func(context.Context, interface{}, *System, util2.Config) (File, error)
+	NewAddr        func(context.Context, interface{}, *System, util2.Config) (Addr, error)
+	NewPort        func(context.Context, interface{}, *System, util2.Config) (Port, error)
+	NewService     func(context.Context, interface{}, *System, util2.Config) (Service, error)
+	NewUser        func(context.Context, interface{}, *System, util2.Config) (User, error)
+	NewGroup       func(context.Context, interface{}, *System, util2.Config) (Group, error)
+	NewCommand     func(context.Context, interface{}, *System, util2.Config) (Command, error)
+	NewDNS         func(context.Context, interface{}, *System, util2.Config) (DNS, error)
+	NewProcess     func(context.Context, interface{}, *System, util2.Config) (Process, error)
+	NewGossfile    func(context.Context, interface{}, *System, util2.Config) (Gossfile, error)
+	NewKernelParam func(context.Context, interface{}, *System, util2.Config) (KernelParam, error)
+	NewMount       func(context.Context, interface{}, *System, util2.Config) (Mount, error)
+	NewInterface   func(context.Context, interface{}, *System, util2.Config) (Interface, error)
+	NewHTTP        func(context.Context, interface{}, *System, util2.Config) (HTTP, error)
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process

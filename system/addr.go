@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"strings"
 	"time"
@@ -21,7 +22,15 @@ type DefAddr struct {
 	Timeout      int
 }
 
-func NewDefAddr(_ context.Context, address string, system *System, config util.Config) Addr {
+func NewDefAddr(_ context.Context, address interface{}, system *System, config util.Config) (Addr, error) {
+	strAddress, ok := address.(string)
+	if !ok {
+		return nil, fmt.Errorf("address must be of type string")
+	}
+	return newDefAddr(nil, strAddress, system, config), nil
+}
+
+func newDefAddr(_ context.Context, address string, system *System, config util.Config) Addr {
 	addr := normalizeAddress(address)
 	return &DefAddr{
 		address:      addr,

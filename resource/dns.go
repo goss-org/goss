@@ -58,7 +58,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 		d.Timeout = 500
 	}
 
-	sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+	sysDNS, _ := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
 
 	var results []TestResult
 	// Backwards compatibility hack for now

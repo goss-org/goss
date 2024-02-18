@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/goss-org/goss/util"
@@ -15,7 +16,15 @@ type RpmPackage struct {
 	installed bool
 }
 
-func NewRpmPackage(_ context.Context, name string, system *System, config util.Config) Package {
+func NewRpmPackage(_ context.Context, name interface{}, system *System, config util.Config) (Package, error) {
+	strName, ok := name.(string)
+	if !ok {
+		return nil, fmt.Errorf("name must be of type string")
+	}
+	return newRpmPackage(nil, strName, system, config), nil
+}
+
+func newRpmPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &RpmPackage{name: name}
 }
 

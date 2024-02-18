@@ -45,7 +45,15 @@ type DefHTTP struct {
 	Proxy             string
 }
 
-func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
+func NewDefHTTP(_ context.Context, httpStr interface{}, system *System, config util.Config) (HTTP, error) {
+	strHttpStr, ok := httpStr.(string)
+	if !ok {
+		return nil, fmt.Errorf("httpStr must be of type string")
+	}
+	return newDefHTTP(nil, strHttpStr, system, config), nil
+}
+
+func newDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
 	headers := http.Header{}
 	for _, r := range config.RequestHeader {
 		str := strings.SplitN(r, ": ", 2)

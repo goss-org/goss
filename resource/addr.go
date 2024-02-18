@@ -58,7 +58,7 @@ func (a *Addr) Validate(sys *system.System) []TestResult {
 		a.Timeout = 500
 	}
 
-	sysAddr := sys.NewAddr(ctx, a.GetAddress(), sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
+	sysAddr, _ := sys.NewAddr(ctx, a.GetAddress(), sys, util.Config{Timeout: time.Duration(a.Timeout) * time.Millisecond, LocalAddress: a.LocalAddress})
 
 	var results []TestResult
 	results = append(results, ValidateValue(a, "reachable", a.Reachable, sysAddr.Reachable, skip))

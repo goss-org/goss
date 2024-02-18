@@ -30,10 +30,29 @@ type DefCommand struct {
 	err        error
 }
 
-func NewDefCommand(ctx context.Context, command util.ExecCommand, system *System, config util.Config) Command {
+func NewDefCommand(ctx context.Context, command interface{}, system *System, config util.Config) (Command, error) {
+	switch cmd := command.(type) {
+	case string:
+		return newDefCommand(ctx, cmd, system, config), nil
+	case []string:
+		return newDefExecCommand(ctx, cmd, system, config), nil
+	default:
+		return nil, fmt.Errorf("command type must be either string or []string")
+	}
+}
+
+func newDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
 	return &DefCommand{
 		Ctx:     ctx,
-		command: command,
+		command: util.ExecCommand{CmdStr: command},
+		Timeout: config.TimeOutMilliSeconds(),
+	}
+}
+
+func newDefExecCommand(ctx context.Context, command []string, system *System, config util.Config) Command {
+	return &DefCommand{
+		Ctx:     ctx,
+		command: util.ExecCommand{CmdSlice: command},
 		Timeout: config.TimeOutMilliSeconds(),
 	}
 }

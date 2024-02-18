@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"os/user"
 	"strconv"
 
@@ -18,7 +19,15 @@ type DefGroup struct {
 	groupname string
 }
 
-func NewDefGroup(_ context.Context, groupname string, system *System, config util.Config) Group {
+func NewDefGroup(_ context.Context, groupname interface{}, system *System, config util.Config) (Group, error) {
+	strGroupname, ok := groupname.(string)
+	if !ok {
+		return nil, fmt.Errorf("groupname must be of type string")
+	}
+	return newDefGroup(nil, strGroupname, system, config), nil
+}
+
+func newDefGroup(_ context.Context, groupname string, system *System, config util.Config) Group {
 	return &DefGroup{groupname: groupname}
 }
 

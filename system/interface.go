@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"net"
 
 	"github.com/goss-org/goss/util"
@@ -22,7 +23,15 @@ type DefInterface struct {
 	err    error
 }
 
-func NewDefInterface(_ context.Context, name string, systei *System, config util.Config) Interface {
+func NewDefInterface(_ context.Context, name interface{}, system *System, config util.Config) (Interface, error) {
+	strName, ok := name.(string)
+	if !ok {
+		return nil, fmt.Errorf("name must be of type string")
+	}
+	return newDefInterface(nil, strName, system, config), nil
+}
+
+func newDefInterface(_ context.Context, name string, systei *System, config util.Config) Interface {
 	return &DefInterface{
 		name: name,
 	}

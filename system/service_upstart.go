@@ -18,7 +18,15 @@ type ServiceUpstart struct {
 var upstartEnabled = regexp.MustCompile(`^\s*start on`)
 var upstartDisabled = regexp.MustCompile(`^manual`)
 
-func NewServiceUpstart(_ context.Context, service string, system *System, config util.Config) Service {
+func NewServiceUpstart(_ context.Context, service interface{}, system *System, config util.Config) (Service, error) {
+	strService, ok := service.(string)
+	if !ok {
+		return nil, fmt.Errorf("service must be of type string")
+	}
+	return newServiceUpstart(nil, strService, system, config), nil
+}
+
+func newServiceUpstart(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceUpstart{service: service}
 }
 

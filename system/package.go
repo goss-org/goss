@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/goss-org/goss/util"
 )
@@ -20,7 +21,15 @@ type NullPackage struct {
 	name string
 }
 
-func NewNullPackage(_ context.Context, name string, system *System, config util.Config) Package {
+func NewNullPackage(_ context.Context, name interface{}, system *System, config util.Config) (Package, error) {
+	strName, ok := name.(string)
+	if !ok {
+		return nil, fmt.Errorf("name must be of type string")
+	}
+	return newNullPackage(nil, strName, system, config), nil
+}
+
+func newNullPackage(_ context.Context, name string, system *System, config util.Config) Package {
 	return &NullPackage{name: name}
 }
 

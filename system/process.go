@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/goss-org/go-ps"
 	"github.com/goss-org/goss/util"
@@ -20,7 +21,15 @@ type DefProcess struct {
 	err        error
 }
 
-func NewDefProcess(_ context.Context, executable string, system *System, config util.Config) Process {
+func NewDefProcess(_ context.Context, executable interface{}, system *System, config util.Config) (Process, error) {
+	strExecutable, ok := executable.(string)
+	if !ok {
+		return nil, fmt.Errorf("executable must be of type string")
+	}
+	return newDefProcess(nil, strExecutable, system, config), nil
+}
+
+func newDefProcess(_ context.Context, executable string, system *System, config util.Config) Process {
 	pmap, err := system.ProcMap()
 	return &DefProcess{
 		executable: executable,
