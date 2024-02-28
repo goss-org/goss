@@ -48,7 +48,7 @@ func (p *Process) GetComm() string {
 func (p *Process) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", p.ID())
 	skip := p.Skip
-	sysProcess := sys.NewProcess(ctx, p.GetComm(), sys, util.Config{})
+	sysProcess, _ := sys.NewProcess(ctx, p.GetComm(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(p, "running", p.Running, sysProcess.Running, skip))

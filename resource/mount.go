@@ -55,7 +55,7 @@ func (m *Mount) GetMountPoint() string {
 func (m *Mount) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", m.ID())
 	skip := m.Skip
-	sysMount := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{})
+	sysMount, _ := sys.NewMount(ctx, m.GetMountPoint(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(m, "exists", m.Exists, sysMount.Exists, skip))

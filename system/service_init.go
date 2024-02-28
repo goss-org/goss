@@ -16,11 +16,27 @@ type ServiceInit struct {
 	runlevel string
 }
 
-func NewServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
+func NewServiceInit(_ context.Context, service interface{}, system *System, config util.Config) (Service, error) {
+	strService, ok := service.(string)
+	if !ok {
+		return nil, fmt.Errorf("service must be of type string")
+	}
+	return newServiceInit(nil, strService, system, config), nil
+}
+
+func newServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceInit{service: service}
 }
 
-func NewAlpineServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
+func NewAlpineServiceInit(_ context.Context, service interface{}, system *System, config util.Config) (Service, error) {
+	strService, ok := service.(string)
+	if !ok {
+		return nil, fmt.Errorf("service must be of type string")
+	}
+	return newAlpineServiceInit(nil, strService, system, config), nil
+}
+
+func newAlpineServiceInit(_ context.Context, service string, system *System, config util.Config) Service {
 	runlevel := config.RunLevel
 	if runlevel == "" {
 		runlevel = "sysinit"

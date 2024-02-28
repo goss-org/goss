@@ -49,7 +49,7 @@ func (g *Group) GetGroupname() string {
 func (g *Group) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", g.ID())
 	skip := g.Skip
-	sysgroup := sys.NewGroup(ctx, g.GetGroupname(), sys, util.Config{})
+	sysgroup, _ := sys.NewGroup(ctx, g.GetGroupname(), sys, util.Config{})
 
 	var results []TestResult
 	results = append(results, ValidateValue(g, "exists", g.Exists, sysgroup.Exists, skip))

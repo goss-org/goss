@@ -13,13 +13,29 @@ type ServiceSystemd struct {
 	legacy  bool
 }
 
-func NewServiceSystemd(_ context.Context, service string, system *System, config util.Config) Service {
+func NewServiceSystemd(_ context.Context, service interface{}, system *System, config util.Config) (Service, error) {
+	strService, ok := service.(string)
+	if !ok {
+		return nil, fmt.Errorf("service must be of type string")
+	}
+	return newServiceSystemd(nil, strService, system, config), nil
+}
+
+func newServiceSystemd(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 	}
 }
 
-func NewServiceSystemdLegacy(_ context.Context, service string, system *System, config util.Config) Service {
+func NewServiceSystemdLegacy(_ context.Context, service interface{}, system *System, config util.Config) (Service, error) {
+	strService, ok := service.(string)
+	if !ok {
+		return nil, fmt.Errorf("service must be of type string")
+	}
+	return newServiceSystemdLegacy(nil, strService, system, config), nil
+}
+
+func newServiceSystemdLegacy(_ context.Context, service string, system *System, config util.Config) Service {
 	return &ServiceSystemd{
 		service: service,
 		legacy:  true,

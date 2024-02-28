@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -21,7 +22,15 @@ type DefPort struct {
 	sysPorts map[string][]GOnetstat.Process
 }
 
-func NewDefPort(_ context.Context, port string, system *System, config util.Config) Port {
+func NewDefPort(_ context.Context, port interface{}, system *System, config util.Config) (Port, error) {
+	strPort, ok := port.(string)
+	if !ok {
+		return nil, fmt.Errorf("port must be of type string")
+	}
+	return newDefPort(nil, strPort, system, config), nil
+}
+
+func newDefPort(_ context.Context, port string, system *System, config util.Config) Port {
 	p := normalizePort(port)
 	return &DefPort{
 		port:     p,

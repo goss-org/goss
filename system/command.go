@@ -12,7 +12,7 @@ import (
 )
 
 type Command interface {
-	Command() string
+	Command() util.ExecCommand
 	Exists() (bool, error)
 	ExitStatus() (int, error)
 	Stdout() (io.Reader, error)
@@ -21,7 +21,7 @@ type Command interface {
 
 type DefCommand struct {
 	Ctx        context.Context
-	command    string
+	command    util.ExecCommand
 	exitStatus int
 	stdout     io.Reader
 	stderr     io.Reader
@@ -30,10 +30,29 @@ type DefCommand struct {
 	err        error
 }
 
-func NewDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
+func NewDefCommand(ctx context.Context, command interface{}, system *System, config util.Config) (Command, error) {
+	switch cmd := command.(type) {
+	case string:
+		return newDefCommand(ctx, cmd, system, config), nil
+	case []string:
+		return newDefExecCommand(ctx, cmd, system, config), nil
+	default:
+		return nil, fmt.Errorf("command type must be either string or []string")
+	}
+}
+
+func newDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
 	return &DefCommand{
 		Ctx:     ctx,
-		command: command,
+		command: util.ExecCommand{CmdStr: command},
+		Timeout: config.TimeOutMilliSeconds(),
+	}
+}
+
+func newDefExecCommand(ctx context.Context, command []string, system *System, config util.Config) Command {
+	return &DefCommand{
+		Ctx:     ctx,
+		command: util.ExecCommand{CmdSlice: command},
 		Timeout: config.TimeOutMilliSeconds(),
 	}
 }
@@ -44,7 +63,12 @@ func (c *DefCommand) setup() error {
 	}
 	c.loaded = true
 
-	cmd := commandWrapper(c.command)
+	var cmd *util.Command
+	if c.command.CmdStr != "" {
+		cmd = commandWrapper(c.command.CmdStr)
+	} else {
+		cmd = util.NewCommand(c.command.CmdSlice[0], c.command.CmdSlice[1:]...)
+	}
 	err := runCommand(cmd, c.Timeout)
 
 	// We don't care about ExitError since it's covered by status
@@ -63,7 +87,7 @@ func (c *DefCommand) setup() error {
 	return c.err
 }
 
-func (c *DefCommand) Command() string {
+func (c *DefCommand) Command() util.ExecCommand {
 	return c.command
 }
 

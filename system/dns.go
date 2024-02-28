@@ -34,7 +34,15 @@ type DefDNS struct {
 	qtype      string
 }
 
-func NewDefDNS(_ context.Context, host string, system *System, config util.Config) DNS {
+func NewDefDNS(_ context.Context, host interface{}, system *System, config util.Config) (DNS, error) {
+	strHost, ok := host.(string)
+	if !ok {
+		return nil, fmt.Errorf("host must be of type string")
+	}
+	return newDefDNS(nil, strHost, system, config), nil
+}
+
+func newDefDNS(_ context.Context, host string, system *System, config util.Config) DNS {
 	var h string
 	var t string
 

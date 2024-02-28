@@ -50,7 +50,7 @@ func (s *Service) GetName() string {
 func (s *Service) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), "id", s.ID())
 	skip := s.Skip
-	sysservice := sys.NewService(ctx, s.GetName(), sys, util.Config{})
+	sysservice, _ := sys.NewService(ctx, s.GetName(), sys, util.Config{})
 
 	var results []TestResult
 	if s.Enabled != nil {
