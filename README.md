@@ -2,14 +2,21 @@
 
 [![Build Status](https://travis-ci.org/goss-org/goss.svg?branch=master)](https://travis-ci.org/goss-org/goss)
 [![Github All Releases](https://img.shields.io/github/downloads/goss-org/goss/total.svg?maxAge=604800)](https://github.com/goss-org/goss/releases)
+[![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.rocks/)
 **
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
+<!-- --8<-- [start:intro] -->
+
 ## Goss in 45 seconds
 
+<!-- markdownlint-disable line-length no-inline-html-->
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
+<!-- markdownlint-enable line-length no-inline-html -->
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper. Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss) and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
+**Note:** For testing docker containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper.
+Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss)
+and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
@@ -19,7 +26,9 @@ container ordering examples, see my blog post
 
 ### What is Goss?
 
-Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for validating a server’s configuration. It eases the process of writing tests by allowing the user to generate tests from the current system state. Once the test suite is written they can be executed, waited-on, or served as a health endpoint.
+Goss is a YAML based [serverspec](http://serverspec.org/) alternative tool for validating a server's configuration.
+It eases the process of writing tests by allowing the user to generate tests from the current system state.
+Once the test suite is written they can be executed, waited-on, or served as a health endpoint.
 
 ### Why use Goss?
 
@@ -42,6 +51,9 @@ curl -fsSL https://goss.rocks/install | sh
 # Install v0.3.16 version to ~/bin
 curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.16 GOSS_DST=~/bin sh
 ```
+
+<!-- --8<-- [end:intro] -->
+<!-- --8<-- [start:install] -->
 
 ### Manual installation
 
@@ -77,15 +89,20 @@ chmod +rx /usr/local/bin/dgoss
 make build
 ```
 
+<!-- --8<-- [end:install] -->
+
 ## Full Documentation
 
-Documentation is available here: [manual](https://github.com/goss-org/goss/blob/master/docs/manual.md)
+Documentation is available at <https://goss.rocks/>
 
 ## Quick start
 
+<!-- --8<-- [start:quickstart] -->
+
 ### Writing a simple sshd test
 
-An initial set of tests can be derived from the system state by using the [add](https://github.com/goss-org/goss/blob/master/docs/manual.md#add-a---add-system-resource-to-test-suite) or [autoadd](https://github.com/goss-org/goss/blob/master/docs/manual.md#autoadd-aa---auto-add-all-matching-resources-to-test-suite) commands.
+An initial set of tests can be derived from the system state by using the [add](https://goss.rocks/cli/#add)
+or [autoadd](https://goss.rocks/cli/#autoadd) commands.
 
 Let's write a simple sshd test using autoadd.
 
@@ -97,7 +114,6 @@ $ sudo goss autoadd sshd
 Generated `goss.yaml`:
 
 ```yaml
-$ cat goss.yaml
 port:
   tcp:22:
     listening: true
@@ -133,59 +149,67 @@ Now that we have a test suite, we can:
 
 * Run it once
 
-```txt
-goss validate
+```console
+$ goss validate
 ...............
 
 Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 ```
 
-* Edit it to use [templates](https://github.com/goss-org/goss/blob/master/docs/manual.md#templates), and run with a vars file
+* Edit it to use [templates](https://goss.rocks/gossfile/#templates), and run with a vars file
 
-```txt
+```console
 goss --vars vars.yaml validate
 ```
 
 * keep running it until the system enters a valid state or we timeout
 
-```txt
+```console
 goss validate --retry-timeout 30s --sleep 1s
 ```
 
 * serve the tests as a health endpoint
 
-```txt
-goss serve &
-curl localhost:8080/healthz
+```console
+$ goss serve &
+$ curl localhost:8080/healthz
 
 # JSON endpoint
-goss serve --format json &
-curl localhost:8080/healthz
+$ goss serve --format json &
+$ curl localhost:8080/healthz
 
 # rspecish response via content negotiation
-goss serve --format json &
-curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
+$ goss serve --format json &
+$ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
 ### Manually editing Goss files
 
 Goss files can be manually edited to improve readability and expressiveness of tests.
 
-A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available in [docs/goss-json-schema.yaml](./docs/goss-json-schema.yaml) makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance such as inline documentation, completion and static analysis. See [PR 793](https://github.com/goss-org/goss/pull/793) for screenshots.
+A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available
+at <https://goss.rocks/schema.yaml> makes it easier to edit simple goss.yaml files in IDEs,
+providing usual coding assistance such as inline documentation, completion and static analysis.
+See #793 for screenshots.
 
-For example, to configure the Json schema in JetBrains intellij IDEA, follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom), with arguments such as `schema url=https://raw.githubusercontent.com/goss-org/goss/master/docs/goss-json-schema.yaml`, `schema version=Json schema version 7`, `file path pattern=*/goss.yaml`
+For example, to configure the Json schema in JetBrains intellij IDEA,
+follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom),
+with arguments such as:
+* `schema url=https://goss.rocks/schema.yaml`
+* `schema version=Json schema version 7`
+* `file path pattern=*/goss.yaml`
 
 In addition, Goss files can also be further manually edited (without yet full json support) to use:
 
-* [Patterns](https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns)
-* [Advanced Matchers](https://github.com/goss-org/goss/blob/master/docs/manual.md#advanced-matchers)
-* [Templates](https://github.com/goss-org/goss/blob/master/docs/manual.md#templates)
+* [Patterns](https://goss.rocks/gossfile/#patterns)
+* [Advanced Matchers](https://goss.rocks/gossfile/#advanced-matchers)
+* [Templates](https://goss.rocks/gossfile/#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
 
-```yaml
+```yaml+jinja
 user:
   sshd:
     title: UID must be between 50-100, GID doesn't matter. home is flexible
@@ -225,19 +249,20 @@ package:
 {{end}}
 ```
 
-Goss.yaml files with templates can still be validated through the Json schema after being rendered using the `goss render` command. See example below  
+Goss.yaml files with templates can still be validated through the Json schema after being rendered
+using the `goss render` command. See example below
 
-```bash
-cd docs
-goss --vars ./vars.yaml render > rendered_goss.yaml 
-# proceed with json schema validation of rendered_goss.yaml in your favorite IDE 
+```console
+$ cd docs
+$ goss --vars ./vars.yaml render > rendered_goss.yaml
+# proceed with json schema validation of rendered_goss.yaml in your favorite IDE
 # or in one of the Json schema validator listed in https://json-schema.org/implementations.html
-# The following example is for a Linux AMD64 host 
-curl -LO https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
-chmod a+x yajsv.linux.amd64 
-sudo mv yajsv.linux.amd64 /usr/sbin/yajsv
+# The following example is for a Linux AMD64 host
+$ curl -LO https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.linux.amd64
+$ chmod a+x yajsv.linux.amd64
+$ sudo mv yajsv.linux.amd64 /usr/sbin/yajsv
 
-yajsv -s goss-json-schema.yaml rendered_goss.yaml
+$ yajsv -s goss-json-schema.yaml rendered_goss.yaml
 
 rendered_goss.yaml: fail: process.chrome: skip is required
 rendered_goss.yaml: fail: service.sshd: skip is required
@@ -246,7 +271,10 @@ rendered_goss.yaml: fail: process.chrome: skip is required
 rendered_goss.yaml: fail: service.sshd: skip is required
 ```
 
-Full list of available Json schema validators can be found in https://json-schema.org/implementations.html#validator-command%20line
+Full list of available Json schema validators can be found in <https://json-schema.org/implementations.html#validator-command%20line>
+
+<!-- --8<-- [end:quickstart] -->
+<!-- --8<-- [start:about] -->
 
 ## Supported resources
 
@@ -280,6 +308,7 @@ Full list of available Json schema validators can be found in https://json-schem
 
 ## Community Contributions
 
+<!-- markdownlint-disable line-length -->
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
 * [degoss](https://github.com/naftulikay/ansible-role-degoss) - Ansible role for installing, running, and removing Goss in a single go.
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
@@ -287,6 +316,7 @@ Full list of available Json schema validators can be found in https://json-schem
 * [molecule](https://github.com/metacloud/molecule) - Automated testing for Ansible roles, with native Goss support.
 * [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
 * [gossboss](https://github.com/mdb/gossboss) - Collect and view aggregated Goss test results from multiple remote Goss servers.
+<!-- markdownlint-enable line-length -->
 
 ## Limitations
 
@@ -309,4 +339,6 @@ Service:
 * Upstart
 
 [kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
-[platform-feature-parity]: docs/platform-feature-parity.md
+[platform-feature-parity]: https://goss.rocks/platforms
+
+<!-- --8<-- [end:about] -->

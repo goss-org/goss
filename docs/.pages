@@ -1,0 +1,12 @@
+nav:
+  - Home: index.md
+  - installation.md
+  - quickstart.md
+  - Command Reference: cli.md
+  - The gossfile: gossfile.md
+  - migrations.md
+  - platforms.md
+  - containers
+  - Contributing: contributing.md
+  - changelog.md
+  - license.md
