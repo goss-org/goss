@@ -37,6 +37,21 @@ func (f *DefFile) Owner() (string, error) {
 	return getUserForUid(uid)
 }
 
+func (f *DefFile) Uid() (int, error) {
+	uidS, err := f.getFileInfo(func(fi os.FileInfo) string {
+		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
+	})
+	if err != nil {
+		return -1, err
+	}
+
+	uid, err := strconv.Atoi(uidS)
+	if err != nil {
+		return -1, err
+	}
+	return uid, nil
+}
+
 func (f *DefFile) Group() (string, error) {
 	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
 		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
@@ -50,6 +65,21 @@ func (f *DefFile) Group() (string, error) {
 		return "", err
 	}
 	return getGroupForGid(gid)
+}
+
+func (f *DefFile) Gid() (int, error) {
+	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
+		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
+	})
+	if err != nil {
+		return -1, err
+	}
+
+	gid, err := strconv.Atoi(gidS)
+	if err != nil {
+		return -1, err
+	}
+	return gid, nil
 }
 
 func (f *DefFile) getFileInfo(selectorFunc func(os.FileInfo) string) (string, error) {

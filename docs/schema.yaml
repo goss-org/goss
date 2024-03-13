@@ -111,9 +111,13 @@ definitions:
       owner:
         type: string
         default: root
+      uid:
+        type: integer
       group:
         type: string
         default: root
+      gid:
+        type: integer
       filetype:
         type: string
         default: file

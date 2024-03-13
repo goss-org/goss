@@ -23,7 +23,9 @@ file:
     exists: true
     mode: '0644'
     owner: root
+    uid: 0
     group: root
+    gid: 0
     filetype: file
     contents:
     - root
