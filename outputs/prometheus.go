@@ -75,7 +75,8 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	if err != nil {
 		return -1
 	}
-	encoder := expfmt.NewEncoder(w, expfmt.FmtText)
+
+	encoder := expfmt.NewEncoder(w, expfmt.NewFormat(expfmt.TypeTextPlain))
 	for _, mf := range metricsFamilies {
 		err := encoder.Encode(mf)
 		if err != nil {
