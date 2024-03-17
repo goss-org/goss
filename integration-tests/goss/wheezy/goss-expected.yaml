@@ -154,6 +154,7 @@ mount:
     - rw
     source: tmpfs
     filesystem: tmpfs
+    timeout: 1000
 http:
   http://google.com:
     status: 301

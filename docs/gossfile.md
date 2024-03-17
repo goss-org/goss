@@ -396,6 +396,7 @@ mount:
     exists: true
     # optional attributes
     # defaults to hash key
+    timeout: 1000
     mountpoint: /home
     opts:
     - rw

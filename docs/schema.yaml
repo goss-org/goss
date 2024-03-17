@@ -317,6 +317,8 @@ definitions:
     required:
       - exists
     properties:
+      timeout:
+        type: integer
       title: { "$ref":"#/definitions/title" }
       meta: { "$ref":"#/definitions/meta" }
       exists:
