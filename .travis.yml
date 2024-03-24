@@ -13,7 +13,7 @@ os:
   - linux
   - windows
 
-dist: trusty
+dist: focal
 osx_image: xcode12.2
 
 services:
