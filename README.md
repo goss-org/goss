@@ -93,7 +93,7 @@ make build
 
 ## Full Documentation
 
-Documentation is available at <https://goss.rocks/>
+[Full Documentation](https://github.com/goss-org/goss/blob/e73553f9c3065ac297499dafb4f8abef6acb24ad/docs/manual.md)
 
 ## Quick start
 
