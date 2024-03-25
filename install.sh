@@ -3,9 +3,8 @@
 {
 set -e
 
-# LATEST_URL="https://github.com/goss-org/goss/releases/latest"
-# LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
-LATEST_EFFECTIVE=https://github.com/goss-org/goss/releases/tag/v0.3.23
+LATEST_URL="https://github.com/goss-org/goss/releases/latest"
+LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
 LATEST=${LATEST_EFFECTIVE##*/}
 
 DGOSS_VER=$GOSS_VER
