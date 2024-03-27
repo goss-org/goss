@@ -1,0 +1,29 @@
+---
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+# Each of these can be read|write|none
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  deployments: read
+  issues: read
+  packages: read
+  pull-requests: read
+  repository-projects: read
+  security-events: read
+  statuses: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - run: ci/build.sh
