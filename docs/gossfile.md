@@ -907,7 +907,7 @@ Available functions:
     `readFile "fileName"`
     :   Reads file content into a string, trims whitespace. Useful when a file contains a token.
         !!! note
-            Goss will error out during during the parsing phase if the file does not exist, no tests will be executed.
+            Goss will error out during the parsing phase if the file does not exist, no tests will be executed.
 
     `regexMatch "(some)?reg[eE]xp"`
     :   Tests the piped input against the regular expression argument.
