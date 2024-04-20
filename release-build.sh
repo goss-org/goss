@@ -22,7 +22,7 @@ fi
 output="${output_dir}/${output_fname}"
 
 GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
-  -ldflags "-X main.version=${version_stamp} -s -w" \
+  -ldflags "-X main.version=${version_stamp} -X github.com/goss-org/goss/util.Version=${version_stamp} -s -w" \
   -o "${output}" \
   github.com/goss-org/goss/cmd/goss
 

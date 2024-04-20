@@ -17,7 +17,7 @@ import (
 )
 
 const USER_AGENT_HEADER_PREFIX = "user-agent:"
-const DEFAULT_USER_AGENT = "goss/x.x.x"
+const DEFAULT_USER_AGENT_PREFIX = "goss/"
 
 type HTTP interface {
 	HTTP() string
@@ -52,7 +52,7 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
 	headers := http.Header{}
 
 	if !hasUserAgentHeader(config.RequestHeader) {
-		config.RequestHeader = append(config.RequestHeader, fmt.Sprintf("%s %s", USER_AGENT_HEADER_PREFIX, DEFAULT_USER_AGENT))
+		config.RequestHeader = append(config.RequestHeader, fmt.Sprintf("%s %s%s", USER_AGENT_HEADER_PREFIX, DEFAULT_USER_AGENT_PREFIX, util.Version))
 	}
 
 	for _, r := range config.RequestHeader {
