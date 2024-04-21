@@ -918,6 +918,15 @@ Available functions:
     `toUpper`
     :   Changes piped input to UPPERCASE
 
+    `regexFirstGroup "my $conf_bd = '(mysql://user:pass@localhost/db)'"`
+    :   Returns the first group from regexp, for example config to connect mysql. Useful with `readFile FILE | regexFirstGroup REGEXP`
+
+```go
+{{ $regexBDRC := "\\'mysql:\\/\\/[a-z0-9]+:[a-z0-9]+@localhost\\/([a-z0-9]+)\\';"}}
+{{ $BD := readFile $fileRCConfig | regexFirstGroup $regexBD}}
+```
+
+
 !!! warning
 
     gossfiles containing text/template `{{}}` controls will no longer work with `goss add/autoadd`.
