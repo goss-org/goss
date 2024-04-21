@@ -76,11 +76,27 @@ func regexMatch(re, s string) (bool, error) {
 	return compiled.MatchString(s), nil
 }
 
+// return first group from regexp
+func regexFirstGroup(re, s string) string {
+	compiled, err := regexp.Compile(re)
+	if err != nil {
+		return ""
+	}
+
+	if compiled.MatchString(s) {
+		// second match (first match is all the text)
+		return compiled.FindAllStringSubmatch(s, -1)[0][1]
+	}
+
+	return ""
+}
+
 var funcMap = template.FuncMap{
-	"mkSlice":    mkSlice,
-	"readFile":   readFile,
-	"getEnv":     getEnv,
-	"regexMatch": regexMatch,
-	"toUpper":    strings.ToUpper,
-	"toLower":    strings.ToLower,
+	"mkSlice":         mkSlice,
+	"readFile":        readFile,
+	"getEnv":          getEnv,
+	"regexMatch":      regexMatch,
+	"toUpper":         strings.ToUpper,
+	"toLower":         strings.ToLower,
+	"regexFirstGroup": regexFirstGroup,
 }
