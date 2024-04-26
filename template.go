@@ -76,27 +76,18 @@ func regexMatch(re, s string) (bool, error) {
 	return compiled.MatchString(s), nil
 }
 
-// return first group from regexp
-func regexFirstGroup(re, s string) string {
-	compiled, err := regexp.Compile(re)
-	if err != nil {
-		return ""
-	}
-
-	if compiled.MatchString(s) {
-		// second match (first match is all the text)
-		return compiled.FindAllStringSubmatch(s, -1)[0][1]
-	}
-
-	return ""
+// return submatchs from string, see https://github.com/goss-org/goss/pull/895#pullrequestreview-2017498865 by @aelsabbahy
+func findStringSubmatch(pattern, input string) []string {
+	re := regexp.MustCompile(pattern)
+	return re.FindStringSubmatch(input)
 }
 
 var funcMap = template.FuncMap{
-	"mkSlice":         mkSlice,
-	"readFile":        readFile,
-	"getEnv":          getEnv,
-	"regexMatch":      regexMatch,
-	"toUpper":         strings.ToUpper,
-	"toLower":         strings.ToLower,
-	"regexFirstGroup": regexFirstGroup,
+	"mkSlice":            mkSlice,
+	"readFile":           readFile,
+	"getEnv":             getEnv,
+	"regexMatch":         regexMatch,
+	"toUpper":            strings.ToUpper,
+	"toLower":            strings.ToLower,
+	"findStringSubmatch": findStringSubmatch,
 }

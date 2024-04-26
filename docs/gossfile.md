@@ -918,13 +918,10 @@ Available functions:
     `toUpper`
     :   Changes piped input to UPPERCASE
 
-    `regexFirstGroup "my $conf_bd = '(mysql://user:pass@localhost/db)'"`
-    :   Returns the first group from regexp, for example config to connect mysql. Useful with `readFile FILE | regexFirstGroup REGEXP`
-
-```go
-{{ $regexBDRC := "\\'mysql:\\/\\/[a-z0-9]+:[a-z0-9]+@localhost\\/([a-z0-9]+)\\';"}}
-{{ $BD := readFile $fileRCConfig | regexFirstGroup $regexBD}}
-```
+    `findStringSubmatch regex string`
+    :   Returns the n group from regex. For example:
+        `{{ $findStr := findStringSubmatch "([a-z0-9+]):([a-z0-9+])@localhost\/([a-z0-9+])" "my $conf_bd = 'mysql://userBD01:passBD01@localhost/db01'" }}`
+        `{{ $USER := index $findStr 1 }}{{ $PASS := index $findStr 2 }}  {{ $BD := index $findStr 3 }}`
 
 
 !!! warning
