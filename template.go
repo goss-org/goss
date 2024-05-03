@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -76,10 +77,29 @@ func regexMatch(re, s string) (bool, error) {
 	return compiled.MatchString(s), nil
 }
 
-// return submatchs from string, see https://github.com/goss-org/goss/pull/895#pullrequestreview-2017498865 by @aelsabbahy
-func findStringSubmatch(pattern, input string) []string {
+// return named parenthesized subexpresions, if received, or stringfied (Sprig "get" need strings) keys like array
+func findStringSubmatch(pattern, input string) map[string]interface{} {
 	re := regexp.MustCompile(pattern)
-	return re.FindStringSubmatch(input)
+	els := re.FindStringSubmatch(input)
+
+	elsMap := make(map[string]interface{})
+	elsMapNamed := make(map[string]interface{})
+
+	// create always elsMaps but returns elsMapNamed if exists named parenthesized subexps
+	for i := 0; i < len(els); i++ {
+		// convert i to string according returned (https://github.com/goss-org/goss/pull/895#issuecomment-2075716706)
+		elsMap[strconv.Itoa(i)] = els[i]
+
+		if re.SubexpNames()[i] != "" {
+			elsMapNamed[re.SubexpNames()[i]] = els[i]
+		}
+	}
+
+	// returns elsMapNamed if exists named parenthesized subexps
+	if len(elsMapNamed) > 0 {
+		return elsMapNamed
+	}
+	return elsMap
 }
 
 var funcMap = template.FuncMap{
