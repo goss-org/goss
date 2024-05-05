@@ -96,6 +96,17 @@ Time to sleep after running container (and optionally `goss_wait.yaml`) and befo
 
 Location of the goss yaml files. (Default: `.`)
 
+#### GOSS_ADDITIONAL_COPY_PATH
+
+Colon-seperated list of additional directories to copy to container.
+
+By default dgoss copies `goss.yaml` from the current working directory and
+nothing else. You may need other files like scripts and configurations copied
+as well. Specify `GOSS_ADDITIONAL_COPY_PATH` similar to `$PATH` as colon seperated
+list of directories for each additional directory you'd like to recursively copy.
+These will be copied as directories next to `goss.yaml` in the temporary
+directory `DGOSS_TEMP_DIR`. (Default: `''`)
+
 #### GOSS_VARS
 
 The name of the variables file relative to `GOSS_FILES_PATH` to copy into the
