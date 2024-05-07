@@ -1,10 +1,10 @@
 FROM debian:bookworm
 
 RUN apt-get -o Acquire::Check-Valid-Until=false update && \
-    apt-get install -y apache2 apache2-doc apache2-utils chkconfig vim-tiny ca-certificates tinyproxy && \
+    apt-get install -y apache2 apache2-doc apache2-utils vim-tiny ca-certificates tinyproxy && \
     apt-get remove -y vim-tiny && \
     apt-get clean
 
-RUN chkconfig apache2 on
-RUN chkconfig tinyproxy on
+RUN update-rc.d apache2 defaults
+RUN update-rc.d tinyproxy defaults
 RUN mkfifo /pipe
