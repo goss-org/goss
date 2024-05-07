@@ -1,8 +1,5 @@
 FROM debian:bookworm
 
-RUN echo 'deb http://archive.debian.org/debian bookworm main' > /etc/apt/sources.list
-RUN echo 'deb http://archive.debian.org/debian-security bookworm/updates main' >> /etc/apt/sources.list
-
 RUN apt-get -o Acquire::Check-Valid-Until=false update && \
     apt-get install -y apache2 apache2-doc apache2-utils chkconfig vim-tiny ca-certificates tinyproxy && \
     apt-get remove -y vim-tiny && \
