@@ -18,7 +18,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-var version string
 
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
@@ -69,7 +68,7 @@ func timeoutFlag(value time.Duration) cli.DurationFlag {
 func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
-	app.Version = version
+	app.Version = util.Version
 	app.Name = "goss"
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
