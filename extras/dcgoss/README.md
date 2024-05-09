@@ -1,6 +1,7 @@
 # dcgoss
 
-dcgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker-compose managed containers. It is based on `dgoss`.
+dcgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker-compose managed
+containers. It is based on `dgoss`.
 
 ## Usage
 
@@ -8,7 +9,9 @@ dcgoss is a convenience wrapper around goss that aims to bring the simplicity of
 
 ### Run
 
-Run is used to validate a docker container defined in `docker-compose.yml`. It expects both a `docker-compose.yml` and `goss.yaml` file to exist in the directory it was invoked from. Container configuration is used from the compose file, for example:
+Run is used to validate a docker container defined in `docker-compose.yml`. It expects both a `docker-compose.yml`
+and `goss.yaml` file to exist in the directory it was invoked from. Container configuration is used from the
+compose file, for example:
 
 **run:**
 
