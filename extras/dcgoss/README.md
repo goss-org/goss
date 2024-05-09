@@ -43,7 +43,7 @@ The following environment variables can be set to change the behavior of dcgoss.
 #### DEBUG
 
 Enables debug output of `dcgoss`.
-  
+
 When running in debug mode, the tmp dir with the container output will not be cleaned up.
 
 **Default:** empty
@@ -54,7 +54,7 @@ When running in debug mode, the tmp dir with the container output will not be cl
 
 #### GOSS_PATH
 
-Location of the goss binary to use. 
+Location of the goss binary to use.
 
 **Default:** `$(which goss)`
 
@@ -104,8 +104,9 @@ If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 
 #### GOSS_FILES_STRATEGY
 
-Strategy used for copying goss files into the docker container. 
-If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as `/goss/docker_output.log` file.
+Strategy used for copying goss files into the docker container.
+If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as
+`/goss/docker_output.log` file.
 Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container.
 With the `'cp'` strategy you lose the ability to write tests or waits against the docker output.
 The `'cp'` strategy is required especially when docker daemon is not on the local machine.
@@ -114,7 +115,8 @@ The `'cp'` strategy is required especially when docker daemon is not on the loca
 
 ## Debugging test runs
 
-When debugging test execution its beneficual to set both `DEBUG=true` and `GOSS_WAIT_OPTS=-r 60s -s 5s` (without the redirect to `/dev/null`).
+When debugging test execution its beneficual to set both `DEBUG=true` and `GOSS_WAIT_OPTS=-r 60s -s 5s`
+(without the redirect to `/dev/null`).
 
 **Example:**
 
