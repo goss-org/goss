@@ -39,4 +39,9 @@ jobs:
           pip install --upgrade pip
           pip install --requirement docs/requirements.txt
       - name: Build documentation
-        run: mkdocs gh-deploy --force
+        run: mkdocs build
+      # To remove if not using github pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
