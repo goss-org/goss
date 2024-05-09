@@ -220,7 +220,7 @@ func (u *DefHTTP) Body() (io.Reader, error) {
 
 func hasUserAgentHeader(headers []string) bool {
 	for _, header := range headers {
-		if strings.HasPrefix(header, USER_AGENT_HEADER_PREFIX) {
+		if strings.HasPrefix(strings.ToLower(header), USER_AGENT_HEADER_PREFIX) {
 			return true
 		}
 	}
