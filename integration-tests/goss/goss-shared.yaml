@@ -205,6 +205,11 @@ http:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
     body: ['"Foo": "bar"']
+  http://httpbin/headers:
+    status: 200
+    timeout: 60000
+    headers: ["Content-Type: application/json"]
+    body: ['"User-Agent": "goss']
   http://httpbin/headers?host:
     status: 200
     timeout: 60000
