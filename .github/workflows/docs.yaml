@@ -25,6 +25,8 @@ jobs:
           globs: |
             docs/**/*.md
             README.md
+            extras/**/README.md
+            .github/CONTRIBUTING.md
 
   build:
     runs-on: ubuntu-latest
