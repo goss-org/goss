@@ -9,7 +9,7 @@ VENV := $(shell echo $${VIRTUAL_ENV-.venv})
 PYTHON := $(VENV)/bin/python
 DOCS_DEPS := $(VENV)/.docs.dependencies
 
-.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
+.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty noble alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 
 all: test-short-all test-int-all dgoss-sha256
 
@@ -96,8 +96,8 @@ test-darwin-all: test-short-all test-int-darwin-all
 test-linux-all: test-short-all test-int-64 test-int-32
 test-windows-all: test-short-all test-int-windows-all
 
-test-int-64: centos7 wheezy trusty alpine3 arch test-int-serve-linux-amd64
-test-int-32: centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
+test-int-64: centos7 wheezy trusty noble alpine3 arch test-int-serve-linux-amd64
+test-int-32: centos7-32 wheezy-32 trusty-32 noble-32 alpine3-32 arch-32
 test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
 test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
 test-int-all: test-int-32 test-int-64
@@ -111,6 +111,9 @@ wheezy-32: build
 trusty-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh trusty 386
+noble-32: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh noble 386
 alpine3-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 386
@@ -126,6 +129,9 @@ wheezy: build
 trusty: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh trusty amd64
+noble: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh noble amd64
 alpine3: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 amd64
