@@ -30,6 +30,6 @@ bookworm:
   packages:
     apache2: "2.4.59-1~deb12u1"
   services:
-    apache2: ["2", "3", "5", "4"]
+    apache2: []
 
 overwrite: foo
