@@ -56,7 +56,7 @@ user:
     groups:
     - www-data
     home: /var/www
-    shell: /usr/bin/nologin
+    shell: /usr/sbin/nologin
 group:
   foobar:
     exists: false
