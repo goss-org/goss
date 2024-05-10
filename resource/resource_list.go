@@ -39,7 +39,7 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -140,7 +140,7 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {

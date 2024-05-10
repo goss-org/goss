@@ -15,7 +15,6 @@ type KernelParam interface {
 
 type DefKernelParam struct {
 	key   string
-	value string
 }
 
 func NewDefKernelParam(_ context.Context, key string, system *System, config util.Config) KernelParam {

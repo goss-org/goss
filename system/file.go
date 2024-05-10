@@ -45,7 +45,6 @@ const (
 type DefFile struct {
 	path     string
 	realPath string
-	fi       os.FileInfo
 	loaded   bool
 	err      error
 }
