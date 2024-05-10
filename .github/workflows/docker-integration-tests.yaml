@@ -1,4 +1,4 @@
-name: Create docker images and push to ghcr.io
+name: Docker images for integration tests
 
 on:
   push:
@@ -6,9 +6,12 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  PLATFORMS: "linux/amd64"
+
 jobs:
   docker:
-    name: Push Docker image
+    name: Build and push Docker image
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -54,12 +57,13 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
 
-      - name: Build and Push Tag
+      - name: Build and push tag
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ${{ matrix.dockerfile }}
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+          platforms: ${{ env.PLATFORMS }}
