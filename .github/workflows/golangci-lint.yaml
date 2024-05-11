@@ -1,4 +1,4 @@
-name: golangci-lint
+name: Golang ci
 on:
   # don't build any branch other than master (and prs) when git pushed
   pull_request: {}
@@ -10,7 +10,6 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: ['1.21']
         os: [ubuntu-latest, macos-latest]
     name: lint
     runs-on: ${{ matrix.os }}
@@ -18,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go }}
+          go-version-file: go.mod
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v5
         with:
