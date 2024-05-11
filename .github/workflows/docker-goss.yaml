@@ -53,11 +53,15 @@ jobs:
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
 
+      - name: Get the current version of Go from project.
+        run: echo "GO_VERSION_FROM_PROJECT=$(go mod edit -json | jq -r .Go)" >> $GITHUB_ENV
+
       - name: Build master goss image
         if: github.ref_name == 'master'
         uses: docker/build-push-action@v5
         with:
           build-args: |
+            GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
             GOSS_VERSION=${{ steps.get-latest-tag.outputs.tag }}-${{ github.ref_name }}+${{ env.COMMIT_SHORT_SHA }}
           context: .
           push: true
@@ -71,6 +75,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           build-args: |
+            GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
             GOSS_VERSION=${{ github.ref_name }}
           context: .
           push: true
