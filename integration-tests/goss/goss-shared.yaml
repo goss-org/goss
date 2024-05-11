@@ -204,9 +204,7 @@ http:
     request-headers:
       - "Foo: bar"
     headers: ["Content-Type: application/json"]
-    body:
-      - '"Foo": "bar"'
-      - '"user-agent": "goss/0.0.0"'
+    body: ['"Foo": "bar"', '"user-agent": "goss/0.0.0"']
   http://httpbin/headers?host:
     status: 200
     timeout: 60000
