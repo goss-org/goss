@@ -18,7 +18,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 	cfg := &util.Config{
