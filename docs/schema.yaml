@@ -1,4 +1,4 @@
-$id: "https://github.com/goss-org/goss/master/docs/goss-json-schema.yaml"
+$id: "https://goss.rocks/schema.yaml"
 # Note: this schema was authored using intellij support for Json schema version 7
 # providing coding assistance
 # This schema is based on content from https://github.com/goss-org/goss/blob/master/docs/manual.md and
@@ -51,12 +51,12 @@ definitions:
         type: string
       stdout:
         type: array
-        description: "can be a string or pattern, see https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns"
+        description: "can be a string or pattern, see https://goss.rocks/gossfile#patterns"
         items:
           type: string
       stderr:
         type: array
-        description: "can be a string or pattern, see https://github.com/goss-org/goss/blob/master/docs/manual.md#patterns"
+        description: "can be a string or pattern, see https://goss.rocks/gossfile#patterns"
         items:
           type: string
       timeout:
@@ -111,9 +111,13 @@ definitions:
       owner:
         type: string
         default: root
+      uid:
+        type: integer
       group:
         type: string
         default: root
+      gid:
+        type: integer
       filetype:
         type: string
         default: file
@@ -317,6 +321,8 @@ definitions:
     required:
       - exists
     properties:
+      timeout:
+        type: integer
       title: { "$ref":"#/definitions/title" }
       meta: { "$ref":"#/definitions/meta" }
       exists:
@@ -385,16 +391,12 @@ definitions:
   processTest:
     required:
       - running
-      - skip
     properties:
       title: { "$ref":"#/definitions/title" }
       meta: { "$ref":"#/definitions/meta" }
       running:
         type: boolean
         default: true
-      skip:
-        type: boolean
-        default: false
   serviceTest:
     required:
       - enabled
@@ -572,7 +574,7 @@ properties:
         </svg>
             </clipboard-copy>
           </div></div>
-        <p dir="auto">Please note that if you want <code>localhost</code> to <strong>only</strong> resolve <code>127.0.0.1</code> you'll need to use <a href="#advanced-matchers">Advanced Matchers</a></p>
+        <p dir="auto">Please note that if you want <code>localhost</code> to <strong>only</strong> resolve <code>127.0.0.1</code> you'll need to use <a href="https://goss.rocks/gossfile/#advanced-matchers">Advanced Matchers</a></p>
         <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
           <span class="pl-ent">localhost</span>:
             <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
@@ -596,7 +598,7 @@ properties:
 
         If the 'skip' attribute is true, then the file is not processed. If the filename is a glob pattern, then none of the matching files are processed. Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented. Skipping a gossfile include is the same as omitting the gossfile resource entirely.
       x-intellij-html-description: |
-        Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See <a href="#render-r---render-gossfile-after-importing-all-referenced-gossfiles">render</a> for more examples. Glob patterns can be also be used to specify matching gossfiles.</p>
+        Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See <a href="https://goss.rocks/cli/#render">render</a> for more examples. Glob patterns can be also be used to specify matching gossfiles.</p>
         <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">gossfile</span>:
           <span class="pl-ent">myapplication</span>:
             <span class="pl-ent">file</span>: <span class="pl-s">myapp_gossfile.yaml</span>
@@ -654,8 +656,8 @@ properties:
       type: object
       description: "Validates specified content against a matcher. Best used with Templates."
       x-intellij-html-description: |
-        <p dir="auto">Validates specified content against a matcher. Best used with <a href="#templates">Templates</a>.</p>
-        <h4 dir="auto"><a id="user-content-with-templates" class="anchor" aria-hidden="true" href="#with-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>With <a href="#templates">Templates</a>:</h4>
+        <p dir="auto">Validates specified content against a matcher. Best used with <a href="https://goss.rocks/gossfile/#templates">Templates</a>.</p>
+        <h4 dir="auto"><a id="user-content-with-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#with-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>With <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
         <p dir="auto">Let's say we have a <code>data.json</code> file that gets generated as part of some testing pipeline:</p>
         <div class="highlight highlight-source-json notranslate position-relative overflow-auto" dir="auto"><pre>{
           <span class="pl-ent">"instance_count"</span>: <span class="pl-c1">14</span>,
@@ -682,11 +684,11 @@ properties:
             <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.instance_count }}</span>
             <span class="pl-ent">matches</span>:
               <span class="pl-ent">gt</span>: <span class="pl-c1">0</span>
-        
+
           <span class="pl-ent">check_failure_count_from_all_instance</span>: <span class="pl-c"><span class="pl-c">#</span> expect no failures</span>
             <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.failures }}</span>
             <span class="pl-ent">matches</span>: <span class="pl-c1">0</span>
-        
+
           <span class="pl-ent">check_status</span>:
             <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.status }}</span>
             <span class="pl-ent">matches</span>:
@@ -696,11 +698,11 @@ properties:
             content: {{ .Vars.instance_count }}
             matches:
               gt: 0
-        
+
           check_failure_count_from_all_instance: # expect no failures
             content: {{ .Vars.failures }}
             matches: 0
-        
+
           check_status:
             content: {{ .Vars.status }}
             matches:
@@ -713,7 +715,7 @@ properties:
         </svg>
             </clipboard-copy>
           </div></div>
-        <h4 dir="auto"><a id="user-content-without-templates" class="anchor" aria-hidden="true" href="#without-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Without <a href="#templates">Templates</a>:</h4>
+        <h4 dir="auto"><a id="user-content-without-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#without-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Without <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
         <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">matching</span>:
           <span class="pl-ent">has_substr</span>: <span class="pl-c"><span class="pl-c">#</span> friendly test name</span>
             <span class="pl-ent">content</span>: <span class="pl-s">some string</span>
@@ -760,7 +762,7 @@ properties:
         </svg>
             </clipboard-copy>
           </div></div>
-        
+
         additionalProperties:
         $ref: "#/definitions/matchTest"
 

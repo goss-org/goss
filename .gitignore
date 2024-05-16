@@ -17,3 +17,9 @@ tmp/
 
 /c.out
 /c.out.tmp
+
+# Documentation
+## Virtualenv
+/.venv
+## MkDocs rendered site
+/site

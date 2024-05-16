@@ -1,0 +1,47 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    paths:
+      - mkdocs.yml
+      - docs/
+      - README.md
+      - LICENSE
+      - extras/**/README.md
+      - .github/CONTRIBUTING.md
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v13
+        with:
+          globs: |
+            docs/**/*.md
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install --requirement docs/requirements.pip
+      - name: Build documentation
+        run: mkdocs build
+      # To remove if not using github pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: site

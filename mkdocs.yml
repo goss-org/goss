@@ -1,0 +1,100 @@
+site_name: Goss
+site_description: Goss is a YAML based serverspec alternative tool for validating a server’s configuration.
+site_author: Goss team
+site_url: https://goss.readthedocs.io/
+repo_url: https://github.com/goss-org/goss
+repo_name: goss-org/goss
+edit_uri: edit/master/docs/
+
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - content.action.edit
+    - content.code.copy
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+
+extra_css:
+  - style.css
+
+plugins:
+  - search
+  - awesome-pages
+  - macros:
+      render_by_default: false
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - mdx_breakless_lists
+  - tables
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink:
+      repo_url_shortener: true
+      social_url_shortener: true
+      repo_url_shorthand: true
+      social_url_shorthand: true
+      user: goss-org
+      repo: goss
+  - pymdownx.snippets:
+      base_path:
+        - .
+        - docs/snippets
+      check_paths: true
+  - pymdownx.superfences
+
+copyright: Copyright &copy; 2015 - 2023 Ahmed Elsabbahy
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gooss-org/goss
+    - icon: simple/codeclimate
+      link: https://codeclimate.com/github/goss-org/goss
+    - icon: simple/travisci
+      link: https://travis-ci.org/goss-org/goss
+    - icon: fontawesome/brands/medium
+      link: https://medium.com/@aelsabbahy
+
+watch:
+  - README.md
+  - LICENSE
+  - .github/CONTRIBUTING.md
+  - extras/dcgoss/README.md
+  - extras/dgoss/README.md
+  - extras/kgoss/README.md

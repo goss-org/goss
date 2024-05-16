@@ -1,0 +1,23 @@
+name: Preview documentation
+on:
+  pull_request_target:
+    types:
+      - opened
+    paths:
+      - mkdocs.yml
+      - docs/
+      - README.md
+      - LICENSE
+      - extras/**/README.md
+      - .github/CONTRIBUTING.md
+
+jobs:
+  pull-request-links:
+    name: Add preview link to pull-request
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: readthedocs/actions/preview@v1
+        with:
+          project-slug: goss

@@ -11,6 +11,14 @@ func (f *DefFile) Owner() (string, error) {
 	return "-1", nil // not applicable on Windows
 }
 
+func (f *DefFile) Uid() (int, error) {
+	return -1, nil // not applicable on Windows
+}
+
 func (f *DefFile) Group() (string, error) {
 	return "-1", nil // not applicable on Windows
+}
+
+func (f *DefFile) Gid() (int, error) {
+	return -1, nil // not applicable on Windows
 }

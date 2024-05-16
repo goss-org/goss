@@ -111,6 +111,7 @@ kernel-param:
 mount:
   /home:
     exists: true
+    timeout: 1000
     opts:
     - rw
     source: /dev/mapper/fedora-home

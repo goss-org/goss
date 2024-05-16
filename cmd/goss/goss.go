@@ -18,8 +18,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-var version string
-
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 	cfg := &util.Config{
@@ -69,7 +67,7 @@ func timeoutFlag(value time.Duration) cli.DurationFlag {
 func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
-	app.Version = version
+	app.Version = util.Version
 	app.Name = "goss"
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
@@ -387,6 +385,9 @@ func main() {
 				{
 					Name:  resource.MountResourceKey,
 					Usage: "add new mount",
+					Flags: []cli.Flag{
+						timeoutFlag(1000 * time.Millisecond),
+					},
 					Action: func(c *cli.Context) error {
 						fatalAlphaIfNeeded(c)
 						return goss.AddResources(c.GlobalString("gossfile"), resource.MountResourceName, c.Args(), newRuntimeConfigFromCLI(c))

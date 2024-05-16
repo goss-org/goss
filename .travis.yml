@@ -6,14 +6,14 @@ env:
 language: go
 
 go:
-  - 1.20.x
+  - 1.21.x
 
 os:
   - osx
   - linux
   - windows
 
-dist: trusty
+dist: focal
 osx_image: xcode12.2
 
 services:

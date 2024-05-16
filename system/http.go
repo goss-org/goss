@@ -16,6 +16,9 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
+const USER_AGENT_HEADER_PREFIX = "user-agent:"
+const DEFAULT_USER_AGENT_PREFIX = "goss/"
+
 type HTTP interface {
 	HTTP() string
 	Status() (int, error)
@@ -47,6 +50,11 @@ type DefHTTP struct {
 
 func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
 	headers := http.Header{}
+
+	if !hasUserAgentHeader(config.RequestHeader) {
+		config.RequestHeader = append(config.RequestHeader, fmt.Sprintf("%s %s%s", USER_AGENT_HEADER_PREFIX, DEFAULT_USER_AGENT_PREFIX, util.Version))
+	}
+
 	for _, r := range config.RequestHeader {
 		str := strings.SplitN(r, ": ", 2)
 		headers.Add(str[0], str[1])
@@ -208,4 +216,13 @@ func (u *DefHTTP) Body() (io.Reader, error) {
 	}
 
 	return u.resp.Body, nil
+}
+
+func hasUserAgentHeader(headers []string) bool {
+	for _, header := range headers {
+		if strings.HasPrefix(strings.ToLower(header), USER_AGENT_HEADER_PREFIX) {
+			return true
+		}
+	}
+	return false
 }

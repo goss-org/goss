@@ -1,0 +1,41 @@
+---
+# Enable all rules
+default: true
+
+# Enforce asterisk for unordered lists
+# See: https://github.com/DavidAnson/markdownlint/blob/main/doc/md004.md
+MD004:
+  style: asterisk
+
+# Set list indent level to 4 which Python-Markdown requires
+# See:
+#  - https://github.com/DavidAnson/markdownlint/blob/main/doc/md007.md
+#  - https://python-markdown.github.io/#differences
+MD007:
+  indent: 4
+
+# Tune `line-length`
+# See: https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
+MD013:
+  line_length: 120
+  tables: false
+  code_blocks: false
+
+# Disable `blanks-around-list` (to stay close from GitHub-flavored markdown)
+# See:
+#  - https://github.com/DavidAnson/markdownlint/blob/main/doc/md032.md
+#  - https://python-markdown.github.io/#differences
+MD032: false
+
+# Disable `no-space-in-code`
+# Generate lots of false positive with admonitions and code blocks
+MD038: false
+
+# Disable `code-blocks-style`
+# Use fenced code blocks everywhere but raise false positives with admonitions
+MD046: false
+
+# Disable `link-fragments`
+# Only works for github-rendered markdown (which does not have the same rules as MkDocs)
+# See: https://github.com/DavidAnson/markdownlint/blob/main/doc/md051.md
+MD051: false
