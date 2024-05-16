@@ -31,6 +31,9 @@ curl -L https://github.com/goss-org/goss/releases/download/v0.3.6/goss-linux-amd
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64
 
+# Set DGOSS_TEMP_DIR to the tmp directory in your home, since /tmp is private on Mac OSX
+export DGOSS_TEMP_DIR=~/tmp
+
 # Use dgoss
 dgoss edit ...
 dgoss run ...
@@ -99,6 +102,17 @@ Time to sleep after running container (and optionally `goss_wait.yaml`) and befo
 #### GOSS_FILES_PATH
 
 Location of the goss yaml files. (Default: `.`)
+
+#### GOSS_ADDITIONAL_COPY_PATH
+
+Colon-seperated list of additional directories to copy to container.
+
+By default dgoss copies `goss.yaml` from the current working directory and
+nothing else. You may need other files like scripts and configurations copied
+as well. Specify `GOSS_ADDITIONAL_COPY_PATH` similar to `$PATH` as colon seperated
+list of directories for each additional directory you'd like to recursively copy.
+These will be copied as directories next to `goss.yaml` in the temporary
+directory `DGOSS_TEMP_DIR`. (Default: `''`)
 
 #### GOSS_VARS
 
