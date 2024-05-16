@@ -29,6 +29,9 @@ curl -L https://github.com/goss-org/goss/releases/download/v0.3.6/goss-linux-amd
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64
 
+# Set DGOSS_TEMP_DIR to the tmp directory in your home, since /tmp is private on Mac OSX
+export DGOSS_TEMP_DIR=~/tmp
+
 # Use dgoss
 dgoss edit ...
 dgoss run ...
