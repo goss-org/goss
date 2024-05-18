@@ -11,7 +11,7 @@ DOCS_DEPS := $(VENV)/.docs.dependencies
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 
-all: test-short-all test-int-all dgoss-sha256
+all: test-short-all test-int-all dgoss-sha256 dcgoss-sha256 kgoss-sha256
 
 test-short-all: fmt lint vet test
 
@@ -135,6 +135,12 @@ arch: build
 
 dgoss-sha256:
 	cd extras/dgoss/ && sha256sum dgoss > dgoss.sha256
+
+dcgoss-sha256:
+	cd extras/dcgoss/ && sha256sum dcgoss > dcgoss.sha256
+
+kgoss-sha256:
+	cd extras/kgoss/ && sha256sum kgoss > kgoss.sha256
 
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
