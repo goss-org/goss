@@ -29,6 +29,8 @@ jobs:
       - name: "Upload binary as artifact"
         uses: actions/upload-artifact@v4
         with:
+          retention-days: 5
+          if-no-files-found: error
           name: build
           path: |
             release/*
@@ -45,7 +47,5 @@ jobs:
       - name: Attach to release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            release/*
-            extras/*/*goss
-            extras/*/*goss.sha256
+          files: build/**
+          fail_on_unmatched_files: true
