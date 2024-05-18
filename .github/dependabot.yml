@@ -13,3 +13,8 @@ updates:
       - "aelsabbahy"
     open-pull-requests-limit: 0
 
+  - package-ecosystem: "pip"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
