@@ -140,10 +140,10 @@ $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
 	@python -m venv $(VENV)
 
-$(DOCS_DEPS): $(PYTHON) docs/requirements.pip
+$(DOCS_DEPS): $(PYTHON) docs/requirements.txt
 	$(info Installing dependencies)
 	@pip install --upgrade pip
-	@pip install --requirement docs/requirements.pip
+	@pip install --requirement docs/requirements.txt
 	@touch $(DOCS_DEPS)
 
 docs/setup: $(DOCS_DEPS)
