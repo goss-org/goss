@@ -7,7 +7,7 @@ WORKDIR /build
 
 RUN --mount=target=. \
     CGO_ENABLED=0 go build \
-    -ldflags "-X main.version=${GOSS_VERSION} -s -w" \
+    -ldflags "-X github.com/goss-org/goss/util.Version=${GOSS_VERSION} -s -w" \
     -o "/release/goss" \
     ./cmd/goss
 
