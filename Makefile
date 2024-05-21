@@ -35,6 +35,11 @@ htmlcov:
 	go test -v -coverpkg=./... -coverprofile=c.out ./...
 	go tool cover -html ./c.out
 
+.PHONY: golangci-lint
+golangci-lint:
+	$(info INFO: Starting build $@)
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.58.2
+	golangci-lint run --timeout 5m $(pkgs)
 
 lint:
 	$(info INFO: Starting build $@)
