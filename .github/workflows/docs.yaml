@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
       - mkdocs.yml
-      - docs/
+      - docs/**
       - README.md
       - LICENSE
       - extras/**/README.md
