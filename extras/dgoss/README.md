@@ -4,9 +4,11 @@ dgoss is a convenience wrapper around goss that aims to bring the simplicity of 
 
 ## Examples and Tutorials
 
-* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) - Introduction to dgoss tutorial
+* [blog tutorial](https://medium.com/@aelsabbahy/tutorial-how-to-test-your-docker-image-in-half-a-second-bbd13e06a4a9) -
+Introduction to dgoss tutorial
 * [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Same as above, but in video format
-* [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate docker images
+* [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate
+docker images
 
 ## Installation
 
@@ -43,7 +45,7 @@ dgoss run ...
 
 ### Run
 
-Run is used to validate a docker container. 
+Run is used to validate a docker container.
 It expects a `./goss.yaml` file to exist in the directory it was invoked from.
 In most cases one can just substitute the docker command for the dgoss command, for example:
 
@@ -65,7 +67,9 @@ In most cases one can just substitute the docker command for the dgoss command, 
 
 ### Edit
 
-Edit will launch a docker container, install goss, and drop the user into an interactive shell. Once the user quits the interactive shell, any `goss.yaml` or `goss_wait.yaml` are copied out into the current directory. This allows the user to leverage the `goss add|autoadd` commands to write tests as they would on a regular machine.
+Edit will launch a docker container, install goss, and drop the user into an interactive shell.
+Once the user quits the interactive shell, any `goss.yaml` or `goss_wait.yaml` are copied out into the current directory.
+This allows the user to leverage the `goss add|autoadd` commands to write tests as they would on a regular machine.
 
 **Example:**
 
@@ -121,12 +125,17 @@ If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 
 #### GOSS_FILES_STRATEGY
 
-Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the local machine. 
+Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted
+and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses
+`'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write
+tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the
+local machine.
 (Default `'mount'`)
 
 #### CONTAINER_LOG_OUTPUT
 
-Location of the file that contains tested container logs. Logs are retained only if the variable is set to a non-empty string. (Default `''`)
+Location of the file that contains tested container logs. Logs are retained only if the variable is set to a non-empty
+string. (Default `''`)
 
 #### DGOSS_TEMP_DIR
 
@@ -134,4 +143,5 @@ Location of the temporary directory used by dgoss. (Default `'$(mktemp -d /tmp/t
 
 #### CONTAINER_RUNTIME
 
-Container runtime to use - `docker` or `podman`. Defaults to `docker`. Note that `podman` requires a run command to keep the container running. This defaults to `sleep infinity` in case only an image is passed to `dgoss` commands.
+Container runtime to use - `docker` or `podman`. Defaults to `docker`. Note that `podman` requires a run command to keep
+the container running. This defaults to `sleep infinity` in case only an image is passed to `dgoss` commands.

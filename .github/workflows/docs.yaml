@@ -7,7 +7,7 @@ on:
   pull_request:
     paths:
       - mkdocs.yml
-      - docs/
+      - docs/**
       - README.md
       - LICENSE
       - extras/**/README.md
@@ -20,10 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: DavidAnson/markdownlint-cli2-action@v13
+      - uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           globs: |
             docs/**/*.md
+            README.md
+            extras/**/README.md
+            .github/CONTRIBUTING.md
 
   build:
     runs-on: ubuntu-latest
