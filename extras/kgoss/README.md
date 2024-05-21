@@ -23,10 +23,10 @@ You can manually install kgoss and goss by going through the Web UI, getting
 the files and putting them in the right path. To get each of them:
 
 * **kgoss**: Run `curl -sSLO
-	https://raw.githubusercontent.com/goss-org/goss/master/extras/kgoss/kgoss`.
+  https://raw.githubusercontent.com/goss-org/goss/master/extras/kgoss/kgoss`.
 * **goss**: Download the `goss-linux-amd64` asset from
   <https://github.com/goss-org/goss/releases> and rename it `goss`. Place it
-  in your HOME directory, e.g. C:\\Users\\<username> on Windows; or set the
+  in your HOME directory, e.g. `C:\Users\<username>` on Windows; or set the
   environment variable `GOSS_PATH` to its path.
 
 ### Automatic / CLI

@@ -46,6 +46,9 @@ plugins:
   - awesome-pages
   - macros:
       render_by_default: false
+  - exclude:
+       glob:
+         - requirements.txt
 
 markdown_extensions:
   - abbr
