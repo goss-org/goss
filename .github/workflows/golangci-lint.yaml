@@ -8,11 +8,8 @@ on:
       - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 jobs:
   golangci:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
     name: lint
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
