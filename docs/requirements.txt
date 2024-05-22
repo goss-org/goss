@@ -1,4 +1,4 @@
-mkdocs-material==9.5.23
+mkdocs-material==9.5.24
 mkdocs-macros-plugin==1.0.5
 mkdocs-awesome-pages-plugin==2.9.2
 mkdocs-exclude==1.0.2
