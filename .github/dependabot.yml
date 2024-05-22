@@ -13,6 +13,12 @@ updates:
       - "aelsabbahy"
     open-pull-requests-limit: 0
 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
   - package-ecosystem: "pip"
     directory: "/docs"
     schedule:
