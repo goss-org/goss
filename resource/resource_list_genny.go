@@ -47,7 +47,7 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {

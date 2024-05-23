@@ -241,7 +241,7 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -342,7 +342,7 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -443,7 +443,7 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -544,7 +544,7 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -645,7 +645,7 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -746,7 +746,7 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -847,7 +847,7 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -948,7 +948,7 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -1049,7 +1049,7 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -1150,7 +1150,7 @@ func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System)
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -1251,7 +1251,7 @@ func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mou
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -1352,7 +1352,7 @@ func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
@@ -1453,7 +1453,7 @@ func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP
 	if err != nil {
 		return nil, nil, false, err
 	}
-	if e, _ := sysres.Exists(); e != true {
+	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
 	if old_res, ok := r[res.ID()]; ok {
