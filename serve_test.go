@@ -66,7 +66,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
-				assert.Equal(t, []string{tc.expectedContentType}, rr.Result().Header.Get("Content-Type"))
+				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
 			}
 		})
 	}
@@ -173,7 +173,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
-				assert.Equal(t, []string{tc.expectedContentType}, rr.Result().Header.Get("Content-Type"))
+				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
 			}
 		})
 	}
