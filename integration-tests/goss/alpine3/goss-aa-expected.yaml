@@ -2,7 +2,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.4.46-r1
+    - 2.4.59-r0
 service:
   apache2:
     enabled: true
