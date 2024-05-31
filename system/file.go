@@ -166,7 +166,7 @@ func realPath(path string) (string, error) {
 	if f == "~" {
 		usr, err = user.Current()
 	} else {
-		usr, err = user.Lookup(f[1:len(f)])
+		usr, err = user.Lookup(f[1:])
 	}
 	if err != nil {
 		return "", err

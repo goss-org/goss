@@ -271,7 +271,7 @@ func ValidateSections(unmarshal func(any) error, i any, whitelist map[string]boo
 	typ := reflect.TypeOf(i)
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, v := range toValidate {
-		for k, _ := range v {
+		for k := range v {
 			if !whitelist[k] {
 				return fmt.Errorf("invalid Attribute for %s:%s: %s", typs, id, k)
 			}
