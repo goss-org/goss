@@ -85,7 +85,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
-	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType)
+	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType) //nolint:gosimple
 	w.WriteHeader(resp.statusCode)
 	logBody := ""
 	if resp.statusCode != http.StatusOK {

@@ -295,7 +295,7 @@ func WhitelistAttrs(i any, format format) (map[string]bool, error) {
 
 func IsValueInList(value string, list []string) bool {
 	for _, v := range list {
-		if strings.ToLower(v) == strings.ToLower(value) {
+		if strings.EqualFold(v, value) {
 			return true
 		}
 	}

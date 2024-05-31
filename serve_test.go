@@ -66,7 +66,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
-				assert.Equal(t, []string{tc.expectedContentType}, rr.HeaderMap["Content-Type"])
+				assert.Equal(t, []string{tc.expectedContentType}, rr.Result().Header.Get("Content-Type"))
 			}
 		})
 	}
@@ -173,7 +173,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
-				assert.Equal(t, []string{tc.expectedContentType}, rr.HeaderMap["Content-Type"])
+				assert.Equal(t, []string{tc.expectedContentType}, rr.Result().Header.Get("Content-Type"))
 			}
 		})
 	}
@@ -297,11 +297,9 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 func makeRequest(t *testing.T, config *util.Config, headers map[string][]string) *http.Request {
 	req, err := http.NewRequest("GET", config.Endpoint, nil)
 	require.NoError(t, err)
-	if headers != nil {
-		for header, vals := range headers {
-			for _, v := range vals {
-				req.Header.Add(header, v)
-			}
+	for header, vals := range headers {
+		for _, v := range vals {
+			req.Header.Add(header, v)
 		}
 	}
 	return req
