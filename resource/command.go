@@ -49,7 +49,7 @@ func (c *Command) GetExec() string {
 }
 
 func (c *Command) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", c.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, c.ID())
 	skip := c.Skip
 
 	if c.Timeout == 0 {
