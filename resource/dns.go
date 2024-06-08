@@ -52,7 +52,7 @@ func (d *DNS) GetResolve() string {
 }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", d.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, d.ID())
 	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500

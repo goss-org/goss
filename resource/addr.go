@@ -20,6 +20,8 @@ type Addr struct {
 	Skip         bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
+type idKey struct{}
+
 const (
 	AddrResourceKey = "addr"
 	AddResourceName = "Addr"
@@ -51,7 +53,7 @@ func (a *Addr) GetAddress() string {
 }
 
 func (a *Addr) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", a.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, a.ID())
 	skip := a.Skip
 
 	if a.Timeout == 0 {
