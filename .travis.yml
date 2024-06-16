@@ -31,17 +31,8 @@ before_install:
   # bash from macOS is too old to have readarray. Install newer version.
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install bash; fi
 
-install:
-  - ./ci/install.sh
-
-before_script:
-  - ./ci/before-build.sh
-
 script:
   - ./ci/build.sh
-
-after_script:
-  - ./ci/after-build.sh
 
 deploy:
   provider: releases
