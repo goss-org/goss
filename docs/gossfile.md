@@ -918,12 +918,11 @@ Available functions:
     `toUpper`
     :   Changes piped input to UPPERCASE
 
-       
     `findStringSubmatch regex string`
     :   Returns map[string]interface{} with the names of the parenthesized subexpressions, like `(?P<first>[a-z])`
-        
+
         {{ $regexDBrc := "\\'mysql:\\/\\/(?P<login>[a-z0-9]+):(?P<password>[a-z0-9]+)@localhost\\/(?P<database>roundcube_[a-z0-9]+)\\';"}}
-        
+
         {{ $rcConf := readFile /home/user/roundcube/config.inc.php | findStringSubmatch $regexDBrc }}
         {{ $UserDBrc := get $rcConf "login" }}
         {{ $PassDBrc  := get $rcConf "password" }}
@@ -932,16 +931,13 @@ Available functions:
     If not exists named parenthesized subexps, returns stringfied array string:
 
         {{ $regexDBrc := "\\'mysql:\\/\\/([a-z0-9]+):([a-z0-9]+)@localhost\\/(roundcube_[a-z0-9]+)\\';"}}
-        
+
         {{ $rcConf := readFile /home/user/roundcube/config.inc.php | findStringSubmatch $regexDBrc }}
         {{ $UserDBrc := get $rcConf "1" }}
         {{ $PassDBrc  := get $rcConf "2" }}
         {{ $DBrc := get $rcConf "3" }}
 
     NOTE: stringfied string array begins with "1" ("0" is all the string matched)
-
-        
-
 
 !!! warning
 
