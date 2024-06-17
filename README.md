@@ -14,11 +14,11 @@
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 <!-- markdownlint-enable line-length no-inline-html -->
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper.
+**Note:** For testing containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper.
 Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss)
 and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
-**Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
+**Note:** For some Container/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
 [here][kubernetes-simplified-health-checks].
 
@@ -77,7 +77,7 @@ VERSION=v0.3.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
-# (optional) dgoss docker wrapper (use 'master' for latest version)
+# (optional) dgoss container wrapper (use 'master' for latest version)
 VERSION=v0.3.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
