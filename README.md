@@ -77,7 +77,7 @@ VERSION=v0.3.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
-# (optional) dgoss container wrapper (use 'master' for latest version)
+# (optional) dgoss docker wrapper (use 'master' for latest version)
 VERSION=v0.3.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
