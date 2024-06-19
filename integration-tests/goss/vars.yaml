@@ -2,7 +2,7 @@
 alpine3:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.4.59-r0"
+    apache2: "2.4.46-r1"
   services:
     apache2: [sysinit]
 arch:
