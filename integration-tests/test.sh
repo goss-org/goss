@@ -44,7 +44,7 @@ trap "rv=\$?; docker rm -vf $id;docker rm -vf httpbin;docker network rm $network
 [[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 
 #out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
-docker_exec sh -c "ps -ef;netstat -lntp"
+docker_exec sh -c "ps -ef;netstat -lntp" || true
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
