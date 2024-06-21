@@ -54,7 +54,7 @@ func (m *Mount) GetMountPoint() string {
 }
 
 func (m *Mount) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", m.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, m.ID())
 	skip := m.Skip
 
 	if m.Timeout == 0 {

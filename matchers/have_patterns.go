@@ -146,14 +146,6 @@ func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherRe
 	}
 }
 
-func appendMissingStrings(message string, missingElements []string) string {
-	if len(missingElements) == 0 {
-		return message
-	}
-	return fmt.Sprintf("%s\nthe missing elements were\n%s", message,
-		format.Object(missingElements, 1))
-}
-
 type patternMatcher interface {
 	Match(string) bool
 	Pattern() string
