@@ -2,6 +2,7 @@ nav:
   - Home: index.md
   - installation.md
   - quickstart.md
+  - container_image.md
   - Command Reference: cli.md
   - The gossfile: gossfile.md
   - migrations.md
