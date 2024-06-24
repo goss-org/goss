@@ -1,6 +1,6 @@
 # dgoss
 
-dgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to docker containers.
+dgoss is a convenience wrapper around goss that aims to bring the simplicity of goss to containers.
 
 ## Examples and Tutorials
 
@@ -8,7 +8,7 @@ dgoss is a convenience wrapper around goss that aims to bring the simplicity of 
 Introduction to dgoss tutorial
 * [video tutorial](https://youtu.be/PEHz5EnZ-FM) - Same as above, but in video format
 * [dgoss-examples](https://github.com/aelsabbahy/dgoss-examples) - Repo containing examples of using dgoss to validate
-docker images
+container images
 
 ## Installation
 
@@ -45,9 +45,10 @@ dgoss run ...
 
 ### Run
 
-Run is used to validate a docker container.
+Run is used to validate a container.
 It expects a `./goss.yaml` file to exist in the directory it was invoked from.
-In most cases one can just substitute the docker command for the dgoss command, for example:
+In most cases one can just substitute the runtime command (`docker` or `podman`)
+for the dgoss command, for example:
 
 **run:**
 
@@ -61,13 +62,13 @@ In most cases one can just substitute the docker command for the dgoss command, 
 
 * Run the container with the flags you specified.
 * Stream the containers log output into the container as `/goss/docker_output.log`
-    * This allows writing tests or waits against the docker output
+    * This allows writing tests or waits against the container output
 * (optional) Run `goss` with `$GOSS_WAIT_OPTS` if `./goss_wait.yaml` file exists in the current dir
 * Run `goss` with `$GOSS_OPTS` using `./goss.yaml`
 
 ### Edit
 
-Edit will launch a docker container, install goss, and drop the user into an interactive shell.
+Edit will launch a container, install goss, and drop the user into an interactive shell.
 Once the user quits the interactive shell, any `goss.yaml` or `goss_wait.yaml` are copied out into the current directory.
 This allows the user to leverage the `goss add|autoadd` commands to write tests as they would on a regular machine.
 
@@ -117,18 +118,18 @@ directory `DGOSS_TEMP_DIR`. (Default: `''`)
 #### GOSS_VARS
 
 The name of the variables file relative to `GOSS_FILES_PATH` to copy into the
-docker container and use for valiation (i.e. `dgoss run`) and copy out of the
-docker container when writing tests (i.e. `dgoss edit`). If set, the
+container and use for valiation (i.e. `dgoss run`) and copy out of the
+container when writing tests (i.e. `dgoss edit`). If set, the
 `--vars` flag is passed to `goss validate` commands inside the container.
 If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 (Default: `''`).
 
 #### GOSS_FILES_STRATEGY
 
-Strategy used for copying goss files into the docker container. If set to `'mount'` a volume with goss files is mounted
+Strategy used for copying goss files into the container. If set to `'mount'` a volume with goss files is mounted
 and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses
-`'docker cp'` command to copy goss files into docker container. With the `'cp'` strategy you lose the ability to write
-tests or waits against the docker output. The `'cp'` strategy is required especially when docker daemon is not on the
+`'docker cp'` command to copy goss files into container. With the `'cp'` strategy you lose the ability to write
+tests or waits against the container output. The `'cp'` strategy is required especially when container daemon is not on the
 local machine.
 (Default `'mount'`)
 
