@@ -95,6 +95,10 @@ make build
 
 [Full Documentation](https://github.com/goss-org/goss/blob/e73553f9c3065ac297499dafb4f8abef6acb24ad/docs/manual.md)
 
+## Using the container image
+
+[Using the Goss container image](docs/container_image.md)
+
 ## Quick start
 
 <!-- --8<-- [start:quickstart] -->
