@@ -18,8 +18,8 @@ for x in /etc/passwd /tmp/goss/foobar;do
   goss a "${args[@]}" file $x
 done
 
-[[ $OS == "centos7" ]] && package="httpd" || package="apache2"
-[[ $OS == "centos7" ]] && user="apache" || user="www-data"
+[[ $OS == "centos7" || $OS == "rockylinux9" ]] && package="httpd" || package="apache2"
+[[ $OS == "centos7" || $OS == "rockylinux9" ]] && user="apache" || user="www-data"
 goss a "${args[@]}" package $package foobar vim-tiny
 
 goss a "${args[@]}" addr --timeout 1s httpbin:80 httpbin:22

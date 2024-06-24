@@ -1,0 +1,25 @@
+FROM rockylinux:9
+
+ENV container docker
+
+RUN dnf install -y systemd httpd diffutils 'dnf-command(config-manager)' && \
+    dnf config-manager --set-enabled crb && \
+    dnf install -y epel-release && \
+    dnf install -y tinyproxy && \
+    dnf remove -y 'dnf-command(config-manager)' epel-release
+
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+    rm -f /lib/systemd/system/multi-user.target.wants/*;\
+    rm -f /etc/systemd/system/*.wants/*;\
+    rm -f /lib/systemd/system/local-fs.target.wants/*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+    rm -f /lib/systemd/system/basic.target.wants/*;\
+    rm -f /lib/systemd/system/anaconda.target.wants/*;
+
+CMD ["/usr/sbin/init"]
+
+RUN systemctl enable httpd
+RUN systemctl enable tinyproxy
+RUN chmod 700 ~root
+RUN mkfifo /pipe
