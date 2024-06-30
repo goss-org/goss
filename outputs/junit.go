@@ -34,8 +34,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	// ISO8601 timeformat
 	timestamp := time.Now().Format(time.RFC3339)
 
-	var summary map[int]string
-	summary = make(map[int]string)
+	var summary map[int]string = make(map[int]string)
 
 	var startTime time.Time
 	var endTime time.Time

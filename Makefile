@@ -35,10 +35,10 @@ htmlcov:
 	go test -v -coverpkg=./... -coverprofile=c.out ./...
 	go tool cover -html ./c.out
 
-
 lint:
 	$(info INFO: Starting build $@)
-	golint $(pkgs) || true
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59
+	golangci-lint run --timeout 5m $(pkgs) || true
 
 vet:
 	$(info INFO: Starting build $@)
@@ -140,10 +140,10 @@ $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
 	@python -m venv $(VENV)
 
-$(DOCS_DEPS): $(PYTHON) docs/requirements.pip
+$(DOCS_DEPS): $(PYTHON) docs/requirements.txt
 	$(info Installing dependencies)
 	@pip install --upgrade pip
-	@pip install --requirement docs/requirements.pip
+	@pip install --requirement docs/requirements.txt
 	@touch $(DOCS_DEPS)
 
 docs/setup: $(DOCS_DEPS)

@@ -46,6 +46,9 @@ plugins:
   - awesome-pages
   - macros:
       render_by_default: false
+  - exclude:
+       glob:
+         - requirements.txt
 
 markdown_extensions:
   - abbr
@@ -78,14 +81,14 @@ markdown_extensions:
       check_paths: true
   - pymdownx.superfences
 
-copyright: Copyright &copy; 2015 - 2023 Ahmed Elsabbahy
+copyright: Copyright &copy; 2015 - 2024 Ahmed Elsabbahy
 
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/gooss-org/goss
+      link: https://github.com/goss-org/goss
     - icon: simple/codeclimate
-      link: https://codeclimate.com/github/goss-org/goss
+      link: https://codeclimate.com/github/aelsabbahy/goss
     - icon: simple/travisci
       link: https://travis-ci.org/goss-org/goss
     - icon: fontawesome/brands/medium

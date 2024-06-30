@@ -61,7 +61,7 @@ func (f *File) GetPath() string {
 }
 
 func (f *File) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", f.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, f.ID())
 	skip := f.Skip
 	sysFile := sys.NewFile(ctx, f.GetPath(), sys, util.Config{})
 
