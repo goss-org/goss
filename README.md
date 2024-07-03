@@ -18,7 +18,7 @@
 Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss)
 and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
-**Note:** For some Container/Kubernetes healthcheck, health endpoint, and
+**Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
 container ordering examples, see my blog post
 [here][kubernetes-simplified-health-checks].
 
