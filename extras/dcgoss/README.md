@@ -9,7 +9,7 @@ containers. It is based on `dgoss`.
 
 ### Run
 
-Run is used to validate a docker defined in `docker-compose.yml`. It expects both a `docker-compose.yml`
+Run is used to validate a docker container defined in `docker-compose.yml`. It expects both a `docker-compose.yml`
 and `goss.yaml` file to exist in the directory it was invoked from. Container configuration is used from the
 compose file, for example:
 
@@ -110,8 +110,8 @@ If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 Strategy used for copying goss files into the docker container.
 If set to `'mount'` a volume with goss files is mounted and log output is streamed into the container as
 `/goss/docker_output.log` file.
-Other strategy is `'cp'` which uses `'docker cp'` (or `'podman cp'`) command to copy goss files into docker container.
-With the `'cp'` strategy you lose the ability to write tests or waits against the output.
+Other strategy is `'cp'` which uses `'docker cp'` command to copy goss files into docker container.
+With the `'cp'` strategy you lose the ability to write tests or waits against the docker output.
 The `'cp'` strategy is required especially when docker daemon is not on the local machine.
 
 **Default:** `'mount'`
