@@ -1,0 +1,27 @@
+name: Trivy Code Scanning
+
+on:
+  schedule:
+    - cron: "0 3 * * 5"
+  workflow_dispatch:
+
+jobs:
+  trivy-scan:
+    name: Trivy scan
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      security-events: write
+
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.23.0
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/goss:latest
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-results.sarif"
