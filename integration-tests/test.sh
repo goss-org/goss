@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty wheezy"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty noble wheezy"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
@@ -36,7 +36,7 @@ fi
 network=goss-test
 docker network create --driver bridge  --subnet '172.19.0.0/16' $network
 docker run -d --name httpbin --network $network kennethreitz/httpbin
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable)
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
 id=$(docker run "${opts[@]}" --network $network "aelsabbahy/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id;docker rm -vf httpbin;docker network rm $network; exit \$rv" INT TERM EXIT
