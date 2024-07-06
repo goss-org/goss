@@ -41,10 +41,6 @@ func HumanOutcomes() map[int]string {
 	return humanOutcomes
 }
 
-const (
-	maxScanTokenSize = 10 * 1024 * 1024
-)
-
 type ValidateError string
 
 func (g ValidateError) Error() string { return string(g) }

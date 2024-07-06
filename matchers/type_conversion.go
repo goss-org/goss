@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strconv"
 	"strings"
 
@@ -108,7 +107,7 @@ func (t ReaderToString) Transform(i interface{}) (interface{}, error) {
 		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
 	}
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return "", err
 	}

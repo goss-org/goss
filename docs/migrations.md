@@ -16,8 +16,8 @@ user:
       - root
 ```
 
-Goss v0.4.x, will fail with the above as group "root" is only in the slice once. However, with goss v0.4.x the array may contain
-matchers. The test below is valid for v0.4.x but not valid for v0.3.x
+Goss v0.4.x, will fail with the above as group "root" is only in the slice once. However, with goss v0.4.x the array may
+contain matchers. The test below is valid for v0.4.x but not valid for v0.3.x
 
 ```yaml
 user:
