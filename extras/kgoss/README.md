@@ -96,7 +96,7 @@ To find `goss.yaml` in another directory specify that directory's path in `GOSS_
 
 ### Run
 
-The `run` command is used to validate a docker container. It expects a
+The `run` command is used to validate a container. It expects a
 `./goss.yaml` file to exist in the directory it was invoked from.
 
 **Example:**
@@ -111,7 +111,7 @@ The `run` command is used to validate a docker container. It expects a
 
 ### Edit
 
-Edit will launch a docker container, install goss, and drop the user into an
+Edit will launch a container, install goss, and drop the user into an
 interactive shell. Once the user quits the interactive shell, any `goss.yaml`
 or `goss_wait.yaml` are copied out into the current directory. This allows the
 user to leverage the `goss add|autoadd` commands to write tests as they would
