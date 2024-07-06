@@ -108,7 +108,7 @@ centos7-32: build
 wheezy-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy 386
-.PHONY: bookworm
+.PHONY: bookworm-32
 bookworm-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh bookworm 386
@@ -127,6 +127,7 @@ centos7: build
 wheezy: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy amd64
+.PHONY: bookworm
 bookworm: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh bookworm amd64
