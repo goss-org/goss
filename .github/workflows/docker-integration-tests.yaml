@@ -10,23 +10,34 @@ env:
   PLATFORMS: "linux/amd64"
 
 jobs:
+  list-dockerfiles:
+    name: Create list of existing dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get file list
+        id: set-matrix
+        run: |
+          # lists all Dockerfile_* and ignore (grep) files with extension (e.g. *.md5)
+          # tranforms the file list in JSON array (StackOverflow#10234327)
+          # converts the list into objects of dockerfile and image name
+          ls integration-tests/Dockerfile_* |
+            grep -Ev "\..{0,3}$" |
+            jq -R -s 'split("\n")[:-1]' |
+            jq '. | map({dockerfile: ., image: sub(".*_"; "")})' > filelist.json
+          echo "matrix=$(jq -c . filelist.json)" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
   docker:
+    needs: [list-dockerfiles]
     name: Build and push Docker image
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - dockerfile: ./integration-tests/Dockerfile_alpine3
-            image: goss_alpine3
-          - dockerfile: ./integration-tests/Dockerfile_arch
-            image: goss_arch
-          - dockerfile: ./integration-tests/Dockerfile_centos7
-            image: goss_centos7
-          - dockerfile: ./integration-tests/Dockerfile_trusty
-            image: goss_trusty
-          - dockerfile: ./integration-tests/Dockerfile_wheezy
-            image: goss_wheezy
+        include: ${{ fromJson(needs.list-dockerfiles.outputs.matrix) }}
     permissions:
       packages: write
       contents: read
