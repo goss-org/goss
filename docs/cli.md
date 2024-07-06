@@ -62,12 +62,12 @@ GLOBAL OPTIONS:
 ## Commands
 
 Commands are the actions goss can run.
-- [add](#add): add a single test for a resource
-- [autoadd](#autoadd): automatically add multiple tests for a resource
-- [render](#render): renders and outputs the gossfile, importing all included gossfiles
-- [serve](#serve): serves the gossfile validation as an HTTP endpoint on a specified address and port,
+* [add](#add): add a single test for a resource
+* [autoadd](#autoadd): automatically add multiple tests for a resource
+* [render](#render): renders and outputs the gossfile, importing all included gossfiles
+* [serve](#serve): serves the gossfile validation as an HTTP endpoint on a specified address and port,
     so you can use your gossfile as a health report for the host
-- [validate](#validate): runs the goss test suite on your server
+* [validate](#validate): runs the goss test suite on your server
 
 ### `add`
 
@@ -123,22 +123,22 @@ A sub-command *resource type* has to be provided when running `add`.
 Automatically [adds](#add) all **existing** resources matching the provided argument.
 
 Will automatically add the following matching resources:
-- `file` - only if argument contains `/`
-- `group`
-- `package`
-- `port`
-- `process` - Also adding any ports it's listening to (if run as root)
-- `service`
-- `user`
+* `file` - only if argument contains `/`
+* `group`
+* `package`
+* `port`
+* `process` - Also adding any ports it's listening to (if run as root)
+* `service`
+* `user`
 
 Will **NOT** automatically add:
-- `addr`
-- `command` - for safety
-- `dns`
-- `http`
-- `interface`
-- `kernel-param`
-- `mount`
+* `addr`
+* `command` - for safety
+* `dns`
+* `http`
+* `interface`
+* `kernel-param`
+* `mount`
 
 !!! example
     ```console

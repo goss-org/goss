@@ -43,15 +43,15 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 			switch testResult.Result {
 			case resource.SUCCESS:
 				logTrace("TRACE", "SUCCESS", testResult, false)
-				fmt.Fprintf(w, green("."))
+				fmt.Fprint(w, green("."))
 			case resource.SKIP:
 				logTrace("TRACE", "SKIP", testResult, false)
-				fmt.Fprintf(w, yellow("S"))
+				fmt.Fprint(w, yellow("S"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
 				logTrace("TRACE", "FAIL", testResult, false)
-				fmt.Fprintf(w, red("F"))
+				fmt.Fprint(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
 			}

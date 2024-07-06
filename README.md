@@ -14,7 +14,7 @@
 <a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
 <!-- markdownlint-enable line-length no-inline-html -->
 
-**Note:** For testing docker containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper.
+**Note:** For testing containers see the [dgoss](https://github.com/goss-org/goss/tree/master/extras/dgoss) wrapper.
 Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/goss-org/goss/tree/master/extras/kgoss)
 and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
@@ -94,6 +94,10 @@ make build
 ## Full Documentation
 
 [Full Documentation](https://github.com/goss-org/goss/blob/e73553f9c3065ac297499dafb4f8abef6acb24ad/docs/manual.md)
+
+## Using the container image
+
+[Using the Goss container image](docs/container_image.md)
 
 ## Quick start
 

@@ -51,7 +51,7 @@ func (u *User) GetUsername() string {
 }
 
 func (u *User) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), "id", u.ID())
+	ctx := context.WithValue(context.Background(), idKey{}, u.ID())
 	skip := u.Skip
 	sysuser := sys.NewUser(ctx, u.GetUsername(), sys, util.Config{})
 

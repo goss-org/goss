@@ -18,8 +18,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-var version string
-
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 	cfg := &util.Config{
@@ -69,7 +67,7 @@ func timeoutFlag(value time.Duration) cli.DurationFlag {
 func main() {
 	app := cli.NewApp()
 	app.EnableBashCompletion = true
-	app.Version = version
+	app.Version = util.Version
 	app.Name = "goss"
 	app.Usage = "Quick and Easy server validation"
 	app.Flags = []cli.Flag{
@@ -424,14 +422,6 @@ func addAlphaFlagIfNeeded(app *cli.App) {
 		})
 	}
 }
-
-const msgFormat string = `WARNING: goss for this platform (%q) is alpha-quality, work-in-progress and community-supported.
-
-You should not expect everything to work. Treat linux as the canonical behaviour to expect.
-
-Please see https://github.com/goss-org/goss/tree/master/docs/platform-feature-parity.md to set your expectations and see progress.
-Please file issues via https://github.com/goss-org/goss/issues/new/choose
-Pull requests and bug reports very welcome.`
 
 func fatalAlphaIfNeeded(c *cli.Context) {
 	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {

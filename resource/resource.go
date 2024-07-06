@@ -5,11 +5,9 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/goss-org/goss/system"
-	"github.com/oleiade/reflections"
 )
 
 type Resource interface {
@@ -64,18 +62,6 @@ func deprecateAtoI(depr any, desc string) any {
 		panic(err)
 	}
 	return float64(i)
-}
-
-func validAttrs(i any, t string) (map[string]bool, error) {
-	validAttrs := make(map[string]bool)
-	tags, err := reflections.Tags(i, t)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range tags {
-		validAttrs[strings.Split(v, ",")[0]] = true
-	}
-	return validAttrs, nil
 }
 
 func shouldSkip(results []TestResult) bool {
