@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty wheezy bookworm"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 rockylinux9 trusty wheezy bookworm"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
