@@ -58,7 +58,7 @@ jobs:
 
       - name: Build master goss image
         if: github.ref_name == 'master'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: |
             GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
@@ -72,7 +72,7 @@ jobs:
 
       - name: Build release goss image
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: |
             GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
