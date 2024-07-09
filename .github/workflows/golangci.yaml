@@ -29,6 +29,7 @@ jobs:
           version: v1.59
 
   coverage:
+    needs: [lint]
     name: coverage
     runs-on: ubuntu-latest
     steps:
@@ -39,3 +40,22 @@ jobs:
 
       - name: Unit tests and coverage
         run: make cov
+
+  integartion-test:
+    needs: [coverage]
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      #- name: Integration tests
+      #  run: make test-int-all
+
+      # GHA does not work with centos7
+      - name: Integration tests-64
+        run: make wheezy trusty alpine3 arch test-int-serve-linux-amd64
+      - name: Integration tests-32
+        run: make wheezy-32 trusty-32 alpine3-32 arch-32
