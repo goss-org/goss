@@ -51,11 +51,5 @@ jobs:
         with:
           go-version-file: go.mod
 
-      #- name: Integration tests
-      #  run: make test-int-all
-
-      # GHA does not work with centos7
-      - name: Integration tests-64
-        run: make wheezy trusty alpine3 arch test-int-serve-linux-amd64
-      - name: Integration tests-32
-        run: make wheezy-32 trusty-32 alpine3-32 arch-32
+      - name: Integration tests
+        run: make test-int-all
