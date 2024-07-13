@@ -144,6 +144,11 @@ arch: build
 dgoss-sha256:
 	cd extras/dgoss/ && sha256sum dgoss > dgoss.sha256
 
+.PHONY: lint-yaml
+lint-yaml:
+	$(info INFO: Starting $@)
+	yamllint -c .yamllint .
+
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
 	@python -m venv $(VENV)
