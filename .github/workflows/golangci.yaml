@@ -1,0 +1,55 @@
+name: Golang ci
+on:
+  # don't build any branch other than master (and prs) when git pushed
+  pull_request: {}
+  push:
+    branches:
+      - master
+      - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
+    paths-ignore:
+      - "**/*.md"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59
+
+  coverage:
+    needs: [lint]
+    name: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Unit tests and coverage
+        run: make cov
+
+  integartion-test:
+    needs: [coverage]
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Integration tests
+        run: make test-int-all

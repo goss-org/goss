@@ -1,5 +1,5 @@
 FROM ubuntu-upstart:trusty
-MAINTAINER Ahmed
+LABEL org.opencontainers.image.authors="Ahmed"
 
 RUN apt-get update && \
     apt-get install -y apache2=2.4.7-1ubuntu4.22 tinyproxy && \
