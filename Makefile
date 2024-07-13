@@ -35,10 +35,10 @@ htmlcov:
 	go test -v -coverpkg=./... -coverprofile=c.out ./...
 	go tool cover -html ./c.out
 
-
 lint:
 	$(info INFO: Starting build $@)
-	golint $(pkgs) || true
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59
+	golangci-lint run --timeout 5m $(pkgs) || true
 
 vet:
 	$(info INFO: Starting build $@)
@@ -96,8 +96,8 @@ test-darwin-all: test-short-all test-int-darwin-all
 test-linux-all: test-short-all test-int-64 test-int-32
 test-windows-all: test-short-all test-int-windows-all
 
-test-int-64: centos7 wheezy trusty alpine3 arch test-int-serve-linux-amd64
-test-int-32: centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
+test-int-64: rockylinux9 wheezy trusty alpine3 arch test-int-serve-linux-amd64
+test-int-32: rockylinux9-32 wheezy-32 trusty-32 alpine3-32 arch-32
 test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
 test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
 test-int-all: test-int-32 test-int-64
@@ -105,6 +105,10 @@ test-int-all: test-int-32 test-int-64
 centos7-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh centos7 386
+.PHONY: rockylinux9-32
+rockylinux9-32: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh rockylinux9 386
 wheezy-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy 386
@@ -120,6 +124,10 @@ arch-32: build
 centos7: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh centos7 amd64
+.PHONY: rockylinux9
+rockylinux9: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh rockylinux9 amd64
 wheezy: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy amd64
@@ -146,10 +154,10 @@ $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
 	@python -m venv $(VENV)
 
-$(DOCS_DEPS): $(PYTHON) docs/requirements.pip
+$(DOCS_DEPS): $(PYTHON) docs/requirements.txt
 	$(info Installing dependencies)
 	@pip install --upgrade pip
-	@pip install --requirement docs/requirements.pip
+	@pip install --requirement docs/requirements.txt
 	@touch $(DOCS_DEPS)
 
 docs/setup: $(DOCS_DEPS)

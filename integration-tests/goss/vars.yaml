@@ -2,7 +2,7 @@
 alpine3:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.4.46-r1"
+    apache2: "2.4.59-r0"
   services:
     apache2: [sysinit]
 arch:
@@ -11,6 +11,12 @@ centos7:
   proxy: http://127.0.0.1:8888
   packages:
     httpd: "2.4.6-95.el7.centos"
+  services:
+    httpd: []
+rockylinux9:
+  proxy: http://127.0.0.1:8888
+  packages:
+    httpd: "2.4.57-8.el9"
   services:
     httpd: []
 trusty:

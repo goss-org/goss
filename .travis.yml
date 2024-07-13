@@ -1,8 +1,4 @@
 ---
-env:
-  global:
-    - secure: IH/xOtRl9rcek+YTz1s2lv2njdV1gob0AY21/kGhqUBH2sdztQ/02CteGz5E0c+LfqoUYQglLsejVCNLXQJI39CyZRzysB1wlVOz7YIPNaOLATtMGg0/8Mb7dpeqAV1u3agIi87q3ims1EkmGE9UGNj/qL75oTXBiozEfkbcsheH3Ju9CcO0i006UlNqAG4T++l1JZ4kPmr1r5eNjRu52oWQrlxaOYpZJGnT3qjxkvxcnI/Pgiem0+2aZ7Yluu0lA7UCFWyORoDRUz4pQR3uDG4ADPG4WcpJ601LDZyWtS7EOXVBgWZX9vV9ZVx63nK5w0W8NN6PQOuz0niN9iwR+FsShrPIsh6P9wVZfGifwXK4g2FL2XMBRuZCsQfrpRY6JbnuyGeMqN53ta95y0Yv4H65UQ7bulr4Lnic4+W52G/fl1VUYX8Bts+ecUydIu+afcDZ6GkpVLEURjaek99uO5ewHH7lfVAOQv4wUP8GFUyLXJumJZHvMzyiAXsTHdUZdm+Ap8EPzWFYYnMxySU39MEkIvhfG47X6sA7zAppuoNwd8vU4ZaxSdsme2InUSalETGJZ7ohL+M/tkTMyuyq8uLMRuwscNdgcCjGaHM19NQMrv4nsPmmzTeiDRoFk2wad07Mgsjy07esxw52rs3zAsa37+h74GYFWYo523AiYjw=
-
 language: go
 
 go:
@@ -31,17 +27,8 @@ before_install:
   # bash from macOS is too old to have readarray. Install newer version.
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then HOMEBREW_NO_AUTO_UPDATE=1 brew install bash; fi
 
-install:
-  - ./ci/install.sh
-
-before_script:
-  - ./ci/before-build.sh
-
 script:
   - ./ci/build.sh
-
-after_script:
-  - ./ci/after-build.sh
 
 # deploy:
 #   provider: releases

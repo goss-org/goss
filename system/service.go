@@ -11,8 +11,5 @@ type Service interface {
 }
 
 func invalidService(s string) bool {
-	if strings.ContainsRune(s, '/') {
-		return true
-	}
-	return false
+	return strings.ContainsRune(s, '/')
 }
