@@ -20,4 +20,3 @@ gossfile:
   "../goss-shared.yaml": {}
   bypath:
     file: "../goss-dummy.yaml"
-

@@ -53,9 +53,9 @@ matching:
     matches:
       and:
         - contain-elements: [foo, bar]
-        - [foo, bar] # same as above
-        - equal: [foo, bar, moo] # order matters, exact match
-        - consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        - [foo, bar]  # same as above
+        - equal: [foo, bar, moo]  # order matters, exact match
+        - consist-of: [foo, have-prefix: m, bar]  # order doesn't matter, can use matchers
         - contain-element:
             have-prefix: b
         - contain-element:
@@ -107,11 +107,11 @@ matching:
       and:
         - not:
             contain-elements: [fox, box]
-        - not: [fox, bax] # same as above
+        - not: [fox, bax]  # same as above
         - not:
-            equal: [fox, bax, mox] # order matters, exact match
+            equal: [fox, bax, mox]  # order matters, exact match
         - not:
-            consist-of: [have-suffix: x, have-prefix: t, box] # order doesn't matter, can use matchers
+            consist-of: [have-suffix: x, have-prefix: t, box]  # order doesn't matter, can use matchers
         - not:
             contain-element:
               have-prefix: x
