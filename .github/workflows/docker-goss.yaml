@@ -56,12 +56,14 @@ jobs:
           git fetch --prune --unshallow 2>/dev/null || true
           latest_tag=$(git describe --abbrev=0 --tags || true)
           echo "tag=${latest_tag}" >> "$GITHUB_OUTPUT"
+          echo "Latest tag: $tag"
 
       - name: Set short git commit SHA
         if: github.ref_name == 'master'
         run: |
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "COMMIT_SHORT_SHA: $COMMIT_SHORT_SHA"
 
       - name: Get the current version of Go from project.
         run: echo "GO_VERSION_FROM_PROJECT=$(go mod edit -json | jq -r .Go)" >> $GITHUB_ENV
