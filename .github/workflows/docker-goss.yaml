@@ -45,10 +45,20 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/goss
 
       - name: Get latest git tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
+        if: github.ref_name == 'master'
         id: get-latest-tag
+        run: |
+          # source: https://github.com/actions-ecosystem/action-get-latest-tag/blob/main/entrypoint.sh
+          set -e
+          git config --global --add safe.directory /github/workspace
+          git fetch --tags --force
+          # This suppress an error occurred when the repository is a complete one.
+          git fetch --prune --unshallow 2>/dev/null || true
+          latest_tag=$(git describe --abbrev=0 --tags || true)
+          echo "tag=${latest_tag}" >> "$GITHUB_OUTPUT"
 
       - name: Set short git commit SHA
+        if: github.ref_name == 'master'
         run: |
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
