@@ -48,8 +48,8 @@ This will install goss and [dgoss](https://github.com/goss-org/goss/tree/master/
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.16 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.16 GOSS_DST=~/bin sh
+# Install v0.4.8 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
 ```
 
 <!-- --8<-- [end:intro] -->
