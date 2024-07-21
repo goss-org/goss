@@ -93,11 +93,11 @@ make build
 
 ## Full Documentation
 
-[Full Documentation](https://github.com/goss-org/goss/blob/e73553f9c3065ac297499dafb4f8abef6acb24ad/docs/manual.md)
+[Full Documentation](https://goss.readthedocs.io/en/stable/)
 
 ## Using the container image
 
-[Using the Goss container image](docs/container_image.md)
+[Using the Goss container image](https://goss.readthedocs.io/en/stable/container_image/)
 
 ## Quick start
 
