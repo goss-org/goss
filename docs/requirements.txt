@@ -1,6 +1,6 @@
 mkdocs-material==9.5.23
 mkdocs-macros-plugin==1.0.5
-mkdocs-awesome-pages-plugin==2.9.2
+mkdocs-awesome-pages-plugin==2.9.3
 mkdocs-exclude==1.0.2
 mdx-breakless-lists==1.0.1
 pygments==2.18.0
