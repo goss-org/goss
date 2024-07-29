@@ -2,7 +2,7 @@ package:
   httpd:
     installed: true
     versions:
-    - 2.4.57-8.el9
+    - 2.4.57-11.el9_4
 port:
   tcp:80:
     listening: true
