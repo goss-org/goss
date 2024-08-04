@@ -48,8 +48,8 @@ This will install goss and [dgoss](https://github.com/goss-org/goss/tree/master/
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.3.16 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.3.16 GOSS_DST=~/bin sh
+# Install v0.4.8 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
 ```
 
 <!-- --8<-- [end:intro] -->
@@ -73,12 +73,12 @@ chmod +rx /usr/local/bin/dgoss
 
 ```bash
 # See https://github.com/goss-org/goss/releases for release versions
-VERSION=v0.3.10
+VERSION=v0.4.8
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-VERSION=v0.3.10
+VERSION=v0.4.8
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
@@ -93,11 +93,11 @@ make build
 
 ## Full Documentation
 
-[Full Documentation](https://github.com/goss-org/goss/blob/e73553f9c3065ac297499dafb4f8abef6acb24ad/docs/manual.md)
+[Full Documentation](https://goss.readthedocs.io/en/stable/)
 
 ## Using the container image
 
-[Using the Goss container image](docs/container_image.md)
+[Using the Goss container image](https://goss.readthedocs.io/en/stable/container_image/)
 
 ## Quick start
 

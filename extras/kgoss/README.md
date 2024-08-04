@@ -59,7 +59,7 @@ chmod a+rx "${dest_dir}/kgoss"
 
 ## install goss
 if [[ ! $(which jq) ]]; then echo "jq is required, get from https://stedolan.github.io/jq"; fi
-version=v0.3.8
+version=v0.4.8
 arch=amd64
 host=github.com
 # for private repos, leave `host` blank or same as above:
