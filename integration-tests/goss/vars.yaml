@@ -16,7 +16,7 @@ centos7:
 rockylinux9:
   proxy: http://127.0.0.1:8888
   packages:
-    httpd: "2.4.57-11.el9_4"
+    httpd: "2.4.57-11.el9_4.1"
   services:
     httpd: []
 trusty:
