@@ -15,7 +15,7 @@ package:
   httpd:
     installed: true
     versions:
-    - 2.4.57-11.el9_4
+    - 2.4.57-11.el9_4.1
   vim-tiny:
     installed: false
 addr:
