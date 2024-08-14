@@ -1,9 +1,9 @@
 name: Docker images for integration tests
 
 on:
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
   workflow_dispatch:
 
 env:
