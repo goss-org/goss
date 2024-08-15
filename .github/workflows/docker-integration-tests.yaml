@@ -61,12 +61,19 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: MD5 of Dockerfile
+        id: md5_result
+        run: |
+          echo "md5=$(md5sum "${{ matrix.dockerfile }}" | awk '{ print $1 }')" >> $GITHUB_OUTPUT
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          labels: |
+            rocks.goss.dockerfile-md5=${{ steps.md5_result.outputs.md5 }}
 
       - name: Build and push tag
         uses: docker/build-push-action@v5
