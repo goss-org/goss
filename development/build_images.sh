@@ -4,7 +4,7 @@ set -xeu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 INTEGRATION_TEST_DIR="$SCRIPT_DIR/../integration-tests/"
-CONTAINER_REPOSITORY="docker.io/aelsabbahy"
+CONTAINER_REPOSITORY="aelsabbahy"
 
 LABEL_DATE=$(date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
 LABEL_URL="https://github.com/goss-org/goss"

@@ -3,7 +3,6 @@
 set -xeu
 
 SCRIPT_DIR=$(readlink -f "$(dirname "$0")")
-# "docker images" does not show the docker registry "docker.io/"
 CONTAINER_REPOSITORY="aelsabbahy"
 images=$(docker images | grep "^$CONTAINER_REPOSITORY/goss_.*latest" | awk '$0=$1')
 
