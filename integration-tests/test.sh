@@ -8,7 +8,7 @@ os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 rockylinux9 trusty wheezy
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
-container_repository="docker.io/aelsabbahy"
+container_repository="aelsabbahy"
 
 # setup places us inside repo-root; this preserves current behaviour with least change.
 cd integration-tests
