@@ -4,6 +4,7 @@ set -xeu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 INTEGRATION_TEST_DIR="$SCRIPT_DIR/../integration-tests/"
+CONTAINER_REPOSITORY="aelsabbahy"
 
 LABEL_DATE=$(date -u +'%Y-%m-%dT%H:%M:%S.%3NZ')
 LABEL_URL="https://github.com/goss-org/goss"
@@ -23,5 +24,5 @@ for docker_file in $INTEGRATION_TEST_DIR/Dockerfile_*; do
         --label "org.opencontainers.image.url=$LABEL_URL" \
         --label "org.opencontainers.image.version=manual" \
         --label "rocks.goss.dockerfile-md5"=$md5 \
-        -t "aelsabbahy/goss_${os}:latest" - < "$docker_file"
+        -t "$CONTAINER_REPOSITORY/goss_${os}:latest" - < "$docker_file"
 done
