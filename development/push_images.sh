@@ -3,7 +3,8 @@
 set -xeu
 
 SCRIPT_DIR=$(readlink -f "$(dirname "$0")")
-images=$(docker images | grep '^aelsabbahy/goss_.*latest' | awk '$0=$1')
+CONTAINER_REPOSITORY="aelsabbahy"
+images=$(docker images | grep "^$CONTAINER_REPOSITORY/goss_.*latest" | awk '$0=$1')
 
 # Use md5sum to determine if CI needs to do a docker build
 pushd "$SCRIPT_DIR/../integration-tests";
