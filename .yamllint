@@ -14,8 +14,7 @@ rules:
   brackets:
     min-spaces-inside: 0
     max-spaces-inside: 1  # required for schema.yaml
-  comments-indentation:
-    level: disable
+  comments-indentation: disable
   indentation:
     spaces: consistent
     indent-sequences: consistent
