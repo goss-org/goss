@@ -32,4 +32,3 @@ gossfile:
   "../goss-s*.yaml": {}
   bypath:
     file: "../goss-dummy.yaml"
-

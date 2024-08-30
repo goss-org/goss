@@ -1,0 +1,17 @@
+name: Validate YAML
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    paths:
+      - "**/*.ya?ml"
+
+jobs:
+  validate-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate YAML file
+        run: make lint-yaml

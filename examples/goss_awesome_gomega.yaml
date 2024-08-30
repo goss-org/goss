@@ -95,9 +95,9 @@ matching:
         - contain-element:
             have-prefix: 'moo'
         - contain-elements:
-          - not: 'this_doesnt_exist'
-          - lt: 20
-          - have-prefix: 'moo'
+            - not: 'this_doesnt_exist'
+            - lt: 20
+            - have-prefix: 'moo'
 
 
   test_reader_as_single_string:
@@ -110,8 +110,8 @@ matching:
     as-reader: true
     matches:
       and:
-       - le: 250
-       - ge: 20
+        - le: 250
+        - ge: 20
 
 
   test_gjson_transform:
