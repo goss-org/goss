@@ -76,7 +76,7 @@ jobs:
             rocks.goss.dockerfile-md5=${{ steps.md5_result.outputs.md5 }}
 
       - name: Build and push tag
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ matrix.dockerfile }}
