@@ -2,7 +2,7 @@
 language: go
 
 go:
-  - 1.22.x
+  - 1.23.x
 
 os:
   - osx
