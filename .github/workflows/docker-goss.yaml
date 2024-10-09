@@ -98,7 +98,7 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: ghcr.io/${{ github.repository_owner }}/goss:master
           format: "sarif"
