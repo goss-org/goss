@@ -315,6 +315,7 @@ Full list of available Json schema validators can be found in <https://json-sche
 <!-- markdownlint-disable line-length -->
 * [goss-ansible](https://github.com/indusbox/goss-ansible) - Ansible module for Goss.
 * [degoss](https://github.com/naftulikay/ansible-role-degoss) - Ansible role for installing, running, and removing Goss in a single go.
+* [ansible-goss-install](https://github.com/marcinpraczko/ansible-goss-install) - Ansible role for installing Goss (option for install as user or root)
 * [kitchen-goss](https://github.com/ahelal/kitchen-goss) - A test-kitchen verifier plugin for Goss.
 * [goss-fpm-files](https://github.com/deanwilson/unixdaemon-fpm-cookery-recipes) - Might be useful for building goss system packages.
 * [packer-provisioner-goss](https://github.com/YaleUniversity/packer-provisioner-goss) - A packer plugin to run Goss as a provision step.
