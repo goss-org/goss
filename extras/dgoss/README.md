@@ -80,6 +80,21 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 
 The following environment variables can be set to change the behavior of dgoss.
 
+#### DEBUG
+
+Enables debug output of `dgoss`.
+
+When running in debug mode, the tmp dir with the container output will not be cleaned up.
+
+Note: Debug output of `dgoss` is from `dgoss` shell script and not debug output of `goss`
+(`dgoss run -e GOSS_LOGLEVEL=DEBUG jenkins:alpine`).
+
+**Default:** empty
+
+**Example:**
+
+`DEBUG=true dgoss run jenkins:alpine`
+
 #### GOSS_PATH
 
 Location of the goss binary to use. (Default: `$(which goss)`)
