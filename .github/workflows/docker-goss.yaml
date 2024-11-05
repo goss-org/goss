@@ -45,20 +45,32 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/goss
 
       - name: Get latest git tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
+        if: github.ref_name == 'master'
         id: get-latest-tag
+        run: |
+          # source: https://github.com/actions-ecosystem/action-get-latest-tag/blob/main/entrypoint.sh
+          set -e
+          git config --global --add safe.directory /github/workspace
+          git fetch --tags --force
+          # This suppress an error occurred when the repository is a complete one.
+          git fetch --prune --unshallow 2>/dev/null || true
+          latest_tag=$(git describe --abbrev=0 --tags || true)
+          echo "tag=${latest_tag}" >> "$GITHUB_OUTPUT"
+          echo "Latest tag: $latest_tag"
 
       - name: Set short git commit SHA
+        if: github.ref_name == 'master'
         run: |
           calculatedSha=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "COMMIT_SHORT_SHA: $calculatedSha"
 
       - name: Get the current version of Go from project.
         run: echo "GO_VERSION_FROM_PROJECT=$(go mod edit -json | jq -r .Go)" >> $GITHUB_ENV
 
       - name: Build master goss image
         if: github.ref_name == 'master'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: |
             GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
@@ -72,7 +84,7 @@ jobs:
 
       - name: Build release goss image
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: |
             GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
