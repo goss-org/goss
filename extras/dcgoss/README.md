@@ -17,8 +17,7 @@ checks whether the conditions in the file are met. Only then does goss start the
 actual check with the file `./goss.yaml`. This is used, for example, to wait
 until a certain port is open before executing the tests.
 
-Container configuration is used from the 
-compose file, for example:
+Container configuration is used from the compose file, for example:
 
 **run:**
 
