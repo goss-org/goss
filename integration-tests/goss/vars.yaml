@@ -31,5 +31,11 @@ wheezy:
     apache2: "2.2.22-13+deb7u13"
   services:
     apache2: ["2", "3", "5", "4"]
+bookworm:
+  proxy: http://127.0.0.1:8888
+  packages:
+    apache2: "2.4.62-1~deb12u2"
+  services:
+    apache2: []
 
 overwrite: foo
