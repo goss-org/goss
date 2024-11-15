@@ -1,10 +1,12 @@
 FROM debian:wheezy
-MAINTAINER Ahmed
+LABEL org.opencontainers.image.authors="Ahmed"
 
 RUN echo 'deb http://archive.debian.org/debian wheezy main' > /etc/apt/sources.list
 RUN echo 'deb http://archive.debian.org/debian-security wheezy/updates main' >> /etc/apt/sources.list
 
-RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y apache2 apache2-doc apache2-utils chkconfig vim-tiny ca-certificates tinyproxy && apt-get remove -y vim-tiny && apt-get clean
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install --yes --force-yes \
+    apache2 apache2-doc apache2-utils chkconfig vim-tiny ca-certificates tinyproxy && \
+    apt-get remove -y vim-tiny && apt-get clean
 
 RUN chkconfig apache2 on
 RUN chkconfig tinyproxy on

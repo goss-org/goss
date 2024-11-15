@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+[ "$DEBUG" ] && set -x
 
 USAGE="USAGE: $(basename "$0") [run|edit] <docker_run_params>"
 GOSS_FILES_PATH="${GOSS_FILES_PATH:-.}"
@@ -22,7 +23,7 @@ cleanup() {
     if [ -n "$CONTAINER_LOG_OUTPUT" ]; then
         cp "$tmp_dir/docker_output.log" "$CONTAINER_LOG_OUTPUT"
     fi
-    rm -rf "$tmp_dir"
+    [ "$DEBUG" ] || rm -rf "$tmp_dir"
     if [[ $id ]];then
         info "Deleting container"
         $CONTAINER_RUNTIME rm -vf "$id" > /dev/null

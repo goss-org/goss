@@ -4,10 +4,11 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 trusty noble wheezy"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 rockylinux9 trusty noble wheezy"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
+container_repository="aelsabbahy"
 
 # setup places us inside repo-root; this preserves current behaviour with least change.
 cd integration-tests
@@ -15,10 +16,10 @@ cd integration-tests
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then
-  docker build -t "aelsabbahy/goss_${os}:latest" - < "Dockerfile_$os"
+  docker build -t "$container_repository/goss_${os}:latest" - < "Dockerfile_$os"
 # Pull if image doesn't exist locally
-elif ! docker images | grep "aelsabbahy/goss_$os";then
-  docker pull "aelsabbahy/goss_$os"
+elif ! docker images | grep "$container_repository/goss_$os";then
+  docker pull "$container_repository/goss_$os"
 fi
 
 container_name="goss_int_test_${os}_${arch}"
@@ -37,7 +38,7 @@ network=goss-test
 docker network create --driver bridge  --subnet '172.19.0.0/16' $network
 docker run -d --name httpbin --network $network kennethreitz/httpbin
 opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
-id=$(docker run "${opts[@]}" --network $network "aelsabbahy/goss_$os" /sbin/init)
+id=$(docker run "${opts[@]}" --network $network "$container_repository/goss_$os" /sbin/init)
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; docker rm -vf $id;docker rm -vf httpbin;docker network rm $network; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures

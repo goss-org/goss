@@ -11,7 +11,7 @@ DOCS_DEPS := $(VENV)/.docs.dependencies
 
 .PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 wheezy trusty alpine3 arch test-int32 centos7-32 wheezy-32 trusty-32 alpine3-32 arch-32
 
-all: test-short-all test-int-all dgoss-sha256
+all: test-short-all test-int-all dgoss-sha256 dcgoss-sha256 kgoss-sha256
 
 test-short-all: fmt lint vet test
 
@@ -96,8 +96,8 @@ test-darwin-all: test-short-all test-int-darwin-all
 test-linux-all: test-short-all test-int-64 test-int-32
 test-windows-all: test-short-all test-int-windows-all
 
-test-int-64: centos7 wheezy trusty noble alpine3 arch test-int-serve-linux-amd64
-test-int-32: centos7-32 wheezy-32 trusty-32 noble-32 alpine3-32 arch-32
+test-int-64: rockylinux9 wheezy trusty noble alpine3 arch test-int-serve-linux-amd64
+test-int-32: rockylinux9-32 wheezy-32 trusty-32 noble-32 alpine3-32 arch-32
 test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
 test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
 test-int-all: test-int-32 test-int-64
@@ -105,6 +105,10 @@ test-int-all: test-int-32 test-int-64
 centos7-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh centos7 386
+.PHONY: rockylinux9-32
+rockylinux9-32: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh rockylinux9 386
 wheezy-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy 386
@@ -124,6 +128,10 @@ arch-32: build
 centos7: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh centos7 amd64
+.PHONY: rockylinux9
+rockylinux9: build
+	$(info INFO: Starting build $@)
+	cd integration-tests/ && ./test.sh rockylinux9 amd64
 wheezy: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh wheezy amd64
@@ -143,6 +151,12 @@ arch: build
 
 dgoss-sha256:
 	cd extras/dgoss/ && sha256sum dgoss > dgoss.sha256
+
+dcgoss-sha256:
+	cd extras/dcgoss/ && sha256sum dcgoss > dcgoss.sha256
+
+kgoss-sha256:
+	cd extras/kgoss/ && sha256sum kgoss > kgoss.sha256
 
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))

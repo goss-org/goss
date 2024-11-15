@@ -2,7 +2,7 @@
 language: go
 
 go:
-  - 1.21.x
+  - 1.23.x
 
 os:
   - osx
@@ -30,31 +30,31 @@ before_install:
 script:
   - ./ci/build.sh
 
-deploy:
-  provider: releases
-  api_key:
-    secure: ijNltjw/mIHIOx8vLZ6asUun3SbY7D+XZbs5NX8vcIv0jvOiwaaT1hqny7SQBHfGZzqHsYUSS/GYAYJdBqKFFfGmTZsl90hFT6D0RGdz9C71UVxNFX4wQ5KQ/WVvdMT2SrLymGvu9TvoU0VG8OWqWVdxSlUPf6qOTGAagrzg+Tbsbb6czeiG67mlBBL23XSlfMG1p45UxzvI41SZj2R3ElUb0hym1CrFaoC36PBGrb0x41TXzvd8J7cu6xDzgczYhnYQQZpS6f2YcqNV1z0f+P67EQqQiDWIIcK2jE/YG+RgM8cbpLMiMec8CDiwNCsejBA5EbVMlGJlODvBXT5NmMBeugueqfSHEfkl5qZTQG4AOAT7UsqbnM7r0NqzmaE5Lj90igvJK6rNsH1ZRe79WfSsTtuzlkkouHGvyoz0M8gnMSzpbbwoyIy+UT0hhPMoZvIpXfr43en5WkbkPKfop0p4Vjc8NGg0iD45q1JAvIVTtz/WvWTknM1P8e3u+TiDTaZkcJJmFaBqgaeLoWktOGfi54p9nhgQnSyBYt4PyvhWDQs7QFmX0BdKlqJCESvUOJTe1t6zJJsV7Gn/3sGCN7JUEwbnXTsCoMjjFFUvQdm0Ur7t7/2xU3kO+dyfqcdM/5SYFeppQcjHI0ckhI51mIoBTsJsGvaVwKKL1I4cyBU=
-  file:
-    - release/goss-darwin-amd64
-    - release/goss-darwin-amd64.sha256
-    - release/goss-darwin-arm64
-    - release/goss-darwin-arm64.sha256
-    - release/goss-linux-amd64
-    - release/goss-linux-amd64.sha256
-    - release/goss-linux-386
-    - release/goss-linux-386.sha256
-    - release/goss-linux-arm
-    - release/goss-linux-arm.sha256
-    - release/goss-linux-arm64
-    - release/goss-linux-arm64.sha256
-    - release/goss-linux-s390x
-    - release/goss-linux-s390x.sha256
-    - release/goss-windows-amd64.exe
-    - release/goss-windows-amd64.exe.sha256
-    - extras/dgoss/dgoss
-    - extras/dgoss/dgoss.sha256
-  skip_cleanup: true
-  on:
-    repo: goss-org/goss
-    tags: true
-    condition: $TRAVIS_OS_NAME = linux
+# deploy:
+#   provider: releases
+#   api_key:
+#     secure: ijNltjw/mIHIOx8vLZ6asUun3SbY7D+XZbs5NX8vcIv0jvOiwaaT1hqny7SQBHfGZzqHsYUSS/GYAYJdBqKFFfGmTZsl90hFT6D0RGdz9C71UVxNFX4wQ5KQ/WVvdMT2SrLymGvu9TvoU0VG8OWqWVdxSlUPf6qOTGAagrzg+Tbsbb6czeiG67mlBBL23XSlfMG1p45UxzvI41SZj2R3ElUb0hym1CrFaoC36PBGrb0x41TXzvd8J7cu6xDzgczYhnYQQZpS6f2YcqNV1z0f+P67EQqQiDWIIcK2jE/YG+RgM8cbpLMiMec8CDiwNCsejBA5EbVMlGJlODvBXT5NmMBeugueqfSHEfkl5qZTQG4AOAT7UsqbnM7r0NqzmaE5Lj90igvJK6rNsH1ZRe79WfSsTtuzlkkouHGvyoz0M8gnMSzpbbwoyIy+UT0hhPMoZvIpXfr43en5WkbkPKfop0p4Vjc8NGg0iD45q1JAvIVTtz/WvWTknM1P8e3u+TiDTaZkcJJmFaBqgaeLoWktOGfi54p9nhgQnSyBYt4PyvhWDQs7QFmX0BdKlqJCESvUOJTe1t6zJJsV7Gn/3sGCN7JUEwbnXTsCoMjjFFUvQdm0Ur7t7/2xU3kO+dyfqcdM/5SYFeppQcjHI0ckhI51mIoBTsJsGvaVwKKL1I4cyBU=
+#   file:
+#     - release/goss-darwin-amd64
+#     - release/goss-darwin-amd64.sha256
+#     - release/goss-darwin-arm64
+#     - release/goss-darwin-arm64.sha256
+#     - release/goss-linux-amd64
+#     - release/goss-linux-amd64.sha256
+#     - release/goss-linux-386
+#     - release/goss-linux-386.sha256
+#     - release/goss-linux-arm
+#     - release/goss-linux-arm.sha256
+#     - release/goss-linux-arm64
+#     - release/goss-linux-arm64.sha256
+#     - release/goss-linux-s390x
+#     - release/goss-linux-s390x.sha256
+#     - release/goss-windows-amd64.exe
+#     - release/goss-windows-amd64.exe.sha256
+#     - extras/dgoss/dgoss
+#     - extras/dgoss/dgoss.sha256
+#   skip_cleanup: true
+#   on:
+#     repo: goss-org/goss
+#     tags: true
+#     condition: $TRAVIS_OS_NAME = linux

@@ -1,0 +1,17 @@
+package:
+  httpd:
+    installed: true
+    versions:
+    - 2.4.57-11.el9_4.1
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - 0.0.0.0
+service:
+  httpd:
+    enabled: true
+    running: true
+process:
+  httpd:
+    running: true
