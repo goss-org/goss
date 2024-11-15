@@ -10,7 +10,14 @@ containers. It is based on `dgoss`.
 ### Run
 
 Run is used to validate a docker container defined in `docker-compose.yml`. It expects both a `docker-compose.yml`
-and `goss.yaml` file to exist in the directory it was invoked from. Container configuration is used from the
+and `goss.yaml` file to exist in the directory it was invoked from.
+
+If the file `./goss_wait.yaml` exists in the current directory, goss regularly
+checks whether the conditions in the file are met. Only then does goss start the
+actual check with the file `./goss.yaml`. This is used, for example, to wait
+until a certain port is open before executing the tests.
+
+Container configuration is used from the 
 compose file, for example:
 
 **run:**

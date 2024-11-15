@@ -47,6 +47,12 @@ dgoss run ...
 
 Run is used to validate a container.
 It expects a `./goss.yaml` file to exist in the directory it was invoked from.
+
+If the file `./goss_wait.yaml` exists in the current directory, goss regularly
+checks whether the conditions in the file are met. Only then does goss start the
+actual check with the file `./goss.yaml`. This is used, for example, to wait
+until a certain port is open before executing the tests.
+
 In most cases one can just substitute the runtime command (`docker` or `podman`)
 for the dgoss command, for example:
 
