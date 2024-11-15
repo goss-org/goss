@@ -1,0 +1,35 @@
+---
+service:
+  tinyproxy:
+    enabled: true
+    running: true
+user:
+  www-data:
+    exists: true
+    uid: 33
+    gid: 33
+    groups:
+    - www-data
+    home: "/var/www"
+group:
+  www-data:
+    exists: true
+    gid: 33
+process:
+  apache2:
+    running: true
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - 0.0.0.0
+addr:
+  tcp://127.0.0.1:80:
+    reachable: true
+    timeout: 500
+    local-address: 127.0.0.1
+gossfile:
+  "../goss-s*.yaml": {}
+  bypath:
+    file: "../goss-dummy.yaml"
+

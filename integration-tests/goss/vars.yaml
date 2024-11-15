@@ -25,6 +25,12 @@ trusty:
     apache2: "2.4.7-1ubuntu4.22"
   services:
     apache2: ["3"]
+noble:
+  proxy: http://127.0.0.1:8888
+  packages:
+    apache2: "2.4.58-1ubuntu8.1"
+  services:
+    apache2: []
 wheezy:
   proxy: http://127.0.0.1:8888
   packages:
