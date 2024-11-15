@@ -34,7 +34,7 @@ wheezy:
 bookworm:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.4.59-1~deb12u1"
+    apache2: "2.4.62-1~deb12u2"
   services:
     apache2: []
 
