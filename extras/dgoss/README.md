@@ -25,8 +25,8 @@ Since goss runs on the target container, dgoss can be used on a Mac OSX system b
 curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
-# Download desired goss version to your preferred location (e.g. v0.3.6)
-curl -L https://github.com/goss-org/goss/releases/download/v0.3.6/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+# Download desired goss version to your preferred location (e.g. v0.4.8)
+curl -L https://github.com/goss-org/goss/releases/download/v0.4.8/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
 
 # Set your GOSS_PATH to the above location
 export GOSS_PATH=~/Downloads/goss-linux-amd64
@@ -79,6 +79,21 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 ### Environment vars and defaults
 
 The following environment variables can be set to change the behavior of dgoss.
+
+#### DEBUG
+
+Enables debug output of `dgoss`.
+
+When running in debug mode, the tmp dir with the container output will not be cleaned up.
+
+Note: Debug output of `dgoss` is from `dgoss` shell script and not debug output of `goss`
+(`dgoss run -e GOSS_LOGLEVEL=DEBUG jenkins:alpine`).
+
+**Default:** empty
+
+**Example:**
+
+`DEBUG=true dgoss run jenkins:alpine`
 
 #### GOSS_PATH
 
