@@ -18,14 +18,20 @@ error() {
 
 cleanup() {
     set +e
+    # There is a chance that the log will not be written completely.
+    # Exit the container and retrieve the last line of logs to ensure
+    # that all logs have been read.
+    info "Stopping container"
+    $CONTAINER_RUNTIME stop --time 1 "$id" > /dev/null 2>&1
+    $CONTAINER_RUNTIME logs --tail 1 "$id" > /dev/null 2>&1
+
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
     if [ -n "$CONTAINER_LOG_OUTPUT" ]; then
-        info "Stopping container and copy log"
-        $CONTAINER_RUNTIME stop -t 1 "$id" > /dev/null
+        info "Copying log"
         cp "$tmp_dir/docker_output.log" "$CONTAINER_LOG_OUTPUT"
     fi
     rm -rf "$tmp_dir"
-    if [[ $id ]];then
+    if [[ $id ]]; then
         info "Deleting container"
         $CONTAINER_RUNTIME rm -vf "$id" > /dev/null
     fi
@@ -68,8 +74,6 @@ run(){
     esac
 
     $CONTAINER_RUNTIME logs -f "$id" > "$tmp_dir/docker_output.log" 2>&1 &
-    # There is a chance that the log will not be written, an empty line is added for mitigation.
-    echo "" >> "$tmp_dir/docker_output.log" 2>&1 &
     log_pid=$!
     info "Container ID: ${id:0:8}"
 }
