@@ -47,6 +47,12 @@ dgoss run ...
 
 Run is used to validate a container.
 It expects a `./goss.yaml` file to exist in the directory it was invoked from.
+
+If the file `./goss_wait.yaml` exists in the current directory, goss regularly
+checks whether the conditions in the file are met. Only then does goss start the
+actual check with the file `./goss.yaml`. This is used, for example, to wait
+until a certain port is open before executing the tests.
+
 In most cases one can just substitute the runtime command (`docker` or `podman`)
 for the dgoss command, for example:
 
@@ -79,6 +85,21 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 ### Environment vars and defaults
 
 The following environment variables can be set to change the behavior of dgoss.
+
+#### DEBUG
+
+Enables debug output of `dgoss`.
+
+When running in debug mode, the tmp dir with the container output will not be cleaned up.
+
+Note: Debug output of `dgoss` is from `dgoss` shell script and not debug output of `goss`
+(`dgoss run -e GOSS_LOGLEVEL=DEBUG jenkins:alpine`).
+
+**Default:** empty
+
+**Example:**
+
+`DEBUG=true dgoss run jenkins:alpine`
 
 #### GOSS_PATH
 
