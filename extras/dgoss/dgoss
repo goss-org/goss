@@ -19,12 +19,20 @@ error() {
 
 cleanup() {
     set +e
+    # There is a chance that the log will not be written completely.
+    # Exit the container and retrieve the last line of logs to ensure
+    # that all logs have been read.
+    info "Stopping container"
+    $CONTAINER_RUNTIME stop --time 1 "$id" > /dev/null 2>&1
+    $CONTAINER_RUNTIME logs --tail 1 "$id" > /dev/null 2>&1
+
     { kill "$log_pid" && wait "$log_pid"; } 2> /dev/null
     if [ -n "$CONTAINER_LOG_OUTPUT" ]; then
+        info "Copying log"
         cp "$tmp_dir/docker_output.log" "$CONTAINER_LOG_OUTPUT"
     fi
     [ "$DEBUG" ] || rm -rf "$tmp_dir"
-    if [[ $id ]];then
+    if [[ $id ]]; then
         info "Deleting container"
         $CONTAINER_RUNTIME rm -vf "$id" > /dev/null
     fi
