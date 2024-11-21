@@ -150,6 +150,11 @@ dcgoss-sha256:
 kgoss-sha256:
 	cd extras/kgoss/ && sha256sum kgoss > kgoss.sha256
 
+.PHONY: lint-yaml
+lint-yaml:
+	$(info INFO: Starting $@)
+	yamllint -c .yamllint .
+
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
 	@python -m venv $(VENV)

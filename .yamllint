@@ -1,8 +1,27 @@
 ---
 extends: default
 
+ignore:
+  # uses go templates (these are invalid yaml files)
+  - integration-tests/goss/goss-service.yaml
+  - integration-tests/goss/goss-shared.yaml
+  - docs/goss.yaml
+
 rules:
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1  # required for schema.yaml
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1  # required for schema.yaml
+  comments-indentation: disable
+  indentation:
+    spaces: consistent
+    indent-sequences: consistent
   line-length: disable
+  document-start: disable
   truthy:
     allowed-values:
-      - on
+      - "on"  # required for github workflows
+      - "false"
+      - "true"

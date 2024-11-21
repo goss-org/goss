@@ -18,7 +18,7 @@ jobs:
     permissions:
       packages: write
       contents: read
-      security-events: write # To upload Trivy sarif files
+      security-events: write  # To upload Trivy sarif files
 
     steps:
       - name: Checkout

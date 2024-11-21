@@ -44,13 +44,13 @@ matching:
     content: '1.2.3'
     matches:
       or:
-       - semver-constraint: '>=9.9.0'
+        - semver-constraint: '>=9.9.0'
 
   basic_len:
     content: "123"
     matches:
       or:
-       - have-len: 2
+        - have-len: 2
 
   basic_int:
     content: 42
@@ -72,9 +72,9 @@ matching:
     matches:
       or:
         - contain-elements: [fox, box]
-        - [fox, bax] # same as above
-        - equal: [fox, bax, mox] # order matters, exact match
-        - consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
+        - [fox, bax]  # same as above
+        - equal: [fox, bax, mox]  # order matters, exact match
+        - consist-of: [fox, have-prefix: t, box]  # order doesn't matter, can use matchers
         - contain-element:
             have-prefix: x
         - contain-element:
@@ -83,7 +83,7 @@ matching:
   basic_array_consists_of:
     content: [foo, bar, moo]
     matches:
-      consist-of: [fox, have-prefix: t, box] # order doesn't matter, can use matchers
+      consist-of: [fox, have-prefix: t, box]  # order doesn't matter, can use matchers
 
   basic_reader:
     as-reader: true
@@ -163,11 +163,11 @@ matching:
         - not:
             contain-elements: [foo, bar]
         - not:
-            [foo, bar] # same as above
+            [foo, bar]  # same as above
         - not:
-            equal: [foo, bar, moo] # order matters, exact match
+            equal: [foo, bar, moo]  # order matters, exact match
         - not:
-            consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+            consist-of: [foo, have-prefix: m, bar]  # order doesn't matter, can use matchers
         - not:
             contain-element:
               have-prefix: b
@@ -182,7 +182,7 @@ matching:
     content: [foo, bar, moo]
     matches:
       not:
-        consist-of: [foo, have-prefix: m, bar] # order doesn't matter, can use matchers
+        consist-of: [foo, have-prefix: m, bar]  # order doesn't matter, can use matchers
 
   negated_basic_reader:
     as-reader: true
