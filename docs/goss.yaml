@@ -16,7 +16,7 @@ command:
     stdout:
       - go version go1.6 linux/amd64
     stderr: []
-    timeout: 10000 # in milliseconds
+    timeout: 10000  # in milliseconds
     skip: false
 
 dns:
@@ -64,7 +64,7 @@ group:
     gid: 65534
   nobody:
     exists: true
-    
+
 
 http:
   https://www.google.com:
@@ -190,14 +190,14 @@ user:
       home: /var/lib/nfs
       shell: /sbin/nologin
       skip: false
-    
+
     nobody:
       exists: true
       uid:
         lt: 500
       groups:
         consist-of: [nobody]
-    
+
     sshd:
       title: UID must be between 50-100, GID doesn't matter. home is flexible
       meta:
@@ -216,7 +216,3 @@ user:
           - /var/run/sshd
 
 # https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files
-            
-
-
-

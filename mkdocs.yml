@@ -47,8 +47,8 @@ plugins:
   - macros:
       render_by_default: false
   - exclude:
-       glob:
-         - requirements.txt
+      glob:
+        - requirements.txt
 
 markdown_extensions:
   - abbr

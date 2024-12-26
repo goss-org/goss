@@ -242,12 +242,12 @@ definitions:
       key-file:
         type: string
         default: ""
-        description:  |
+        description: |
           private-key file to use for authentication (used with cert-file)
       proxy:
         type: string
         default: ""
-        description:  |
+        description: |
           proxy server to proxy traffic through. Proxy can also be set with environment variables http_proxy.
       skip:
         type: boolean
@@ -256,8 +256,8 @@ definitions:
         type: string
         default: PUT
         description: http method
-        enum: # See https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
-        # Note: not yet clear whether goss supports all methods
+        enum:  # See https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods
+          # Note: not yet clear whether goss supports all methods
           - GET
           - PUT
           - HEAD
@@ -281,8 +281,8 @@ definitions:
         items:
           type: string
         default:
-        - 172.17.0.2/16
-        - fe80::42:acff:fe11:2/64
+          - 172.17.0.2/16
+          - fe80::42:acff:fe11:2/64
       mtu:
         type: integer
         default: 1500
@@ -303,15 +303,15 @@ definitions:
       meta: { "$ref":"#/definitions/meta" }
       content:
         anyOf:
-        - type: string
-          default: "some string"
-        - type: array
-          default:
-            - 2
-        - type: object
-          default:
-            foo: bar
-            baz: ring
+          - type: string
+            default: "some string"
+          - type: array
+            default:
+              - 2
+          - type: object
+            default:
+              foo: bar
+              baz: ring
       matches:
         anyOf:
           - type: integer
@@ -333,8 +333,8 @@ definitions:
         items:
           type: string
         default:
-        - rw
-        - relatime
+          - rw
+          - relatime
       source:
         type: string
         default: /dev/mapper/fedora-home
@@ -360,12 +360,12 @@ definitions:
         default: true
       versions:
         oneOf:
-          - type: object # matcher
+          - type: object  # matcher
           - type: array
             items:
               type: string
             default:
-            - 2.2.15
+              - 2.2.15
       skip:
         type: boolean
         default: false
@@ -384,7 +384,7 @@ definitions:
         items:
           type: string
         default:
-        - 0.0.0.0
+          - 0.0.0.0
       skip:
         type: boolean
         default: false
@@ -419,7 +419,7 @@ definitions:
       - exists
     properties:
       title: { "$ref": "#/definitions/title" }
-      meta:  { "$ref": "#/definitions/meta" }
+      meta: { "$ref": "#/definitions/meta" }
       exists:
         type: boolean
         default: true
@@ -442,7 +442,7 @@ definitions:
             items:
               type: string
             default:
-            - nfsnobody
+              - nfsnobody
       home:
         anyOf:
           - { "$ref": "#/definitions/matchingTest" }
@@ -460,15 +460,15 @@ type: "object"
 
 properties:
   addr:
-      type: object
-      description: "Validates if a remote address:port are accessible."
-      examples:
-        - tcp://ip-address-or-domain-name:80:
-            reachable: true
-            timeout: 500
-            local-address: 127.0.0.1
-      additionalProperties:
-        $ref: "#/definitions/addrTest"
+    type: object
+    description: "Validates if a remote address:port are accessible."
+    examples:
+      - tcp://ip-address-or-domain-name:80:
+          reachable: true
+          timeout: 500
+          local-address: 127.0.0.1
+    additionalProperties:
+      $ref: "#/definitions/addrTest"
 
   command:
     type: object
@@ -477,348 +477,345 @@ properties:
       $ref: "#/definitions/commandTest"
 
   dns:
-      type: object
-      description: "Validates that the provided address is resolvable and the addrs it resolves to."
-      x-intellij-html-description: |
-        <p dir="auto">Validates that the provided address is resolvable and the addrs it resolves to.</p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
-          <span class="pl-ent">localhost</span>:
-            <span class="pl-c"><span class="pl-c">#</span> required attributes</span>
-            <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
-            <span class="pl-c"><span class="pl-c">#</span> optional attributes</span>
-            <span class="pl-ent">addrs</span>:
-            - <span class="pl-s">127.0.0.1</span>
-            - <span class="pl-s">::1</span>
-            <span class="pl-ent">server</span>: <span class="pl-s">8.8.8.8 </span><span class="pl-c"><span class="pl-c">#</span> Also supports server:port</span>
-            <span class="pl-ent">timeout</span>: <span class="pl-c1">500</span> <span class="pl-c"><span class="pl-c">#</span> in milliseconds (Only used when server attribute is provided)</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="dns:
-          localhost:
-            # required attributes
-            resolvable: true
-            # optional attributes
-            addrs:
+    type: object
+    description: "Validates that the provided address is resolvable and the addrs it resolves to."
+    x-intellij-html-description: |
+      <p dir="auto">Validates that the provided address is resolvable and the addrs it resolves to.</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
+        <span class="pl-ent">localhost</span>:
+          <span class="pl-c"><span class="pl-c">#</span> required attributes</span>
+          <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
+          <span class="pl-c"><span class="pl-c">#</span> optional attributes</span>
+          <span class="pl-ent">addrs</span>:
+          - <span class="pl-s">127.0.0.1</span>
+          - <span class="pl-s">::1</span>
+          <span class="pl-ent">server</span>: <span class="pl-s">8.8.8.8 </span><span class="pl-c"><span class="pl-c">#</span> Also supports server:port</span>
+          <span class="pl-ent">timeout</span>: <span class="pl-c1">500</span> <span class="pl-c"><span class="pl-c">#</span> in milliseconds (Only used when server attribute is provided)</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="dns:
+        localhost:
+          # required attributes
+          resolvable: true
+          # optional attributes
+          addrs:
             - 127.0.0.1
             - ::1
-            server: 8.8.8.8 # Also supports server:port
-            timeout: 500 # in milliseconds (Only used when server attribute is provided)" tabindex="0" role="button" style="display: none;">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
-        <p dir="auto">It is possible to validate the following types of DNS records, but requires the <code>server</code> attribute be set:</p>
-        <ul dir="auto">
-        <li>A</li>
-        <li>AAAA</li>
-        <li>CAA</li>
-        <li>CNAME</li>
-        <li>MX</li>
-        <li>NS</li>
-        <li>PTR</li>
-        <li>SRV</li>
-        <li>TXT</li>
-        </ul>
-        <p dir="auto">To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:</p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
-          <span class="pl-c"><span class="pl-c">#</span> Validate a CNAME record</span>
-          <span class="pl-ent">CNAME:c.dnstest.io</span>:
-            <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
-            <span class="pl-ent">server</span>: <span class="pl-s">208.67.222.222</span>
-            <span class="pl-ent">addrs</span>:
-            - <span class="pl-s"><span class="pl-pds">"</span>a.dnstest.io.<span class="pl-pds">"</span></span>
+          server: 8.8.8.8 # Also supports server:port
+          timeout: 500 # in milliseconds (Only used when server attribute is provided)" tabindex="0" role="button" style="display: none;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+          </clipboard-copy>
+        </div></div>
+      <p dir="auto">It is possible to validate the following types of DNS records, but requires the <code>server</code> attribute be set:</p>
+      <ul dir="auto">
+      <li>A</li>
+      <li>AAAA</li>
+      <li>CAA</li>
+      <li>CNAME</li>
+      <li>MX</li>
+      <li>NS</li>
+      <li>PTR</li>
+      <li>SRV</li>
+      <li>TXT</li>
+      </ul>
+      <p dir="auto">To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
+        <span class="pl-c"><span class="pl-c">#</span> Validate a CNAME record</span>
+        <span class="pl-ent">CNAME:c.dnstest.io</span>:
+          <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
+          <span class="pl-ent">server</span>: <span class="pl-s">208.67.222.222</span>
+          <span class="pl-ent">addrs</span>:
+          - <span class="pl-s"><span class="pl-pds">"</span>a.dnstest.io.<span class="pl-pds">"</span></span>
 
-          <span class="pl-c"><span class="pl-c">#</span> Validate a PTR record</span>
-          <span class="pl-ent">PTR:8.8.8.8</span>:
-            <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
-            <span class="pl-ent">server</span>: <span class="pl-s">8.8.8.8</span>
-            <span class="pl-ent">addrs</span>:
-            - <span class="pl-s"><span class="pl-pds">"</span>dns.google.<span class="pl-pds">"</span></span>
+        <span class="pl-c"><span class="pl-c">#</span> Validate a PTR record</span>
+        <span class="pl-ent">PTR:8.8.8.8</span>:
+          <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
+          <span class="pl-ent">server</span>: <span class="pl-s">8.8.8.8</span>
+          <span class="pl-ent">addrs</span>:
+          - <span class="pl-s"><span class="pl-pds">"</span>dns.google.<span class="pl-pds">"</span></span>
 
-          <span class="pl-c"><span class="pl-c">#</span> Validate and SRV record</span>
-          <span class="pl-ent">SRV:_https._tcp.dnstest.io</span>:
-            <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
-            <span class="pl-ent">server</span>: <span class="pl-s">208.67.222.222</span>
-            <span class="pl-ent">addrs</span>:
-            - <span class="pl-s"><span class="pl-pds">"</span>0 5 443 a.dnstest.io.<span class="pl-pds">"</span></span>
-            - <span class="pl-s"><span class="pl-pds">"</span>10 10 443 b.dnstest.io.<span class="pl-pds">"</span></span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="dns:
-          # Validate a CNAME record
-          CNAME:c.dnstest.io:
-            resolvable: true
-            server: 208.67.222.222
-            addrs:
-            - &quot;a.dnstest.io.&quot;
+        <span class="pl-c"><span class="pl-c">#</span> Validate and SRV record</span>
+        <span class="pl-ent">SRV:_https._tcp.dnstest.io</span>:
+          <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
+          <span class="pl-ent">server</span>: <span class="pl-s">208.67.222.222</span>
+          <span class="pl-ent">addrs</span>:
+          - <span class="pl-s"><span class="pl-pds">"</span>0 5 443 a.dnstest.io.<span class="pl-pds">"</span></span>
+          - <span class="pl-s"><span class="pl-pds">"</span>10 10 443 b.dnstest.io.<span class="pl-pds">"</span></span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="dns:
+        # Validate a CNAME record
+        CNAME:c.dnstest.io:
+          resolvable: true
+          server: 208.67.222.222
+          addrs:
+          - &quot;a.dnstest.io.&quot;
 
-          # Validate a PTR record
-          PTR:8.8.8.8:
-            resolvable: true
-            server: 8.8.8.8
-            addrs:
-            - &quot;dns.google.&quot;
-
-          # Validate and SRV record
-          SRV:_https._tcp.dnstest.io:
-            resolvable: true
-            server: 208.67.222.222
-            addrs:
-            - &quot;0 5 443 a.dnstest.io.&quot;
-            - &quot;10 10 443 b.dnstest.io.&quot;" tabindex="0" role="button">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
-        <p dir="auto">Please note that if you want <code>localhost</code> to <strong>only</strong> resolve <code>127.0.0.1</code> you'll need to use <a href="https://goss.rocks/gossfile/#advanced-matchers">Advanced Matchers</a></p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
-          <span class="pl-ent">localhost</span>:
-            <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
-            <span class="pl-ent">addrs</span>:
-              <span class="pl-ent">consist-of</span>: <span class="pl-s">[127.0.0.1]</span>
-            <span class="pl-ent">timeout</span>: <span class="pl-c1">500</span> <span class="pl-c"><span class="pl-c">#</span> in milliseconds</span>
-      additionalProperties:
-        $ref: "#/definitions/dnsTest"
+        # Validate a PTR record
+        PTR:8.8.8.8:
+          resolvable: true
+          server: 8.8.8.8
+          addrs:
+          - &quot;dns.google.&quot;
+        # Validate and SRV record
+        SRV:_https._tcp.dnstest.io:
+          resolvable: true
+          server: 208.67.222.222
+          addrs:
+          - &quot;0 5 443 a.dnstest.io.&quot;
+          - &quot;10 10 443 b.dnstest.io.&quot;" tabindex="0" role="button">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+          </clipboard-copy>
+        </div></div>
+      <p dir="auto">Please note that if you want <code>localhost</code> to <strong>only</strong> resolve <code>127.0.0.1</code> you'll need to use <a href="https://goss.rocks/gossfile/#advanced-matchers">Advanced Matchers</a></p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">dns</span>:
+        <span class="pl-ent">localhost</span>:
+          <span class="pl-ent">resolvable</span>: <span class="pl-c1">true</span>
+          <span class="pl-ent">addrs</span>:
+            <span class="pl-ent">consist-of</span>: <span class="pl-s">[127.0.0.1]</span>
+          <span class="pl-ent">timeout</span>: <span class="pl-c1">500</span> <span class="pl-c"><span class="pl-c">#</span> in milliseconds</span>
+    additionalProperties:
+      $ref: "#/definitions/dnsTest"
 
   file:
-      type: object
-      description: "Validates the state of a file, directory, or symbolic link"
-      additionalProperties:
-        $ref: "#/definitions/fileTest"
+    type: object
+    description: "Validates the state of a file, directory, or symbolic link"
+    additionalProperties:
+      $ref: "#/definitions/fileTest"
 
   gossfile:
-      type: object
-      description: |
-        Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See render for more examples. Glob patterns can be also be used to specify matching gossfiles.
-        You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.
+    type: object
+    description: |
+      Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See render for more examples. Glob patterns can be also be used to specify matching gossfiles.
+      You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.
 
-        If the 'skip' attribute is true, then the file is not processed. If the filename is a glob pattern, then none of the matching files are processed. Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented. Skipping a gossfile include is the same as omitting the gossfile resource entirely.
-      x-intellij-html-description: |
-        Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See <a href="https://goss.rocks/cli/#render">render</a> for more examples. Glob patterns can be also be used to specify matching gossfiles.</p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">gossfile</span>:
-          <span class="pl-ent">myapplication</span>:
-            <span class="pl-ent">file</span>: <span class="pl-s">myapp_gossfile.yaml</span>
-            <span class="pl-ent">skip</span>: <span class="pl-c1">false</span>
-          <span class="pl-s">*.yaml:</span>
-            <span class="pl-ent">skip</span>: <span class="pl-c1">true</span>
-          <span class="pl-ent">goss_httpd.yaml</span>: <span class="pl-s">{}</span>
-          <span class="pl-ent">/etc/goss.d/*.yaml</span>: <span class="pl-s">{}</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="gossfile:
-          myapplication:
-            file: myapp_gossfile.yaml
-            skip: false
-          *.yaml:
-            skip: true
-          goss_httpd.yaml: {}
-          /etc/goss.d/*.yaml: {}" tabindex="0" role="button" style="display: none;">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
-        <p dir="auto">You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.</p>
-        <p dir="auto">If the 'skip' attribute is true, then the file is not processed.  If the filename is a glob pattern, then none of the matching files are processed.  Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented.  Skipping a gossfile include is the same as omitting the gossfile resource entirely.</p>
-      additionalProperties:
-        $ref: "#/definitions/gossfileTest"
+      If the 'skip' attribute is true, then the file is not processed. If the filename is a glob pattern, then none of the matching files are processed. Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented. Skipping a gossfile include is the same as omitting the gossfile resource entirely.
+    x-intellij-html-description: |
+      Import other gossfiles from this one. This is the best way to maintain a large number of tests, and/or create profiles. See <a href="https://goss.rocks/cli/#render">render</a> for more examples. Glob patterns can be also be used to specify matching gossfiles.</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">gossfile</span>:
+        <span class="pl-ent">myapplication</span>:
+          <span class="pl-ent">file</span>: <span class="pl-s">myapp_gossfile.yaml</span>
+          <span class="pl-ent">skip</span>: <span class="pl-c1">false</span>
+        <span class="pl-s">*.yaml:</span>
+          <span class="pl-ent">skip</span>: <span class="pl-c1">true</span>
+        <span class="pl-ent">goss_httpd.yaml</span>: <span class="pl-s">{}</span>
+        <span class="pl-ent">/etc/goss.d/*.yaml</span>: <span class="pl-s">{}</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="gossfile:
+        myapplication:
+          file: myapp_gossfile.yaml
+          skip: false
+        *.yaml:
+          skip: true
+        goss_httpd.yaml: {}
+        /etc/goss.d/*.yaml: {}" tabindex="0" role="button" style="display: none;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+          </clipboard-copy>
+        </div></div>
+      <p dir="auto">You can specify the gossfile(s) either as the resource key, or using the 'file' attribute.</p>
+      <p dir="auto">If the 'skip' attribute is true, then the file is not processed.  If the filename is a glob pattern, then none of the matching files are processed.  Note that this is not the same as skipping the contained resources; any overrides in the referenced gossfile will not be processed, and the resource count will not be incremented.  Skipping a gossfile include is the same as omitting the gossfile resource entirely.</p>
+    additionalProperties:
+      $ref: "#/definitions/gossfileTest"
 
   group:
-      type: object
-      description: "Validates the state of a group"
-      additionalProperties:
-        $ref: "#/definitions/groupTest"
+    type: object
+    description: "Validates the state of a group"
+    additionalProperties:
+      $ref: "#/definitions/groupTest"
 
   http:
-      type: object
-      description: "description: Validates network interface values"
-      additionalProperties:
-        $ref: "#/definitions/httpTest"
+    type: object
+    description: "description: Validates network interface values"
+    additionalProperties:
+      $ref: "#/definitions/httpTest"
 
   interface:
-      type: object
-      description: "test "
-      additionalProperties:
-        $ref: "#/definitions/interfaceTest"
+    type: object
+    description: "test "
+    additionalProperties:
+      $ref: "#/definitions/interfaceTest"
 
   kernel-param:
-      type: object
-      description: "test "
-      additionalProperties:
-        $ref: "#/definitions/kernelParamTest"
+    type: object
+    description: "test "
+    additionalProperties:
+      $ref: "#/definitions/kernelParamTest"
 
   matching:
-      type: object
-      description: "Validates specified content against a matcher. Best used with Templates."
-      x-intellij-html-description: |
-        <p dir="auto">Validates specified content against a matcher. Best used with <a href="https://goss.rocks/gossfile/#templates">Templates</a>.</p>
-        <h4 dir="auto"><a id="user-content-with-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#with-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>With <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
-        <p dir="auto">Let's say we have a <code>data.json</code> file that gets generated as part of some testing pipeline:</p>
-        <div class="highlight highlight-source-json notranslate position-relative overflow-auto" dir="auto"><pre>{
-          <span class="pl-ent">"instance_count"</span>: <span class="pl-c1">14</span>,
-          <span class="pl-ent">"failures"</span>: <span class="pl-c1">3</span>,
-          <span class="pl-ent">"status"</span>: <span class="pl-s"><span class="pl-pds">"</span>FAIL<span class="pl-pds">"</span></span>
-        }</pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="{
-          &quot;instance_count&quot;: 14,
-          &quot;failures&quot;: 3,
-          &quot;status&quot;: &quot;FAIL&quot;
-        }" tabindex="0" role="button">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
-        <p dir="auto">This could then be passed into goss: <code>goss --vars data.json validate</code></p>
-        <p dir="auto">And then validated against:</p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">matching</span>:
-          <span class="pl-ent">check_instance_count</span>: <span class="pl-c"><span class="pl-c">#</span> Make sure there is at least one instance</span>
-            <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.instance_count }}</span>
-            <span class="pl-ent">matches</span>:
-              <span class="pl-ent">gt</span>: <span class="pl-c1">0</span>
+    type: object
+    description: "Validates specified content against a matcher. Best used with Templates."
+    x-intellij-html-description: |
+      <p dir="auto">Validates specified content against a matcher. Best used with <a href="https://goss.rocks/gossfile/#templates">Templates</a>.</p>
+      <h4 dir="auto"><a id="user-content-with-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#with-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>With <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
+      <p dir="auto">Let's say we have a <code>data.json</code> file that gets generated as part of some testing pipeline:</p>
+      <div class="highlight highlight-source-json notranslate position-relative overflow-auto" dir="auto"><pre>{
+        <span class="pl-ent">"instance_count"</span>: <span class="pl-c1">14</span>,
+        <span class="pl-ent">"failures"</span>: <span class="pl-c1">3</span>,
+        <span class="pl-ent">"status"</span>: <span class="pl-s"><span class="pl-pds">"</span>FAIL<span class="pl-pds">"</span></span>
+      }</pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="{
+        &quot;instance_count&quot;: 14,
+        &quot;failures&quot;: 3,
+        &quot;status&quot;: &quot;FAIL&quot;
+      }" tabindex="0" role="button">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+          </clipboard-copy>
+        </div></div>
+      <p dir="auto">This could then be passed into goss: <code>goss --vars data.json validate</code></p>
+      <p dir="auto">And then validated against:</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">matching</span>:
+        <span class="pl-ent">check_instance_count</span>: <span class="pl-c"><span class="pl-c">#</span> Make sure there is at least one instance</span>
+          <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.instance_count }}</span>
+          <span class="pl-ent">matches</span>:
+            <span class="pl-ent">gt</span>: <span class="pl-c1">0</span>
 
-          <span class="pl-ent">check_failure_count_from_all_instance</span>: <span class="pl-c"><span class="pl-c">#</span> expect no failures</span>
-            <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.failures }}</span>
-            <span class="pl-ent">matches</span>: <span class="pl-c1">0</span>
+        <span class="pl-ent">check_failure_count_from_all_instance</span>: <span class="pl-c"><span class="pl-c">#</span> expect no failures</span>
+          <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.failures }}</span>
+          <span class="pl-ent">matches</span>: <span class="pl-c1">0</span>
 
-          <span class="pl-ent">check_status</span>:
-            <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.status }}</span>
-            <span class="pl-ent">matches</span>:
-              - <span class="pl-ent">not</span>: <span class="pl-s">FAIL</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="matching:
-          check_instance_count: # Make sure there is at least one instance
-            content: {{ .Vars.instance_count }}
-            matches:
-              gt: 0
+        <span class="pl-ent">check_status</span>:
+          <span class="pl-ent">content</span>: <span class="pl-s">{{ .Vars.status }}</span>
+          <span class="pl-ent">matches</span>:
+            - <span class="pl-ent">not</span>: <span class="pl-s">FAIL</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="matching:
+        check_instance_count: # Make sure there is at least one instance
+          content: {{ .Vars.instance_count }}
+          matches:
+            gt: 0
 
-          check_failure_count_from_all_instance: # expect no failures
-            content: {{ .Vars.failures }}
-            matches: 0
+        check_failure_count_from_all_instance: # expect no failures
+          content: {{ .Vars.failures }}
+          matches: 0
 
-          check_status:
-            content: {{ .Vars.status }}
-            matches:
-              - not: FAIL" tabindex="0" role="button" style="display: none;">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
-        <h4 dir="auto"><a id="user-content-without-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#without-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Without <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">matching</span>:
-          <span class="pl-ent">has_substr</span>: <span class="pl-c"><span class="pl-c">#</span> friendly test name</span>
-            <span class="pl-ent">content</span>: <span class="pl-s">some string</span>
-            <span class="pl-ent">matches</span>:
-              <span class="pl-ent">match-regexp</span>: <span class="pl-s">some str</span>
-          <span class="pl-ent">has_2</span>:
-            <span class="pl-ent">content</span>:
-              - <span class="pl-c1">2</span>
-            <span class="pl-ent">matches</span>:
-              <span class="pl-ent">contain-element</span>: <span class="pl-c1">2</span>
-          <span class="pl-ent">has_foo_bar_and_baz</span>:
-            <span class="pl-ent">content</span>:
-              <span class="pl-ent">foo</span>: <span class="pl-s">bar</span>
-              <span class="pl-ent">baz</span>: <span class="pl-s">bing</span>
-            <span class="pl-ent">matches</span>:
-              <span class="pl-ent">and</span>:
-                - <span class="pl-ent">have-key-with-value</span>:
-                    <span class="pl-ent">foo</span>: <span class="pl-s">bar</span>
-                - <span class="pl-ent">have-key</span>: <span class="pl-s">baz</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
-            <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="matching:
-          has_substr: # friendly test name
-            content: some string
-            matches:
-              match-regexp: some str
-          has_2:
-            content:
-              - 2
-            matches:
-              contain-element: 2
-          has_foo_bar_and_baz:
-            content:
-              foo: bar
-              baz: bing
-            matches:
-              and:
-                - have-key-with-value:
-                    foo: bar
-                - have-key: baz" tabindex="0" role="button" style="display: none;">
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
-            <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-        </svg>
-              <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-        </svg>
-            </clipboard-copy>
-          </div></div>
+        check_status:
+          content: {{ .Vars.status }}
+          matches:
+            - not: FAIL" tabindex="0" role="button" style="display: none;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+          </clipboard-copy>
+        </div></div>
+      <h4 dir="auto"><a id="user-content-without-templates" class="anchor" aria-hidden="true" href="https://goss.rocks/gossfile/#without-templates"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"></path></svg></a>Without <a href="https://goss.rocks/gossfile/#templates">Templates</a>:</h4>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">matching</span>:
+        <span class="pl-ent">has_substr</span>: <span class="pl-c"><span class="pl-c">#</span> friendly test name</span>
+          <span class="pl-ent">content</span>: <span class="pl-s">some string</span>
+          <span class="pl-ent">matches</span>:
+            <span class="pl-ent">match-regexp</span>: <span class="pl-s">some str</span>
+        <span class="pl-ent">has_2</span>:
+          <span class="pl-ent">content</span>:
+            - <span class="pl-c1">2</span>
+          <span class="pl-ent">matches</span>:
+            <span class="pl-ent">contain-element</span>: <span class="pl-c1">2</span>
+        <span class="pl-ent">has_foo_bar_and_baz</span>:
+          <span class="pl-ent">content</span>:
+            <span class="pl-ent">foo</span>: <span class="pl-s">bar</span>
+            <span class="pl-ent">baz</span>: <span class="pl-s">bing</span>
+          <span class="pl-ent">matches</span>:
+            <span class="pl-ent">and</span>:
+              - <span class="pl-ent">have-key-with-value</span>:
+                  <span class="pl-ent">foo</span>: <span class="pl-s">bar</span>
+              - <span class="pl-ent">have-key</span>: <span class="pl-s">baz</span></pre><div class="zeroclipboard-container position-absolute right-0 top-0">
+          <clipboard-copy aria-label="Copy" class="ClipboardButton btn js-clipboard-copy m-2 p-0 tooltipped-no-delay" data-copy-feedback="Copied!" data-tooltip-direction="w" value="matching:
+        has_substr: # friendly test name
+          content: some string
+          matches:
+            match-regexp: some str
+        has_2:
+          content:
+            - 2
+          matches:
+            contain-element: 2
+        has_foo_bar_and_baz:
+          content:
+            foo: bar
+            baz: bing
+          matches:
+            and:
+              - have-key-with-value:
+                  foo: bar
+              - have-key: baz" tabindex="0" role="button" style="display: none;">
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon m-2">
+          <path fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+      </svg>
+            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none m-2">
+          <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
+      </svg>
+         </clipboard-copy>
+       </div></div>
 
-        additionalProperties:
+      additionalProperties:
         $ref: "#/definitions/matchTest"
 
   mount:
-      type: object
-      description: "Validates mount point attributes."
-      additionalProperties:
-        $ref: "#/definitions/mountTest"
+    type: object
+    description: "Validates mount point attributes."
+    additionalProperties:
+      $ref: "#/definitions/mountTest"
 
   package:
-      type: object
-      description: |
-        Validates the state of a package"
-        NOTE: this check uses the --package <format> parameter passed on the command line.
-      additionalProperties:
-        $ref: "#/definitions/packageTest"
+    type: object
+    description: |
+      Validates the state of a package"
+      NOTE: this check uses the --package <format> parameter passed on the command line.
+    additionalProperties:
+      $ref: "#/definitions/packageTest"
 
   port:
-      type: object
-      description: |
-        Validates the state of a local port.
+    type: object
+    description: |
+      Validates the state of a local port.
 
-        Note: Goss might consider your port to be listening on tcp6 rather than tcp, try running goss add port .. to see how goss detects it. (explanation)
-      x-intellij-html-description: |
-        <p dir="auto">Validates the state of a local port.</p>
-        <p dir="auto"><strong>Note:</strong> Goss might consider your port to be listening on <code>tcp6</code> rather than <code>tcp</code>, try running <code>goss add port ..</code> to see how goss detects it. (<a href="https://github.com/goss-org/goss/issues/149" data-hovercard-type="issue" data-hovercard-url="/goss-org/goss/issues/149/hovercard">explanation</a>)</p>
-        <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">port</span>:
-          <span class="pl-c"><span class="pl-c">#</span> {tcp,tcp6,udp,udp6}:port_num</span>
-          <span class="pl-ent">tcp:22</span>:
-            <span class="pl-c"><span class="pl-c">#</span> required attributes</span>
-            <span class="pl-ent">listening</span>: <span class="pl-c1">true</span>
-            <span class="pl-c"><span class="pl-c">#</span> optional attributes</span>
-            <span class="pl-ent">ip</span>: <span class="pl-c"><span class="pl-c">#</span> what IP(s) is it listening on</span>
-            - <span class="pl-s">0.0.0.0</span>
-            <span class="pl-ent">skip</span>: <span class="pl-c1">false</span>
-      additionalProperties:
-        $ref: "#/definitions/portTest"
+      Note: Goss might consider your port to be listening on tcp6 rather than tcp, try running goss add port .. to see how goss detects it. (explanation)
+    x-intellij-html-description: |
+      <p dir="auto">Validates the state of a local port.</p>
+      <p dir="auto"><strong>Note:</strong> Goss might consider your port to be listening on <code>tcp6</code> rather than <code>tcp</code>, try running <code>goss add port ..</code> to see how goss detects it. (<a href="https://github.com/goss-org/goss/issues/149" data-hovercard-type="issue" data-hovercard-url="/goss-org/goss/issues/149/hovercard">explanation</a>)</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">port</span>:
+        <span class="pl-c"><span class="pl-c">#</span> {tcp,tcp6,udp,udp6}:port_num</span>
+        <span class="pl-ent">tcp:22</span>:
+          <span class="pl-c"><span class="pl-c">#</span> required attributes</span>
+          <span class="pl-ent">listening</span>: <span class="pl-c1">true</span>
+          <span class="pl-c"><span class="pl-c">#</span> optional attributes</span>
+          <span class="pl-ent">ip</span>: <span class="pl-c"><span class="pl-c">#</span> what IP(s) is it listening on</span>
+          - <span class="pl-s">0.0.0.0</span>
+          <span class="pl-ent">skip</span>: <span class="pl-c1">false</span>
+    additionalProperties:
+      $ref: "#/definitions/portTest"
 
   process:
-      type: object
-      description: "Validates if a process is running."
-      additionalProperties:
-        $ref: "#/definitions/processTest"
+    type: object
+    description: "Validates if a process is running."
+    additionalProperties:
+      $ref: "#/definitions/processTest"
 
   service:
-      type: object
-      description: "Validates the state of a service."
-      additionalProperties:
-        $ref: "#/definitions/serviceTest"
+    type: object
+    description: "Validates the state of a service."
+    additionalProperties:
+      $ref: "#/definitions/serviceTest"
 
   user:
-      type: object
-      description: |
-        Validates the state of a user"
-        NOTE: This check is inspecting the contents of local passwd file /etc/passwd, this does not validate remote users (e.g. LDAP).
-      additionalProperties:
-        $ref: "#/definitions/userTest"
-
-
+    type: object
+    description: |
+      Validates the state of a user"
+      NOTE: This check is inspecting the contents of local passwd file /etc/passwd, this does not validate remote users (e.g. LDAP).
+    additionalProperties:
+      $ref: "#/definitions/userTest"

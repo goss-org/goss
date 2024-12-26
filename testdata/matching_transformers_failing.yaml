@@ -65,9 +65,9 @@ matching:
         - contain-element:
             have-prefix: 'too'
         - contain-elements:
-          - not: 'moo cow'
-          - lt: 10
-          - have-prefix: 'tow'
+            - not: 'moo cow'
+            - lt: 10
+            - have-prefix: 'tow'
 
 
   test_reader_as_single_string:
@@ -80,8 +80,8 @@ matching:
     as-reader: true
     matches:
       and:
-       - le: 20
-       - ge: 50
+        - le: 20
+        - ge: 50
 
 
   test_gjson_transform_simple:
@@ -159,4 +159,4 @@ matching:
     matches:
       gjson:
         '@this':
-            - have-key: "arr"
+          - have-key: "arr"
