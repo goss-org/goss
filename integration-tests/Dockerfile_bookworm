@@ -1,0 +1,9 @@
+FROM debian:bookworm
+
+RUN apt-get -o Acquire::Check-Valid-Until=false update && \
+    apt-get install -y apache2=2.4.62-1~deb12u2 ca-certificates tinyproxy vim-tiny systemd systemd-sysv && \
+    apt-get remove -y vim-tiny && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkfifo /pipe
