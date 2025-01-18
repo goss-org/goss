@@ -61,3 +61,5 @@ func (s *ServiceWindows) Running() (bool, error) {
 func (s *ServiceWindows) RunLevels() ([]string, error) {
 	return nil, nil
 }
+
+// test
