@@ -23,39 +23,30 @@ func (s *ServiceWindows) Service() string {
 }
 
 func (s *ServiceWindows) Exists() (bool, error) {
-	if invalidService(s.service) {
+	cmd := util.NewCommand(fmt.Sprintf("Get-Service -Name %s", s.service))
+	cmd.Run()
+	if strings.Contains(cmd.Stderr.String(), "Cannot find any service with service name") {
 		return false, nil
 	}
-	cmd := util.NewCommand("systemctltest", "-q", "list-unit-files", "--type=service")
-	cmd.Run()
-	if strings.Contains(cmd.Stdout.String(), fmt.Sprintf("%s.service", s.service)) {
-		return true, cmd.Err
-	}
-	return false, nil
+	return true, cmd.Err
 }
 
 func (s *ServiceWindows) Enabled() (bool, error) {
-	if invalidService(s.service) {
-		return false, nil
-	}
-	cmd := util.NewCommand("systemctltest", "-q", "is-enabled", s.service)
+	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("$(Get-Service -Name %s).StartType", s.service), "-eq", "\"Automatic\"")
 	cmd.Run()
-	if cmd.Status == 0 {
+	if strings.Contains(cmd.Stdout.String(), "True") {
 		return true, cmd.Err
 	}
-	return false, nil
+	return false, cmd.Err
 }
 
 func (s *ServiceWindows) Running() (bool, error) {
-	if invalidService(s.service) {
-		return false, nil
-	}
-	cmd := util.NewCommand("systemctltest", "-q", "is-active", s.service)
+	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("$(Get-Service -Name %s).Status", s.service), "-eq", "\"Running\"")
 	cmd.Run()
-	if cmd.Status == 0 {
+	if strings.Contains(cmd.Stdout.String(), "True") {
 		return true, cmd.Err
 	}
-	return false, nil
+	return false, cmd.Err
 }
 
 func (s *ServiceWindows) RunLevels() ([]string, error) {
