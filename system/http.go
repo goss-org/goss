@@ -30,22 +30,23 @@ type HTTP interface {
 }
 
 type DefHTTP struct {
-	http              string
-	allowInsecure     bool
-	noFollowRedirects bool
-	resp              *http.Response
-	RequestHeader     http.Header
-	RequestBody       string
-	Timeout           int
-	loaded            bool
-	err               error
-	Username          string
-	Password          string
-	CAFile            string
-	CertFile          string
-	KeyFile           string
-	Method            string
-	Proxy             string
+	http               string
+	allowInsecure      bool
+	noFollowRedirects  bool
+	resp               *http.Response
+	RequestHeader      http.Header
+	RequestBody        string
+	RequestQueryParams map[string]string
+	Timeout            int
+	loaded             bool
+	err                error
+	Username           string
+	Password           string
+	CAFile             string
+	CertFile           string
+	KeyFile            string
+	Method             string
+	Proxy              string
 }
 
 func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.Config) HTTP {
@@ -60,19 +61,20 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
 		headers.Add(str[0], str[1])
 	}
 	return &DefHTTP{
-		http:              httpStr,
-		allowInsecure:     config.AllowInsecure,
-		Method:            config.Method,
-		noFollowRedirects: config.NoFollowRedirects,
-		RequestHeader:     headers,
-		RequestBody:       config.RequestBody,
-		Timeout:           config.TimeOutMilliSeconds(),
-		Username:          config.Username,
-		Password:          config.Password,
-		CAFile:            config.CAFile,
-		CertFile:          config.CertFile,
-		KeyFile:           config.KeyFile,
-		Proxy:             config.Proxy,
+		http:               httpStr,
+		allowInsecure:      config.AllowInsecure,
+		Method:             config.Method,
+		noFollowRedirects:  config.NoFollowRedirects,
+		RequestHeader:      headers,
+		RequestBody:        config.RequestBody,
+		RequestQueryParams: config.RequestQueryParams,
+		Timeout:            config.TimeOutMilliSeconds(),
+		Username:           config.Username,
+		Password:           config.Password,
+		CAFile:             config.CAFile,
+		CertFile:           config.CertFile,
+		KeyFile:            config.KeyFile,
+		Proxy:              config.Proxy,
 	}
 }
 
@@ -160,6 +162,14 @@ func (u *DefHTTP) setupReal() error {
 
 	if host := req.Header.Get("Host"); host != "" {
 		req.Host = host
+	}
+
+	if u.RequestQueryParams != nil {
+		qParams := req.URL.Query()
+		for k, v := range u.RequestQueryParams {
+			qParams.Add(k, v)
+		}
+		req.URL.RawQuery = qParams.Encode()
 	}
 
 	if u.Username != "" || u.Password != "" {

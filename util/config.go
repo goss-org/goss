@@ -42,6 +42,7 @@ type Config struct {
 	RequestBody           string
 	Proxy                 string
 	RequestHeader         []string
+	RequestQueryParams    map[string]string
 	RetryTimeout          time.Duration
 	RunLevel              string
 	Server                string

@@ -335,6 +335,8 @@ http:
     timeout: 1000
     request-headers: # Set request header values
        - "Content-Type: text/html"
+    request-query-params:
+       foo: 'bar'
     headers: [] # Check http response headers for these patterns (e.g. "Content-Type: text/html")
     request-body: '{"key": "value"}' # request body
     body: [] # Check http response content for these patterns

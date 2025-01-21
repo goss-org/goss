@@ -10,26 +10,27 @@ import (
 )
 
 type HTTP struct {
-	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id                string   `json:"-" yaml:"-"`
-	URL               string   `json:"url,omitempty" yaml:"url,omitempty"`
-	Method            string   `json:"method,omitempty" yaml:"method,omitempty"`
-	Status            matcher  `json:"status" yaml:"status"`
-	AllowInsecure     bool     `json:"allow-insecure" yaml:"allow-insecure"`
-	NoFollowRedirects bool     `json:"no-follow-redirects" yaml:"no-follow-redirects"`
-	Timeout           int      `json:"timeout,omitempty" yaml:"timeout,omitempty"`
-	RequestHeader     []string `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
-	RequestBody       string   `json:"request-body,omitempty" yaml:"request-body,omitempty"`
-	Headers           matcher  `json:"headers,omitempty" yaml:"headers,omitempty"`
-	Body              matcher  `json:"body,omitempty" yaml:"body,omitempty"`
-	Username          string   `json:"username,omitempty" yaml:"username,omitempty"`
-	Password          string   `json:"password,omitempty" yaml:"password,omitempty"`
-	CAFile            string   `json:"ca-file,omitempty" yaml:"ca-file,omitempty"`
-	CertFile          string   `json:"cert-file,omitempty" yaml:"cert-file,omitempty"`
-	KeyFile           string   `json:"key-file,omitempty" yaml:"key-file,omitempty"`
-	Skip              bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
-	Proxy             string   `json:"proxy,omitempty" yaml:"proxy,omitempty"`
+	Title              string            `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta               meta              `json:"meta,omitempty" yaml:"meta,omitempty"`
+	id                 string            `json:"-" yaml:"-"`
+	URL                string            `json:"url,omitempty" yaml:"url,omitempty"`
+	Method             string            `json:"method,omitempty" yaml:"method,omitempty"`
+	Status             matcher           `json:"status" yaml:"status"`
+	AllowInsecure      bool              `json:"allow-insecure" yaml:"allow-insecure"`
+	NoFollowRedirects  bool              `json:"no-follow-redirects" yaml:"no-follow-redirects"`
+	Timeout            int               `json:"timeout,omitempty" yaml:"timeout,omitempty"`
+	RequestHeader      []string          `json:"request-headers,omitempty" yaml:"request-headers,omitempty"`
+	RequestBody        string            `json:"request-body,omitempty" yaml:"request-body,omitempty"`
+	RequestQueryParams map[string]string `json:"request-query-params,omitempty" yaml:"request-query-params,omitempty"`
+	Headers            matcher           `json:"headers,omitempty" yaml:"headers,omitempty"`
+	Body               matcher           `json:"body,omitempty" yaml:"body,omitempty"`
+	Username           string            `json:"username,omitempty" yaml:"username,omitempty"`
+	Password           string            `json:"password,omitempty" yaml:"password,omitempty"`
+	CAFile             string            `json:"ca-file,omitempty" yaml:"ca-file,omitempty"`
+	CertFile           string            `json:"cert-file,omitempty" yaml:"cert-file,omitempty"`
+	KeyFile            string            `json:"key-file,omitempty" yaml:"key-file,omitempty"`
+	Skip               bool              `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Proxy              string            `json:"proxy,omitempty" yaml:"proxy,omitempty"`
 }
 
 const (
@@ -75,7 +76,7 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 		KeyFile:           u.KeyFile,
 		NoFollowRedirects: u.NoFollowRedirects,
 		Timeout:           time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
-		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
+		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, RequestQueryParams: u.RequestQueryParams, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 
@@ -98,17 +99,18 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 	http := sysHTTP.HTTP()
 	status, err := sysHTTP.Status()
 	u := &HTTP{
-		id:                http,
-		Status:            status,
-		RequestHeader:     []string{},
-		Headers:           nil,
-		Body:              []string{},
-		AllowInsecure:     config.AllowInsecure,
-		NoFollowRedirects: config.NoFollowRedirects,
-		Timeout:           config.TimeOutMilliSeconds(),
-		Username:          config.Username,
-		Password:          config.Password,
-		Proxy:             config.Proxy,
+		id:                 http,
+		Status:             status,
+		RequestHeader:      []string{},
+		RequestQueryParams: nil,
+		Headers:            nil,
+		Body:               []string{},
+		AllowInsecure:      config.AllowInsecure,
+		NoFollowRedirects:  config.NoFollowRedirects,
+		Timeout:            config.TimeOutMilliSeconds(),
+		Username:           config.Username,
+		Password:           config.Password,
+		Proxy:              config.Proxy,
 	}
 	return u, err
 }
