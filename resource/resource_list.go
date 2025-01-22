@@ -120,7 +120,7 @@ type CommandMap map[string]*Command
 
 func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Command, error) {
 	ctx := context.WithValue(context.Background(), idKey{}, sr)
-	sysres := sys.NewCommand(ctx, sr, sys, config)
+	sysres, _ := sys.NewCommand(ctx, sr, sys, config)
 	res, err := NewCommand(sysres, config)
 	if err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util
 
 func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Command, system.Command, bool, error) {
 	ctx := context.WithValue(context.Background(), idKey{}, sr)
-	sysres := sys.NewCommand(ctx, sr, sys, util.Config{})
+	sysres, _ := sys.NewCommand(ctx, sr, sys, util.Config{})
 	res, err := NewCommand(sysres, util.Config{})
 	if err != nil {
 		return nil, nil, false, err
