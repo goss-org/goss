@@ -34,7 +34,7 @@ definitions:
         default: 500
         examples:
           - 500
-          # optional attributes
+          # optional attributesf
       local-address:
         type: string
         default: 127.0.0.1
@@ -47,8 +47,12 @@ definitions:
         type: integer
         description: "Validates the exit-status and output of a command"
       exec:
-        description: "command to execute, defaults to the hash key"
-        type: string
+        description: "command to execute, defaults to the hash key, see https://goss.rocks/gossfile#command"
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
       stdout:
         type: array
         description: "can be a string or pattern, see https://goss.rocks/gossfile#patterns"

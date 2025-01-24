@@ -173,8 +173,18 @@ command:
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
-The `exec` attribute is the command to run; this defaults to the name of
-the hash for backwards compatibility
+The `exec` attribute specifies the command to run. It can be:
+
+* A string, which will be executed through the shell (e.g., /bin/sh -c on Unix systems).
+* An array of strings, where each element represents an argument. In this case, the command is invoked directly without a shell. This is
+  particularly useful in environments like scratch containers, which do not include a shell.
+  ```yaml
+    ...
+    exec: ["/someBinary", "argument1"]
+    ...
+  ```
+
+If exec is not provided, it defaults to the name of the hash for backward compatibility.
 
 ### dns
 
