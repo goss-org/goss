@@ -23,7 +23,7 @@ func (s *ServiceWindows) Service() string {
 }
 
 func (s *ServiceWindows) Exists() (bool, error) {
-	cmd := util.NewCommand(fmt.Sprintf("Get-Service -Name %s", s.service))
+	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("Get-Service -Name %s", s.service))
 	cmd.Run()
 	if strings.Contains(cmd.Stderr.String(), "Cannot find any service with service name") {
 		return false, nil
