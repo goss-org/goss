@@ -40,6 +40,7 @@ file:
     sha512: cb71b1940dc879a3688bd502846bff6316dd537bbe917484964fe0f098e9245d80958258dc3bd6297bf42d5bd978cbe2c03d077d4ed45b2b1ed9cd831ceb1bd0
     linked-to: /usr/sbin/sendmail.sendmail
     skip: false
+    capabilities: []
 # Inline templates are not valid json/yaml that could be validated as-in by json schema
 # Instead, run `goss --vars ./vars.yaml render > rendered_goss.yaml` to render them
 # and apply the schema validation on the rendered file.
@@ -153,7 +154,7 @@ package:
     versions:
       - "2.1"
     skip: false
-# https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files    
+# https://github.com/goss-org/goss/blob/master/README.md#manually-editing-goss-files
   kernel:
     installed: true
     versions:
