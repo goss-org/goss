@@ -36,7 +36,7 @@ type DefHTTP struct {
 	resp               *http.Response
 	RequestHeader      http.Header
 	RequestBody        string
-	RequestQueryParams map[string]string
+	RequestQueryParams map[string][]string
 	Timeout            int
 	loaded             bool
 	err                error
@@ -166,8 +166,10 @@ func (u *DefHTTP) setupReal() error {
 
 	if u.RequestQueryParams != nil {
 		qParams := req.URL.Query()
-		for k, v := range u.RequestQueryParams {
-			qParams.Add(k, v)
+		for k, params := range u.RequestQueryParams {
+			for _, param := range params {
+				qParams.Add(k, param)
+			}
 		}
 		req.URL.RawQuery = qParams.Encode()
 	}
