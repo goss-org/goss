@@ -275,7 +275,7 @@ rendered_goss.yaml: fail: process.chrome: skip is required
 rendered_goss.yaml: fail: service.sshd: skip is required
 ```
 
-Full list of available Json schema validators can be found in <https://json-schema.org/implementations.html#validator-command%20line>
+JSON Schema maintains a [table of validators](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=validator&environments=Command+Line&showObsolete=false).
 
 <!-- --8<-- [end:quickstart] -->
 <!-- --8<-- [start:about] -->
