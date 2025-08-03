@@ -205,6 +205,7 @@ It is possible to validate the following types of DNS records, but requires the 
 * `NS`
 * `PTR`
 * `SRV`
+* `SSHFP`
 * `TXT`
 
 To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:
@@ -225,13 +226,25 @@ dns:
     addrs:
     - "dns.google."
 
-  # Validate and SRV record
+  # Validate a SRV record
   SRV:_https._tcp.dnstest.io:
     resolvable: true
     server: 208.67.222.222
     addrs:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
+
+  # Validate a SSHFP record
+  SSHFP:mars.yellowjacket.io:
+    resolvable: true
+    server: 8.8.8.8
+    addrs:
+    - "1 2 422F22EFB548FEAC403A633A86F74553599B85AC93E7EC3BB0A46B6CD6DDABF8"
+    - "3 1 1B28EEA699B1C784DC16F1122EEDDCF3131C89D2"
+    - "3 2 F5982E00758BF5016B9FDDF26D8E495C376E657BAAC4C7DB1B363C06F0D093CC"
+    - "4 1 5802C65FB3F3B62242055A12455C8E9C5B5A3CDA"
+    - "4 2 99DB27696110BB3918599BF35D932D35DAA3DE09D6F42506FDAA08EBD2AD7311"
+    - "1 1 B6B05D527AE206A2A7163AB349166E15D1AFC7E9"
 ```
 
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
