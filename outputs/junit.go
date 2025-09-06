@@ -52,7 +52,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
         escapeString(testResult.ResourceId),
         testResult.Property);
       if (testResult.Title != "") {
-        testcaseName = testResult.Title;
+        testcaseName = escapeString(testResult.Title);
       }
       summary[testCount] = "<testcase name=\"" +
         testcaseName + "\" " +
