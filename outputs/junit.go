@@ -54,9 +54,11 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
       if (testResult.Title != "") {
         testcaseName = escapeString(testResult.Title);
       }
-      summary[testCount] = "<testcase name=\"" +
-        testcaseName + "\" " +
-        "time=\"" + duration + "\">\n"
+      summary[testCount] = fmt.Sprintf("<testcase name=\"%s\" time=\"%s\">\n",
+        testcaseName,
+        duration,
+      );
+
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
 					escapeString(humanizeResult(testResult, true, includeRaw)) +
