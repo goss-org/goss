@@ -6,7 +6,6 @@ package util
 import (
 	"strings"
 
-	//"fmt"
 	"os/exec"
 	"syscall"
 )
@@ -23,6 +22,28 @@ func NewCommandForWindowsCmd(name string, arg ...string) *Command {
 	command.Cmd.SysProcAttr = &syscall.SysProcAttr{
 		HideWindow:    false,
 		CmdLine:       strings.Join(arg, " "),
+		CreationFlags: 0,
+	}
+
+	return command
+}
+
+func NewCommandForWindowsPowershell(name string, arg ...string) *Command {
+	//fmt.Println(arg)
+	command := new(Command)
+	command.name = "powershell"
+
+	// Build the powershell command line with -NoProfile -Command
+	// The name and args are the PowerShell commands to execute
+	cmdLine := "-NoProfile -Command " + name
+	if len(arg) > 0 {
+		cmdLine += " " + strings.Join(arg, " ")
+	}
+
+	command.Cmd = exec.Command("powershell")
+	command.Cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow:    false,
+		CmdLine:       cmdLine,
 		CreationFlags: 0,
 	}
 
