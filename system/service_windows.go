@@ -1,3 +1,6 @@
+//go:build windows
+// +build windows
+
 package system
 
 import (
@@ -23,7 +26,7 @@ func (s *ServiceWindows) Service() string {
 }
 
 func (s *ServiceWindows) Exists() (bool, error) {
-	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("Get-Service -Name %s", s.service))
+	cmd := util.NewCommandForWindowsPowershell("Get-Service", "-Name", s.service)
 	cmd.Run()
 	if strings.Contains(cmd.Stderr.String(), "Cannot find any service with service name") {
 		return false, nil
@@ -32,18 +35,18 @@ func (s *ServiceWindows) Exists() (bool, error) {
 }
 
 func (s *ServiceWindows) Enabled() (bool, error) {
-	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("$(Get-Service -Name %s).StartType", s.service), "-eq", "\"Automatic\"")
+	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %s).StartType", s.service))
 	cmd.Run()
-	if strings.Contains(cmd.Stdout.String(), "True") {
+	if strings.Contains(cmd.Stdout.String(), "Automatic") {
 		return true, cmd.Err
 	}
 	return false, cmd.Err
 }
 
 func (s *ServiceWindows) Running() (bool, error) {
-	cmd := util.NewCommand("powershell", "-command", fmt.Sprintf("$(Get-Service -Name %s).Status", s.service), "-eq", "\"Running\"")
+	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %s).Status", s.service))
 	cmd.Run()
-	if strings.Contains(cmd.Stdout.String(), "True") {
+	if strings.Contains(cmd.Stdout.String(), "Running") {
 		return true, cmd.Err
 	}
 	return false, cmd.Err
