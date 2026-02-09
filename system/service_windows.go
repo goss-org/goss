@@ -35,7 +35,7 @@ func (s *ServiceWindows) Exists() (bool, error) {
 }
 
 func (s *ServiceWindows) Enabled() (bool, error) {
-	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %s).StartType", s.service))
+	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %q).StartType", s.service))
 	cmd.Run()
 	if strings.Contains(cmd.Stdout.String(), "Automatic") {
 		return true, cmd.Err
@@ -44,7 +44,7 @@ func (s *ServiceWindows) Enabled() (bool, error) {
 }
 
 func (s *ServiceWindows) Running() (bool, error) {
-	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %s).Status", s.service))
+	cmd := util.NewCommandForWindowsPowershell(fmt.Sprintf("$(Get-Service -Name %q).Status", s.service))
 	cmd.Run()
 	if strings.Contains(cmd.Stdout.String(), "Running") {
 		return true, cmd.Err
