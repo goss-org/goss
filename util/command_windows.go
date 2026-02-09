@@ -29,7 +29,6 @@ func NewCommandForWindowsCmd(name string, arg ...string) *Command {
 }
 
 func NewCommandForWindowsPowershell(name string, arg ...string) *Command {
-	//fmt.Println(arg)
 	command := new(Command)
 	command.name = "powershell"
 
