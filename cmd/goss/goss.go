@@ -419,6 +419,14 @@ func main() {
 							return goss.AddResources(c.String("gossfile"), resource.InterfaceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
+					{
+						Name:  resource.RegistryResourceKey,
+						Usage: "add new registry key",
+						Action: func(ctx context.Context, c *cli.Command) error {
+							fatalAlphaIfNeeded(c)
+							return goss.AddResources(c.String("gossfile"), resource.RegistryResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+						},
+					},
 				},
 			},
 		},

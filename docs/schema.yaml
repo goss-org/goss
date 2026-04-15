@@ -297,6 +297,36 @@ definitions:
       value:
         type: string
         default: Linux
+  registryTest:
+    description: |
+      Validates the state of a Windows registry key value.
+      The key format is HIVE\SubKey\Path\ValueName.
+      When the value name contains backslashes, use "::" as separator:
+      HIVE\SubKey\Path::ValueName (e.g. HKLM\...\HardenedPaths::\\*\NETLOGON).
+      Supported hives: HKLM, HKCU, HKCR, HKU, HKCC.
+    required:
+      - exists
+    properties:
+      title: { "$ref":"#/definitions/title" }
+      meta: { "$ref":"#/definitions/meta" }
+      exists:
+        type: boolean
+        default: true
+      value:
+        anyOf:
+          - type: string
+          - type: integer
+        default: "Windows"
+      type:
+        type: string
+        default: REG_SZ
+        enum:
+          - REG_SZ
+          - REG_EXPAND_SZ
+          - REG_DWORD
+          - REG_QWORD
+          - REG_BINARY
+          - REG_MULTI_SZ
   matchingTest:
     properties:
       title: { "$ref":"#/definitions/title" }
@@ -819,3 +849,9 @@ properties:
       NOTE: This check is inspecting the contents of local passwd file /etc/passwd, this does not validate remote users (e.g. LDAP).
     additionalProperties:
       $ref: "#/definitions/userTest"
+
+  registry:
+    type: object
+    description: "Validates the state of a Windows registry key value."
+    additionalProperties:
+      $ref: "#/definitions/registryTest"
