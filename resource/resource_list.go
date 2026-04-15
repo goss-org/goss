@@ -1529,3 +1529,101 @@ func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 	*ret = tmp
 	return nil
 }
+
+type RegistryMap map[string]*Registry
+
+func (r RegistryMap) AppendSysResource(sr string, sys *system.System, config util.Config) (*Registry, error) {
+	ctx := context.WithValue(context.Background(), idKey{}, sr)
+	sysres := sys.NewRegistry(ctx, sr, sys, config)
+	res, err := NewRegistry(sysres, config)
+	if err != nil {
+		return nil, err
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, nil
+}
+
+func (r RegistryMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Registry, system.Registry, bool, error) {
+	ctx := context.WithValue(context.Background(), idKey{}, sr)
+	sysres := sys.NewRegistry(ctx, sr, sys, util.Config{})
+	res, err := NewRegistry(sysres, util.Config{})
+	if err != nil {
+		return nil, nil, false, err
+	}
+	if e, _ := sysres.Exists(); !e {
+		return res, sysres, false, nil
+	}
+	if old_res, ok := r[res.ID()]; ok {
+		res.Title = old_res.Title
+		res.Meta = old_res.Meta
+	}
+	r[res.ID()] = res
+	return res, sysres, true, nil
+}
+
+func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
+	unmarshal := func(i interface{}) error {
+		if err := json.Unmarshal(data, i); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	zero := Registry{}
+	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*Registry
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}
+
+func (ret *RegistryMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+	zero := Registry{}
+	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
+	if err != nil {
+		return err
+	}
+	if err := util.ValidateSections(unmarshal, zero, whitelist); err != nil {
+		return err
+	}
+
+	var tmp map[string]*Registry
+	if err := unmarshal(&tmp); err != nil {
+		return err
+	}
+
+	typ := reflect.TypeOf(zero)
+	typs := strings.Split(typ.String(), ".")[1]
+	for id, res := range tmp {
+		if res == nil {
+			return fmt.Errorf("Could not parse resource %s:%s", typs, id)
+		}
+		res.SetID(id)
+	}
+
+	*ret = tmp
+	return nil
+}

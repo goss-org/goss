@@ -81,6 +81,8 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 		res, err = gossConfig.Interfaces.AppendSysResource(key, sys, config)
 	case resource.HTTPResourceName:
 		res, err = gossConfig.HTTPs.AppendSysResource(key, sys, config)
+	case resource.RegistryResourceName:
+		res, err = gossConfig.Registries.AppendSysResource(key, sys, config)
 	default:
 		err = fmt.Errorf("undefined resource name: %s", resourceName)
 	}
