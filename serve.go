@@ -3,13 +3,11 @@ package goss
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/outputs"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/system"
@@ -30,15 +28,18 @@ func Serve(c *util.Config) error {
 	}
 	http.Handle(endpoint, health)
 	http.Handle("/metrics", promhttp.Handler())
-	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
+	c.Log().Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
 	return http.ListenAndServe(c.ListenAddress, nil)
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
-	color.NoColor = true
+	// The serve endpoint always produces machine-readable output, so disable
+	// ANSI color codes. Using util.InitNoColor (sync.Once) avoids racing with
+	// concurrent requests or other initialization paths.
+	util.InitNoColor(true)
 	cache := cache.New(c.Cache, 30*time.Second)
 
-	cfg, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	cfg, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -75,15 +76,16 @@ type healthHandler struct {
 }
 
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	logger := h.c.Log()
 	outputFormat, outputer, err := h.negotiateResponseContentType(r)
 	if err != nil {
-		log.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
+		logger.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
 		outputFormat = h.c.OutputFormat
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
 
-	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
+	logger.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
 	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType) //nolint:gosimple
 	w.WriteHeader(resp.statusCode)
@@ -92,18 +94,19 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logBody = " - " + resp.body.String()
 	}
 	resp.body.WriteTo(w)
-	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
+	logger.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
 }
 
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
+	logger := h.c.Log()
 	var tra [][]resource.TestResult
 	cacheKey := "res"
 	tmp, found := h.cache.Get(cacheKey)
 	if found {
-		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+		logger.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
-		log.Printf("Stale cache[%s], running tests", cacheKey)
+		logger.Printf("Stale cache[%s], running tests", cacheKey)
 		h.sys = system.New(h.c.PackageManager)
 		tra = h.validate()
 		h.cache.SetDefault(cacheKey, tra)
@@ -116,6 +119,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
+		Logger:        h.c.Logger,
 	}
 	exitCode := outputer.Output(&b, trc, outputConfig)
 	resp := res{

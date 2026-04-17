@@ -1,7 +1,7 @@
 package goss
 
 import (
-	"log"
+	"fmt"
 	"reflect"
 
 	"github.com/goss-org/goss/resource"
@@ -47,75 +47,83 @@ func NewGossConfig() *GossConfig {
 	}
 }
 
-// Merge consumes all the resources in g2 into c, duplicate resources
-// will be overwritten with the ones in g2
-func (c *GossConfig) Merge(g2 GossConfig) {
+// Merge consumes all the resources in g2 into c. Duplicate resources in g2
+// will overwrite the ones already present in c; a warning describing each
+// duplicate is returned to the caller so it can be emitted at the
+// appropriate architectural boundary (where a *util.Config and therefore a
+// Logger is available).
+//
+// Merge itself performs no logging: keeping this function pure makes it
+// trivially testable and decouples core config merging from the goss
+// logging infrastructure.
+func (c *GossConfig) Merge(g2 GossConfig) []string {
+	var warnings []string
+	collect := func(w string) {
+		if w != "" {
+			warnings = append(warnings, w)
+		}
+	}
+
 	for k, v := range g2.Files {
-		mergeType(c.Files, "file", k, v)
+		collect(mergeType(c.Files, "file", k, v))
 	}
-
 	for k, v := range g2.Packages {
-		mergeType(c.Packages, "package", k, v)
+		collect(mergeType(c.Packages, "package", k, v))
 	}
-
 	for k, v := range g2.Addrs {
-		mergeType(c.Addrs, "addr", k, v)
+		collect(mergeType(c.Addrs, "addr", k, v))
 	}
-
 	for k, v := range g2.Ports {
-		mergeType(c.Ports, "port", k, v)
+		collect(mergeType(c.Ports, "port", k, v))
 	}
-
 	for k, v := range g2.Services {
-		mergeType(c.Services, "service", k, v)
+		collect(mergeType(c.Services, "service", k, v))
 	}
-
 	for k, v := range g2.Users {
-		mergeType(c.Users, "user", k, v)
+		collect(mergeType(c.Users, "user", k, v))
 	}
-
 	for k, v := range g2.Groups {
-		mergeType(c.Groups, "group", k, v)
+		collect(mergeType(c.Groups, "group", k, v))
 	}
-
 	for k, v := range g2.Commands {
-		mergeType(c.Commands, "command", k, v)
+		collect(mergeType(c.Commands, "command", k, v))
 	}
-
 	for k, v := range g2.DNS {
-		mergeType(c.DNS, "dns", k, v)
+		collect(mergeType(c.DNS, "dns", k, v))
 	}
-
 	for k, v := range g2.Processes {
-		mergeType(c.Processes, "process", k, v)
+		collect(mergeType(c.Processes, "process", k, v))
 	}
-
 	for k, v := range g2.KernelParams {
-		mergeType(c.KernelParams, "kernel-param", k, v)
+		collect(mergeType(c.KernelParams, "kernel-param", k, v))
 	}
-
 	for k, v := range g2.Mounts {
-		mergeType(c.Mounts, "mount", k, v)
+		collect(mergeType(c.Mounts, "mount", k, v))
 	}
-
 	for k, v := range g2.Interfaces {
-		mergeType(c.Interfaces, "interface", k, v)
+		collect(mergeType(c.Interfaces, "interface", k, v))
 	}
-
 	for k, v := range g2.HTTPs {
-		mergeType(c.HTTPs, "http", k, v)
+		collect(mergeType(c.HTTPs, "http", k, v))
+	}
+	for k, v := range g2.Matchings {
+		collect(mergeType(c.Matchings, "matching", k, v))
 	}
 
-	for k, v := range g2.Matchings {
-		mergeType(c.Matchings, "matching", k, v)
-	}
+	return warnings
 }
 
-func mergeType[V any](m map[string]V, t, k string, v V) {
-	if _, ok := m[k]; ok {
-		log.Printf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
-	}
+// mergeType inserts v into m at key k, returning a non-empty warning string
+// describing a duplicate if one was overwritten. This function performs no
+// logging; the caller (ultimately a component at the edge layer that has
+// access to a Logger) is responsible for emitting the returned warnings.
+func mergeType[V any](m map[string]V, t, k string, v V) string {
+	_, duplicate := m[k]
 	m[k] = v
+	if duplicate {
+		return fmt.Sprintf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
+	}
+	return ""
 }
 
 func (c *GossConfig) Resources() []resource.Resource {
@@ -171,10 +179,12 @@ func interfaceMap(slice any) map[string]any {
 	return ret
 }
 
-func mergeGoss(g1, g2 GossConfig) GossConfig {
+// mergeGoss merges g2 into g1, discarding g1.Gossfiles first so the
+// recursion boundary in mergeJSONData is respected. Warnings about
+// duplicate keys are returned rather than logged; the caller (which has a
+// *util.Config in scope) is expected to emit them via c.Log().
+func mergeGoss(g1, g2 GossConfig) (GossConfig, []string) {
 	g1.Gossfiles = nil
-
-	g1.Merge(g2)
-
-	return g1
+	warnings := g1.Merge(g2)
+	return g1, warnings
 }

@@ -13,15 +13,15 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
-	var err error
-	err = setLogLevel(c)
+	err := setLogLevel(c)
 	if err != nil {
 		return err
 	}
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
+	storeFormat, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
+	setStoreFormat(storeFormat)
 
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
@@ -41,7 +41,14 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	warning, err := WriteJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+	if warning != "" {
+		c.Log().Printf("%s", warning)
+	}
+	return nil
 }
 
 // AddResource adds a single resource to fileName
@@ -96,11 +103,11 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 
 // AutoAddResources is a simple wrapper to add multiple resources
 func AutoAddResources(fileName string, keys []string, c *util.Config) error {
-	var err error
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
+	storeFormat, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
+	setStoreFormat(storeFormat)
 
 	var gossConfig GossConfig
 	if _, err = os.Stat(fileName); err == nil {
@@ -120,7 +127,14 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	warning, err := WriteJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+	if warning != "" {
+		c.Log().Printf("%s", warning)
+	}
+	return nil
 }
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource

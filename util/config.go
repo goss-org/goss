@@ -55,6 +55,21 @@ type Config struct {
 	Vars                  string
 	VarsInline            string
 	DisabledResourceTypes []string
+	// Logger is the sink for goss's own log output. If nil, Log() returns a
+	// DefaultLogger that delegates to the standard library log package,
+	// preserving pre-refactor behavior. Set via WithLogger for tests or
+	// embedders that want to redirect log output.
+	Logger Logger
+}
+
+// Log returns the Logger configured on this Config, or a DefaultLogger when
+// none has been set. It never returns nil and is safe to call on a
+// zero-value *Config.
+func (c *Config) Log() Logger {
+	if c.Logger != nil {
+		return c.Logger
+	}
+	return DefaultLogger{}
 }
 
 // TimeOutMilliSeconds is the timeout as milliseconds
@@ -249,8 +264,33 @@ func WithDisabledResourceTypes(t ...string) ConfigOption {
 	}
 }
 
+// WithLogger injects a custom Logger. Passing nil explicitly clears any
+// previously injected logger (Log() will then fall back to DefaultLogger).
+func WithLogger(l Logger) ConfigOption {
+	return func(c *Config) error {
+		c.Logger = l
+		return nil
+	}
+}
+
+// OutputConfig carries per-run configuration for Outputer implementations.
+// It is deliberately narrow; fields here are the ones that outputs actually
+// consume, not a mirror of the top-level Config.
 type OutputConfig struct {
 	FormatOptions []string
+	// Logger is the sink for debug/trace messages emitted by output
+	// formatters (summary lines, per-test traces, etc.). If nil, Log()
+	// returns a DefaultLogger.
+	Logger Logger
+}
+
+// Log returns the Logger configured on this OutputConfig, or a DefaultLogger
+// when none has been set. Never returns nil.
+func (o OutputConfig) Log() Logger {
+	if o.Logger != nil {
+		return o.Logger
+	}
+	return DefaultLogger{}
 }
 
 type format string

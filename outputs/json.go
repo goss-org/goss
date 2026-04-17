@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 )
@@ -24,6 +22,7 @@ func (r Json) ValidOptions() []*formatOption {
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
 
+	logger := outConfig.Log()
 	var pretty bool = util.IsValueInList(foPretty, outConfig.FormatOptions)
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
@@ -32,7 +31,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var startTime time.Time
 	var endTime time.Time
-	color.NoColor = true
+	disableColor()
 	testCount := 0
 	failed := 0
 	skipped := 0
@@ -47,9 +46,9 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			if testResult.Result == resource.FAIL {
 				failed++
-				logTrace("TRACE", "FAIL", testResult, true)
+				logTrace(logger, "TRACE", "FAIL", testResult, true)
 			} else {
-				logTrace("TRACE", "SUCCESS", testResult, true)
+				logTrace(logger, "TRACE", "SUCCESS", testResult, true)
 			}
 			if testResult.Skipped {
 				skipped++
@@ -87,11 +86,11 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprintln(w, resstr)
 
 	if failed > 0 {
-		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
+		logger.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
 
-	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
+	logger.Printf("[DEBUG] OK SUMMARY: %s", resstr)
 	return 0
 }
 

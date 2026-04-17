@@ -18,16 +18,21 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+// getGossConfig loads and merges gossfiles, emitting any merge warnings via
+// c.Log(). It is an edge-layer function: it owns the translation between
+// pure config-merging results (warnings returned as values) and the
+// process's log sink.
+func getGossConfig(c *util.Config, vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
 
-	currentTemplateFilter, err = NewTemplateFilter(vars, varsInline)
+	tf, err := NewTemplateFilter(vars, varsInline)
 	if err != nil {
 		return nil, err
 	}
+	setTemplateFilter(tf)
 
 	if specFile == "-" {
 		source = "STDIN"
@@ -36,10 +41,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 		if err != nil {
 			return nil, err
 		}
-		outStoreFormat, err = getStoreFormatFromData(data)
+		storeFormat, err := getStoreFormatFromData(data)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(storeFormat)
 
 		gossConfig, err = ReadJSONData(data, true)
 		if err != nil {
@@ -48,10 +54,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		outStoreFormat, err = getStoreFormatFromFileName(specFile)
+		storeFormat, err := getStoreFormatFromFileName(specFile)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(storeFormat)
 
 		gossConfig, err = ReadJSON(specFile)
 		if err != nil {
@@ -59,10 +66,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 		}
 	}
 
-	gossConfig, err = mergeJSONData(gossConfig, 0, path)
+	gossConfig, warnings, err := mergeJSONData(gossConfig, 0, path)
 	if err != nil {
 		return nil, err
 	}
+	logWarnings(c.Log(), warnings)
 
 	if len(gossConfig.Resources()) == 0 {
 		return nil, fmt.Errorf("found 0 tests, source: %v", source)
@@ -72,11 +80,13 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 }
 
 func getOutputer(c *bool, format string) (outputs.Outputer, error) {
-	if c != nil && *c {
-		color.NoColor = true
-	}
-	if c != nil && !*c {
-		color.NoColor = false
+	// color.NoColor is a package-level global that was historically set
+	// directly here. To avoid races under parallel/serve workloads, we
+	// initialize it at most once per process. If the caller explicitly
+	// requested a value, honour it; otherwise leave the library's default
+	// (derived from terminal detection) in place.
+	if c != nil {
+		util.InitNoColor(*c)
 	}
 
 	return outputs.GetOutputer(format)
@@ -85,7 +95,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
 func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -104,21 +114,30 @@ func Validate(c *util.Config) (code int, err error) {
 	if err != nil {
 		return 1, err
 	}
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
 	if err != nil {
 		return 78, err
 	}
 	return ValidateConfig(c, gossConfig)
 }
 
+// gomegaFormatOnce guards the single mutation of the gomega format package's
+// UseStringerRepresentation flag. gomega/format stores this as a package
+// global, and ValidateConfig may be invoked concurrently under `goss serve`,
+// so we set it exactly once per process.
+var gomegaFormatOnce sync.Once
+
 func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid
-	// transform message
-	format.UseStringerRepresentation = true
+	// transform message.
+	gomegaFormatOnce.Do(func() {
+		format.UseStringerRepresentation = true
+	})
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
+		Logger:        c.Logger,
 	}
 
 	sys := system.New(c.PackageManager)
