@@ -10,25 +10,26 @@ import (
 )
 
 type File struct {
-	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id       string  `json:"-" yaml:"-"`
-	Path     string  `json:"path,omitempty" yaml:"path,omitempty"`
-	Exists   matcher `json:"exists" yaml:"exists"`
-	Mode     matcher `json:"mode,omitempty" yaml:"mode,omitempty"`
-	Size     matcher `json:"size,omitempty" yaml:"size,omitempty"`
-	Owner    matcher `json:"owner,omitempty" yaml:"owner,omitempty"`
-	Uid      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
-	Group    matcher `json:"group,omitempty" yaml:"group,omitempty"`
-	Gid      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
-	LinkedTo matcher `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
-	Filetype matcher `json:"filetype,omitempty" yaml:"filetype,omitempty"`
-	Contains matcher `json:"contains,omitempty" yaml:"contains,omitempty"`
-	Contents matcher `json:"contents" yaml:"contents"`
-	Md5      matcher `json:"md5,omitempty" yaml:"md5,omitempty"`
-	Sha256   matcher `json:"sha256,omitempty" yaml:"sha256,omitempty"`
-	Sha512   matcher `json:"sha512,omitempty" yaml:"sha512,omitempty"`
-	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks    []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id       string   `json:"-" yaml:"-"`
+	Path     string   `json:"path,omitempty" yaml:"path,omitempty"`
+	Exists   matcher  `json:"exists" yaml:"exists"`
+	Mode     matcher  `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Size     matcher  `json:"size,omitempty" yaml:"size,omitempty"`
+	Owner    matcher  `json:"owner,omitempty" yaml:"owner,omitempty"`
+	Uid      matcher  `json:"uid,omitempty" yaml:"uid,omitempty"`
+	Group    matcher  `json:"group,omitempty" yaml:"group,omitempty"`
+	Gid      matcher  `json:"gid,omitempty" yaml:"gid,omitempty"`
+	LinkedTo matcher  `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
+	Filetype matcher  `json:"filetype,omitempty" yaml:"filetype,omitempty"`
+	Contains matcher  `json:"contains,omitempty" yaml:"contains,omitempty"`
+	Contents matcher  `json:"contents" yaml:"contents"`
+	Md5      matcher  `json:"md5,omitempty" yaml:"md5,omitempty"`
+	Sha256   matcher  `json:"sha256,omitempty" yaml:"sha256,omitempty"`
+	Sha512   matcher  `json:"sha512,omitempty" yaml:"sha512,omitempty"`
+	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -51,8 +52,9 @@ func (f *File) SetSkip()         { f.Skip = true }
 func (f *File) TypeKey() string  { return FileResourceKey }
 func (f *File) TypeName() string { return FileResourceName }
 
-func (f *File) GetTitle() string { return f.Title }
-func (f *File) GetMeta() meta    { return f.Meta }
+func (f *File) GetTitle() string   { return f.Title }
+func (f *File) GetMeta() meta      { return f.Meta }
+func (f *File) GetMarks() []string { return f.Marks }
 func (f *File) GetPath() string {
 	if f.Path != "" {
 		return f.Path

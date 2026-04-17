@@ -102,7 +102,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 
 	sys := system.New(c.PackageManager)
 
-	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
+	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent), nil
 }
 
 // Validate performs validation, writes formatted output to stdout by default
@@ -157,7 +157,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	i := 1
 	startTime := time.Now()
 	for {
-		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
+		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent)
 		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
@@ -175,13 +175,17 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig, skipList []string, includeMarks []string, excludeMarks []string, maxConcurrent int) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
 	go func() {
 		for _, t := range gossConfig.Resources() {
 			if util.IsValueInList(t.TypeName(), skipList) || util.IsValueInList(t.TypeKey(), skipList) {
+				t.SetSkip()
+			}
+
+			if !shouldRunByMarks(t.GetMarks(), includeMarks, excludeMarks) {
 				t.SetSkip()
 			}
 
@@ -211,4 +215,43 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 	}()
 
 	return out
+}
+
+// shouldRunByMarks decides whether a resource with the given marks should run
+// under the supplied include/exclude filters.
+//
+// Rules:
+//   - If includeMarks is non-empty, the resource must have at least one matching
+//     mark to run. Resources with no marks are excluded when includeMarks is set.
+//   - If excludeMarks is non-empty, the resource is skipped if it has any
+//     matching mark.
+//   - When both are set, inclusion is evaluated first, then exclusion.
+//   - When both are empty, the resource runs by default.
+func shouldRunByMarks(resourceMarks, includeMarks, excludeMarks []string) bool {
+	if len(includeMarks) > 0 {
+		if !hasAnyMark(resourceMarks, includeMarks) {
+			return false
+		}
+	}
+	if len(excludeMarks) > 0 {
+		if hasAnyMark(resourceMarks, excludeMarks) {
+			return false
+		}
+	}
+	return true
+}
+
+// hasAnyMark returns true if any element of resourceMarks is also in filterMarks.
+func hasAnyMark(resourceMarks, filterMarks []string) bool {
+	if len(resourceMarks) == 0 || len(filterMarks) == 0 {
+		return false
+	}
+	for _, rm := range resourceMarks {
+		for _, fm := range filterMarks {
+			if rm == fm {
+				return true
+			}
+		}
+	}
+	return false
 }

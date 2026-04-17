@@ -44,6 +44,8 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		Username:          c.String("username"),
 		Vars:              c.GlobalString("vars"),
 		VarsInline:        c.GlobalString("vars-inline"),
+		IncludeMarks:      util.ParseMarksParam(c.String("marks")),
+		ExcludeMarks:      util.ParseMarksParam(c.String("exclude-marks")),
 	}
 
 	if c.Bool("no-color") {
@@ -143,6 +145,16 @@ func main() {
 					Value:  50,
 					EnvVar: "GOSS_MAX_CONCURRENT",
 				},
+				cli.StringFlag{
+					Name:   "marks",
+					Usage:  "Comma-separated list of marks; only resources with at least one matching mark will be validated",
+					EnvVar: "GOSS_MARKS",
+				},
+				cli.StringFlag{
+					Name:   "exclude-marks",
+					Usage:  "Comma-separated list of marks; resources with any matching mark will be skipped",
+					EnvVar: "GOSS_EXCLUDE_MARKS",
+				},
 			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
@@ -194,6 +206,16 @@ func main() {
 					Usage:  "Max number of tests to run concurrently",
 					Value:  50,
 					EnvVar: "GOSS_MAX_CONCURRENT",
+				},
+				cli.StringFlag{
+					Name:   "marks",
+					Usage:  "Comma-separated list of marks; only resources with at least one matching mark will be validated (overridable via ?marks= query param)",
+					EnvVar: "GOSS_MARKS",
+				},
+				cli.StringFlag{
+					Name:   "exclude-marks",
+					Usage:  "Comma-separated list of marks; resources with any matching mark will be skipped (overridable via ?exclude-marks= query param)",
+					EnvVar: "GOSS_EXCLUDE_MARKS",
 				},
 			},
 			Action: func(c *cli.Context) error {

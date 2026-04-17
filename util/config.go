@@ -55,6 +55,8 @@ type Config struct {
 	Vars                  string
 	VarsInline            string
 	DisabledResourceTypes []string
+	IncludeMarks          []string
+	ExcludeMarks          []string
 	// Logger is the sink for goss's own log output. If nil, Log() returns a
 	// DefaultLogger that delegates to the standard library log package,
 	// preserving pre-refactor behavior. Set via WithLogger for tests or
@@ -271,6 +273,42 @@ func WithLogger(l Logger) ConfigOption {
 		c.Logger = l
 		return nil
 	}
+}
+
+// WithIncludeMarks restricts validation to resources that have at least one of the supplied marks
+func WithIncludeMarks(marks ...string) ConfigOption {
+	return func(c *Config) error {
+		c.IncludeMarks = append(c.IncludeMarks, marks...)
+		return nil
+	}
+}
+
+// WithExcludeMarks skips resources that have any of the supplied marks
+func WithExcludeMarks(marks ...string) ConfigOption {
+	return func(c *Config) error {
+		c.ExcludeMarks = append(c.ExcludeMarks, marks...)
+		return nil
+	}
+}
+
+// ParseMarksParam splits a comma-separated marks string into a normalized slice.
+// Empty entries and surrounding whitespace are trimmed. Returns nil for empty input.
+func ParseMarksParam(s string) []string {
+	if s == "" {
+		return nil
+	}
+	parts := strings.Split(s, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 // OutputConfig carries per-run configuration for Outputer implementations.

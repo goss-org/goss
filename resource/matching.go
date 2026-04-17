@@ -12,13 +12,14 @@ import (
 )
 
 type Matching struct {
-	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Content  any     `json:"content,omitempty" yaml:"content,omitempty"`
-	AsReader bool    `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
-	id       string  `json:"-" yaml:"-"`
-	Matches  matcher `json:"matches" yaml:"matches"`
-	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks    []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	Content  any      `json:"content,omitempty" yaml:"content,omitempty"`
+	AsReader bool     `json:"as-reader,omitempty" yaml:"as-reader,omitempty"`
+	id       string   `json:"-" yaml:"-"`
+	Matches  matcher  `json:"matches" yaml:"matches"`
+	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -35,8 +36,9 @@ func (a *Matching) TypeKey() string  { return MatchingResourceKey }
 func (a *Matching) TypeName() string { return MatchingResourceName }
 
 // FIXME: Can this be refactored?
-func (r *Matching) GetTitle() string { return r.Title }
-func (r *Matching) GetMeta() meta    { return r.Meta }
+func (r *Matching) GetTitle() string   { return r.Title }
+func (r *Matching) GetMeta() meta      { return r.Meta }
+func (r *Matching) GetMarks() []string { return r.Marks }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false

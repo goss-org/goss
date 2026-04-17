@@ -16,6 +16,7 @@ type Resource interface {
 	SetSkip()
 	TypeKey() string
 	TypeName() string
+	GetMarks() []string
 }
 
 var (
@@ -37,6 +38,7 @@ type ResourceRead interface {
 	ID() string
 	GetTitle() string
 	GetMeta() meta
+	GetMarks() []string
 }
 
 type matcher any

@@ -9,17 +9,18 @@ import (
 )
 
 type User struct {
-	Title    string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta     meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id       string  `json:"-" yaml:"-"`
-	Username string  `json:"username,omitempty" yaml:"username,omitempty"`
-	Exists   matcher `json:"exists" yaml:"exists"`
-	UID      matcher `json:"uid,omitempty" yaml:"uid,omitempty"`
-	GID      matcher `json:"gid,omitempty" yaml:"gid,omitempty"`
-	Groups   matcher `json:"groups,omitempty" yaml:"groups,omitempty"`
-	Home     matcher `json:"home,omitempty" yaml:"home,omitempty"`
-	Shell    matcher `json:"shell,omitempty" yaml:"shell,omitempty"`
-	Skip     bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title    string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta     meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks    []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id       string   `json:"-" yaml:"-"`
+	Username string   `json:"username,omitempty" yaml:"username,omitempty"`
+	Exists   matcher  `json:"exists" yaml:"exists"`
+	UID      matcher  `json:"uid,omitempty" yaml:"uid,omitempty"`
+	GID      matcher  `json:"gid,omitempty" yaml:"gid,omitempty"`
+	Groups   matcher  `json:"groups,omitempty" yaml:"groups,omitempty"`
+	Home     matcher  `json:"home,omitempty" yaml:"home,omitempty"`
+	Shell    matcher  `json:"shell,omitempty" yaml:"shell,omitempty"`
+	Skip     bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -37,12 +38,13 @@ func (u *User) ID() string {
 	}
 	return u.id
 }
-func (u *User) SetID(id string)  { u.id = id }
-func (u *User) SetSkip()         { u.Skip = true }
-func (u *User) TypeKey() string  { return UserResourceKey }
-func (u *User) TypeName() string { return UserResourceName }
-func (u *User) GetTitle() string { return u.Title }
-func (u *User) GetMeta() meta    { return u.Meta }
+func (u *User) SetID(id string)    { u.id = id }
+func (u *User) SetSkip()           { u.Skip = true }
+func (u *User) TypeKey() string    { return UserResourceKey }
+func (u *User) TypeName() string   { return UserResourceName }
+func (u *User) GetTitle() string   { return u.Title }
+func (u *User) GetMeta() meta      { return u.Meta }
+func (u *User) GetMarks() []string { return u.Marks }
 func (u *User) GetUsername() string {
 	if u.Username != "" {
 		return u.Username

@@ -12,6 +12,7 @@ import (
 type HTTP struct {
 	Title             string   `json:"title,omitempty" yaml:"title,omitempty"`
 	Meta              meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks             []string `json:"marks,omitempty" yaml:"marks,omitempty"`
 	id                string   `json:"-" yaml:"-"`
 	URL               string   `json:"url,omitempty" yaml:"url,omitempty"`
 	Method            string   `json:"method,omitempty" yaml:"method,omitempty"`
@@ -53,8 +54,9 @@ func (u *HTTP) TypeKey() string  { return HTTPResourceKey }
 func (u *HTTP) TypeName() string { return HTTPResourceName }
 
 // FIXME: Can this be refactored?
-func (r *HTTP) GetTitle() string { return r.Title }
-func (r *HTTP) GetMeta() meta    { return r.Meta }
+func (r *HTTP) GetTitle() string   { return r.Title }
+func (r *HTTP) GetMeta() meta      { return r.Meta }
+func (r *HTTP) GetMarks() []string { return r.Marks }
 func (r *HTTP) getURL() string {
 	if r.URL != "" {
 		return r.URL

@@ -13,7 +13,11 @@ import (
 )
 
 func TestServeWithNoContentNegotiation(t *testing.T) {
-	t.Parallel()
+	// NOTE: cannot use t.Parallel() because this test and its peers call
+	// log.SetOutput to redirect the process-wide standard logger into a
+	// local bytes.Buffer and then read from it. Running in parallel with
+	// other tests that do the same causes races on both the shared logger
+	// and the buffers.
 	tests := map[string]struct {
 		outputFormat        string
 		specFile            string
@@ -72,7 +76,11 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 }
 
 func TestServeNegotiatingContent(t *testing.T) {
-	t.Parallel()
+	// NOTE: cannot use t.Parallel() because this test and its peers call
+	// log.SetOutput to redirect the process-wide standard logger into a
+	// local bytes.Buffer and then read from it. Running in parallel with
+	// other tests that do the same causes races on both the shared logger
+	// and the buffers.
 	tests := map[string]struct {
 		acceptHeader        []string
 		outputFormat        string
