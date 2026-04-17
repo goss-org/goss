@@ -18,6 +18,19 @@ import (
 	"github.com/urfave/cli"
 )
 
+// stringFromContextChain walks upward through the current context's ancestors
+// returning the first non-empty value set for the named flag. This lets us
+// declare a flag once on a parent command (e.g., "add") and have its value
+// picked up when a nested subcommand (e.g., "add file") is being executed.
+func stringFromContextChain(c *cli.Context, name string) string {
+	for ctx := c; ctx != nil; ctx = ctx.Parent() {
+		if v := ctx.String(name); v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 	cfg := &util.Config{
@@ -44,8 +57,8 @@ func newRuntimeConfigFromCLI(c *cli.Context) *util.Config {
 		Username:          c.String("username"),
 		Vars:              c.GlobalString("vars"),
 		VarsInline:        c.GlobalString("vars-inline"),
-		IncludeMarks:      util.ParseMarksParam(c.String("marks")),
-		ExcludeMarks:      util.ParseMarksParam(c.String("exclude-marks")),
+		IncludeMarks:      util.ParseMarksParam(stringFromContextChain(c, "marks")),
+		ExcludeMarks:      util.ParseMarksParam(stringFromContextChain(c, "exclude-marks")),
 	}
 
 	if c.Bool("no-color") {
@@ -249,6 +262,13 @@ func main() {
 			Name:    "autoadd",
 			Aliases: []string{"aa"},
 			Usage:   "automatically add all matching resource to the test suite",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:   "marks",
+					Usage:  "Comma-separated list of marks to apply to newly added resources",
+					EnvVar: "GOSS_MARKS",
+				},
+			},
 			Action: func(c *cli.Context) error {
 				fatalAlphaIfNeeded(c)
 				return goss.AutoAddResources(c.GlobalString("gossfile"), c.Args(), newRuntimeConfigFromCLI(c))
@@ -262,6 +282,11 @@ func main() {
 				cli.StringSliceFlag{
 					Name:  "exclude-attr",
 					Usage: "Exclude the following attributes when adding a new resource",
+				},
+				cli.StringFlag{
+					Name:   "marks",
+					Usage:  "Comma-separated list of marks to apply to newly added resources",
+					EnvVar: "GOSS_MARKS",
 				},
 			},
 			Subcommands: []cli.Command{

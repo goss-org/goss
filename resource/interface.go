@@ -41,9 +41,10 @@ func (i *Interface) TypeKey() string  { return InterfaceResourceKey }
 func (i *Interface) TypeName() string { return InterfaceResourceName }
 
 // FIXME: Can this be refactored?
-func (i *Interface) GetTitle() string   { return i.Title }
-func (i *Interface) GetMeta() meta      { return i.Meta }
-func (i *Interface) GetMarks() []string { return i.Marks }
+func (i *Interface) GetTitle() string    { return i.Title }
+func (i *Interface) GetMeta() meta       { return i.Meta }
+func (i *Interface) GetMarks() []string  { return i.Marks }
+func (i *Interface) SetMarks(m []string) { i.Marks = m }
 func (i *Interface) GetName() string {
 	if i.Name != "" {
 		return i.Name

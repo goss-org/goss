@@ -35,13 +35,14 @@ func (s *Service) ID() string {
 	}
 	return s.id
 }
-func (s *Service) SetID(id string)    { s.id = id }
-func (s *Service) SetSkip()           { s.Skip = true }
-func (s *Service) TypeKey() string    { return ServiceResourceKey }
-func (s *Service) TypeName() string   { return ServiceResourceName }
-func (s *Service) GetTitle() string   { return s.Title }
-func (s *Service) GetMeta() meta      { return s.Meta }
-func (s *Service) GetMarks() []string { return s.Marks }
+func (s *Service) SetID(id string)     { s.id = id }
+func (s *Service) SetSkip()            { s.Skip = true }
+func (s *Service) TypeKey() string     { return ServiceResourceKey }
+func (s *Service) TypeName() string    { return ServiceResourceName }
+func (s *Service) GetTitle() string    { return s.Title }
+func (s *Service) GetMeta() meta       { return s.Meta }
+func (s *Service) GetMarks() []string  { return s.Marks }
+func (s *Service) SetMarks(m []string) { s.Marks = m }
 func (s *Service) GetName() string {
 	if s.Name != "" {
 		return s.Name

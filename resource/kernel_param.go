@@ -41,9 +41,10 @@ func (a *KernelParam) TypeKey() string  { return KernelParamResourceKey }
 func (a *KernelParam) TypeName() string { return KernelParamResourceName }
 
 // FIXME: Can this be refactored?
-func (k *KernelParam) GetTitle() string   { return k.Title }
-func (k *KernelParam) GetMeta() meta      { return k.Meta }
-func (k *KernelParam) GetMarks() []string { return k.Marks }
+func (k *KernelParam) GetTitle() string    { return k.Title }
+func (k *KernelParam) GetMeta() meta       { return k.Meta }
+func (k *KernelParam) GetMarks() []string  { return k.Marks }
+func (k *KernelParam) SetMarks(m []string) { k.Marks = m }
 func (k *KernelParam) GetName() string {
 	if k.Name != "" {
 		return k.Name

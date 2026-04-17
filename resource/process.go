@@ -33,13 +33,14 @@ func (p *Process) ID() string {
 	}
 	return p.id
 }
-func (p *Process) SetID(id string)    { p.id = id }
-func (p *Process) SetSkip()           { p.Skip = true }
-func (p *Process) TypeKey() string    { return ProcessResourceKey }
-func (p *Process) TypeName() string   { return ProcessResourceName }
-func (p *Process) GetTitle() string   { return p.Title }
-func (p *Process) GetMeta() meta      { return p.Meta }
-func (p *Process) GetMarks() []string { return p.Marks }
+func (p *Process) SetID(id string)     { p.id = id }
+func (p *Process) SetSkip()            { p.Skip = true }
+func (p *Process) TypeKey() string     { return ProcessResourceKey }
+func (p *Process) TypeName() string    { return ProcessResourceName }
+func (p *Process) GetTitle() string    { return p.Title }
+func (p *Process) GetMeta() meta       { return p.Meta }
+func (p *Process) GetMarks() []string  { return p.Marks }
+func (p *Process) SetMarks(m []string) { p.Marks = m }
 func (p *Process) GetComm() string {
 	if p.Comm != "" {
 		return p.Comm

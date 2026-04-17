@@ -36,9 +36,10 @@ func (a *Matching) TypeKey() string  { return MatchingResourceKey }
 func (a *Matching) TypeName() string { return MatchingResourceName }
 
 // FIXME: Can this be refactored?
-func (r *Matching) GetTitle() string   { return r.Title }
-func (r *Matching) GetMeta() meta      { return r.Meta }
-func (r *Matching) GetMarks() []string { return r.Marks }
+func (r *Matching) GetTitle() string    { return r.Title }
+func (r *Matching) GetMeta() meta       { return r.Meta }
+func (r *Matching) GetMarks() []string  { return r.Marks }
+func (r *Matching) SetMarks(m []string) { r.Marks = m }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := false

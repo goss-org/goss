@@ -188,7 +188,7 @@ func (h healthHandler) validate(mf markFilter) [][]resource.TestResult {
 
 	h.sys = system.New(h.c.PackageManager)
 	res := make([][]resource.TestResult, 0)
-	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, mf.includeMarks, mf.excludeMarks, h.maxConcurrent)
+	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, mf.includeMarks, mf.excludeMarks, h.maxConcurrent, h.c.Log())
 	for i := range tr {
 		res = append(res, i)
 	}

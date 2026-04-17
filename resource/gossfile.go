@@ -29,9 +29,10 @@ func (g *Gossfile) SetSkip()         {}
 func (g *Gossfile) TypeKey() string  { return GossFileResourceKey }
 func (g *Gossfile) TypeName() string { return GossFileResourceName }
 
-func (g *Gossfile) GetTitle() string   { return g.Title }
-func (g *Gossfile) GetMeta() meta      { return g.Meta }
-func (g *Gossfile) GetMarks() []string { return g.Marks }
+func (g *Gossfile) GetTitle() string    { return g.Title }
+func (g *Gossfile) GetMeta() meta       { return g.Meta }
+func (g *Gossfile) GetMarks() []string  { return g.Marks }
+func (g *Gossfile) SetMarks(m []string) { g.Marks = m }
 
 func (g *Gossfile) GetSkip() bool { return g.Skip }
 

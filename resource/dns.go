@@ -39,13 +39,14 @@ func (d *DNS) ID() string {
 	}
 	return d.id
 }
-func (d *DNS) SetID(id string)    { d.id = id }
-func (d *DNS) SetSkip()           { d.Skip = true }
-func (d *DNS) TypeKey() string    { return DNSResourceKey }
-func (d *DNS) TypeName() string   { return DNSResourceName }
-func (d *DNS) GetTitle() string   { return d.Title }
-func (d *DNS) GetMeta() meta      { return d.Meta }
-func (d *DNS) GetMarks() []string { return d.Marks }
+func (d *DNS) SetID(id string)     { d.id = id }
+func (d *DNS) SetSkip()            { d.Skip = true }
+func (d *DNS) TypeKey() string     { return DNSResourceKey }
+func (d *DNS) TypeName() string    { return DNSResourceName }
+func (d *DNS) GetTitle() string    { return d.Title }
+func (d *DNS) GetMeta() meta       { return d.Meta }
+func (d *DNS) GetMarks() []string  { return d.Marks }
+func (d *DNS) SetMarks(m []string) { d.Marks = m }
 func (d *DNS) GetResolve() string {
 	if d.Resolve != "" {
 		return d.Resolve

@@ -38,13 +38,14 @@ func (u *User) ID() string {
 	}
 	return u.id
 }
-func (u *User) SetID(id string)    { u.id = id }
-func (u *User) SetSkip()           { u.Skip = true }
-func (u *User) TypeKey() string    { return UserResourceKey }
-func (u *User) TypeName() string   { return UserResourceName }
-func (u *User) GetTitle() string   { return u.Title }
-func (u *User) GetMeta() meta      { return u.Meta }
-func (u *User) GetMarks() []string { return u.Marks }
+func (u *User) SetID(id string)     { u.id = id }
+func (u *User) SetSkip()            { u.Skip = true }
+func (u *User) TypeKey() string     { return UserResourceKey }
+func (u *User) TypeName() string    { return UserResourceName }
+func (u *User) GetTitle() string    { return u.Title }
+func (u *User) GetMeta() meta       { return u.Meta }
+func (u *User) GetMarks() []string  { return u.Marks }
+func (u *User) SetMarks(m []string) { u.Marks = m }
 func (u *User) GetUsername() string {
 	if u.Username != "" {
 		return u.Username

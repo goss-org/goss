@@ -19,7 +19,8 @@ func (f *FakeResource) GetTitle() string { return "title" }
 
 func (f *FakeResource) GetMeta() meta { return meta{"foo": "bar"} }
 
-func (f *FakeResource) GetMarks() []string { return nil }
+func (f *FakeResource) GetMarks() []string  { return nil }
+func (f *FakeResource) SetMarks(m []string) {}
 
 var stringTests = []struct {
 	in, in2 any

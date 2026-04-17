@@ -34,13 +34,14 @@ func (p *Package) ID() string {
 	}
 	return p.id
 }
-func (p *Package) SetID(id string)    { p.id = id }
-func (p *Package) SetSkip()           { p.Skip = true }
-func (p *Package) TypeKey() string    { return PackageResourceKey }
-func (p *Package) TypeName() string   { return PackageResourceName }
-func (p *Package) GetTitle() string   { return p.Title }
-func (p *Package) GetMeta() meta      { return p.Meta }
-func (p *Package) GetMarks() []string { return p.Marks }
+func (p *Package) SetID(id string)     { p.id = id }
+func (p *Package) SetSkip()            { p.Skip = true }
+func (p *Package) TypeKey() string     { return PackageResourceKey }
+func (p *Package) TypeName() string    { return PackageResourceName }
+func (p *Package) GetTitle() string    { return p.Title }
+func (p *Package) GetMeta() meta       { return p.Meta }
+func (p *Package) GetMarks() []string  { return p.Marks }
+func (p *Package) SetMarks(m []string) { p.Marks = m }
 func (p *Package) GetName() string {
 	if p.Name != "" {
 		return p.Name

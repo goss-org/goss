@@ -216,3 +216,57 @@ func TestValidateResults_AllFilteredOut(t *testing.T) {
 	assert.Equal(t, 0, ran, "no tests should run when include filter matches nothing")
 	assert.Equal(t, 6, skipped, "all 6 properties should be skipped")
 }
+
+// TestValidate_LogsMarkFilterSummary verifies that when a mark filter is
+// active, validate() emits a [DEBUG] summary log describing the filter and
+// a post-run count of filtered resources. When no filter is set, the logger
+// must remain silent on this topic (regression guard for backward compat).
+func TestValidate_LogsMarkFilterSummary(t *testing.T) {
+	t.Parallel()
+
+	t.Run("filter active emits debug summary and count", func(t *testing.T) {
+		t.Parallel()
+		tl := util.NewTestLogger(t)
+
+		cfg, err := util.NewConfig(
+			util.WithSpecFile(filepath.Join("testdata", "marks.goss.yaml")),
+			util.WithIncludeMarks("critical"),
+			util.WithLogger(tl),
+		)
+		require.NoError(t, err)
+
+		results, err := ValidateResults(cfg)
+		require.NoError(t, err)
+		// Drain results so the filtering goroutine runs to completion and
+		// emits its post-loop count line.
+		_, _ = collectResults(t, results)
+
+		out := tl.String()
+		assert.Contains(t, out, "[DEBUG] mark filters active",
+			"should announce which filters are in play")
+		assert.Contains(t, out, "include=[critical]")
+		assert.Contains(t, out, "[DEBUG] marks filter skipped",
+			"should summarize filtered count after the run")
+	})
+
+	t.Run("no filter means no mark log output", func(t *testing.T) {
+		t.Parallel()
+		tl := util.NewTestLogger(t)
+
+		cfg, err := util.NewConfig(
+			util.WithSpecFile(filepath.Join("testdata", "marks.goss.yaml")),
+			util.WithLogger(tl),
+		)
+		require.NoError(t, err)
+
+		results, err := ValidateResults(cfg)
+		require.NoError(t, err)
+		_, _ = collectResults(t, results)
+
+		out := tl.String()
+		assert.NotContains(t, out, "mark filters active",
+			"must not log filter-active summary when no filters are set")
+		assert.NotContains(t, out, "marks filter skipped",
+			"must not log filter-count summary when no filters are set")
+	})
+}

@@ -102,7 +102,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 
 	sys := system.New(c.PackageManager)
 
-	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent), nil
+	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent, c.Log()), nil
 }
 
 // Validate performs validation, writes formatted output to stdout by default
@@ -157,7 +157,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	i := 1
 	startTime := time.Now()
 	for {
-		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent)
+		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.IncludeMarks, c.ExcludeMarks, c.MaxConcurrent, c.Log())
 		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
@@ -175,11 +175,18 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig, skipList []string, includeMarks []string, excludeMarks []string, maxConcurrent int) <-chan []resource.TestResult {
+func validate(sys *system.System, gossConfig GossConfig, skipList []string, includeMarks []string, excludeMarks []string, maxConcurrent int, logger util.Logger) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
+	// Emit a single informational summary when mark filters are active.
+	// This is gated behind the caller's log level (via logutils) by using
+	// the [DEBUG] prefix, so it is quiet at the default INFO level and
+	// opt-in when someone runs with -L DEBUG.
+	logMarkFilterSummary(logger, gossConfig, includeMarks, excludeMarks)
+
 	go func() {
+		filteredByMarks := 0
 		for _, t := range gossConfig.Resources() {
 			if util.IsValueInList(t.TypeName(), skipList) || util.IsValueInList(t.TypeKey(), skipList) {
 				t.SetSkip()
@@ -187,11 +194,16 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, incl
 
 			if !shouldRunByMarks(t.GetMarks(), includeMarks, excludeMarks) {
 				t.SetSkip()
+				filteredByMarks++
 			}
 
 			in <- t
 		}
 		close(in)
+
+		if logger != nil && (len(includeMarks) > 0 || len(excludeMarks) > 0) {
+			logger.Printf("[DEBUG] marks filter skipped %d of %d resources", filteredByMarks, len(gossConfig.Resources()))
+		}
 	}()
 
 	workerCount := runtime.NumCPU() * 5
@@ -239,6 +251,20 @@ func shouldRunByMarks(resourceMarks, includeMarks, excludeMarks []string) bool {
 		}
 	}
 	return true
+}
+
+// logMarkFilterSummary emits a DEBUG line describing the active mark filters.
+// It is a no-op when no filters are set or when logger is nil. The message is
+// prefixed with [DEBUG] so hashicorp/logutils gates it by log level.
+func logMarkFilterSummary(logger util.Logger, gossConfig GossConfig, includeMarks, excludeMarks []string) {
+	if logger == nil {
+		return
+	}
+	if len(includeMarks) == 0 && len(excludeMarks) == 0 {
+		return
+	}
+	logger.Printf("[DEBUG] mark filters active: include=%v exclude=%v total_resources=%d",
+		includeMarks, excludeMarks, len(gossConfig.Resources()))
 }
 
 // hasAnyMark returns true if any element of resourceMarks is also in filterMarks.

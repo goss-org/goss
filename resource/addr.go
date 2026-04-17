@@ -44,9 +44,10 @@ func (a *Addr) TypeKey() string  { return AddrResourceKey }
 func (a *Addr) TypeName() string { return AddResourceName }
 
 // FIXME: Can this be refactored?
-func (a *Addr) GetTitle() string   { return a.Title }
-func (a *Addr) GetMeta() meta      { return a.Meta }
-func (a *Addr) GetMarks() []string { return a.Marks }
+func (a *Addr) GetTitle() string    { return a.Title }
+func (a *Addr) GetMeta() meta       { return a.Meta }
+func (a *Addr) GetMarks() []string  { return a.Marks }
+func (a *Addr) SetMarks(m []string) { a.Marks = m }
 func (a *Addr) GetAddress() string {
 	if a.Address != "" {
 		return a.Address

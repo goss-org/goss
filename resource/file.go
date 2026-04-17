@@ -52,9 +52,10 @@ func (f *File) SetSkip()         { f.Skip = true }
 func (f *File) TypeKey() string  { return FileResourceKey }
 func (f *File) TypeName() string { return FileResourceName }
 
-func (f *File) GetTitle() string   { return f.Title }
-func (f *File) GetMeta() meta      { return f.Meta }
-func (f *File) GetMarks() []string { return f.Marks }
+func (f *File) GetTitle() string    { return f.Title }
+func (f *File) GetMeta() meta       { return f.Meta }
+func (f *File) GetMarks() []string  { return f.Marks }
+func (f *File) SetMarks(m []string) { f.Marks = m }
 func (f *File) GetPath() string {
 	if f.Path != "" {
 		return f.Path

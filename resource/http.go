@@ -54,9 +54,10 @@ func (u *HTTP) TypeKey() string  { return HTTPResourceKey }
 func (u *HTTP) TypeName() string { return HTTPResourceName }
 
 // FIXME: Can this be refactored?
-func (r *HTTP) GetTitle() string   { return r.Title }
-func (r *HTTP) GetMeta() meta      { return r.Meta }
-func (r *HTTP) GetMarks() []string { return r.Marks }
+func (r *HTTP) GetTitle() string    { return r.Title }
+func (r *HTTP) GetMeta() meta       { return r.Meta }
+func (r *HTTP) GetMarks() []string  { return r.Marks }
+func (r *HTTP) SetMarks(m []string) { r.Marks = m }
 func (r *HTTP) getURL() string {
 	if r.URL != "" {
 		return r.URL

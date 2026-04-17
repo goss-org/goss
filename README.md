@@ -188,6 +188,80 @@ $ goss serve --format json &
 $ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 ```
 
+### Running a subset of tests with marks
+
+Tests can be tagged with arbitrary `marks` (inspired by `pytest -m`) and then
+filtered at validation time. This is useful for:
+
+* **Selective alerting** - run only `critical` health checks in production
+* **Incident response** - quickly run `network` or `storage` categories
+* **Flaky-test quarantine** - tag flaky tests `flaky` and exclude them from CI
+
+Add marks to any resource in your gossfile:
+
+```yaml
+command:
+  echo hello:
+    exit-status: 0
+    stdout: [hello]
+    marks:
+      - critical
+      - fast
+  echo slow:
+    exit-status: 0
+    stdout: [slow]
+    marks:
+      - slow
+http:
+  https://api.example.com/health:
+    status: 200
+    marks:
+      - critical
+      - network
+```
+
+Then filter at run time with `--marks` (include) and/or `--exclude-marks`:
+
+```console
+# Only run tests marked "critical"
+$ goss validate --marks critical
+
+# Run tests marked "critical" OR "fast"
+$ goss validate --marks critical,fast
+
+# Exclude slow and flaky tests
+$ goss validate --exclude-marks slow,flaky
+
+# Combine: run critical tests but skip any that are also marked flaky
+$ goss validate --marks critical --exclude-marks flaky
+```
+
+Resources with **no marks** are always included unless filtered out by
+`--exclude-marks` or other criteria. When `--marks` is set, unmarked resources
+are skipped. See `docs/marks.md` or the design spec for the full evaluation
+rules.
+
+Marks also work on the health endpoint - pass them as query parameters, which
+override any defaults baked in via the serve command's flags:
+
+```console
+$ goss serve --marks critical &
+$ curl 'localhost:8080/healthz'                          # uses --marks critical
+$ curl 'localhost:8080/healthz?marks=network'            # overrides: only network
+$ curl 'localhost:8080/healthz?exclude-marks=slow,flaky' # include all but slow/flaky
+```
+
+When using `goss add` or `goss autoadd`, pass `--marks` to tag newly created
+resources automatically:
+
+```console
+$ goss add --marks critical service sshd
+$ goss autoadd --marks network nginx
+```
+
+Existing marks on previously parsed resources are preserved; the flag only
+applies to newly created ones.
+
 ### Manually editing Goss files
 
 Goss files can be manually edited to improve readability and expressiveness of tests.

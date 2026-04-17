@@ -45,9 +45,10 @@ func (m *Mount) TypeKey() string  { return MountResourceKey }
 func (m *Mount) TypeName() string { return MountResourceName }
 
 // FIXME: Can this be refactored?
-func (m *Mount) GetTitle() string   { return m.Title }
-func (m *Mount) GetMeta() meta      { return m.Meta }
-func (m *Mount) GetMarks() []string { return m.Marks }
+func (m *Mount) GetTitle() string     { return m.Title }
+func (m *Mount) GetMeta() meta        { return m.Meta }
+func (m *Mount) GetMarks() []string   { return m.Marks }
+func (m *Mount) SetMarks(ms []string) { m.Marks = ms }
 func (m *Mount) GetMountPoint() string {
 	if m.MountPoint != "" {
 		return m.MountPoint

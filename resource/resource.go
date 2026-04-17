@@ -39,6 +39,7 @@ type ResourceRead interface {
 	GetTitle() string
 	GetMeta() meta
 	GetMarks() []string
+	SetMarks([]string)
 }
 
 type matcher any

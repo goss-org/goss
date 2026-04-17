@@ -34,13 +34,14 @@ func (p *Port) ID() string {
 	}
 	return p.id
 }
-func (p *Port) SetID(id string)    { p.id = id }
-func (p *Port) SetSkip()           { p.Skip = true }
-func (p *Port) TypeKey() string    { return PortResourceKey }
-func (p *Port) TypeName() string   { return PortResourceName }
-func (p *Port) GetTitle() string   { return p.Title }
-func (p *Port) GetMeta() meta      { return p.Meta }
-func (p *Port) GetMarks() []string { return p.Marks }
+func (p *Port) SetID(id string)     { p.id = id }
+func (p *Port) SetSkip()            { p.Skip = true }
+func (p *Port) TypeKey() string     { return PortResourceKey }
+func (p *Port) TypeName() string    { return PortResourceName }
+func (p *Port) GetTitle() string    { return p.Title }
+func (p *Port) GetMeta() meta       { return p.Meta }
+func (p *Port) GetMarks() []string  { return p.Marks }
+func (p *Port) SetMarks(m []string) { p.Marks = m }
 func (p *Port) GetPort() string {
 	if p.Port != "" {
 		return p.Port

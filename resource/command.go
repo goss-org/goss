@@ -40,9 +40,10 @@ func (c *Command) SetSkip()         { c.Skip = true }
 func (c *Command) TypeKey() string  { return CommandResourceKey }
 func (c *Command) TypeName() string { return CommandResourceName }
 
-func (c *Command) GetTitle() string   { return c.Title }
-func (c *Command) GetMeta() meta      { return c.Meta }
-func (c *Command) GetMarks() []string { return c.Marks }
+func (c *Command) GetTitle() string    { return c.Title }
+func (c *Command) GetMeta() meta       { return c.Meta }
+func (c *Command) GetMarks() []string  { return c.Marks }
+func (c *Command) SetMarks(m []string) { c.Marks = m }
 func (c *Command) GetExec() string {
 	if c.Exec != "" {
 		return c.Exec

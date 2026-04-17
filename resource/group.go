@@ -34,13 +34,14 @@ func (g *Group) ID() string {
 	}
 	return g.id
 }
-func (g *Group) SetID(id string)    { g.id = id }
-func (g *Group) SetSkip()           { g.Skip = true }
-func (g *Group) TypeKey() string    { return GroupResourceKey }
-func (g *Group) TypeName() string   { return GroupResourceName }
-func (g *Group) GetTitle() string   { return g.Title }
-func (g *Group) GetMeta() meta      { return g.Meta }
-func (g *Group) GetMarks() []string { return g.Marks }
+func (g *Group) SetID(id string)     { g.id = id }
+func (g *Group) SetSkip()            { g.Skip = true }
+func (g *Group) TypeKey() string     { return GroupResourceKey }
+func (g *Group) TypeName() string    { return GroupResourceName }
+func (g *Group) GetTitle() string    { return g.Title }
+func (g *Group) GetMeta() meta       { return g.Meta }
+func (g *Group) GetMarks() []string  { return g.Marks }
+func (g *Group) SetMarks(m []string) { g.Marks = m }
 func (g *Group) GetGroupname() string {
 	if g.Groupname != "" {
 		return g.Groupname
