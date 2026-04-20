@@ -40,7 +40,7 @@ to satisfy at least one of these matchers
 
 Matching: basic_reader: matches:
 Expected
-    "object: *strings.Reader"
+    "foo bar\nmoo cow"
 to have patterns
     ["fox","/^t.*w$/","!foo","!/^foo/"]
 the missing elements were

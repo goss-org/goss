@@ -21,6 +21,7 @@ type HavePatternsMatcher struct {
 	Elements        interface{}
 	missingElements []string
 	foundElements   []string
+	cachedActual    string
 }
 
 func HavePatterns(elements interface{}) GossMatcher {
@@ -76,8 +77,10 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 	scanner := bufio.NewScanner(fh)
 	scanner.Buffer(nil, maxScanTokenSize)
 	var found []patternMatcher
+	var lines []string
 	for scanner.Scan() {
 		line := scanner.Text()
+		lines = append(lines, line)
 
 		i := 0
 		for _, pat := range notfound {
@@ -99,6 +102,7 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 	if err := scanner.Err(); err != nil {
 		return false, err
 	}
+	m.cachedActual = strings.Join(lines, "\n")
 
 	for _, pat := range notfound {
 		// Didn't find it, but we didn't want to.. so we mark it as found
@@ -123,7 +127,7 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	case string, []string:
 		a = actual
 	default:
-		a = fmt.Sprintf("object: %T", actual)
+		a = m.cachedActual
 	}
 	return MatcherResult{
 		Actual:          a,
@@ -135,9 +139,12 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 }
 
 func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	a, ok := actual.(string)
-	if !ok {
-		a = fmt.Sprintf("object: %T", actual)
+	var a string
+	switch v := actual.(type) {
+	case string:
+		a = v
+	default:
+		a = m.cachedActual
 	}
 	return MatcherResult{
 		Actual:   a,
