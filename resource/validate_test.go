@@ -128,6 +128,33 @@ func TestValidateContainsBadRegexErr(t *testing.T) {
 	}
 }
 
+// TestValidateContainsFailureActual asserts that when a file-contents check fails,
+// the MatcherResult.Actual field contains the readable file content — not the
+// Go internal type representation "object: *bytes.Reader" / "object: *os.File".
+func TestValidateContainsFailureActual(t *testing.T) {
+	fileContent := "Banner /etc/issue.net\nLogLevel INFO\n"
+	missingPattern := "nonexistent-pattern-xyz"
+
+	inFunc := func() (io.Reader, error) {
+		return strings.NewReader(fileContent), nil
+	}
+	got := ValidateValue(&FakeResource{""}, "contents", []interface{}{missingPattern}, inFunc, false)
+
+	if got.Result != FAIL {
+		t.Fatalf("expected FAIL, got %v", got.Result)
+	}
+	actual, ok := got.MatcherResult.Actual.(string)
+	if !ok {
+		t.Fatalf("MatcherResult.Actual must be a string, got %T: %v", got.MatcherResult.Actual, got.MatcherResult.Actual)
+	}
+	if strings.Contains(actual, "object:") {
+		t.Errorf("MatcherResult.Actual must not contain Go type repr, got: %q", actual)
+	}
+	if !strings.Contains(actual, "Banner") {
+		t.Errorf("MatcherResult.Actual must contain file content, got: %q", actual)
+	}
+}
+
 func TestValidateContainsSkip(t *testing.T) {
 	for _, c := range containsTests {
 		inFunc := func() (io.Reader, error) {
