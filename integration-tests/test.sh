@@ -4,7 +4,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 rockylinux9 trusty wheezy"}"
+os="${1:?"Need OS as 1st arg. e.g. alpine arch rockylinux9 jammy bullseye"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
@@ -16,7 +16,7 @@ cd integration-tests
 cp "../release/goss-linux-$arch" "goss/$os/"
 # Run build if Dockerfile has changed but hasn't been pushed to dockerhub
 if ! md5sum -c "Dockerfile_${os}.md5"; then
-  docker build -t "$container_repository/goss_${os}:latest" - < "Dockerfile_$os"
+  docker build -t "$container_repository/goss_${os}:latest" --file "Dockerfile_$os" .
 # Pull if image doesn't exist locally
 elif ! docker images | grep "$container_repository/goss_$os";then
   docker pull "$container_repository/goss_$os"
@@ -51,7 +51,7 @@ echo "$out"
 if [[ $os == "arch" ]]; then
     egrep -q 'Count: 104, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 125, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 127, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then

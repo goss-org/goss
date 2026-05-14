@@ -1,0 +1,12 @@
+FROM ubuntu:jammy
+LABEL org.opencontainers.image.authors="Ahmed"
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y systemd-sysv && \
+    apt-get install -y apache2 tinyproxy dnsmasq && \
+    apt-get clean
+
+COPY dnsmasq.conf /etc/dnsmasq.conf
+
+RUN systemctl enable apache2 tinyproxy dnsmasq
+RUN mkfifo /pipe

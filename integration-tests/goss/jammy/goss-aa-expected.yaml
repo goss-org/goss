@@ -2,7 +2,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.4.7-1ubuntu4.22
+    - 2.4.52-1ubuntu4.20
 port:
   tcp:80:
     listening: true

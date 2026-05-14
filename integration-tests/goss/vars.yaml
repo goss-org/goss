@@ -2,7 +2,7 @@
 alpine3:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.4.59-r0"
+    apache2: "2.4.67-r0"
   services:
     apache2: [sysinit]
 arch:
@@ -16,20 +16,20 @@ centos7:
 rockylinux9:
   proxy: http://127.0.0.1:8888
   packages:
-    httpd: "2.4.57-11.el9_4.1"
+    httpd: "2.4.62-7.el9_7.3"
   services:
     httpd: []
-trusty:
+jammy:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.4.7-1ubuntu4.22"
+    apache2: "2.4.52-1ubuntu4.20"
   services:
-    apache2: ["3"]
-wheezy:
+    apache2: []
+bullseye:
   proxy: http://127.0.0.1:8888
   packages:
-    apache2: "2.2.22-13+deb7u13"
+    apache2: "2.4.67-1~deb11u1"
   services:
-    apache2: ["2", "3", "5", "4"]
+    apache2: []
 
 overwrite: foo
