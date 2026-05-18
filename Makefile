@@ -9,7 +9,7 @@ VENV := $(shell echo $${VIRTUAL_ENV-.venv})
 PYTHON := $(VENV)/bin/python
 DOCS_DEPS := $(VENV)/.docs.dependencies
 
-.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 bullseye jammy alpine3 arch test-int32 centos7-32 bullseye-32 jammy alpine3-32 arch-32
+.PHONY: all build install test release bench fmt lint vet test-int-all gen centos7 test-int32 centos7-32
 
 all: test-short-all test-int-all dgoss-sha256 dcgoss-sha256 kgoss-sha256
 
@@ -96,7 +96,7 @@ test-darwin-all: test-short-all test-int-darwin-all
 test-linux-all: test-short-all test-int-64 test-int-32
 test-windows-all: test-short-all test-int-windows-all
 
-test-int-64: rockylinux9 bullseye jammy alpine3 test-int-serve-linux-amd64
+test-int-64: rockylinux9 bullseye jammy alpine3 arch test-int-serve-linux-amd64
 test-int-32: rockylinux9-32 bullseye-32 alpine3-32
 test-int-darwin-all: test-int-validate-darwin-amd64 test-int-serve-darwin-amd64
 test-int-windows-all: test-int-validate-windows-amd64 test-int-serve-windows-amd64
@@ -109,15 +109,14 @@ centos7-32: build
 rockylinux9-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh rockylinux9 386
+.PHONY: bullseye-32
 bullseye-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh bullseye 386
+.PHONY: alpine3-32
 alpine3-32: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 386
-arch-32: build
-	$(info INFO: Starting build $@)
-	cd integration-tests/ && ./test.sh arch 386
 centos7: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh centos7 amd64
@@ -125,15 +124,19 @@ centos7: build
 rockylinux9: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh rockylinux9 amd64
+.PHONY: bullseye
 bullseye: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh bullseye amd64
+.PHONY: jammy
 jammy: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh jammy amd64
+.PHONY: alpine3
 alpine3: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh alpine3 amd64
+.PHONY: arch
 arch: build
 	$(info INFO: Starting build $@)
 	cd integration-tests/ && ./test.sh arch amd64
