@@ -231,7 +231,7 @@ func IsValidFormat(f string) bool {
 
 func GetOutputer(name string) (Outputer, error) {
 	if _, ok := outputers[name]; !ok {
-		return nil, fmt.Errorf("bad output format: " + name)
+		return nil, fmt.Errorf("bad output format: %v", name)
 	}
 	return outputers[name], nil
 }

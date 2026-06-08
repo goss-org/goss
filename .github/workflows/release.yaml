@@ -12,10 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
 
@@ -27,7 +27,7 @@ jobs:
       - run: make dgoss-sha256 dcgoss-sha256 kgoss-sha256
 
       - name: "Upload binary as artifact"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           retention-days: 5
           if-no-files-found: error
@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch all binaries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
       - name: Attach to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: build/**
           fail_on_unmatched_files: true
