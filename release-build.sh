@@ -2,7 +2,7 @@
 set -euo pipefail
 
 platform_spec="${1:?"Must supply name of release binary to build e.g. goss-linux-amd64"}"
-version_stamp="${TRAVIS_TAG:-"0.0.0"}"
+version_stamp="$(git describe --tags 2>/dev/null || echo "v0.0.0")"
 
 # Split platform_spec into platform/arch segments
 IFS='- ' read -r -a segments <<< "${platform_spec}"
@@ -22,7 +22,7 @@ fi
 output="${output_dir}/${output_fname}"
 
 GOOS="${os}" GOARCH="${arch}" CGO_ENABLED=0 go build \
-  -ldflags "-X github.com/goss-org/goss/util.Version=${version_stamp} -s -w" \
+  -trimpath -ldflags "-X github.com/goss-org/goss/util.Version=${version_stamp} -s -w" \
   -o "${output}" \
   github.com/goss-org/goss/cmd/goss
 

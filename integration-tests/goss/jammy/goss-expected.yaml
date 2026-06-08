@@ -10,12 +10,12 @@ file:
     exists: false
     contents: []
 package:
-  foobar:
-    installed: false
-  httpd:
+  apache2:
     installed: true
     versions:
-    - 2.4.6-95.el7.centos
+    - 2.4.52-1ubuntu4.21
+  foobar:
+    installed: false
   vim-tiny:
     installed: false
 addr:
@@ -25,7 +25,7 @@ addr:
   tcp://httpbin:80:
     reachable: true
     timeout: 1000
-  udp://8.8.8.8:53:
+  udp://127.0.0.1:8053:
     reachable: true
     timeout: 1000
 port:
@@ -40,29 +40,29 @@ port:
     listening: false
     ip: []
 service:
+  apache2:
+    enabled: true
+    running: true
   foobar:
     enabled: false
     running: false
-  httpd:
-    enabled: true
-    running: true
 user:
-  apache:
+  foobar:
+    exists: false
+  www-data:
     exists: true
-    uid: 48
-    gid: 48
+    uid: 33
+    gid: 33
     groups:
-    - apache
-    home: /usr/share/httpd
-    shell: /sbin/nologin
-  foobar:
-    exists: false
+    - www-data
+    home: /var/www
+    shell: /usr/sbin/nologin
 group:
-  apache:
-    exists: true
-    gid: 48
   foobar:
     exists: false
+  www-data:
+    exists: true
+    gid: 33
 command:
   echo 'hi':
     exit-status: 0
@@ -74,7 +74,7 @@ command:
     exit-status: 127
     stdout: ""
     stderr:
-    - 'sh: foobar: command not found'
+    - 'sh: 1: foobar: not found'
     timeout: 10000
 dns:
   CAA:dnstest.io:
@@ -84,27 +84,27 @@ dns:
     - 0 issue letsencrypt.org
     - 0 issuewild ;
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   CNAME:c.dnstest.io:
     resolvable: true
     addrs:
     - a.dnstest.io.
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   MX:dnstest.io:
     resolvable: true
     addrs:
     - 10 b.dnstest.io.
     - 5 a.dnstest.io.
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   NS:dnstest.io:
     resolvable: true
     addrs:
     - ns1.dnstest.io.
     - ns2.dnstest.io.
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   PTR:54.243.154.1:
     resolvable: true
     addrs:
@@ -117,19 +117,19 @@ dns:
     - 0 5 443 a.dnstest.io.
     - 10 10 443 b.dnstest.io.
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   TXT:txt._test.dnstest.io:
     resolvable: true
     addrs:
     - Hello DNS
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   ip6.dnstest.io:
     resolvable: true
     addrs:
     - 2404:6800:4001:807::200e
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   localhost:
     resolvable: true
     addrs:
@@ -137,10 +137,10 @@ dns:
     - ::1
     timeout: 1000
 process:
+  apache2:
+    running: true
   foobar:
     running: false
-  httpd:
-    running: true
 kernel-param:
   kernel.ostype:
     value: Linux

@@ -4,54 +4,55 @@ source "$(dirname "${BASH_SOURCE[0]}")/../ci/lib/setup.sh" || exit 67
 # preserve current behaviour
 set -x
 
-os="${1:?"Need OS as 1st arg. e.g. alpine arch centos7 rockylinux9 trusty wheezy"}"
+: "${DOCKER_BIN:=docker}"
+
+os="${1:?"Need OS as 1st arg. e.g. alpine arch rockylinux9 jammy bullseye"}"
 arch="${2:?"Need arch as 2nd arg. e.g. amd64 386"}"
 
 vars_inline="{inline: bar, overwrite: bar}"
-container_repository="aelsabbahy"
+container_repository="ghcr.io/goss-org"
 
 # setup places us inside repo-root; this preserves current behaviour with least change.
 cd integration-tests
 
 cp "../release/goss-linux-$arch" "goss/$os/"
-# Run build if Dockerfile has changed but hasn't been pushed to dockerhub
+image_name="$container_repository/goss_integration_$os"
+# Run build if Dockerfile has changed but hasn't been pushed
 if ! md5sum -c "Dockerfile_${os}.md5"; then
-  docker build -t "$container_repository/goss_${os}:latest" - < "Dockerfile_$os"
+  $DOCKER_BIN build -t "$image_name:latest" --file "Dockerfile_$os" .
 # Pull if image doesn't exist locally
-elif ! docker images | grep "$container_repository/goss_$os";then
-  docker pull "$container_repository/goss_$os"
+elif ! $DOCKER_BIN images | grep "$image_name";then
+  $DOCKER_BIN pull "$image_name"
 fi
 
 container_name="goss_int_test_${os}_${arch}"
 docker_exec() {
-  docker exec "$container_name" "$@"
+  $DOCKER_BIN exec "$container_name" "$@"
 }
 
 # Cleanup any old containers
-if docker ps -a | grep "$container_name";then
-  docker rm -vf "$container_name"
+if $DOCKER_BIN ps -a | grep "$container_name";then
+  $DOCKER_BIN rm -vf "$container_name"
 fi
 
 # Setup local httbin
 # FIXME: this is a quick hack to fix intermittent CI issues
 network=goss-test
-docker network create --driver bridge  --subnet '172.19.0.0/16' $network
-docker run -d --name httpbin --network $network kennethreitz/httpbin
+$DOCKER_BIN network create --driver bridge --subnet '172.19.0.0/16' $network
+$DOCKER_BIN run -d --name httpbin --network $network docker.io/kennethreitz/httpbin
 opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
-id=$(docker run "${opts[@]}" --network $network "$container_repository/goss_$os" /sbin/init)
-ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
-trap "rv=\$?; docker rm -vf $id;docker rm -vf httpbin;docker network rm $network; exit \$rv" INT TERM EXIT
+id=$($DOCKER_BIN run "${opts[@]}" --network $network "$image_name" /sbin/init)
+ip=$($DOCKER_BIN inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
+trap "rv=\$?; $DOCKER_BIN rm -vf $id || :;$DOCKER_BIN rm -vf httpbin || :;$DOCKER_BIN network rm $network || :; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
-[[ $os != "arch" ]] && docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
-
-#out=$(docker exec "$container_name" bash -c "time /goss/$os/goss-linux-$arch -g /goss/$os/goss.yaml validate")
+docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
 out=$(docker_exec "/goss/$os/goss-linux-$arch" --vars "/goss/vars.yaml" --vars-inline "$vars_inline" -g "/goss/$os/goss.yaml" validate)
 echo "$out"
 
 if [[ $os == "arch" ]]; then
-    egrep -q 'Count: 104, Failed: 0, Skipped: 3' <<<"$out"
+    egrep -q 'Count: 106, Failed: 0, Skipped: 3' <<<"$out"
 else
-    egrep -q 'Count: 125, Failed: 0, Skipped: 5' <<<"$out"
+    egrep -q 'Count: 127, Failed: 0, Skipped: 5' <<<"$out"
 fi
 
 if [[ ! $os == "arch" ]]; then
