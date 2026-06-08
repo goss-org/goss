@@ -19,7 +19,7 @@ addr:
   tcp://httpbin:80:
     reachable: true
     timeout: 1000
-  udp://8.8.8.8:53:
+  udp://127.0.0.1:8053:
     reachable: true
     timeout: 1000
 port:
@@ -61,19 +61,19 @@ dns:
   CAA:dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   CNAME:c.dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   MX:dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   NS:dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   PTR:54.243.154.1:
     resolvable: true
     timeout: 1000
@@ -81,15 +81,15 @@ dns:
   SRV:_https._tcp.dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   TXT:txt._test.dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   ip6.dnstest.io:
     resolvable: true
     timeout: 1000
-    server: 8.8.8.8
+    server: 127.0.0.1:8053
   localhost:
     resolvable: true
     timeout: 1000

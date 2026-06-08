@@ -2,7 +2,7 @@ package:
   apache2:
     installed: true
     versions:
-    - 2.2.22-13+deb7u13
+    - 2.4.67-1~deb11u2
 port:
   tcp:80:
     listening: true

@@ -3,12 +3,12 @@ service:
   foobar:
     enabled: false
     running: false
-{{ if .Env.OS | regexMatch "centos[7]|rockylinux[9]" }}
+{{ if .Env.OS | regexMatch "rockylinux[9]" }}
   httpd:
 {{else}}
   apache2:
 {{end}}
-{{ if .Env.OS | regexMatch "trusty" }}
+{{ if .Env.OS | regexMatch "jammy" }}
     enabled: false
 {{else}}
     enabled: true
