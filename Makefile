@@ -37,7 +37,7 @@ htmlcov:
 
 lint:
 	$(info INFO: Starting build $@)
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.2
 	golangci-lint run --timeout 5m $(pkgs) || true
 
 vet:
