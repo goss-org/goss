@@ -40,6 +40,7 @@ If -p, -c and -a are not specified, container will run its ENTRYPOINT.
 
 GOSS_KUBECTL_BIN="$(which kubectl)": location of kubectl-compatible binary
 GOSS_KUBECTL_OPTS="": hook to inject more options such as "--namespace=default"
+GOSS_KUBECTL_RUN_OPTS="": options only for kubectl run (e.g. --overrides for serviceAccount)
 GOSS_PATH="$(which goss)": location of goss binary
 GOSS_FILES_PATH=".": location of goss.yaml and other configuration files
 GOSS_VARS="": path to a goss.vars file
@@ -74,6 +75,8 @@ GOSS_OPTS=${GOSS_OPTS:-"--color --format documentation"}
 GOSS_WAIT_OPTS=${GOSS_WAIT_OPTS:-"-r 30s -s 1s > /dev/null"}
 GOSS_CONTAINER_PATH=${GOSS_CONTAINER_PATH:-/tmp/goss}
 GOSS_KUBECTL_OPTS=${GOSS_KUBECTL_OPTS:-""}
+# GOSS_KUBECTL_RUN_OPTS: additional options only for kubectl run (e.g. --overrides for serviceAccount, nodeSelector)
+GOSS_KUBECTL_RUN_OPTS=${GOSS_KUBECTL_RUN_OPTS:-""}
 
 kgoss_cmd=run
 image=
@@ -200,7 +203,7 @@ initialize () {
         info "Creating Kubernetes pod/container to test"
         test_pod_name=kgoss-tester-${RANDOM}
         set -x
-        id=$(${k} run ${GOSS_KUBECTL_OPTS}  $test_pod_name --image-pull-policy=Always --restart=Never \
+        id=$(${k} run ${GOSS_KUBECTL_OPTS} ${GOSS_KUBECTL_RUN_OPTS} $test_pod_name --image-pull-policy=Always --restart=Never \
           --labels='app=kgoss-test' --output=jsonpath={.metadata.name} ${envs} \
           --image=${image} ${to_exec} )
         set +x
