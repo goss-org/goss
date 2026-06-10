@@ -150,6 +150,12 @@ definitions:
       skip:
         type: boolean
         default: false
+      capabilities:
+        type: array
+        items:
+          type: string
+        default: []
+        description: Linux capabilities
   gossfileTest:
     properties:
       title: { "$ref":"#/definitions/title" }

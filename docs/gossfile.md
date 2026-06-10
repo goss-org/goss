@@ -274,6 +274,9 @@ file:
     filetype: symlink # file, symlink, directory, socket
     linked-to: /usr/sbin/sendmail.sendmail
     skip: false
+    capabilities:
+        - 38 # CAP_PERFMON https://github.com/syndtr/gocapability/blob/master/capability/enum.go#L268
+        - 21 # CAP_SYS_ADMIN https://github.com/syndtr/gocapability/blob/master/capability/enum.go#L193
 ```
 
 `contents` can be a string or a [pattern](#patterns)

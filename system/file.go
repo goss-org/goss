@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"fmt"
+	"github.com/syndtr/gocapability/capability"
 	"hash"
 	"io"
 	"os"
@@ -32,6 +33,7 @@ type File interface {
 	Md5() (string, error)
 	Sha256() (string, error)
 	Sha512() (string, error)
+	Capabilities() ([]string, error)
 }
 
 type hashFuncType string
@@ -95,6 +97,28 @@ func (f *DefFile) Contents() (io.Reader, error) {
 		return nil, err
 	}
 	return fh, nil
+}
+
+func (f *DefFile) Capabilities() ([]string, error) {
+	if err := f.setup(); err != nil {
+		return nil, err
+	}
+
+	fileCaps, err := capability.NewFile2(f.realPath)
+	if err != nil {
+		return nil, err
+	}
+	if err = fileCaps.Load(); err != nil {
+		return nil, err
+	}
+
+	var effectiveCaps []string
+	for _, c := range capability.List() {
+		if fileCaps.Get(capability.EFFECTIVE, c) {
+			effectiveCaps = append(effectiveCaps, strconv.Itoa(int(c)))
+		}
+	}
+	return effectiveCaps, nil
 }
 
 func (f *DefFile) Size() (int, error) {
