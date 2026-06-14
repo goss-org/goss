@@ -578,7 +578,8 @@ user:
 ```
 
 !!! note
-    This check is inspecting the contents of local passwd file `/etc/passwd`, this does not validate remote users (e.g. LDAP).
+    This check is inspecting the contents of local passwd file `/etc/passwd`,
+    this does not validate remote users (e.g. LDAP).
 
 ## Matchers
 
@@ -645,7 +646,7 @@ Each pattern is checked against the attribute output, the type of patterns are:
 * `"!/[Rr]egex/"` - inverse of above, checks that no line matches regex
 
 !!! note
-    Regex support is based on Golang's regex engine documented [here](https://golang.org/pkg/regexp/syntax/)
+    Regex support is based on [Golang's regex engine](https://golang.org/pkg/regexp/syntax/)
 
 !!! warning
     You will **need** the double backslash (`\\`) escape for Regex special entities, for example `\\s` for blank spaces.

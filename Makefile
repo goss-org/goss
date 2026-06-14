@@ -151,21 +151,21 @@ lint-yaml:
 
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
-	@python -m venv $(VENV)
+	@python3 -m venv $(VENV)
 
 $(DOCS_DEPS): $(PYTHON) docs/requirements.txt
 	$(info Installing dependencies)
-	@pip install --upgrade pip
-	@pip install --requirement docs/requirements.txt
+	@$(VENV)/bin/pip install --upgrade pip
+	@$(VENV)/bin/pip install --requirement docs/requirements.txt
 	@touch $(DOCS_DEPS)
 
 docs/setup: $(DOCS_DEPS)
 
 docs/serve: docs/setup
 	$(info Running documentation live development server)
-	@mkdocs serve --strict
+	@$(VENV)/bin/mkdocs serve --strict
 
 .PHONY: docs
 docs: docs/setup
 	$(info Building documentation)
-	@mkdocs build --strict
+	@$(VENV)/bin/mkdocs build --strict
