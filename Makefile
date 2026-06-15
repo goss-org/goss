@@ -37,7 +37,7 @@ htmlcov:
 
 lint:
 	$(info INFO: Starting build $@)
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.2
 	golangci-lint run --timeout 5m $(pkgs) || true
 
 vet:
@@ -151,21 +151,21 @@ lint-yaml:
 
 $(PYTHON):
 	$(info Creating virtualenv in $(VENV))
-	@python -m venv $(VENV)
+	@python3 -m venv $(VENV)
 
 $(DOCS_DEPS): $(PYTHON) docs/requirements.txt
 	$(info Installing dependencies)
-	@pip install --upgrade pip
-	@pip install --requirement docs/requirements.txt
+	@$(VENV)/bin/pip install --upgrade pip
+	@$(VENV)/bin/pip install --requirement docs/requirements.txt
 	@touch $(DOCS_DEPS)
 
 docs/setup: $(DOCS_DEPS)
 
 docs/serve: docs/setup
 	$(info Running documentation live development server)
-	@mkdocs serve --strict
+	@$(VENV)/bin/mkdocs serve --strict
 
 .PHONY: docs
 docs: docs/setup
 	$(info Building documentation)
-	@mkdocs build --strict
+	@$(VENV)/bin/mkdocs build --strict
