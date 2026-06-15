@@ -29,7 +29,7 @@ func (p *DebPackage) setup() {
 		return
 	}
 	for _, l := range strings.Split(strings.TrimSpace(cmd.Stdout.String()), "\n") {
-		if !(strings.HasPrefix(l, "install ok installed") || strings.HasPrefix(l, "hold ok installed")) {
+		if !strings.HasPrefix(l, "install ok installed") && !strings.HasPrefix(l, "hold ok installed") {
 			continue
 		}
 		ver := strings.Fields(l)[3]

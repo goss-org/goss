@@ -39,10 +39,7 @@ func (r *Matching) GetTitle() string { return r.Title }
 func (r *Matching) GetMeta() meta    { return r.Meta }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
-	skip := false
-	if a.Skip {
-		skip = true
-	}
+	skip := a.Skip
 
 	var stub interface{}
 	if a.AsReader {
