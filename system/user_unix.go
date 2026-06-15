@@ -5,10 +5,13 @@ package system
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 )
+
+var errInvalidEntry = errors.New("invalid entry in /etc/passwd")
 
 func (u *DefUser) Shell() (string, error) {
 	passwd, err := os.Open("/etc/passwd")
@@ -27,7 +30,7 @@ func (u *DefUser) Shell() (string, error) {
 
 		fs := strings.Split(string(line), ":")
 		if len(fs) != 7 {
-			return "", fmt.Errorf("invalid entry in /etc/passwd")
+			return "", errInvalidEntry
 		}
 
 		if fs[0] == u.username {

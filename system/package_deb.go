@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	"github.com/goss-org/goss/util"
@@ -56,7 +55,7 @@ func (p *DebPackage) Installed() (bool, error) {
 func (p *DebPackage) Versions() ([]string, error) {
 	p.setup()
 	if len(p.versions) == 0 {
-		return p.versions, errors.New("Package version not found")
+		return p.versions, ErrPackageVersionNotFound
 	}
 	return p.versions, nil
 }
