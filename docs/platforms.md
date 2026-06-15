@@ -95,6 +95,10 @@ This matrix attempts to track parity across platforms.
 |                     | mtu                 | {{ fully_supported }}   | {{ not_implemented }}  | {{ not_implemented }}   |
 | **kernel-param**    |                     | {{ fully_supported }}   | {{ n_a }}              | {{ n_a }}               |
 |                     | value               | {{ fully_supported }}   | {{ n_a }}              | {{ n_a }}               |
+| **registry**        |                     | {{ n_a }}               | {{ n_a }}              | {{community_supported}} |
+|                     | exists              | {{ n_a }}               | {{ n_a }}              | {{community_supported}} |
+|                     | value               | {{ n_a }}               | {{ n_a }}              | {{community_supported}} |
+|                     | type                | {{ n_a }}               | {{ n_a }}              | {{community_supported}} |
 | **mount**           |                     | {{ fully_supported }}   | {{ not_implemented }}  | {{ not_implemented }}   |
 |                     | exists              | {{ fully_supported }}   | {{ not_implemented }}  | {{ not_implemented }}   |
 |                     | opts                | {{ fully_supported }}   | {{ not_implemented }}  | {{ n_a }}               |

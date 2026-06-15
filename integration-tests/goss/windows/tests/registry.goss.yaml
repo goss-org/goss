@@ -1,0 +1,20 @@
+---
+registry:
+  HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProductName:
+    exists: true
+    value:
+      match-regexp: "Windows.*"
+    type: REG_SZ
+
+  HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuild:
+    exists: true
+    type: REG_SZ
+
+  HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NonExistentValue12345:
+    exists: false
+
+  # Test explicit "::" separator for value names containing backslashes.
+  # HardenedPaths entries use UNC paths as value names (e.g. \\*\NETLOGON).
+  HKLM\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths::\\*\NETLOGON:
+    exists: true
+    skip: true  # only present on domain-joined machines with GPO applied

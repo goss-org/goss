@@ -35,6 +35,7 @@ type System struct {
 	NewMount       func(context.Context, string, *System, util2.Config) Mount
 	NewInterface   func(context.Context, string, *System, util2.Config) Interface
 	NewHTTP        func(context.Context, string, *System, util2.Config) HTTP
+	NewRegistry    func(context.Context, string, *System, util2.Config) Registry
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -73,6 +74,7 @@ func New(packageManager string) *System {
 		NewMount:       NewDefMount,
 		NewInterface:   NewDefInterface,
 		NewHTTP:        NewDefHTTP,
+		NewRegistry:    NewDefRegistry,
 	}
 
 	sys.detectService()
