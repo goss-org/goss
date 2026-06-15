@@ -13,15 +13,16 @@ import (
 )
 
 type Command struct {
-	Title      string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta       meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id         string  `json:"-" yaml:"-"`
-	Exec       string  `json:"exec,omitempty" yaml:"exec,omitempty"`
-	ExitStatus matcher `json:"exit-status" yaml:"exit-status"`
-	Stdout     matcher `json:"stdout" yaml:"stdout"`
-	Stderr     matcher `json:"stderr" yaml:"stderr"`
-	Timeout    int     `json:"timeout" yaml:"timeout"`
-	Skip       bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title      string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta       meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks      []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id         string   `json:"-" yaml:"-"`
+	Exec       string   `json:"exec,omitempty" yaml:"exec,omitempty"`
+	ExitStatus matcher  `json:"exit-status" yaml:"exit-status"`
+	Stdout     matcher  `json:"stdout" yaml:"stdout"`
+	Stderr     matcher  `json:"stderr" yaml:"stderr"`
+	Timeout    int      `json:"timeout" yaml:"timeout"`
+	Skip       bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -39,8 +40,10 @@ func (c *Command) SetSkip()         { c.Skip = true }
 func (c *Command) TypeKey() string  { return CommandResourceKey }
 func (c *Command) TypeName() string { return CommandResourceName }
 
-func (c *Command) GetTitle() string { return c.Title }
-func (c *Command) GetMeta() meta    { return c.Meta }
+func (c *Command) GetTitle() string    { return c.Title }
+func (c *Command) GetMeta() meta       { return c.Meta }
+func (c *Command) GetMarks() []string  { return c.Marks }
+func (c *Command) SetMarks(m []string) { c.Marks = m }
 func (c *Command) GetExec() string {
 	if c.Exec != "" {
 		return c.Exec

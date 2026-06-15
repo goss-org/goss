@@ -53,6 +53,14 @@ var red = color.New(color.FgRed).SprintfFunc()
 var yellow = color.New(color.FgYellow).SprintfFunc()
 var multiple_space = regexp.MustCompile(`\s+`)
 
+// disableColor sets color.NoColor=true at most once per process. It delegates
+// to util.InitNoColor so that this package and the root goss package share a
+// single sync.Once; otherwise concurrent writes to color.NoColor from
+// different paths could race even if each path was individually guarded.
+func disableColor() {
+	util.InitNoColor(true)
+}
+
 func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
 	sep := "\n"
 	if compact {

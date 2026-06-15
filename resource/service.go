@@ -9,14 +9,15 @@ import (
 )
 
 type Service struct {
-	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id        string  `json:"-" yaml:"-"`
-	Name      string  `json:"name,omitempty" yaml:"name,omitempty"`
-	Enabled   matcher `json:"enabled" yaml:"enabled"`
-	Running   matcher `json:"running" yaml:"running"`
-	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
-	RunLevels matcher `json:"runlevels,omitempty" yaml:"runlevels,omitempty"`
+	Title     string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks     []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id        string   `json:"-" yaml:"-"`
+	Name      string   `json:"name,omitempty" yaml:"name,omitempty"`
+	Enabled   matcher  `json:"enabled" yaml:"enabled"`
+	Running   matcher  `json:"running" yaml:"running"`
+	Skip      bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	RunLevels matcher  `json:"runlevels,omitempty" yaml:"runlevels,omitempty"`
 }
 
 const (
@@ -34,12 +35,14 @@ func (s *Service) ID() string {
 	}
 	return s.id
 }
-func (s *Service) SetID(id string)  { s.id = id }
-func (s *Service) SetSkip()         { s.Skip = true }
-func (s *Service) TypeKey() string  { return ServiceResourceKey }
-func (s *Service) TypeName() string { return ServiceResourceName }
-func (s *Service) GetTitle() string { return s.Title }
-func (s *Service) GetMeta() meta    { return s.Meta }
+func (s *Service) SetID(id string)     { s.id = id }
+func (s *Service) SetSkip()            { s.Skip = true }
+func (s *Service) TypeKey() string     { return ServiceResourceKey }
+func (s *Service) TypeName() string    { return ServiceResourceName }
+func (s *Service) GetTitle() string    { return s.Title }
+func (s *Service) GetMeta() meta       { return s.Meta }
+func (s *Service) GetMarks() []string  { return s.Marks }
+func (s *Service) SetMarks(m []string) { s.Marks = m }
 func (s *Service) GetName() string {
 	if s.Name != "" {
 		return s.Name

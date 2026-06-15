@@ -11,16 +11,17 @@ import (
 )
 
 type DNS struct {
-	Title       string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta        meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id          string  `json:"-" yaml:"-"`
-	Resolve     string  `json:"resolve,omitempty" yaml:"resolve,omitempty"`
-	Resolveable matcher `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
-	Resolvable  matcher `json:"resolvable" yaml:"resolvable"`
-	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
-	Timeout     int     `json:"timeout" yaml:"timeout"`
-	Server      string  `json:"server,omitempty" yaml:"server,omitempty"`
-	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title       string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta        meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks       []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id          string   `json:"-" yaml:"-"`
+	Resolve     string   `json:"resolve,omitempty" yaml:"resolve,omitempty"`
+	Resolveable matcher  `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
+	Resolvable  matcher  `json:"resolvable" yaml:"resolvable"`
+	Addrs       matcher  `json:"addrs,omitempty" yaml:"addrs,omitempty"`
+	Timeout     int      `json:"timeout" yaml:"timeout"`
+	Server      string   `json:"server,omitempty" yaml:"server,omitempty"`
+	Skip        bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -38,12 +39,14 @@ func (d *DNS) ID() string {
 	}
 	return d.id
 }
-func (d *DNS) SetID(id string)  { d.id = id }
-func (d *DNS) SetSkip()         { d.Skip = true }
-func (d *DNS) TypeKey() string  { return DNSResourceKey }
-func (d *DNS) TypeName() string { return DNSResourceName }
-func (d *DNS) GetTitle() string { return d.Title }
-func (d *DNS) GetMeta() meta    { return d.Meta }
+func (d *DNS) SetID(id string)     { d.id = id }
+func (d *DNS) SetSkip()            { d.Skip = true }
+func (d *DNS) TypeKey() string     { return DNSResourceKey }
+func (d *DNS) TypeName() string    { return DNSResourceName }
+func (d *DNS) GetTitle() string    { return d.Title }
+func (d *DNS) GetMeta() meta       { return d.Meta }
+func (d *DNS) GetMarks() []string  { return d.Marks }
+func (d *DNS) SetMarks(m []string) { d.Marks = m }
 func (d *DNS) GetResolve() string {
 	if d.Resolve != "" {
 		return d.Resolve

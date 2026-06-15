@@ -1,0 +1,28 @@
+---
+command:
+  echo critical:
+    exit-status: 0
+    exec: "echo critical"
+    stdout:
+    - critical
+    stderr: []
+    timeout: 10000
+    marks:
+      - critical
+      - fast
+  echo slow:
+    exit-status: 0
+    exec: "echo slow"
+    stdout:
+    - slow
+    stderr: []
+    timeout: 10000
+    marks:
+      - slow
+  echo unmarked:
+    exit-status: 0
+    exec: "echo unmarked"
+    stdout:
+    - unmarked
+    stderr: []
+    timeout: 10000

@@ -9,13 +9,14 @@ import (
 )
 
 type KernelParam struct {
-	Title string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta  meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id    string  `json:"-" yaml:"-"`
-	Name  string  `json:"name,omitempty" yaml:"name,omitempty"`
-	Key   string  `json:"-" yaml:"-"`
-	Value matcher `json:"value" yaml:"value"`
-	Skip  bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta  meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id    string   `json:"-" yaml:"-"`
+	Name  string   `json:"name,omitempty" yaml:"name,omitempty"`
+	Key   string   `json:"-" yaml:"-"`
+	Value matcher  `json:"value" yaml:"value"`
+	Skip  bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -40,8 +41,10 @@ func (a *KernelParam) TypeKey() string  { return KernelParamResourceKey }
 func (a *KernelParam) TypeName() string { return KernelParamResourceName }
 
 // FIXME: Can this be refactored?
-func (k *KernelParam) GetTitle() string { return k.Title }
-func (k *KernelParam) GetMeta() meta    { return k.Meta }
+func (k *KernelParam) GetTitle() string    { return k.Title }
+func (k *KernelParam) GetMeta() meta       { return k.Meta }
+func (k *KernelParam) GetMarks() []string  { return k.Marks }
+func (k *KernelParam) SetMarks(m []string) { k.Marks = m }
 func (k *KernelParam) GetName() string {
 	if k.Name != "" {
 		return k.Name

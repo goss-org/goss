@@ -9,13 +9,14 @@ import (
 )
 
 type Port struct {
-	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id        string  `json:"-" yaml:"-"`
-	Port      string  `json:"port,omitempty" yaml:"port,omitempty"`
-	Listening matcher `json:"listening" yaml:"listening"`
-	IP        matcher `json:"ip,omitempty" yaml:"ip,omitempty"`
-	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title     string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks     []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id        string   `json:"-" yaml:"-"`
+	Port      string   `json:"port,omitempty" yaml:"port,omitempty"`
+	Listening matcher  `json:"listening" yaml:"listening"`
+	IP        matcher  `json:"ip,omitempty" yaml:"ip,omitempty"`
+	Skip      bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -33,12 +34,14 @@ func (p *Port) ID() string {
 	}
 	return p.id
 }
-func (p *Port) SetID(id string)  { p.id = id }
-func (p *Port) SetSkip()         { p.Skip = true }
-func (p *Port) TypeKey() string  { return PortResourceKey }
-func (p *Port) TypeName() string { return PortResourceName }
-func (p *Port) GetTitle() string { return p.Title }
-func (p *Port) GetMeta() meta    { return p.Meta }
+func (p *Port) SetID(id string)     { p.id = id }
+func (p *Port) SetSkip()            { p.Skip = true }
+func (p *Port) TypeKey() string     { return PortResourceKey }
+func (p *Port) TypeName() string    { return PortResourceName }
+func (p *Port) GetTitle() string    { return p.Title }
+func (p *Port) GetMeta() meta       { return p.Meta }
+func (p *Port) GetMarks() []string  { return p.Marks }
+func (p *Port) SetMarks(m []string) { p.Marks = m }
 func (p *Port) GetPort() string {
 	if p.Port != "" {
 		return p.Port

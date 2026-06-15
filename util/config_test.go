@@ -49,3 +49,61 @@ func TestWithVarsData(t *testing.T) {
 		t.Fatalf("expected %q got %q", `{"hello":"world"}`, c.VarsInline)
 	}
 }
+
+func TestWithIncludeMarks(t *testing.T) {
+	c, err := NewConfig(WithIncludeMarks("critical", "network"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.IncludeMarks) != 2 || c.IncludeMarks[0] != "critical" || c.IncludeMarks[1] != "network" {
+		t.Fatalf("unexpected IncludeMarks: %v", c.IncludeMarks)
+	}
+}
+
+func TestWithExcludeMarks(t *testing.T) {
+	c, err := NewConfig(WithExcludeMarks("slow", "flaky"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.ExcludeMarks) != 2 || c.ExcludeMarks[0] != "slow" || c.ExcludeMarks[1] != "flaky" {
+		t.Fatalf("unexpected ExcludeMarks: %v", c.ExcludeMarks)
+	}
+}
+
+func TestWithMarksMultipleCallsAppend(t *testing.T) {
+	c, err := NewConfig(WithIncludeMarks("a"), WithIncludeMarks("b", "c"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.IncludeMarks) != 3 {
+		t.Fatalf("expected 3 marks got %v", c.IncludeMarks)
+	}
+}
+
+func TestParseMarksParam(t *testing.T) {
+	cases := []struct {
+		in   string
+		want []string
+	}{
+		{"", nil},
+		{"   ", nil},
+		{",,,", nil},
+		{"critical", []string{"critical"}},
+		{"critical,network", []string{"critical", "network"}},
+		{"  critical , network  ", []string{"critical", "network"}},
+		{"critical, ,network", []string{"critical", "network"}},
+		{"a,b,c,d", []string{"a", "b", "c", "d"}},
+	}
+	for _, tc := range cases {
+		got := ParseMarksParam(tc.in)
+		if len(got) != len(tc.want) {
+			t.Errorf("ParseMarksParam(%q) length = %d, want %d (got=%v)", tc.in, len(got), len(tc.want), got)
+			continue
+		}
+		for i := range got {
+			if got[i] != tc.want[i] {
+				t.Errorf("ParseMarksParam(%q)[%d] = %q, want %q", tc.in, i, got[i], tc.want[i])
+			}
+		}
+	}
+}
