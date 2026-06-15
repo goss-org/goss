@@ -177,7 +177,7 @@ not to be numerically eq
 
 Matching: negated_basic_reader: matches:
 Error
-    ContainElements matcher expects an array/slice/map/iter.Seq/iter.Seq2.  Got:
+    ContainElements matcher expects an array/slice/map.  Got:
         <string>: foo bar
         moo cow
         
