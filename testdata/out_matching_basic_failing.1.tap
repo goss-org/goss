@@ -19,7 +19,7 @@ not ok 17 - Matching: negated_basic_array_consists_of: matches: Expected ["foo",
 not ok 18 - Matching: negated_basic_array_contain_element: matches: Expected ["foo","bar","moo"] not to contain element matching "foo"
 not ok 19 - Matching: negated_basic_array_matchers: matches: Expected ["foo","bar","moo"] to satisfy at least one of these matchers [{"not":{"contain-elements":["foo","bar"]}},{"not":{"contain-elements":["foo","bar"]}},{"not":["foo","bar","moo"]},{"not":{"consist-of":["foo",{"have-prefix":"m"},"bar"]}},{"not":{"contain-element":{"have-prefix":"b"}}}]
 not ok 20 - Matching: negated_basic_int: matches: Expected 42 not to be numerically eq 42
-not ok 21 - Matching: negated_basic_reader: matches: Error ContainElements matcher expects an array/slice/map. Got: <string>: foo bar moo cow 
+not ok 21 - Matching: negated_basic_reader: matches: Error ContainElements matcher expects an array/slice/map. Got: <string>: foo bar moo cow
 not ok 22 - Matching: negated_basic_string: matches: Expected "this is a test" not to equal "this is a test"
 not ok 23 - Matching: negatedbasic_len: matches: Expected "123" not to have length 3
 not ok 24 - Matching: negatedbasic_string_contain_substring: matches: Expected "foo" not to contain substring "oo"
