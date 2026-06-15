@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.22
+ARG GO_VERSION=1.25
 
 FROM docker.io/golang:${GO_VERSION}-alpine AS base
 
@@ -11,7 +11,7 @@ RUN --mount=target=. \
     -o "/release/goss" \
     ./cmd/goss
 
-FROM alpine:3.19
+FROM alpine:3.23
 
 COPY --from=base /release/* /usr/bin/
 

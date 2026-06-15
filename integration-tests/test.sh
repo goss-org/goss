@@ -17,13 +17,7 @@ cd integration-tests
 
 cp "../release/goss-linux-$arch" "goss/$os/"
 image_name="$container_repository/goss_integration_$os"
-# Run build if Dockerfile has changed but hasn't been pushed
-if ! md5sum -c "Dockerfile_${os}.md5"; then
-  $DOCKER_BIN build -t "$image_name:latest" --file "Dockerfile_$os" .
-# Pull if image doesn't exist locally
-elif ! $DOCKER_BIN images | grep "$image_name";then
-  $DOCKER_BIN pull "$image_name"
-fi
+$DOCKER_BIN pull "$image_name"
 
 container_name="goss_int_test_${os}_${arch}"
 docker_exec() {
