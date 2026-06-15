@@ -3,6 +3,11 @@
 {
 set -e
 
+if [ "$(id -u)" != "0" ]; then
+  echo "warning: you probably need to be running this as root" >&2
+  exit 1
+fi
+
 LATEST_URL="https://github.com/goss-org/goss/releases/latest"
 LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
 LATEST=${LATEST_EFFECTIVE##*/}
@@ -22,16 +27,28 @@ INSTALL_LOC="${GOSS_DST%/}/goss"
 DGOSS_INSTALL_LOC="${GOSS_DST%/}/dgoss"
 touch "$INSTALL_LOC" || { echo "ERROR: Cannot write to $GOSS_DST set GOSS_DST elsewhere or use sudo"; exit 1; }
 
-arch=""
-if [ "$(uname -m)" = "x86_64" ]; then
+# Reference: https://wiki.debian.org/ArchitectureSpecificsMemo
+case "$(uname -m)" in
+  x86_64)
     arch="amd64"
-elif [ "$(uname -m)" = "aarch32" ]; then
+    ;;
+  aarch32)
     arch="arm"
-elif [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
+    ;;
+  aarch64|arm64)
     arch="arm64"
-else
+    ;;
+  x390|s390x)
+    arch="s390x"
+    ;;
+  i?86)
     arch="386"
-fi
+    ;;
+  *)
+    echo "error: unknown/unsupported architecture: $(uname -m)" >&2
+    exit 1
+    ;;
+esac
 
 url="https://github.com/goss-org/goss/releases/download/$GOSS_VER/goss-linux-$arch"
 
