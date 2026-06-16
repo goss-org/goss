@@ -62,7 +62,7 @@ func TestMatchers(t *testing.T) {
 				t.Fatal(err)
 			}
 			actualOut := output.String()
-			actualOut = sanitizeOutput(actualOut)
+			actualOut = sanitizeTrailingWhitespace(sanitizeOutput(actualOut))
 
 			if *update {
 				os.WriteFile(outFile, []byte(actualOut), 0644)
@@ -71,7 +71,7 @@ func TestMatchers(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			wantOut := string(wantOutB)
+			wantOut := sanitizeTrailingWhitespace(string(wantOutB))
 			if actualOut != wantOut {
 				assert.Equal(t, wantOut, actualOut)
 			}
@@ -86,4 +86,9 @@ func sanitizeOutput(s string) string {
 	// Remove duration time
 	re := regexp.MustCompile(`\d\.\d\d\ds`)
 	return re.ReplaceAllString(s, "")
+}
+
+func sanitizeTrailingWhitespace(s string) string {
+	re := regexp.MustCompile(` +\n`)
+	return re.ReplaceAllString(s, "\n")
 }
