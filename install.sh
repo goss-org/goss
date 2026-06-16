@@ -3,11 +3,6 @@
 {
 set -e
 
-if [ "$(id -u)" != "0" ]; then
-  echo "warning: you probably need to be running this as root" >&2
-  exit 1
-fi
-
 LATEST_URL="https://github.com/goss-org/goss/releases/latest"
 LATEST_EFFECTIVE=$(curl -s -L -o /dev/null ${LATEST_URL} -w '%{url_effective}')
 LATEST=${LATEST_EFFECTIVE##*/}
