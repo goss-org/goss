@@ -14,7 +14,7 @@ import (
 // ConfigOption manipulates Config
 type ConfigOption func(c *Config) error
 
-// Config is the runtime configuration for the goss system, the cli.Context gets
+// Config is the runtime configuration for the goss system, the cli.Command gets
 // converted to this and it allows other packages to embed goss by creating this
 // structure and using it when adding, validating etc.
 //
