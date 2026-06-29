@@ -103,7 +103,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
-		log.Printf("Stale cache[%s], running tests", cacheKey)
+		log.Printf("[INFO] Stale cache[%s], running tests", cacheKey)
 		h.sys = system.New(h.c.PackageManager)
 		tra = h.validate()
 		h.cache.SetDefault(cacheKey, tra)
