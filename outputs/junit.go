@@ -47,11 +47,18 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 				endTime = testResult.EndTime
 			}
 			duration := strconv.FormatFloat(testResult.Duration.Seconds(), 'f', 3, 64)
-			summary[testCount] = "<testcase name=\"" +
-				testResult.ResourceType + " " +
-				escapeString(testResult.ResourceId) + " " +
-				testResult.Property + "\" " +
-				"time=\"" + duration + "\">\n"
+      testcaseName := fmt.Sprintf("%s %s %s",
+        testResult.ResourceType,
+        escapeString(testResult.ResourceId),
+        testResult.Property);
+      if (testResult.Title != "") {
+        testcaseName = escapeString(testResult.Title);
+      }
+      summary[testCount] = fmt.Sprintf("<testcase name=\"%s\" time=\"%s\">\n",
+        testcaseName,
+        duration,
+      );
+
 			if testResult.Result == resource.FAIL {
 				summary[testCount] += "<system-err>" +
 					escapeString(humanizeResult(testResult, true, includeRaw)) +
