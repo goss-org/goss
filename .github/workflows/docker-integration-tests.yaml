@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Get file list
         id: set-matrix
         run: |
@@ -41,12 +41,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -73,7 +73,7 @@ jobs:
             rocks.goss.dockerfile-md5=${{ steps.md5_result.outputs.md5 }}
 
       - name: Build and push tag
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: integration-tests
           file: ${{ matrix.dockerfile }}
