@@ -169,6 +169,8 @@ command:
     stderr: []
     timeout: 10000 # in milliseconds
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
@@ -193,6 +195,8 @@ dns:
     - ::1
     server: 8.8.8.8 # Also supports server:port
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
+    retry_count: 1  # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 It is possible to validate the following types of DNS records, but requires the ```server``` attribute be set:
@@ -217,6 +221,8 @@ dns:
     server: 208.67.222.222
     addrs:
     - "a.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate a PTR record
   PTR:8.8.8.8:
@@ -224,6 +230,8 @@ dns:
     server: 8.8.8.8
     addrs:
     - "dns.google."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate and SRV record
   SRV:_https._tcp.dnstest.io:
@@ -232,6 +240,8 @@ dns:
     addrs:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
 ```
 
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
@@ -486,6 +496,8 @@ package:
     versions:
     - 2.2.15
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 10000  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 !!! note

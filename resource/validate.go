@@ -126,6 +126,29 @@ func ValidateValue(res ResourceRead, property string, expectedValue any, actual 
 	return ValidateGomegaValue(res, property, expectedValue, actual, skip)
 }
 
+func ValidateValueWithRetry(res ResourceRead, property string, expectedValue any, actualFunc func() (any, error), skip bool, retryCount int, retryDelay RetryDelay) TestResult {
+	if skip {
+		// Return skip result immediately
+		skipFunc := func() (any, error) { return nil, nil }
+		return ValidateValue(res, property, expectedValue, skipFunc, skip)
+	}
+
+	var lastResult TestResult
+
+	runWithRetry(retryCount, retryDelay, func() bool {
+		actual, err := actualFunc()
+
+		// Create a function that returns the current result
+		currentFunc := func() (any, error) { return actual, err }
+		result := ValidateValue(res, property, expectedValue, currentFunc, skip)
+		lastResult = result
+
+		return result.Result == SUCCESS
+	})
+
+	return lastResult
+}
+
 func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()

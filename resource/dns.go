@@ -11,16 +11,18 @@ import (
 )
 
 type DNS struct {
-	Title       string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta        meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id          string  `json:"-" yaml:"-"`
-	Resolve     string  `json:"resolve,omitempty" yaml:"resolve,omitempty"`
-	Resolveable matcher `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
-	Resolvable  matcher `json:"resolvable" yaml:"resolvable"`
-	Addrs       matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
-	Timeout     int     `json:"timeout" yaml:"timeout"`
-	Server      string  `json:"server,omitempty" yaml:"server,omitempty"`
-	Skip        bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title       string     `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta        meta       `json:"meta,omitempty" yaml:"meta,omitempty"`
+	id          string     `json:"-" yaml:"-"`
+	Resolve     string     `json:"resolve,omitempty" yaml:"resolve,omitempty"`
+	Resolveable matcher    `json:"resolveable,omitempty" yaml:"resolveable,omitempty"`
+	Resolvable  matcher    `json:"resolvable" yaml:"resolvable"`
+	Addrs       matcher    `json:"addrs,omitempty" yaml:"addrs,omitempty"`
+	Timeout     int        `json:"timeout" yaml:"timeout"`
+	Server      string     `json:"server,omitempty" yaml:"server,omitempty"`
+	RetryCount  int        `json:"retry_count,omitempty" yaml:"retry_count,omitempty"`
+	RetryDelay  RetryDelay `json:"retry_delay,omitempty" yaml:"retry_delay,omitempty"`
+	Skip        bool       `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -50,6 +52,8 @@ func (d *DNS) GetResolve() string {
 	}
 	return d.id
 }
+func (d *DNS) GetRetryCount() int        { return d.RetryCount }
+func (d *DNS) GetRetryDelay() RetryDelay { return d.RetryDelay }
 
 func (d *DNS) Validate(sys *system.System) []TestResult {
 	ctx := context.WithValue(context.Background(), idKey{}, d.ID())
@@ -58,19 +62,34 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 		d.Timeout = 500
 	}
 
-	sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
-
 	var results []TestResult
 	// Backwards compatibility hack for now
 	if d.Resolvable == nil {
 		d.Resolvable = d.Resolveable
 	}
-	results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
+	// Retry logic for resolvable
+	if d.RetryCount > 0 {
+		results = append(results, ValidateValueWithRetry(d, "resolvable", d.Resolvable, func() (any, error) {
+			sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+			return sysDNS.Resolvable()
+		}, skip, d.RetryCount, d.RetryDelay))
+	} else {
+		sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+		results = append(results, ValidateValue(d, "resolvable", d.Resolvable, sysDNS.Resolvable, skip))
+	}
 	if shouldSkip(results) {
 		skip = true
 	}
 	if d.Addrs != nil {
-		results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs, skip))
+		if d.RetryCount > 0 {
+			results = append(results, ValidateValueWithRetry(d, "addrs", d.Addrs, func() (any, error) {
+				sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+				return sysDNS.Addrs()
+			}, skip, d.RetryCount, d.RetryDelay))
+		} else {
+			sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
+			results = append(results, ValidateValue(d, "addrs", d.Addrs, sysDNS.Addrs, skip))
+		}
 	}
 	return results
 }
