@@ -1,0 +1,108 @@
+---
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: binaries
+    binary: goss
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+      - s390x
+    ignore:
+      - goos: windows
+        goarch: s390x
+      - goos: windows
+        goarch: "386"
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+      - goos: darwin
+        goarch: s390x
+      - goos: darwin
+        goarch: "386"
+      - goos: darwin
+        goarch: arm
+    main: ./cmd/goss
+    flags:
+      - -trimpath
+    ldflags:
+      - "-s -w -X github.com/goss-org/goss/util.Version={{ .Version }}"
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - formats:
+      - tar.gz
+    id: archives
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - README.md
+
+dockers_v2:
+  - id: images
+    ids:
+      - binaries
+    labels:
+      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.description": "Quick and Easy server testing/validation"
+      "org.opencontainers.image.licenses": "Apache-2.0"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.source": "{{ .GitURL }}"
+      "org.opencontainers.image.title": "{{ .ProjectName }}"
+      "org.opencontainers.image.url": "{{ .GitURL }}"
+      "org.opencontainers.image.version": "{{ .Version }}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    disable: "{{ .IsSnapshot }}"
+    images:
+      - "ghcr.io/goss-org/goss"
+    tags:
+      - "v{{ .Version }}"
+      - "{{ if .IsNightly }}nightly{{ end }}"
+      - "{{ if not .IsNightly }}latest{{ end }}"
+
+checksum:
+  algorithm: sha256
+  name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
+
+release:
+  extra_files:
+    - glob: ./extras/*goss/*goss*
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

@@ -88,6 +88,53 @@ chmod +rx /usr/local/bin/dgoss
 make build
 ```
 
+Alternatively, you can build it with [goreleaser](https://goreleaser.com/). To
+build a binary, use `gorelease build`, and to only build for the same OS and
+architecture as the machine you're building on, include the `--single-target`
+flag. The `--clean` flag will clean up any existing builds, and `--snapshot`
+will allow you to build against something other than a tag.
+
+Here's an example:
+
+```console
+$ goreleaser build --clean --single-target --snapshot
+  • skipping validate...
+  • cleaning distribution directory
+  • loading environment variables
+  • getting and validating git state
+    • ignoring errors because this is a snapshot     error=git doesn't contain any tags - either add a tag or use --snapshot
+    • using tags                                     previous=<unknown> current=v0.0.0
+    • pipe skipped or partially skipped              reason=disabled during snapshot mode
+  • parsing tag
+  • setting defaults
+  • partial
+  • snapshotting
+    • building snapshot...                           version=0.0.1-next
+  • running before hooks
+    • running                                        hook=go mod tidy
+  • ensuring distribution directory
+  • setting up metadata
+  • writing release metadata
+  • loading go mod information
+  • build prerequisites
+  • building binaries
+    • partial build                                  match=target=linux_arm64_v8.0
+    • building                                       paths=cmd/goss binaries=goss target=linux_arm64_v8.0
+      • took: 31s
+  • writing artifacts metadata
+  • build succeeded after 31s
+  • thanks for using GoReleaser!
+$ tree dist
+dist
+├── artifacts.json
+├── binaries_linux_arm64_v8.0
+│   └── goss                            <- your binary
+├── config.yaml
+└── metadata.json
+
+2 directories, 4 files
+```
+
 <!-- --8<-- [end:install] -->
 
 ## Full Documentation

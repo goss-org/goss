@@ -22,22 +22,36 @@ INSTALL_LOC="${GOSS_DST%/}/goss"
 DGOSS_INSTALL_LOC="${GOSS_DST%/}/dgoss"
 touch "$INSTALL_LOC" || { echo "ERROR: Cannot write to $GOSS_DST set GOSS_DST elsewhere or use sudo"; exit 1; }
 
-arch=""
-if [ "$(uname -m)" = "x86_64" ]; then
-    arch="amd64"
-elif [ "$(uname -m)" = "aarch32" ]; then
+# Reference: https://wiki.debian.org/ArchitectureSpecificsMemo
+case "$(uname -m)" in
+  x86_64)
+    arch="x86_64"
+    ;;
+  aarch32|arm)
     arch="arm"
-elif [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then
+    ;;
+  aarch64|arm64)
     arch="arm64"
-else
-    arch="386"
-fi
+    ;;
+  s390x)
+    arch="s390x"
+    ;;
+  i?86)
+    arch="i386"
+    ;;
+  *)
+    echo "error: unknown/unsupported architecture: $(uname -m)" >&2
+    exit 1
+    ;;
+esac
 
-url="https://github.com/goss-org/goss/releases/download/$GOSS_VER/goss-linux-$arch"
+url="https://github.com/goss-org/goss/releases/download/$GOSS_VER/goss_${GOSS_VER#v}_linux_$arch.tar.gz"
 
 echo "Downloading $url"
-curl -L "$url" -o "$INSTALL_LOC"
-chmod +rx "$INSTALL_LOC"
+tmp=$(mktemp -d)
+trap "rm -rf $tmp" EXIT
+curl -L "$url" | tar xz -C "$tmp"
+mv "$tmp/goss" "$INSTALL_LOC"
 echo "Goss $GOSS_VER has been installed to $INSTALL_LOC"
 echo "goss --version"
 "$INSTALL_LOC" --version
