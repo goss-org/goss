@@ -38,6 +38,7 @@ GLOBAL OPTIONS:
 :   The file to use when reading/writing tests. Use `--gossfile -` or `-g -` to read from `STDIN`.
 
     Valid formats:
+
     * `yaml` *(default)*
     * `json`
 
@@ -62,6 +63,7 @@ GLOBAL OPTIONS:
 ## Commands
 
 Commands are the actions goss can run.
+
 * [add](#add): add a single test for a resource
 * [autoadd](#autoadd): automatically add multiple tests for a resource
 * [render](#render): renders and outputs the gossfile, importing all included gossfiles
@@ -123,6 +125,7 @@ A sub-command *resource type* has to be provided when running `add`.
 Automatically [adds](#add) all **existing** resources matching the provided argument.
 
 Will automatically add the following matching resources:
+
 * `file` - only if argument contains `/`
 * `group`
 * `package`
@@ -132,6 +135,7 @@ Will automatically add the following matching resources:
 * `user`
 
 Will **NOT** automatically add:
+
 * `addr`
 * `command` - for safety
 * `dns`
@@ -264,6 +268,7 @@ The end-point will return the stest results in the format requested and an http 
 :   Goss logging verbosity level (default: `INFO`).
     Lower levels of tracing include all upper levels traces also (ie. `INFO` include `WARN` and `ERROR`).
     `level` can be one of:
+
     - `ERROR` - Critical errors that halt goss or significantly affect its functionality, requiring immediate intervention.
     - `WARN` - Non-critical issues that may require attention, such as overwritten keys or deprecated features.
     - `INFO` - General operational messages, useful for tasks where a more structured output is needed (e.g. goss serve).
@@ -302,6 +307,7 @@ Exits with status 0 on success, non-0 otherwise.
 
 `--format <format>`, `-f <format>`
 :   Output format. Can be one of:
+
     - `documentation` - Verbose test results
     - `json` - Detailed test result on a single line (See `pretty` format option)
     - `junit`
@@ -313,6 +319,7 @@ Exits with status 0 on success, non-0 otherwise.
 
 `--format-options`, `-o`
 :   Output format option:
+
     - `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
     - `verbose`  - Gives verbose output. Applies to `nagios` and `prometheus` output
     - `pretty`   - Pretty printing for the `json` output
@@ -321,7 +328,8 @@ Exits with status 0 on success, non-0 otherwise.
 `--loglevel <level>`, `-L <level>`
 :   Goss logging verbosity level (default: `INFO`).
     Lower levels of tracing include all upper levels traces also (ie. `INFO` includes `WARN`, `ERROR` and `FATAL` outputs).
-    `level` can be one of :
+    `level` can be one of:
+
     - `TRACE` - Print details for each check, successful or not and all incoming healthchecks
     - `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
     - `INFO` - Print summary when all checks run OK
