@@ -251,6 +251,7 @@ func WithDisabledResourceTypes(t ...string) ConfigOption {
 
 type OutputConfig struct {
 	FormatOptions []string
+	SpecFile      string
 }
 
 type format string

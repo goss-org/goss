@@ -119,6 +119,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	format.UseStringerRepresentation = true
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
+		SpecFile:      c.Spec,
 	}
 
 	sys := system.New(c.PackageManager)
