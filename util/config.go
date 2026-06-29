@@ -52,7 +52,7 @@ type Config struct {
 	CAFile                string
 	CertFile              string
 	KeyFile               string
-	Vars                  string
+	VarsFiles             []string
 	VarsInline            string
 	DisabledResourceTypes []string
 }
@@ -90,7 +90,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		Spec:                  "",
 		Timeout:               0,
 		Username:              "",
-		Vars:                  "",
+		VarsFiles:             []string{},
 		VarsInline:            "",
 	}
 
@@ -206,10 +206,10 @@ func WithDebug() ConfigOption {
 	}
 }
 
-// WithVarsFile is a json or yaml file containing variables to pass to the validator
-func WithVarsFile(file string) ConfigOption {
+// WithVarsFiles are json or yaml files containing variables to pass to the validator
+func WithVarsFiles(files []string) ConfigOption {
 	return func(c *Config) error {
-		c.Vars = file
+		c.VarsFiles = files
 		return nil
 	}
 }

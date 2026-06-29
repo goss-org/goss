@@ -38,7 +38,7 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 	color.NoColor = true
 	cache := cache.New(c.Cache, 30*time.Second)
 
-	cfg, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	cfg, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}

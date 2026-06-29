@@ -16,10 +16,10 @@ import (
 type TemplateFilter func([]byte) ([]byte, error)
 
 // NewTemplateFilter creates a new Template Filter based in the file and inline variables.
-func NewTemplateFilter(varsFile string, varsInline string) (func([]byte) ([]byte, error), error) {
-	vars, err := loadVars(varsFile, varsInline)
+func NewTemplateFilter(varsFiles []string, varsInline string) (func([]byte) ([]byte, error), error) {
+	vars, err := loadVars(varsFiles, varsInline)
 	if err != nil {
-		return nil, fmt.Errorf("failed while loading vars file %q: %v", varsFile, err)
+		return nil, fmt.Errorf("failed while loading vars file %q: %v", varsFiles, err)
 	}
 
 	tVars := &TmplVars{Vars: vars}

@@ -43,8 +43,8 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		Spec:              c.String("gossfile"),
 		Timeout:           c.Duration("timeout"),
 		Username:          c.String("username"),
-		Vars:              c.String("vars"),
 		VarsInline:        c.String("vars-inline"),
+		VarsFiles:         c.StringSlice("vars"),
 	}
 
 	if c.Bool("no-color") {
@@ -86,7 +86,7 @@ func main() {
 				Usage:   "Goss file to read from / write to",
 				Sources: cli.EnvVars("GOSS_FILE"),
 			},
-			&cli.StringFlag{
+			&cli.StringSliceFlag{
 				Name:    "vars",
 				Usage:   "json/yaml file containing variables for template",
 				Sources: cli.EnvVars("GOSS_VARS"),

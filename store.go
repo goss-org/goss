@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"dario.cat/mergo"
 	"gopkg.in/yaml.v3"
 
 	"github.com/goss-org/goss/resource"
@@ -73,10 +74,17 @@ func (t *TmplVars) Env() map[string]string {
 	return env
 }
 
-func loadVars(varsFile string, varsInline string) (map[string]any, error) {
-	vars, err := varsFromFile(varsFile)
-	if err != nil {
-		return nil, fmt.Errorf("loading vars file '%s'\n%w", varsFile, err)
+func loadVars(varsFiles []string, varsInline string) (map[string]any, error) {
+	mergedVars := map[string]any{}
+
+	// Later defined vars file overwrites values of the previous files
+	// in places where non-empty keys overlap.
+	for _, varsFile := range varsFiles {
+		vars, err := varsFromFile(varsFile)
+		if err != nil {
+			return nil, fmt.Errorf("loading vars file '%s'\n%w", varsFile, err)
+		}
+		mergo.Merge(&mergedVars, vars, mergo.WithOverride)
 	}
 
 	varsExtra, err := varsFromString(varsInline)
@@ -84,11 +92,12 @@ func loadVars(varsFile string, varsInline string) (map[string]any, error) {
 		return nil, fmt.Errorf("loading inline vars\n%w", err)
 	}
 
+	// Note: This algorithm replaces value under key even if it's nested map
 	for k, v := range varsExtra {
-		vars[k] = v
+		mergedVars[k] = v
 	}
 
-	return vars, nil
+	return mergedVars, nil
 }
 
 func varsFromFile(varsFile string) (map[string]any, error) {
@@ -162,7 +171,7 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 func RenderJSON(c *util.Config) (string, error) {
 	var err error
 	debug = c.Debug
-	currentTemplateFilter, err = NewTemplateFilter(c.Vars, c.VarsInline)
+	currentTemplateFilter, err = NewTemplateFilter(c.VarsFiles, c.VarsInline)
 	if err != nil {
 		return "", err
 	}

@@ -129,11 +129,22 @@ func Test_loadVars(t *testing.T) {
 	fileNil, fileNilClose := fileMaker(``)
 	defer fileNilClose()
 
-	fileSimple, fileSimpleClose := fileMaker(`{a: a}`)
-	defer fileSimpleClose()
+	fileSimple1, fileSimpleClose1 := fileMaker(`{a: a}`)
+	defer fileSimpleClose1()
+	fileSimple2, fileSimpleClose2 := fileMaker(`{b: b}`)
+	defer fileSimpleClose2()
+	fileSimple3, fileSimpleClose3 := fileMaker(`{a: overriden, c: c}`)
+	defer fileSimpleClose3()
+
+	fileComplex1, fileComplexClose1 := fileMaker(`{vars: {a: a}}`)
+	defer fileComplexClose1()
+	fileComplex2, fileComplexClose2 := fileMaker(`{vars: {b: b}}`)
+	defer fileComplexClose2()
+	fileComplex3, fileComplexClose3 := fileMaker(`{vars: {a: overriden}}`)
+	defer fileComplexClose3()
 
 	type args struct {
-		varsFile   string
+		varsFiles  []string
 		varsInline string
 	}
 	tests := []struct {
@@ -145,7 +156,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "both_empty",
 			args: args{
-				varsFile:   fileEmpty,
+				varsFiles:  []string{fileEmpty},
 				varsInline: `{}`,
 			},
 			want:    map[string]any{},
@@ -154,7 +165,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "both_nil",
 			args: args{
-				varsFile:   fileNil,
+				varsFiles:  []string{fileNil},
 				varsInline: `{}`,
 			},
 			want:    map[string]any{},
@@ -163,7 +174,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "file_empty",
 			args: args{
-				varsFile:   fileEmpty,
+				varsFiles:  []string{fileEmpty},
 				varsInline: `{b: b}`,
 			},
 			want: map[string]any{
@@ -174,7 +185,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "inline_empty",
 			args: args{
-				varsFile:   fileSimple,
+				varsFiles:  []string{fileSimple1},
 				varsInline: `{}`,
 			},
 			want: map[string]any{
@@ -185,7 +196,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "no_overwrite",
 			args: args{
-				varsFile:   fileSimple,
+				varsFiles:  []string{fileSimple1},
 				varsInline: `{b: b}`,
 			},
 			want: map[string]any{
@@ -197,7 +208,7 @@ func Test_loadVars(t *testing.T) {
 		{
 			name: "overwrite",
 			args: args{
-				varsFile:   fileSimple,
+				varsFiles:  []string{fileSimple1},
 				varsInline: `{a: c, b: b}`,
 			},
 			want: map[string]any{
@@ -206,10 +217,75 @@ func Test_loadVars(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "multiple files, non-overlapped keys, no inline vars",
+			args: args{
+				varsFiles:  []string{fileSimple1, fileSimple2},
+				varsInline: `{}`,
+			},
+			want: map[string]any{
+				"a": "a",
+				"b": "b",
+			},
+			wantErr: false,
+		},
+		{
+			name: "multiple files, overlapped keys, no inline vars",
+			args: args{
+				varsFiles:  []string{fileSimple1, fileSimple2, fileSimple3},
+				varsInline: `{}`,
+			},
+			want: map[string]any{
+				"a": "overriden",
+				"b": "b",
+				"c": "c",
+			},
+			wantErr: false,
+		},
+		{
+			name: "multiple files, overlapped keys, inline vars",
+			args: args{
+				varsFiles:  []string{fileSimple1, fileSimple2, fileSimple3},
+				varsInline: `{c: overriden, b: b}`,
+			},
+			want: map[string]any{
+				"a": "overriden",
+				"b": "b",
+				"c": "overriden",
+			},
+			wantErr: false,
+		},
+		{
+			name: "multiple nested files",
+			args: args{
+				varsFiles:  []string{fileComplex1, fileComplex2, fileComplex3},
+				varsInline: `{}`,
+			},
+			want: map[string]any{
+				"vars": map[string]any{
+					"a": "overriden",
+					"b": "b",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "multiple nested files and inline variables",
+			args: args{
+				varsFiles:  []string{fileComplex1, fileComplex2, fileComplex3},
+				varsInline: `{vars: { c: c }}`,
+			},
+			want: map[string]any{
+				"vars": map[string]any{
+					"c": "c",
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := loadVars(tt.args.varsFile, tt.args.varsInline)
+			got, err := loadVars(tt.args.varsFiles, tt.args.varsInline)
 
 			assert.Equal(t, tt.want, got, "map contents")
 			assert.Equal(t, tt.wantErr, err != nil, "has error")
