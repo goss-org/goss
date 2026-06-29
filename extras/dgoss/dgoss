@@ -102,7 +102,7 @@ GOSS_PATH="${GOSS_PATH:-$(which goss 2> /dev/null || true)}"
 [[ ${GOSS_WAIT_OPTS+x} ]] || GOSS_WAIT_OPTS="-r 30s -s 1s > /dev/null"
 GOSS_SLEEP=${GOSS_SLEEP:-0.2}
 
-[[ $CONTAINER_RUNTIME =~ ^(docker|podman)$ ]] || { error "Runtime must be one of docker or podman"; }
+[[ $CONTAINER_RUNTIME =~ ^(docker|nerdctl|podman)$ ]] || { error "Runtime must be one of docker, nerdctl or podman"; }
 
 case "$1" in
     run)

@@ -53,7 +53,7 @@ checks whether the conditions in the file are met. Only then does goss start the
 actual check with the file `./goss.yaml`. This is used, for example, to wait
 until a certain port is open before executing the tests.
 
-In most cases one can just substitute the runtime command (`docker` or `podman`)
+In most cases one can just substitute the runtime command (`docker`, `nerdctl` or `podman`)
 for the dgoss command, for example:
 
 **run:**
@@ -165,5 +165,5 @@ Location of the temporary directory used by dgoss. (Default `'$(mktemp -d /tmp/t
 
 #### CONTAINER_RUNTIME
 
-Container runtime to use - `docker` or `podman`. Defaults to `docker`. Note that `podman` requires a run command to keep
+Container runtime to use - `docker`, `nerdctl` or `podman`. Defaults to `docker`. Note that `podman` requires a run command to keep
 the container running. This defaults to `sleep infinity` in case only an image is passed to `dgoss` commands.
