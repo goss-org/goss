@@ -89,6 +89,23 @@ extra:
     - icon: fontawesome/brands/medium
       link: https://medium.com/@aelsabbahy
 
+nav:
+  - Home: index.md
+  - installation.md
+  - quickstart.md
+  - container_image.md
+  - Command Reference: cli.md
+  - The gossfile: gossfile.md
+  - migrations.md
+  - platforms.md
+  - Containers:
+      - Docker compose: containers/docker-compose.md
+      - Docker: containers/docker.md
+      - Kubernetes: containers/kubernetes.md
+  - Contributing: contributing.md
+  - changelog.md
+  - license.md
+
 watch:
   - README.md
   - LICENSE
