@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -10,6 +11,8 @@ import (
 	"github.com/moby/sys/mountinfo"
 	"github.com/samber/lo"
 )
+
+var errMountpointNotFound = errors.New("Mountpoint not found")
 
 type Mount interface {
 	MountPoint() string
@@ -131,7 +134,7 @@ func getMount(mountpoint string, timeout int) (*mountinfo.Info, error) {
 			return
 		}
 		if len(entries) == 0 {
-			e1 <- fmt.Errorf("Mountpoint not found")
+			e1 <- errMountpointNotFound
 			return
 		}
 		c1 <- entries[0]

@@ -230,7 +230,7 @@ func getUserForUid(uid int) (string, error) {
 
 	cmd := util.NewCommand("getent", "passwd", strconv.Itoa(uid))
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: no matching entries in passwd file. getent passwd: %v", err)
+		return "", fmt.Errorf("Error: no matching entries in passwd file. getent passwd: %w", err)
 	}
 	userS := strings.Split(cmd.Stdout.String(), ":")[0]
 
@@ -244,7 +244,7 @@ func getGroupForGid(gid int) (string, error) {
 
 	cmd := util.NewCommand("getent", "group", strconv.Itoa(gid))
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("Error: no matching entries in passwd file. getent group: %v", err)
+		return "", fmt.Errorf("Error: no matching entries in passwd file. getent group: %w", err)
 	}
 	groupS := strings.Split(cmd.Stdout.String(), ":")[0]
 

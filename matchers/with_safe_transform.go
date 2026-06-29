@@ -34,7 +34,7 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 		m.wasTransformed = true
 	}
 	if err != nil {
-		return false, fmt.Errorf("%#v: %s", m.Transform, err)
+		return false, fmt.Errorf("%#v: %w", m.Transform, err)
 	}
 	//log.Printf("%#v: output: %v", m.Transform, m.transformedValue)
 	return m.Matcher.Match(m.transformedValue)
