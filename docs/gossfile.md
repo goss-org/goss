@@ -750,12 +750,7 @@ These will convert the system attribute to a string prior to matching.
 * `have-suffix: suf` - Checks if string ends with "suf"
 * `match-regexp: '.*'` - Checks if string matches regexp
 * `contain-substring: '2'` - Checks if string contains "2"
-
 * `'55'` - Checks that the numeric is "55" when converted to string
-* `have-prefix: pre` - Checks if string starts with "pre"
-* `have-suffix: suf` - Checks if string ends with "suf"
-* `match-regexp: '.*'` - Checks if string matches regexp
-* `contain-substring: '2'` - Checks if string contains "2"
 
 !!! example
     ```yaml
