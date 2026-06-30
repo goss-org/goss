@@ -1,6 +1,6 @@
 # Goss - Quick and Easy server validation
 
-[![Build Status](https://travis-ci.org/goss-org/goss.svg?branch=master)](https://travis-ci.org/goss-org/goss)
+[![Integration tests](https://github.com/goss-org/goss/actions/workflows/golangci.yaml/badge.svg)](https://github.com/goss-org/goss/actions/workflows/golangci.yaml)
 [![Github All Releases](https://img.shields.io/github/downloads/goss-org/goss/total.svg?maxAge=604800)](https://github.com/goss-org/goss/releases)
 [![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.rocks/)
 **
@@ -199,6 +199,7 @@ See #793 for screenshots.
 For example, to configure the Json schema in JetBrains intellij IDEA,
 follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom),
 with arguments such as:
+
 * `schema url=https://goss.rocks/schema.yaml`
 * `schema version=Json schema version 7`
 * `file path pattern=*/goss.yaml`
@@ -274,7 +275,7 @@ rendered_goss.yaml: fail: process.chrome: skip is required
 rendered_goss.yaml: fail: service.sshd: skip is required
 ```
 
-Full list of available Json schema validators can be found in <https://json-schema.org/implementations.html#validator-command%20line>
+JSON Schema maintains a [table of validators](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=validator&environments=Command+Line&showObsolete=false).
 
 <!-- --8<-- [end:quickstart] -->
 <!-- --8<-- [start:about] -->

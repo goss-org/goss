@@ -56,7 +56,6 @@ markdown_extensions:
   - attr_list
   - def_list
   - md_in_html
-  - mdx_breakless_lists
   - tables
   - pymdownx.details
   - pymdownx.emoji:
@@ -81,16 +80,31 @@ markdown_extensions:
       check_paths: true
   - pymdownx.superfences
 
-copyright: Copyright &copy; 2015 - 2024 Ahmed Elsabbahy
+copyright: Copyright &copy; 2015&ndash;2026 Ahmed Elsabbahy
 
 extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/goss-org/goss
-    - icon: simple/travisci
-      link: https://travis-ci.org/goss-org/goss
     - icon: fontawesome/brands/medium
       link: https://medium.com/@aelsabbahy
+
+nav:
+  - Home: index.md
+  - installation.md
+  - quickstart.md
+  - container_image.md
+  - Command Reference: cli.md
+  - The gossfile: gossfile.md
+  - migrations.md
+  - platforms.md
+  - Containers:
+      - Docker compose: containers/docker-compose.md
+      - Docker: containers/docker.md
+      - Kubernetes: containers/kubernetes.md
+  - Contributing: contributing.md
+  - changelog.md
+  - license.md
 
 watch:
   - README.md

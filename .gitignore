@@ -24,3 +24,4 @@ tmp/
 /.venv
 ## MkDocs rendered site
 /site
+.cache/
