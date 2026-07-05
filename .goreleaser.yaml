@@ -22,6 +22,7 @@ builds:
       - arm
       - arm64
       - s390x
+      - ppc64le
     ignore:
       - goos: windows
         goarch: s390x
@@ -31,12 +32,16 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm64
+      - goos: windows
+        goarch: ppc64le
       - goos: darwin
         goarch: s390x
       - goos: darwin
         goarch: "386"
       - goos: darwin
         goarch: arm
+      - goos: darwin
+        goarch: ppc64le
     main: ./cmd/goss
     flags:
       - -trimpath

@@ -39,6 +39,9 @@ case "$(uname -m)" in
   i?86)
     arch="i386"
     ;;
+  ppcle|ppc64le)
+    arch="ppc64le"
+    ;;
   *)
     echo "error: unknown/unsupported architecture: $(uname -m)" >&2
     exit 1
