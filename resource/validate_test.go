@@ -2,10 +2,15 @@ package resource
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"strings"
 	"testing"
+)
+
+var (
+	errSome  = errors.New("some err")
+	errDummy = errors.New("dummy error")
 )
 
 type FakeResource struct {
@@ -45,7 +50,7 @@ func TestValidateValue(t *testing.T) {
 func TestValidateValueErr(t *testing.T) {
 	for _, c := range stringTests {
 		inFunc := func() (any, error) {
-			return c.in2, fmt.Errorf("some err")
+			return c.in2, errSome
 		}
 		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != FAIL {
@@ -108,7 +113,7 @@ func TestValidateContainsErr(t *testing.T) {
 	for _, c := range containsTests {
 		inFunc := func() (io.Reader, error) {
 			reader := strings.NewReader(c.in2)
-			return reader, fmt.Errorf("some err")
+			return reader, errSome
 		}
 		got := ValidateValue(&FakeResource{""}, "", c.in, inFunc, false)
 		if got.Result != FAIL {
@@ -143,7 +148,7 @@ func TestValidateContainsSkip(t *testing.T) {
 
 func TestResultMarshaling(t *testing.T) {
 	inFunc := func() (io.Reader, error) {
-		return nil, fmt.Errorf("dummy error")
+		return nil, errDummy
 	}
 	res := ValidateValue(&FakeResource{}, "", []string{"x"}, inFunc, false)
 	if res.Err == nil {
