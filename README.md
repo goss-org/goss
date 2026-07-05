@@ -2,7 +2,7 @@
 
 [![Integration tests](https://github.com/goss-org/goss/actions/workflows/golangci.yaml/badge.svg)](https://github.com/goss-org/goss/actions/workflows/golangci.yaml)
 [![Github All Releases](https://img.shields.io/github/downloads/goss-org/goss/total.svg?maxAge=604800)](https://github.com/goss-org/goss/releases)
-[![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.rocks/)
+[![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.readthedocs.io/en/stable/)
 **
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
@@ -151,8 +151,8 @@ dist
 
 ### Writing a simple sshd test
 
-An initial set of tests can be derived from the system state by using the [add](https://goss.rocks/cli/#add)
-or [autoadd](https://goss.rocks/cli/#autoadd) commands.
+An initial set of tests can be derived from the system state by using the [add](https://goss.readthedocs.io/en/stable/cli/#add)
+or [autoadd](https://goss.readthedocs.io/en/stable/cli/#autoadd) commands.
 
 Let's write a simple sshd test using autoadd.
 
@@ -207,7 +207,7 @@ Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 ```
 
-* Edit it to use [templates](https://goss.rocks/gossfile/#templates), and run with a vars file
+* Edit it to use [templates](https://goss.readthedocs.io/en/stable/gossfile/#templates), and run with a vars file
 
 ```console
 goss --vars vars.yaml validate
@@ -239,7 +239,7 @@ $ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 Goss files can be manually edited to improve readability and expressiveness of tests.
 
 A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available
-at <https://goss.rocks/schema.yaml> makes it easier to edit simple goss.yaml files in IDEs,
+at <https://goss.readthedocs.io/en/stable/schema.yaml> makes it easier to edit simple goss.yaml files in IDEs,
 providing usual coding assistance such as inline documentation, completion and static analysis.
 See #793 for screenshots.
 
@@ -247,15 +247,15 @@ For example, to configure the Json schema in JetBrains intellij IDEA,
 follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom),
 with arguments such as:
 
-* `schema url=https://goss.rocks/schema.yaml`
+* `schema url=https://goss.readthedocs.io/en/stable/schema.yaml`
 * `schema version=Json schema version 7`
 * `file path pattern=*/goss.yaml`
 
 In addition, Goss files can also be further manually edited (without yet full json support) to use:
 
-* [Patterns](https://goss.rocks/gossfile/#patterns)
-* [Advanced Matchers](https://goss.rocks/gossfile/#advanced-matchers)
-* [Templates](https://goss.rocks/gossfile/#templates)
+* [Patterns](https://goss.readthedocs.io/en/stable/gossfile/#patterns)
+* [Advanced Matchers](https://goss.readthedocs.io/en/stable/gossfile/#advanced-matchers)
+* [Templates](https://goss.readthedocs.io/en/stable/gossfile/#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
@@ -390,6 +390,6 @@ Service:
 * Upstart
 
 [kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
-[platform-feature-parity]: https://goss.rocks/platforms
+[platform-feature-parity]: https://goss.readthedocs.io/en/stable/platforms/
 
 <!-- --8<-- [end:about] -->
