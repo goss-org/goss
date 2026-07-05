@@ -8,9 +8,6 @@ on:
       - "v*"
   workflow_dispatch:
 
-env:
-  PLATFORMS: "linux/amd64,linux/arm64"
-
 jobs:
   goss:
     name: Build and push Docker image
@@ -75,27 +72,13 @@ jobs:
           build-args: |
             GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
             GOSS_VERSION=${{ steps.get-latest-tag.outputs.tag }}-${{ github.ref_name }}+${{ env.COMMIT_SHORT_SHA }}
+          file: ./Dockerfile_trivy
           context: .
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/goss:master
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ env.PLATFORMS }}
-
-      - name: Build release goss image
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        uses: docker/build-push-action@v7
-        with:
-          build-args: |
-            GO_VERSION=${{ env.GO_VERSION_FROM_PROJECT }}
-            GOSS_VERSION=${{ github.ref_name }}
-          context: .
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/goss:latest
-            ghcr.io/${{ github.repository_owner }}/goss:${{ github.ref_name }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ env.PLATFORMS }}
+          platforms: linux/amd64
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.36.0
