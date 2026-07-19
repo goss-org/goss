@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
