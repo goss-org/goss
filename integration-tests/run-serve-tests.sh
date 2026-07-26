@@ -15,35 +15,33 @@ find_open_port() {
   local endAt="${2:?"Supply end of port range"}"
   local how_many="${3:-"1"}"
 
-  if [[ "$(go env GOOS)" == "windows" ]]; then
-    # ss (see unix implementation below) doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
-    # Thanks also to https://blog.netspi.com/15-ways-to-bypass-the-powershell-execution-policy/
-    powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
-  elif [[ "$(go env GOOS)" == "darwin" ]]; then
-    jot -n -r 1 1025 65535
-  else
-    # Thanks to https://unix.stackexchange.com/questions/55913/whats-the-easiest-way-to-find-an-unused-local-port
-    comm -23 \
-      <(seq "${startAt}" "${endAt}" | sort) \
-      <(ss -tan | tail -n +2 | awk '{print $4}' | cut -d':' -f2 | sort -u) |
-      shuf -n "${how_many}" ||
-      shuf -i "${startAt}-${endAt}" -n "${how_many}"
-  fi
+  case "$os" in
+    windows)
+      # ss (see unix implementation below) doesn't exist on Windows, so fall back on just choosing a random number inside the range (since netstat is _slow_).
+      # Thanks also to https://blog.netspi.com/15-ways-to-bypass-the-powershell-execution-policy/
+      powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "integration-tests/Find-AvailablePort.ps1 -startAt ${startAt} -endAt ${endAt}"
+      ;;
+    *)
+      # Binding to port 0 on *nix will yield a free port
+      python3 -c 'import socket; s = socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()'
+      ;;
+  esac
 }
 
 cleanup() {
   binary_name="$(basename "${GOSS_BINARY}")"
   log_info "Killing goss serve process to clean up, exit code for tests was ${?}..."
-  if [[ "${os}" == "darwin" ]]; then
-    killall "${binary_name}"
-  elif [[ "${os}" == "linux" ]]; then
-    killall "${binary_name}"
-  elif [[ "${os}" == "windows" ]]; then
-    # Can't use killall, doesn't exist on Windows. Also would interfere with concurrent runs.
-    ps -W |
-      awk "/${binary_name}/,NF=1" |
-      xargs kill
-  fi
+  case "$os" in
+    windows)
+      # Can't use killall, doesn't exist on Windows. Also would interfere with concurrent runs.
+      ps -W |
+        awk "/${binary_name}/,NF=1" |
+        xargs kill
+      ;;
+    *)
+      killall "${binary_name}"
+      ;;
+  esac
   exit "${ret:-0}"
 }
 trap cleanup EXIT
@@ -63,7 +61,7 @@ args=(
 log_action "\nTesting \`${GOSS_BINARY} ${args[*]}\` ...\n"
 "${GOSS_BINARY}" "${args[@]}" &
 base_url="http://127.0.0.1:${open_port}"
-[[ "$(go env GOOS)" == "darwin" ]] && sleep 2
+[[ "${os}" == "darwin" ]] && sleep 2
 
 assert_response_contains() {
   local url="${1:?"1st arg: url"}"
@@ -76,7 +74,7 @@ assert_response_contains() {
   curl_args+=("${url}")
   log_info "curl ${curl_args[*]}"
   curl="curl"
-  [[ "$(go env GOOS)" == "windows" ]] && curl="curl.exe"
+  [[ "${os}" == "windows" ]] && curl="curl.exe"
   response="$(${curl} "${curl_args[@]}")"
   if grep --quiet "${expectation}" <<<"${response}"; then
     log_success "Passed: ${test_name}"

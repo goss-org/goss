@@ -109,10 +109,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v7
-        with:
-          go-version-file: go.mod
-
       - uses: actions/download-artifact@v8
         with:
           artifact-ids: ${{ needs.build.outputs.artifact-id }}
@@ -125,6 +121,15 @@ jobs:
         shell: bash
         working-directory: integration-tests
         run: |
-          os_name="$(go env GOOS)"
-          ./run-validate-tests.sh $os_name-amd64
-          ./run-serve-tests.sh $os_name-amd64
+          case "${{ matrix.os }}" in
+            macos-*)
+              platform_spec="darwin-arm64"
+              ;;
+            windows-*)
+              platform_spec="windows-amd64"
+              ;;
+            *)
+              echo "Unexpected platform"
+          esac
+          ./run-validate-tests.sh $platform_spec
+          ./run-serve-tests.sh $platform_spec
