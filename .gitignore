@@ -3,6 +3,7 @@
 *.bak
 /goss
 /release
+/dist
 /integration-tests/goss/goss
 /integration-tests/**/*-generated*
 /vendor/
@@ -24,3 +25,4 @@ tmp/
 /.venv
 ## MkDocs rendered site
 /site
+.cache/

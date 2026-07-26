@@ -103,7 +103,7 @@ and then [render](cli.md#render) it.
 ### Schema
 
 A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json)
-available at <https://goss.rocks/schema.yaml>
+available at <https://goss.readthedocs.io/en/stable/schema.yaml>
 makes it easier to edit simple goss.yaml files in IDEs, providing usual coding assistance
 such as inline documentation, completion and static analysis.
 See #793 for screenshots.
@@ -112,7 +112,7 @@ For example, to configure the Json schema in JetBrains intellij IDEA,
 follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom),
 with arguments such as:
 
-* `schema url=https://goss.rocks/schemas/gossfile.yaml`
+* `schema url=https://goss.readthedocs.io/en/stable/schema.yaml`
 * `schema version=Json schema version 7`
 * `file path pattern=*/goss.yaml`
 
@@ -744,12 +744,6 @@ Goss supports advanced matchers by converting YAML input to [gomega](https://ons
 #### String Matchers
 
 These will convert the system attribute to a string prior to matching.
-
-* `'55'` - Checks that the numeric is "55" when converted to string
-* `have-prefix: pre` - Checks if string starts with "pre"
-* `have-suffix: suf` - Checks if string ends with "suf"
-* `match-regexp: '.*'` - Checks if string matches regexp
-* `contain-substring: '2'` - Checks if string contains "2"
 
 * `'55'` - Checks that the numeric is "55" when converted to string
 * `have-prefix: pre` - Checks if string starts with "pre"

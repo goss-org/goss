@@ -19,7 +19,7 @@ type TemplateFilter func([]byte) ([]byte, error)
 func NewTemplateFilter(varsFiles []string, varsInline string) (func([]byte) ([]byte, error), error) {
 	vars, err := loadVars(varsFiles, varsInline)
 	if err != nil {
-		return nil, fmt.Errorf("failed while loading vars file %q: %v", varsFiles, err)
+		return nil, fmt.Errorf("failed while loading vars file %q: %w", varsFiles, err)
 	}
 
 	tVars := &TmplVars{Vars: vars}
