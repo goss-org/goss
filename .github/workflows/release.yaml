@@ -27,7 +27,7 @@ jobs:
       - run: make dgoss-sha256 dcgoss-sha256 kgoss-sha256
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
           check-latest: true
