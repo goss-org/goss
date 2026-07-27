@@ -43,7 +43,9 @@ GLOBAL OPTIONS:
     * `json`
 
 `--vars <varfile>`
-:   Files to read variables from when rendering gossfile [templates](gossfile.md#templates). Can be specified multiple times. When specified multiple times it will load variables from all files. Non-empty map keys that overlap will be overriden by subsequent file that defines them.
+:   Files to read variables from when rendering gossfile [templates](gossfile.md#templates). Can be specified multiple
+    times. When specified multiple times it will load variables from all files. Non-empty map keys that overlap will
+    be overriden by subsequent file that defines them.
 
     Valid formats:
 
