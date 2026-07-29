@@ -26,10 +26,10 @@ curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgos
 chmod +rx /usr/local/bin/dgoss
 
 # Download desired goss version to your preferred location (e.g. v0.4.8)
-curl -L https://github.com/goss-org/goss/releases/download/v0.4.8/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+curl -L "https://github.com/goss-org/goss/releases/download/v0.4.10/goss_0.4.10_linux_x86_64.tar.gz" | tar xz -C ~/Downloads goss
 
 # Set your GOSS_PATH to the above location
-export GOSS_PATH=~/Downloads/goss-linux-amd64
+export GOSS_PATH=~/Downloads/goss
 
 # Set DGOSS_TEMP_DIR to the tmp directory in your home, since /tmp is private on Mac OSX
 export DGOSS_TEMP_DIR=~/tmp
@@ -41,7 +41,9 @@ dgoss run ...
 
 ## Usage
 
-`dgoss [run|edit] <docker_run_params>`
+```
+dgoss [run|edit] <docker_run_params>
+```
 
 ### Run
 
