@@ -40,10 +40,11 @@ jobs:
       - name: Unit tests and coverage
         run: make cov
 
-  integration-test-linux:
+  build:
     needs: [lint, coverage]
-    name: Integration tests (ubuntu-latest)
     runs-on: ubuntu-latest
+    outputs:
+      artifact-id: ${{ steps.artifact-upload.outputs.artifact-id }}
 
     steps:
       - uses: actions/checkout@v7
@@ -51,12 +52,50 @@ jobs:
         with:
           go-version-file: go.mod
 
+      - name: Build binaries for integration tests
+        run: make build
+
+      - uses: actions/upload-artifact@v7
+        id: artifact-upload
+        with:
+          name: binaries
+          retention-days: 1
+          archive: true
+          path: release/*
+
+  integration-test-linux:
+    needs: build
+    name: Integration tests (ubuntu-latest)
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - rockylinux9
+          - bullseye
+          - jammy
+          - arch
+          - alpine3
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
+          path: release
+
+      - shell: bash
+        run: chmod +x release/*
+
       - name: Integration tests
         shell: bash
-        run: make test-int-all
+        working-directory: integration-tests
+        run: ./test.sh ${{ matrix.distro }} amd64
 
   integration-test-other:
-    needs: [lint, coverage]
+    needs: build
     name: Integration tests
     runs-on: ${{ matrix.os }}
 
@@ -69,12 +108,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-go@v7
+      - uses: actions/download-artifact@v8
         with:
-          go-version-file: go.mod
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
+          path: release
+
+      - shell: bash
+        run: chmod +x release/*
 
       - name: Integration tests
         shell: bash
+        working-directory: integration-tests
         run: |
-          os_name="$(go env GOOS)"
-          make "test-int-${os_name}-all"
+          case "${{ matrix.os }}" in
+            macos-*)
+              platform_spec="darwin-arm64"
+              ;;
+            windows-*)
+              platform_spec="windows-amd64"
+              ;;
+            *)
+              echo "Unexpected platform"
+          esac
+          ./run-validate-tests.sh $platform_spec
+          ./run-serve-tests.sh $platform_spec
