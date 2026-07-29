@@ -41,7 +41,7 @@ dgoss run ...
 
 ## Usage
 
-```
+```plain
 dgoss [run|edit] <docker_run_params>
 ```
 
@@ -60,11 +60,15 @@ for the dgoss command, for example:
 
 **run:**
 
-`docker run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+docker run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 **test:**
 
-`dgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+dgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 `dgoss run` will do the following:
 
@@ -82,7 +86,9 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 
 **Example:**
 
-`dgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+dgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 ### Environment vars and defaults
 
@@ -101,7 +107,9 @@ Note: Debug output of `dgoss` is from `dgoss` shell script and not debug output 
 
 **Example:**
 
-`DEBUG=true dgoss run jenkins:alpine`
+```sh
+DEBUG=true dgoss run jenkins:alpine
+```
 
 #### GOSS_PATH
 

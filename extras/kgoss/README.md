@@ -102,7 +102,7 @@ on a regular machine.
 
 **Example:**
 
-```
+```sh
 kgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine
 ```
 
