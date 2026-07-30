@@ -25,7 +25,7 @@ Since goss runs on the target container, dgoss can be used on a Mac OSX system b
 curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
-# Download desired goss version to your preferred location (e.g. v0.4.8)
+# Download desired goss version to your preferred location (e.g. v0.4.10)
 curl -L "https://github.com/goss-org/goss/releases/download/v0.4.10/goss_0.4.10_linux_x86_64.tar.gz" | tar xz -C ~/Downloads goss
 
 # Set your GOSS_PATH to the above location
