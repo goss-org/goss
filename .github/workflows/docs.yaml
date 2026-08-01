@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: DavidAnson/markdownlint-cli2-action@v23
+      - uses: DavidAnson/markdownlint-cli2-action@v24
         with:
           globs: |
             docs/**/*.md
@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: 'pip'

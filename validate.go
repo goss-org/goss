@@ -18,13 +18,13 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
 
-	currentTemplateFilter, err = NewTemplateFilter(vars, varsInline)
+	currentTemplateFilter, err = NewTemplateFilter(varsFiles, varsInline)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
 func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func Validate(c *util.Config) (code int, err error) {
 	if err != nil {
 		return 1, err
 	}
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return 78, err
 	}
