@@ -2,6 +2,7 @@ package goss
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"sort"
 	"strings"
 
+	"dario.cat/mergo"
 	"gopkg.in/yaml.v3"
 
 	"github.com/goss-org/goss/resource"
@@ -25,6 +27,12 @@ const (
 var outStoreFormat = UNSET
 var currentTemplateFilter TemplateFilter
 var debug = false
+
+var (
+	errCannotDetermineFormat = errors.New("unable to determine format from content")
+	errMaxDepth              = errors.New("max depth of 50 reached, possibly due to dependency loop in goss file")
+	errStoreFormatUnset      = errors.New("StoreFormat unset")
+)
 
 func getStoreFormatFromFileName(f string) (int, error) {
 	ext := filepath.Ext(f)
@@ -47,14 +55,14 @@ func getStoreFormatFromData(data []byte) (int, error) {
 		return YAML, nil
 	}
 
-	return 0, fmt.Errorf("unable to determine format from content")
+	return 0, errCannotDetermineFormat
 }
 
 // ReadJSON Reads json file returning GossConfig
 func ReadJSON(filePath string) (GossConfig, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
-		return GossConfig{}, fmt.Errorf("file error: %v", err)
+		return GossConfig{}, fmt.Errorf("file error: %w", err)
 	}
 
 	return ReadJSONData(file, false)
@@ -73,10 +81,17 @@ func (t *TmplVars) Env() map[string]string {
 	return env
 }
 
-func loadVars(varsFile string, varsInline string) (map[string]any, error) {
-	vars, err := varsFromFile(varsFile)
-	if err != nil {
-		return nil, fmt.Errorf("loading vars file '%s'\n%w", varsFile, err)
+func loadVars(varsFiles []string, varsInline string) (map[string]any, error) {
+	mergedVars := map[string]any{}
+
+	// Later defined vars file overwrites values of the previous files
+	// in places where non-empty keys overlap.
+	for _, varsFile := range varsFiles {
+		vars, err := varsFromFile(varsFile)
+		if err != nil {
+			return nil, fmt.Errorf("loading vars file '%s'\n%w", varsFile, err)
+		}
+		mergo.Merge(&mergedVars, vars, mergo.WithOverride)
 	}
 
 	varsExtra, err := varsFromString(varsInline)
@@ -84,11 +99,12 @@ func loadVars(varsFile string, varsInline string) (map[string]any, error) {
 		return nil, fmt.Errorf("loading inline vars\n%w", err)
 	}
 
+	// Note: This algorithm replaces value under key even if it's nested map
 	for k, v := range varsExtra {
-		vars[k] = v
+		mergedVars[k] = v
 	}
 
-	return vars, nil
+	return mergedVars, nil
 }
 
 func varsFromFile(varsFile string) (map[string]any, error) {
@@ -162,7 +178,7 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 func RenderJSON(c *util.Config) (string, error) {
 	var err error
 	debug = c.Debug
-	currentTemplateFilter, err = NewTemplateFilter(c.Vars, c.VarsInline)
+	currentTemplateFilter, err = NewTemplateFilter(c.VarsFiles, c.VarsInline)
 	if err != nil {
 		return "", err
 	}
@@ -184,7 +200,7 @@ func RenderJSON(c *util.Config) (string, error) {
 
 	b, err := marshal(gossConfig)
 	if err != nil {
-		return "", fmt.Errorf("rendering failed: %v", err)
+		return "", fmt.Errorf("rendering failed: %w", err)
 	}
 
 	return string(b), nil
@@ -193,7 +209,7 @@ func RenderJSON(c *util.Config) (string, error) {
 func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, error) {
 	depth++
 	if depth >= 50 {
-		return GossConfig{}, fmt.Errorf("max depth of 50 reached, possibly due to dependency loop in goss file")
+		return GossConfig{}, errMaxDepth
 	}
 	// Our return gossConfig
 	ret := *NewGossConfig()
@@ -221,7 +237,7 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 		}
 		matches, err := filepath.Glob(fpath)
 		if err != nil {
-			return ret, fmt.Errorf("error in expanding glob pattern: %q", err)
+			return ret, fmt.Errorf("error in expanding glob pattern: %w", err)
 		}
 		if matches == nil {
 			return ret, fmt.Errorf("no matched files were found: %q", fpath)
@@ -230,11 +246,11 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 			fdir := filepath.Dir(match)
 			j, err := ReadJSON(match)
 			if err != nil {
-				return GossConfig{}, fmt.Errorf("could not read json data in %s: %s", match, err)
+				return GossConfig{}, fmt.Errorf("could not read json data in %s: %w", match, err)
 			}
 			j, err = mergeJSONData(j, depth, fdir)
 			if err != nil {
-				return ret, fmt.Errorf("could not write json data: %s", err)
+				return ret, fmt.Errorf("could not write json data: %w", err)
 			}
 			ret = mergeGoss(ret, j)
 		}
@@ -245,14 +261,14 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 func WriteJSON(filePath string, gossConfig GossConfig) error {
 	jsonData, err := marshal(gossConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %s", filePath, err)
+		return fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %s", filePath, err)
+		return fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	if string(emptyData) == string(jsonData) {
@@ -261,7 +277,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 	}
 
 	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
-		return fmt.Errorf("failed to write %s: %s", filePath, err)
+		return fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	return nil
@@ -286,7 +302,7 @@ func marshal(gossConfig any) ([]byte, error) {
 	case YAML:
 		return marshalYAML(gossConfig)
 	default:
-		return nil, fmt.Errorf("StoreFormat unset")
+		return nil, errStoreFormatUnset
 	}
 }
 
@@ -297,7 +313,7 @@ func unmarshal(data []byte, v any, storeFormat int) error {
 	case YAML:
 		return unmarshalYAML(data, v)
 	default:
-		return fmt.Errorf("StoreFormat unset")
+		return errStoreFormatUnset
 	}
 }
 

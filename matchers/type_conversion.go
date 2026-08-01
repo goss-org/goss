@@ -2,6 +2,7 @@ package matchers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -10,6 +11,8 @@ import (
 	"github.com/onsi/gomega/format"
 	"github.com/tidwall/gjson"
 )
+
+var errInvalidJSON = errors.New("Invalid json")
 
 type Transformer interface {
 	Transform(interface{}) (interface{}, error)
@@ -124,7 +127,7 @@ func (g Gjson) Transform(i interface{}) (interface{}, error) {
 		return nil, fmt.Errorf("Expected string, Got:%s", format.Object(i, 1))
 	}
 	if !gjson.Valid(s) {
-		return nil, fmt.Errorf("Invalid json")
+		return nil, errInvalidJSON
 	}
 	r := gjson.Get(s, g.Path)
 	if !r.Exists() {
