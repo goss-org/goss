@@ -292,8 +292,11 @@ override any defaults baked in via the serve command's flags:
 
 ```console
 $ goss serve --marks critical &
+
 $ curl 'localhost:8080/healthz'                          # uses --marks critical
+
 $ curl 'localhost:8080/healthz?marks=network'            # overrides: only network
+
 $ curl 'localhost:8080/healthz?exclude-marks=slow,flaky' # include all but slow/flaky
 ```
 
@@ -302,6 +305,7 @@ resources automatically:
 
 ```console
 $ goss add --marks critical service sshd
+
 $ goss autoadd --marks network nginx
 ```
 
