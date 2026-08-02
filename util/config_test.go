@@ -1,6 +1,7 @@
 package util
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -28,14 +29,25 @@ func TestWithVarsString(t *testing.T) {
 	}
 }
 
-func TestWithVarsFile(t *testing.T) {
-	c, err := NewConfig(WithVarsFile("/nonexisting"))
+func TestWithVarsFiles(t *testing.T) {
+	files := []string{"/nonexisting"}
+	c, err := NewConfig(WithVarsFiles(files))
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 
-	if c.Vars != "/nonexisting" {
-		t.Fatalf("expected '/nonexisting' got %q", c.Vars)
+	if !reflect.DeepEqual(c.VarsFiles, files) {
+		t.Fatalf("expected %s got %q", files, c.VarsFiles)
+	}
+
+	files = []string{"/nonexisting", "/second", "third"}
+	c, err = NewConfig(WithVarsFiles(files))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	if !reflect.DeepEqual(c.VarsFiles, files) {
+		t.Fatalf("expected %s got %q", files, c.VarsFiles)
 	}
 }
 

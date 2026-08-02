@@ -42,10 +42,7 @@ func (r *Matching) GetMarks() []string  { return r.Marks }
 func (r *Matching) SetMarks(m []string) { r.Marks = m }
 
 func (a *Matching) Validate(sys *system.System) []TestResult {
-	skip := false
-	if a.Skip {
-		skip = true
-	}
+	skip := a.Skip
 
 	var stub interface{}
 	if a.AsReader {

@@ -22,13 +22,13 @@ import (
 // c.Log(). It is an edge-layer function: it owns the translation between
 // pure config-merging results (warnings returned as values) and the
 // process's log sink.
-func getGossConfig(c *util.Config, vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(c *util.Config, varsFiles []string, varsInline, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
 
-	tf, err := NewTemplateFilter(vars, varsInline)
+	tf, err := NewTemplateFilter(varsFiles, varsInline)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
 func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
-	gossConfig, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c, c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func Validate(c *util.Config) (code int, err error) {
 	if err != nil {
 		return 1, err
 	}
-	gossConfig, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c, c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return 78, err
 	}

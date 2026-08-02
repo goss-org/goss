@@ -39,7 +39,7 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 	util.InitNoColor(true)
 	cache := cache.New(c.Cache, 30*time.Second)
 
-	cfg, err := getGossConfig(c, c.Vars, c.VarsInline, c.Spec)
+	cfg, err := getGossConfig(c, c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -93,10 +93,9 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	negotiatedContentType := h.responseContentType(outputFormat)
 
 	mf := h.resolveMarkFilter(r)
-
 	logger.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
 	resp := h.processAndEnsureCached(negotiatedContentType, outputer, mf)
-	w.Header().Set(http.CanonicalHeaderKey("Content-Type"), negotiatedContentType) //nolint:gosimple
+	w.Header().Set("Content-Type", negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
 	logBody := ""
 	if resp.statusCode != http.StatusOK {

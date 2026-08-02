@@ -125,7 +125,7 @@ diff
     @@ -1,2 +1,2 @@
     -this is a test9
     +this is a test1
-     
+
 
 Matching: basic_string_regexp: matches:
 Expected
@@ -180,7 +180,7 @@ Error
     ContainElements matcher expects an array/slice/map.  Got:
         <string>: foo bar
         moo cow
-        
+
 
 Matching: negated_basic_string: matches:
 Expected
@@ -242,5 +242,5 @@ diff
     -^this
     +this is a test
 
-Total Duration: 
+Total Duration:
 Count: 27, Failed: 27, Skipped: 0
