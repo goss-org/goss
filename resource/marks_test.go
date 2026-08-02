@@ -47,10 +47,10 @@ func TestResourceMarksRoundTrip(t *testing.T) {
 			if err != nil {
 				t.Fatalf("marshal: %v", err)
 			}
-			out := tc.newRes()
+			tc.newRes()
 			// reset to zero by allocating a fresh instance via reflection-free path:
 			// simply unmarshal into a freshly constructed value of the same type.
-			out = freshOf(res)
+			out := freshOf(res)
 			if err := json.Unmarshal(data, out); err != nil {
 				t.Fatalf("unmarshal: %v", err)
 			}
