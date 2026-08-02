@@ -297,10 +297,9 @@ curl 'localhost:8080/healthz?exclude-marks=slow,flaky' # include all but slow/fl
 When using `goss add` or `goss autoadd`, pass `--marks` to tag newly created
 resources automatically:
 
-```console
-$ goss add --marks critical service sshd
-
-$ goss autoadd --marks network nginx
+```sh
+goss add --marks critical service sshd
+goss autoadd --marks network nginx
 ```
 
 Existing marks on previously parsed resources are preserved; the flag only
