@@ -4,7 +4,7 @@ command:
     exit-status: 0
     exec: "echo critical"
     stdout:
-    - critical
+      - critical
     stderr: []
     timeout: 10000
     marks:
@@ -14,7 +14,7 @@ command:
     exit-status: 0
     exec: "echo slow"
     stdout:
-    - slow
+      - slow
     stderr: []
     timeout: 10000
     marks:
@@ -23,6 +23,6 @@ command:
     exit-status: 0
     exec: "echo unmarked"
     stdout:
-    - unmarked
+      - unmarked
     stderr: []
     timeout: 10000
