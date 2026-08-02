@@ -268,18 +268,15 @@ http:
 
 Then filter at run time with `--marks` (include) and/or `--exclude-marks`:
 
-```console
+```sh
 # Only run tests marked "critical"
-$ goss validate --marks critical
-
+goss validate --marks critical
 # Run tests marked "critical" OR "fast"
-$ goss validate --marks critical,fast
-
+goss validate --marks critical,fast
 # Exclude slow and flaky tests
-$ goss validate --exclude-marks slow,flaky
-
+goss validate --exclude-marks slow,flaky
 # Combine: run critical tests but skip any that are also marked flaky
-$ goss validate --marks critical --exclude-marks flaky
+goss validate --marks critical --exclude-marks flaky
 ```
 
 Resources with **no marks** are always included unless filtered out by
@@ -290,14 +287,11 @@ rules.
 Marks also work on the health endpoint - pass them as query parameters, which
 override any defaults baked in via the serve command's flags:
 
-```console
-$ goss serve --marks critical &
-
-$ curl 'localhost:8080/healthz'                          # uses --marks critical
-
-$ curl 'localhost:8080/healthz?marks=network'            # overrides: only network
-
-$ curl 'localhost:8080/healthz?exclude-marks=slow,flaky' # include all but slow/flaky
+```sh
+goss serve --marks critical &
+curl 'localhost:8080/healthz'                          # uses --marks critical
+curl 'localhost:8080/healthz?marks=network'            # overrides: only network
+curl 'localhost:8080/healthz?exclude-marks=slow,flaky' # include all but slow/flaky
 ```
 
 When using `goss add` or `goss autoadd`, pass `--marks` to tag newly created
