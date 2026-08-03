@@ -24,53 +24,27 @@ the files and putting them in the right path. To get each of them:
 
 * **kgoss**: Run `curl -sSLO
   https://raw.githubusercontent.com/goss-org/goss/master/extras/kgoss/kgoss`.
-* **goss**: Download the `goss-linux-amd64` asset from
-  <https://github.com/goss-org/goss/releases> and rename it `goss`. Place it
-  in your HOME directory, e.g. `C:\Users\<username>` on Windows; or set the
+* **goss**: Download the `goss_<VERSION>_linux_x86_64.tar.gz` archive from
+  <https://github.com/goss-org/goss/releases> and extract the binary from it
+  with `tar xzf goss_<VERSION>_linux_x86_64.tar.gz goss`. Place it in your
+  HOME directory, e.g. `C:\Users\<username>` on Windows; or set the
   environment variable `GOSS_PATH` to its path.
 
 ### Automatic / CLI
 
 To install from the command line or automatically, use the following commands.
-[jq][] is required to parse the API response and find the release asset's
-download URL.
-
-[jq]: https://stedolan.github.io/jq
-
-First get a GitHub personal access token for accessing the GitHub API from
-<https://github.com/settings/tokens>. Input it in the first
-line below. Set `dest_dir` to a directory in your `PATH` env var.
+Set `GOSS_DST` to a directory in your `PATH` env var.
 
 ```shell
-token=<personal_access_token>
-username=$(whoami)
-dest_dir=${HOME}/bin
+GOSS_VER=v0.4.10
+GOSS_DST=$HOME/bin
 
-host=raw.githubusercontent.com
-repo=goss-org/goss
-# for private repos, replace:
-# host=github.yourcompany.com
-# repo=org-name/goss
-
-## install kgoss
-curl -sSL -u "${username}:${token}" -H 'Accept: application/vnd.github.v3.raw' -o "${dest_dir}/kgoss" \
-  https://${host}/api/v3/repos/${repo}/contents/extras/kgoss/kgoss
-chmod a+rx "${dest_dir}/kgoss"
-
-## install goss
-if [[ ! $(which jq) ]]; then echo "jq is required, get from https://stedolan.github.io/jq"; fi
-version=v0.4.8
-arch=amd64
-host=github.com
-# for private repos, leave `host` blank or same as above:
-# host=github.yourcompany.com
-dl_url=$(curl -sSL -u "${username}:${token}" https://${host}/api/v3/repos/${repo}/releases \
-  | jq -r ".[] | select (.name == \"${version}\") | .assets[] | select (.name == \"goss-linux-${arch}\") | .url")
-curl -sSL -u "${username}:${token}" -H 'Accept: application/octet-stream' -o "${dest_dir}/goss" $dl_url
-chmod a+rx "${dest_dir}/goss"
+curl -L "https://github.com/goss-org/goss/releases/download/$GOSS_VER/dgoss" -o $GOSS_DST/kgoss
+chmod a+rx "$GOSS_DST/kgoss"
+curl -fsSL https://goss.rocks/install | sh
 
 # If `goss` is not in your path, export a GOSS_PATH variable:
-export GOSS_PATH=${dest_dir}/goss
+export GOSS_PATH="$GOSS_DST/goss"
 
 # Now you can use kgoss as described below:
 # kgoss edit ...
@@ -79,7 +53,9 @@ export GOSS_PATH=${dest_dir}/goss
 
 ## Use
 
-`kgoss [run|edit] -i <image_url> [-p | -c "command to run" | -a "args to pass"] [-d "directory to include"]* [-e "k=v"]*`
+```sh
+kgoss [run|edit] -i <image_url> [-p | -c "command to run" | -a "args to pass"] [-d "directory to include"]* [-e "k=v"]*
+```
 
 If none of `-p|-c|-a` are specified the container is run with its configured entry point.
 
@@ -106,7 +82,9 @@ until a certain port is open before executing the tests.
 
 **Example:**
 
-`kgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine`
+```sh
+kgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine
+```
 
 `kgoss run` will do the following:
 
@@ -124,7 +102,9 @@ on a regular machine.
 
 **Example:**
 
-`kgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine`
+```sh
+kgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" -i jenkins:alpine
+```
 
 ## Environment variables
 
