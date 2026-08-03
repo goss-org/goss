@@ -13,15 +13,15 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
-	var err error
-	err = setLogLevel(c)
+	err := setLogLevel(c)
 	if err != nil {
 		return err
 	}
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
+	storeFormat, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
+	setStoreFormat(storeFormat)
 
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
@@ -41,7 +41,14 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	warning, err := WriteJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+	if warning != "" {
+		c.Log().Printf("%s", warning)
+	}
+	return nil
 }
 
 // AddResource adds a single resource to fileName
@@ -89,18 +96,37 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 		return err
 	}
 
+	applyMarksIfUnset(res, config.IncludeMarks)
+
 	resourcePrint(fileName, res, config.AnnounceToCLI)
 
 	return nil
 }
 
+// applyMarksIfUnset sets the supplied marks on res when res has no existing
+// marks. It is called from the add/autoadd paths so that --marks tags newly
+// created resources but never overwrites marks that existed in a previously
+// parsed gossfile. A nil or empty marks slice is a no-op.
+func applyMarksIfUnset(res resource.ResourceRead, marks []string) {
+	if res == nil || len(marks) == 0 {
+		return
+	}
+	if len(res.GetMarks()) > 0 {
+		return
+	}
+	// Copy to avoid aliasing the config's slice into every resource.
+	out := make([]string, len(marks))
+	copy(out, marks)
+	res.SetMarks(out)
+}
+
 // AutoAddResources is a simple wrapper to add multiple resources
 func AutoAddResources(fileName string, keys []string, c *util.Config) error {
-	var err error
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
+	storeFormat, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
+	setStoreFormat(storeFormat)
 
 	var gossConfig GossConfig
 	if _, err = os.Stat(fileName); err == nil {
@@ -120,11 +146,20 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	warning, err := WriteJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+	if warning != "" {
+		c.Log().Printf("%s", warning)
+	}
+	return nil
 }
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource
 func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
+	marks := c.IncludeMarks
+
 	// file
 	if strings.Contains(key, "/") {
 		res, _, ok, err := gossConfig.Files.AppendSysResourceIfExists(key, sys)
@@ -132,6 +167,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 			return err
 		}
 		if ok {
+			applyMarksIfUnset(res, marks)
 			resourcePrint(fileName, res, c.AnnounceToCLI)
 		}
 	}
@@ -141,6 +177,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 		return err
 
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
@@ -150,6 +187,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 		return err
 
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
@@ -158,6 +196,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 		return err
 
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
@@ -165,6 +204,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	if res, sysres, ok, err := gossConfig.Processes.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 		ports := system.GetPorts(true)
 		pids, _ := sysres.Pids()
@@ -177,6 +217,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 						if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(port, sys); err != nil {
 							return err
 						} else if ok {
+							applyMarksIfUnset(res, marks)
 							resourcePrint(fileName, res, c.AnnounceToCLI)
 						}
 					}
@@ -189,6 +230,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	if res, _, ok, err := gossConfig.Services.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
@@ -196,6 +238,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	if res, _, ok, err := gossConfig.Users.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
 	} else if ok {
+		applyMarksIfUnset(res, marks)
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 

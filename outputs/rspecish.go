@@ -3,7 +3,6 @@ package outputs
 import (
 	"fmt"
 	"io"
-	"log"
 	"strings"
 	"time"
 
@@ -20,6 +19,7 @@ func (r Rspecish) ValidOptions() []*formatOption {
 func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
 
+	logger := outConfig.Log()
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 
@@ -42,15 +42,15 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			switch testResult.Result {
 			case resource.SUCCESS:
-				logTrace("TRACE", "SUCCESS", testResult, false)
+				logTrace(logger, "TRACE", "SUCCESS", testResult, false)
 				fmt.Fprint(w, green("."))
 			case resource.SKIP:
-				logTrace("TRACE", "SKIP", testResult, false)
+				logTrace(logger, "TRACE", "SKIP", testResult, false)
 				fmt.Fprint(w, yellow("S"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				logTrace("TRACE", "FAIL", testResult, false)
+				logTrace(logger, "TRACE", "FAIL", testResult, false)
 				fmt.Fprint(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
@@ -71,9 +71,9 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	fmt.Fprint(w, outstr)
 	resstr := strings.ReplaceAll(outstr, "\n", " ")
 	if failed > 0 {
-		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
+		logger.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
 		return 1
 	}
-	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
+	logger.Printf("[DEBUG] OK SUMMARY: %s", resstr)
 	return 0
 }

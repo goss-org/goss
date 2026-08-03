@@ -9,14 +9,15 @@ import (
 )
 
 type Interface struct {
-	Title  string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta   meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id     string  `json:"-" yaml:"-"`
-	Name   string  `json:"name,omitempty" yaml:"name,omitempty"`
-	Exists matcher `json:"exists" yaml:"exists"`
-	Addrs  matcher `json:"addrs,omitempty" yaml:"addrs,omitempty"`
-	MTU    matcher `json:"mtu,omitempty" yaml:"mtu,omitempty"`
-	Skip   bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title  string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta   meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks  []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id     string   `json:"-" yaml:"-"`
+	Name   string   `json:"name,omitempty" yaml:"name,omitempty"`
+	Exists matcher  `json:"exists" yaml:"exists"`
+	Addrs  matcher  `json:"addrs,omitempty" yaml:"addrs,omitempty"`
+	MTU    matcher  `json:"mtu,omitempty" yaml:"mtu,omitempty"`
+	Skip   bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -40,8 +41,10 @@ func (i *Interface) TypeKey() string  { return InterfaceResourceKey }
 func (i *Interface) TypeName() string { return InterfaceResourceName }
 
 // FIXME: Can this be refactored?
-func (i *Interface) GetTitle() string { return i.Title }
-func (i *Interface) GetMeta() meta    { return i.Meta }
+func (i *Interface) GetTitle() string    { return i.Title }
+func (i *Interface) GetMeta() meta       { return i.Meta }
+func (i *Interface) GetMarks() []string  { return i.Marks }
+func (i *Interface) SetMarks(m []string) { i.Marks = m }
 func (i *Interface) GetName() string {
 	if i.Name != "" {
 		return i.Name

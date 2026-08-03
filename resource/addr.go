@@ -10,14 +10,15 @@ import (
 )
 
 type Addr struct {
-	Title        string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta         meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id           string  `json:"-" yaml:"-"`
-	Address      string  `json:"address,omitempty" yaml:"address,omitempty"`
-	LocalAddress string  `json:"local-address,omitempty" yaml:"local-address,omitempty"`
-	Reachable    matcher `json:"reachable" yaml:"reachable"`
-	Timeout      int     `json:"timeout" yaml:"timeout"`
-	Skip         bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title        string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta         meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks        []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id           string   `json:"-" yaml:"-"`
+	Address      string   `json:"address,omitempty" yaml:"address,omitempty"`
+	LocalAddress string   `json:"local-address,omitempty" yaml:"local-address,omitempty"`
+	Reachable    matcher  `json:"reachable" yaml:"reachable"`
+	Timeout      int      `json:"timeout" yaml:"timeout"`
+	Skip         bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 type idKey struct{}
@@ -43,8 +44,10 @@ func (a *Addr) TypeKey() string  { return AddrResourceKey }
 func (a *Addr) TypeName() string { return AddResourceName }
 
 // FIXME: Can this be refactored?
-func (a *Addr) GetTitle() string { return a.Title }
-func (a *Addr) GetMeta() meta    { return a.Meta }
+func (a *Addr) GetTitle() string    { return a.Title }
+func (a *Addr) GetMeta() meta       { return a.Meta }
+func (a *Addr) GetMarks() []string  { return a.Marks }
+func (a *Addr) SetMarks(m []string) { a.Marks = m }
 func (a *Addr) GetAddress() string {
 	if a.Address != "" {
 		return a.Address

@@ -28,6 +28,7 @@ type DefCommand struct {
 	loaded     bool
 	Timeout    int
 	err        error
+	logger     util.Logger
 }
 
 func NewDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
@@ -35,6 +36,7 @@ func NewDefCommand(ctx context.Context, command string, system *System, config u
 		Ctx:     ctx,
 		command: command,
 		Timeout: config.TimeOutMilliSeconds(),
+		logger:  config.Log(),
 	}
 }
 
@@ -55,8 +57,8 @@ func (c *DefCommand) setup() error {
 	stdoutB := cmd.Stdout.Bytes()
 	stderrB := cmd.Stderr.Bytes()
 	id := c.Ctx.Value("id")
-	logBytes(stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
-	logBytes(stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
+	logBytes(c.logger, stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
+	logBytes(c.logger, stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
 	c.stdout = bytes.NewReader(stdoutB)
 	c.stderr = bytes.NewReader(stderrB)
 

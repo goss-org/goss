@@ -19,6 +19,19 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+// stringFromCommandLineage walks upward through the command's ancestors
+// returning the first non-empty value set for the named flag. This lets us
+// declare a flag once on a parent command (e.g., "add") and have its value
+// picked up when a nested subcommand (e.g., "add file") is being executed.
+func stringFromCommandLineage(cmd *cli.Command, name string) string {
+	for _, c := range cmd.Lineage() {
+		if v := c.String(name); v != "" {
+			return v
+		}
+	}
+	return ""
+}
+
 // converts a cli context into a goss Config
 func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 	cfg := &util.Config{
@@ -45,6 +58,8 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		Username:          c.String("username"),
 		VarsInline:        c.String("vars-inline"),
 		VarsFiles:         c.StringSlice("vars"),
+		IncludeMarks:      util.ParseMarksParam(stringFromCommandLineage(c, "marks")),
+		ExcludeMarks:      util.ParseMarksParam(stringFromCommandLineage(c, "exclude-marks")),
 	}
 
 	if c.Bool("no-color") {
@@ -150,6 +165,16 @@ func main() {
 						Value:   50,
 						Sources: cli.EnvVars("GOSS_MAX_CONCURRENT"),
 					},
+					&cli.StringFlag{
+						Name:    "marks",
+						Usage:   "Comma-separated list of marks; only resources with at least one matching mark will be validated",
+						Sources: cli.EnvVars("GOSS_MARKS"),
+					},
+					&cli.StringFlag{
+						Name:    "exclude-marks",
+						Usage:   "Comma-separated list of marks; resources with any matching mark will be skipped",
+						Sources: cli.EnvVars("GOSS_EXCLUDE_MARKS"),
+					},
 				},
 				Action: func(ctx context.Context, c *cli.Command) error {
 					fatalAlphaIfNeeded(c)
@@ -207,6 +232,16 @@ func main() {
 						Value:   50,
 						Sources: cli.EnvVars("GOSS_MAX_CONCURRENT"),
 					},
+					&cli.StringFlag{
+						Name:    "marks",
+						Usage:   "Comma-separated list of marks; only resources with at least one matching mark will be validated (overridable via ?marks= query param)",
+						Sources: cli.EnvVars("GOSS_MARKS"),
+					},
+					&cli.StringFlag{
+						Name:    "exclude-marks",
+						Usage:   "Comma-separated list of marks; resources with any matching mark will be skipped (overridable via ?exclude-marks= query param)",
+						Sources: cli.EnvVars("GOSS_EXCLUDE_MARKS"),
+					},
 				},
 				Action: func(ctx context.Context, c *cli.Command) error {
 					fatalAlphaIfNeeded(c)
@@ -240,6 +275,13 @@ func main() {
 				Name:    "autoadd",
 				Aliases: []string{"aa"},
 				Usage:   "automatically add all matching resource to the test suite",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "marks",
+						Usage:   "Comma-separated list of marks to apply to newly added resources",
+						Sources: cli.EnvVars("GOSS_MARKS"),
+					},
+				},
 				Action: func(ctx context.Context, c *cli.Command) error {
 					fatalAlphaIfNeeded(c)
 					return goss.AutoAddResources(c.String("gossfile"), c.Args().Slice(), newRuntimeConfigFromCLI(c))
@@ -253,6 +295,11 @@ func main() {
 					&cli.StringSliceFlag{
 						Name:  "exclude-attr",
 						Usage: "Exclude the following attributes when adding a new resource",
+					},
+					&cli.StringFlag{
+						Name:    "marks",
+						Usage:   "Comma-separated list of marks to apply to newly added resources",
+						Sources: cli.EnvVars("GOSS_MARKS"),
 					},
 				},
 				Commands: []*cli.Command{
