@@ -24,7 +24,7 @@ test:
 	./ci/go-test.sh
 
 cov:
-	go test -coverpkg=./... -coverprofile=c.out ./...
+	go test -race -coverpkg=./... -coverprofile=c.out ./...
 	# go tool cover -func ./c.out
 
 funcov:
