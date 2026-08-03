@@ -62,6 +62,23 @@ GLOBAL OPTIONS:
     * `pacman`
     * `rpm`
 
+`--loglevel <level>`, `-L <level>`
+:   Goss logging verbosity level (default: `INFO`).
+    This is a global option: it applies to every command, and may be given either
+    before or after the command name.
+    Lower levels of tracing include all upper levels traces also
+    (ie. `INFO` includes `WARN` and `ERROR`).
+    `level` can be one of:
+
+    * `ERROR` - Critical errors that halt goss or significantly affect its functionality,
+        requiring immediate intervention.
+    * `WARN` - Non-critical issues that may require attention, such as overwritten keys
+        or deprecated features.
+    * `INFO` - General operational messages, useful for tasks where a more structured
+        output is needed (e.g. goss serve).
+    * `DEBUG` - Information useful for the goss user to debug.
+    * `TRACE` - Detailed internal system activities useful for goss developers to debug.
+
 ## Commands
 
 Commands are the actions goss can run.
@@ -266,17 +283,6 @@ The end-point will return the stest results in the format requested and an http 
 `--listen-addr [ip]:port`, `-l [ip]:port`
 :   Address to listen on (default: `:8080`)
 
-`--loglevel <level>`, `-L <level>`
-:   Goss logging verbosity level (default: `INFO`).
-    Lower levels of tracing include all upper levels traces also (ie. `INFO` include `WARN` and `ERROR`).
-    `level` can be one of:
-
-    - `ERROR` - Critical errors that halt goss or significantly affect its functionality, requiring immediate intervention.
-    - `WARN` - Non-critical issues that may require attention, such as overwritten keys or deprecated features.
-    - `INFO` - General operational messages, useful for tasks where a more structured output is needed (e.g. goss serve).
-    - `DEBUG` - Information useful for the goss user to debug.
-    - `TRACE` - Detailed internal system activities useful for goss developers to debug.
-
 `--max-concurrent <num>`
 :   Max number of tests to run concurrently
 
@@ -326,18 +332,6 @@ Exits with status 0 on success, non-0 otherwise.
     - `verbose`  - Gives verbose output. Applies to `nagios` and `prometheus` output
     - `pretty`   - Pretty printing for the `json` output
     - `sort`     - Sorts the results
-
-`--loglevel <level>`, `-L <level>`
-:   Goss logging verbosity level (default: `INFO`).
-    Lower levels of tracing include all upper levels traces also (ie. `INFO` includes `WARN`, `ERROR` and `FATAL` outputs).
-    `level` can be one of:
-
-    - `TRACE` - Print details for each check, successful or not and all incoming healthchecks
-    - `DEBUG` - Print details of summary response to healthchecks including remote IP address, return code and full body
-    - `INFO` - Print summary when all checks run OK
-    - `WARN` - Print summary and corresponding checks when encountering some failures
-    - `ERROR` - Not used for now (will not print anything)
-    - `FATAL` - Not used for now (will not print anything)
 
 `--max-concurrent <num>`
 :   Max number of tests to run concurrently
