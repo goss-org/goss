@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/outputs"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/system"
@@ -35,7 +34,8 @@ func Serve(c *util.Config) error {
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
-	color.NoColor = true
+	// The health endpoint always emits machine-readable output.
+	outputs.SetNoColor(true)
 	cache := cache.New(c.Cache, 30*time.Second)
 
 	cfg, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
