@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"sort"
 	"strings"
+	"sync"
 
 	"dario.cat/mergo"
 	"gopkg.in/yaml.v3"
@@ -24,9 +25,52 @@ const (
 	YAML
 )
 
-var outStoreFormat = UNSET
-var currentTemplateFilter TemplateFilter
-var debug = false
+// These package-level variables hold state derived from the gossfile currently
+// being processed. `goss serve` and library consumers can drive the load path
+// from more than one goroutine, so every access goes through storeStateMu via
+// the helpers below rather than touching the variables directly.
+var (
+	storeStateMu          sync.RWMutex
+	outStoreFormat        = UNSET
+	currentTemplateFilter TemplateFilter
+	debug                 bool
+)
+
+func setStoreFormat(f int) {
+	storeStateMu.Lock()
+	defer storeStateMu.Unlock()
+	outStoreFormat = f
+}
+
+func storeFormat() int {
+	storeStateMu.RLock()
+	defer storeStateMu.RUnlock()
+	return outStoreFormat
+}
+
+func setTemplateFilter(tf TemplateFilter) {
+	storeStateMu.Lock()
+	defer storeStateMu.Unlock()
+	currentTemplateFilter = tf
+}
+
+func templateFilter() TemplateFilter {
+	storeStateMu.RLock()
+	defer storeStateMu.RUnlock()
+	return currentTemplateFilter
+}
+
+func setDebug(d bool) {
+	storeStateMu.Lock()
+	defer storeStateMu.Unlock()
+	debug = d
+}
+
+func debugEnabled() bool {
+	storeStateMu.RLock()
+	defer storeStateMu.RUnlock()
+	return debug
+}
 
 var (
 	errCannotDetermineFormat = errors.New("unable to determine format from content")
@@ -146,18 +190,18 @@ func varsFromString(varsString string) (map[string]any, error) {
 // ReadJSONData Reads json byte array returning GossConfig
 func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	var err error
-	if currentTemplateFilter != nil {
-		data, err = currentTemplateFilter(data)
+	if tf := templateFilter(); tf != nil {
+		data, err = tf(data)
 		if err != nil {
 			return GossConfig{}, err
 		}
-		if debug {
+		if debugEnabled() {
 			fmt.Println("DEBUG: file after text/template render")
 			fmt.Println(string(data))
 		}
 	}
 
-	format := outStoreFormat
+	format := storeFormat()
 	if detectFormat {
 		format, err = getStoreFormatFromData(data)
 		if err != nil {
@@ -176,17 +220,18 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 
 // RenderJSON reads json file recursively returning string
 func RenderJSON(c *util.Config) (string, error) {
-	var err error
-	debug = c.Debug
-	currentTemplateFilter, err = NewTemplateFilter(c.VarsFiles, c.VarsInline)
+	setDebug(c.Debug)
+	tf, err := NewTemplateFilter(c.VarsFiles, c.VarsInline)
 	if err != nil {
 		return "", err
 	}
+	setTemplateFilter(tf)
 
-	outStoreFormat, err = getStoreFormatFromFileName(c.Spec)
+	format, err := getStoreFormatFromFileName(c.Spec)
 	if err != nil {
 		return "", err
 	}
+	setStoreFormat(format)
 
 	j, err := ReadJSON(c.Spec)
 	if err != nil {
@@ -296,7 +341,7 @@ func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {
 }
 
 func marshal(gossConfig any) ([]byte, error) {
-	switch outStoreFormat {
+	switch storeFormat() {
 	case JSON:
 		return marshalJSON(gossConfig)
 	case YAML:

@@ -24,10 +24,11 @@ func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg 
 	var path, source string
 	var gossConfig GossConfig
 
-	currentTemplateFilter, err = NewTemplateFilter(varsFiles, varsInline)
+	tf, err := NewTemplateFilter(varsFiles, varsInline)
 	if err != nil {
 		return nil, err
 	}
+	setTemplateFilter(tf)
 
 	if specFile == "-" {
 		source = "STDIN"
@@ -36,10 +37,11 @@ func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg 
 		if err != nil {
 			return nil, err
 		}
-		outStoreFormat, err = getStoreFormatFromData(data)
+		format, err := getStoreFormatFromData(data)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSONData(data, true)
 		if err != nil {
@@ -48,10 +50,11 @@ func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg 
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		outStoreFormat, err = getStoreFormatFromFileName(specFile)
+		format, err := getStoreFormatFromFileName(specFile)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSON(specFile)
 		if err != nil {
@@ -73,10 +76,10 @@ func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg 
 
 func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 	if c != nil && *c {
-		color.NoColor = true
+		outputs.SetNoColor(true)
 	}
 	if c != nil && !*c {
-		color.NoColor = false
+		outputs.SetNoColor(false)
 	}
 
 	return outputs.GetOutputer(format)
