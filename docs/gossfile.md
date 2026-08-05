@@ -173,6 +173,20 @@ command:
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
+!!! warning "An empty list asserts nothing"
+
+    A list of patterns is a list of conditions that must all be satisfied. An
+    empty list is therefore zero conditions, and always passes:
+
+    ```yaml
+    stderr: []   # asserts nothing; passes even when stderr has output
+    stderr: ""   # asserts stderr is empty
+    ```
+
+    This is why `goss add` writes `stderr: ""` rather than `stderr: []` when a
+    command produced no error output. Use `[]` only where you deliberately want
+    no assertion at all.
+
 The `exec` attribute is the command to run; this defaults to the name of
 the hash for backwards compatibility
 
@@ -277,6 +291,14 @@ file:
 ```
 
 `contents` can be a string or a [pattern](#patterns)
+
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `contents: []` is a list of zero
+    conditions and always passes. `goss add file` writes it to record that it
+    captured no content expectation, so it is normal in generated gossfiles —
+    but it does not check that the file is empty. To assert emptiness, use
+    `contents: ""`.
 
 ### gossfile
 
