@@ -91,11 +91,11 @@ func (f *File) Validate(sys *system.System) []TestResult {
 	if f.Filetype != nil {
 		results = append(results, ValidateValue(f, "filetype", f.Filetype, sysFile.Filetype, skip))
 	}
-	if isSet(f.Contains) {
+	if isSetWarnEmpty(f.Contains, fmt.Sprintf("%s: file.contains", f.ID())) {
 		fmt.Fprintf(os.Stderr, "DEPRECATION WARNING: file.contains has been renamed to file.contents\n")
 		results = append(results, ValidateValue(f, "contains", f.Contains, sysFile.Contents, skip))
 	}
-	if isSet(f.Contents) {
+	if isSetWarnEmpty(f.Contents, fmt.Sprintf("%s: file.contents", f.ID())) {
 		results = append(results, ValidateValue(f, "contents", f.Contents, sysFile.Contents, skip))
 	}
 	if f.Size != nil {
