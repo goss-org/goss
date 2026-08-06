@@ -93,8 +93,8 @@ func isSet(i interface{}) bool {
 // captured no expectation, and erroring would invalidate every gossfile it has
 // ever generated. desc follows the same "<id>: <type>.<property>" shape as the
 // deprecation warnings.
-func isSetWarnEmpty(i interface{}, desc string) bool {
-	if v, ok := i.([]interface{}); ok && len(v) == 0 {
+func isSetWarnEmpty(i any, desc string) bool {
+	if v, ok := i.([]any); ok && len(v) == 0 {
 		fmt.Fprintf(os.Stderr, "WARNING: %s is an empty list, which asserts nothing and always passes. Use \"\" to assert empty content, or remove it.\n", desc)
 	}
 	return isSet(i)
