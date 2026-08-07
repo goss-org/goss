@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 )
@@ -28,13 +27,13 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 
-	color.NoColor = true
+	SetNoColor(true)
 	var testCount, failed, skipped int
 
 	// ISO8601 timeformat
 	timestamp := time.Now().Format(time.RFC3339)
 
-	var summary map[int]string = make(map[int]string)
+	var summary = make(map[int]string)
 
 	var startTime time.Time
 	var endTime time.Time

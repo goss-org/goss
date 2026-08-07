@@ -25,11 +25,11 @@ Since goss runs on the target container, dgoss can be used on a Mac OSX system b
 curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 
-# Download desired goss version to your preferred location (e.g. v0.4.8)
-curl -L https://github.com/goss-org/goss/releases/download/v0.4.8/goss-linux-amd64 -o ~/Downloads/goss-linux-amd64
+# Download desired goss version to your preferred location (e.g. v0.4.10)
+curl -L "https://github.com/goss-org/goss/releases/download/v0.4.10/goss_0.4.10_linux_x86_64.tar.gz" | tar xz -C ~/Downloads goss
 
 # Set your GOSS_PATH to the above location
-export GOSS_PATH=~/Downloads/goss-linux-amd64
+export GOSS_PATH=~/Downloads/goss
 
 # Set DGOSS_TEMP_DIR to the tmp directory in your home, since /tmp is private on Mac OSX
 export DGOSS_TEMP_DIR=~/tmp
@@ -41,7 +41,9 @@ dgoss run ...
 
 ## Usage
 
-`dgoss [run|edit] <docker_run_params>`
+```plain
+dgoss [run|edit] <docker_run_params>
+```
 
 ### Run
 
@@ -58,11 +60,15 @@ for the dgoss command, for example:
 
 **run:**
 
-`docker run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+docker run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 **test:**
 
-`dgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+dgoss run -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 `dgoss run` will do the following:
 
@@ -80,7 +86,9 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 
 **Example:**
 
-`dgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine`
+```sh
+dgoss edit -e JENKINS_OPTS="--httpPort=8080 --httpsPort=-1" -e JAVA_OPTS="-Xmx1048m" jenkins:alpine
+```
 
 ### Environment vars and defaults
 
@@ -99,7 +107,9 @@ Note: Debug output of `dgoss` is from `dgoss` shell script and not debug output 
 
 **Example:**
 
-`DEBUG=true dgoss run jenkins:alpine`
+```sh
+DEBUG=true dgoss run jenkins:alpine
+```
 
 #### GOSS_PATH
 
@@ -150,8 +160,8 @@ If unset (or empty), the `--vars` flag is omitted, which is the normal behavior.
 Strategy used for copying goss files into the container. If set to `'mount'` a volume with goss files is mounted
 and log output is streamed into the container as `/goss/docker_output.log` file. Other strategy is `'cp'` which uses
 `'docker cp'` command to copy goss files into container. With the `'cp'` strategy you lose the ability to write
-tests or waits against the container output. The `'cp'` strategy is required especially when container daemon is not on the
-local machine.
+tests or waits against the container output. The `'cp'` strategy is required especially when container daemon is not on
+the local machine.
 (Default `'mount'`)
 
 #### CONTAINER_LOG_OUTPUT

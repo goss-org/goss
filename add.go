@@ -13,15 +13,14 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
-	var err error
-	err = setLogLevel(c)
+	if err := setLogLevel(c); err != nil {
+		return err
+	}
+	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
-	if err != nil {
-		return err
-	}
+	setStoreFormat(format)
 
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
@@ -96,11 +95,11 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 
 // AutoAddResources is a simple wrapper to add multiple resources
 func AutoAddResources(fileName string, keys []string, c *util.Config) error {
-	var err error
-	outStoreFormat, err = getStoreFormatFromFileName(fileName)
+	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
+	setStoreFormat(format)
 
 	var gossConfig GossConfig
 	if _, err = os.Stat(fileName); err == nil {

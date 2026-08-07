@@ -512,7 +512,7 @@ func TestPrometheusOutput(t *testing.T) {
 			assert.Equal(t, 0, exitCode)
 
 			output := buf.String()
-			t.Logf(output)
+			t.Log(output)
 			for _, metric := range testCase.expectedMetrics {
 				assert.Contains(t, output, metric)
 			}

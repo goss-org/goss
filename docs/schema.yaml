@@ -125,6 +125,10 @@ definitions:
           - file
           - symlink
           - directory
+          - socket
+          - character-device
+          - block-device
+          - pipe
       contains:
         type: array
         description: Check file content for these patterns. can be a string or a pattern
@@ -585,7 +589,7 @@ properties:
 
   file:
     type: object
-    description: "Validates the state of a file, directory, or symbolic link"
+    description: "Validates the state of a file, directory, socket, symbolic link, character-device, block-device, or pipe"
     additionalProperties:
       $ref: "#/definitions/fileTest"
 
