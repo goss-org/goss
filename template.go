@@ -54,7 +54,6 @@ func readFile(f string) (string, error) {
 	b, err := os.ReadFile(f)
 	if err != nil {
 		return "", err
-
 	}
 	return strings.TrimSpace(string(b)), nil
 }

@@ -7,6 +7,35 @@ linters:
     - staticcheck
     - unused
     - modernize
+    - dupword
+    - copyloopvar
+    - durationcheck
+    - errname
+    # - errorlint
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - grouper
+    - iface
+    - importas
+    - ineffassign
+    - ineffassign
+    - mirror
+    - misspell
+    #- nilerr
+    - nilnesserr
+    #- noctx
+    - nosprintfhostport
+    #- perfsprint
+    #- prealloc
+    #- promlinter
+    - reassign
+    #- revive
+    #- testifylint
+    #- tparallel
+    #- unconvert
+    - usetesting
+    - whitespace
+    #- wrapcheck
   disable:
     - noinlineerr
   exclusions:
@@ -33,6 +62,10 @@ linters:
         - "-ST1022"
         # Incorrectly formatted error string: there are a lot of these
         - "-ST1005"
+    usetesting:
+      os-temp-dir: true
+      context-background: true
+      context-todo: true
 formatters:
   enable:
     - gofmt

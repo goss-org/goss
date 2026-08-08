@@ -35,7 +35,6 @@ func (t ToNumeric) Transform(e any) (any, error) {
 		return strconv.ParseFloat(strings.TrimSpace(s), 64)
 	default:
 		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
-
 	}
 }
 func (t ToNumeric) MarshalJSON() ([]byte, error) {

@@ -69,7 +69,6 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		v, isStr := value.(string)
 		if !isStr {
 			return nil, invalidArgSyntaxError("contain-substring", "string", value)
-
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.ContainSubstring(v)), nil
 	case "have-len":
@@ -87,7 +86,6 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		_, isArr := value.([]any)
 		if !isArr {
 			return nil, invalidArgSyntaxError("have-patterns", "array", value)
-
 		}
 		return matchers.WithSafeTransform(matchers.ToString{}, matchers.HavePatterns(value)), nil
 	case "have-key":
@@ -101,7 +99,6 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		case map[string]any, string, float64, int:
 		default:
 			return nil, invalidArgSyntaxError("contain-element", "matcher, string or numeric", value)
-
 		}
 		subMatcher, err := matcherToGomegaMatcher(value)
 		if err != nil {
@@ -153,7 +150,6 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		v, isStr := value.(string)
 		if !isStr {
 			return nil, invalidArgSyntaxError("semver-constraint", "string", value)
-
 		}
 		return matchers.BeSemverConstraint(v), nil
 
@@ -196,12 +192,10 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 				return nil, err
 			}
 			subMatchers = append(subMatchers, matchers.WithSafeTransform(matchers.Gjson{Path: key}, subMatcher))
-
 		}
 		return matchers.And(subMatchers...), nil
 	default:
 		return nil, fmt.Errorf("Syntax Error: Unknown matcher: %s", matchType)
-
 	}
 }
 

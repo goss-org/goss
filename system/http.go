@@ -96,7 +96,6 @@ func (u *DefHTTP) setup() error {
 		u.err = err
 	}
 	return u.err
-
 }
 func (u *DefHTTP) setupReal() error {
 	proxyURL := http.ProxyFromEnvironment

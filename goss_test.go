@@ -60,9 +60,10 @@ func TestConfigMerge(t *testing.T) {
 
 func TestUseAsPackage(t *testing.T) {
 	output := &bytes.Buffer{}
+	tempdir := t.TempDir()
 
 	// temp spec file
-	fh, err := os.CreateTemp("", "*.yaml")
+	fh, err := os.CreateTemp(tempdir, "*.yaml")
 	checkErr(t, err, "temp file failed")
 	fh.Close()
 
@@ -71,8 +72,8 @@ func TestUseAsPackage(t *testing.T) {
 	checkErr(t, err, "new config failed")
 
 	// adds the os tmp dir to the goss spec file
-	err = AddResources(fh.Name(), "File", []string{os.TempDir()}, cfg)
-	checkErr(t, err, "could not add resource %q", os.TempDir())
+	err = AddResources(fh.Name(), "File", []string{tempdir}, cfg)
+	checkErr(t, err, "could not add resource %q", tempdir)
 
 	// validate and sanity check, compare structured vs direct results etc
 	results, err := ValidateResults(cfg)
@@ -122,9 +123,10 @@ func TestUseAsPackage(t *testing.T) {
 
 func TestSkipResourcesByType(t *testing.T) {
 	output := &bytes.Buffer{}
+	tempdir := t.TempDir()
 
 	// temp spec file
-	fh, err := os.CreateTemp("", "*.yaml")
+	fh, err := os.CreateTemp(tempdir, "*.yaml")
 	checkErr(t, err, "temp file failed")
 	fh.Close()
 
@@ -133,8 +135,8 @@ func TestSkipResourcesByType(t *testing.T) {
 	checkErr(t, err, "new config failed")
 
 	// adds the os tmp dir to the goss spec file
-	err = AddResources(fh.Name(), "File", []string{os.TempDir()}, cfg)
-	checkErr(t, err, "could not add resource %q", os.TempDir())
+	err = AddResources(fh.Name(), "File", []string{tempdir}, cfg)
+	checkErr(t, err, "could not add resource %q", tempdir)
 
 	// validate and sanity check, compare structured vs direct results etc
 	results, err := ValidateResults(cfg)

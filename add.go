@@ -140,16 +140,13 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	// group
 	if res, _, ok, err := gossConfig.Groups.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// package
 	if res, _, ok, err := gossConfig.Packages.AppendSysResourceIfExists(key, sys); err != nil {
-
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
@@ -157,7 +154,6 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	// port
 	if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(key, sys); err != nil {
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}

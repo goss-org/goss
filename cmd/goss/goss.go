@@ -389,7 +389,6 @@ func main() {
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
 							return goss.AddResources(c.String("gossfile"), resource.GossFileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-
 						},
 					},
 					{

@@ -35,7 +35,6 @@ func splitPort(fullport string) (network, port string) {
 		return split[0], split[1]
 	}
 	return "tcp", fullport
-
 }
 
 func normalizePort(fullport string) string {

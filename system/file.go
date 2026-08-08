@@ -180,7 +180,6 @@ func realPath(path string) (string, error) {
 }
 
 func (f *DefFile) hash(hashFunc hashFuncType) (string, error) {
-
 	if err := f.setup(); err != nil {
 		return "", err
 	}

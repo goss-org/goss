@@ -21,7 +21,6 @@ func (r Nagios) ValidOptions() []*formatOption {
 
 func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
-
 	var testCount, failed, skipped int
 
 	var perfdata, verbose bool

@@ -331,7 +331,6 @@ func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 
 // PTR record lookup
 func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
-
 	reverse, err := dns.ReverseAddr(addr)
 	if err != nil {
 		return nil, err

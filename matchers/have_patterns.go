@@ -62,7 +62,6 @@ func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
 		fh = strings.NewReader(strings.Join(av, "\n"))
 	default:
 		err = fmt.Errorf("Incorrect type %T", actual)
-
 	}
 	if err != nil {
 		return false, err
@@ -216,7 +215,6 @@ func newRegexPattern(str string) (*regexPattern, error) {
 		re:      re,
 		inverse: inverse,
 	}, err
-
 }
 
 func (re *regexPattern) Match(str string) bool {
