@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"maps"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -144,9 +145,7 @@ func loadVars(varsFiles []string, varsInline string) (map[string]any, error) {
 	}
 
 	// Note: This algorithm replaces value under key even if it's nested map
-	for k, v := range varsExtra {
-		mergedVars[k] = v
-	}
+	maps.Copy(mergedVars, varsExtra)
 
 	return mergedVars, nil
 }

@@ -74,9 +74,9 @@ func shouldSkip(results []TestResult) bool {
 	return false
 }
 
-func isSet(i interface{}) bool {
+func isSet(i any) bool {
 	switch v := i.(type) {
-	case []interface{}:
+	case []any:
 		return len(v) > 0
 	default:
 		return i != nil

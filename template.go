@@ -78,15 +78,15 @@ func regexMatch(re, s string) (bool, error) {
 }
 
 // return named parenthesized subexpresions, if received, or stringfied (Sprig "get" need strings) keys like array
-func findStringSubmatch(pattern, input string) map[string]interface{} {
+func findStringSubmatch(pattern, input string) map[string]any {
 	re := regexp.MustCompile(pattern)
 	els := re.FindStringSubmatch(input)
 
-	elsMap := make(map[string]interface{})
-	elsMapNamed := make(map[string]interface{})
+	elsMap := make(map[string]any)
+	elsMapNamed := make(map[string]any)
 
 	// create always elsMaps but returns elsMapNamed if exists named parenthesized subexps
-	for i := 0; i < len(els); i++ {
+	for i := range els {
 		// convert i to string according returned (https://github.com/goss-org/goss/pull/895#issuecomment-2075716706)
 		elsMap[strconv.Itoa(i)] = els[i]
 

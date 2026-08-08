@@ -72,7 +72,7 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 		if err != nil || len(addrs) == 0 {
 			d.resolvable = false

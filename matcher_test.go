@@ -35,7 +35,6 @@ func TestMatchers(t *testing.T) {
 	}
 
 	for _, outFile := range files {
-		outFile := outFile
 		parts := strings.Split(outFile, ".")
 		specName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
 		specFile := filepath.Join("testdata", specName)

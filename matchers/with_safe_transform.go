@@ -14,7 +14,7 @@ type WithSafeTransformMatcher struct {
 	Matcher   GossMatcher
 
 	// state
-	transformedValue interface{}
+	transformedValue any
 	wasTransformed   bool
 }
 
@@ -26,7 +26,7 @@ func WithSafeTransform(transform Transformer, matcher GossMatcher) GossMatcher {
 	}
 }
 
-func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
+func (m *WithSafeTransformMatcher) Match(actual any) (bool, error) {
 	var err error
 	//log.Printf("%#v: input: %v", m.Transform, actual)
 	m.transformedValue, err = m.Transform.Transform(actual)
@@ -40,14 +40,14 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	return m.Matcher.Match(m.transformedValue)
 }
 
-func (m *WithSafeTransformMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *WithSafeTransformMatcher) FailureResult(actual any) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
 	result := matcher.FailureResult(tvalue)
 	result.TransformerChain = tchain
 	result.UntransformedValue = actual
 	return result
 }
-func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *WithSafeTransformMatcher) NegatedFailureResult(actual any) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
 	result := matcher.NegatedFailureResult(tvalue)
 	result.TransformerChain = tchain
@@ -55,7 +55,7 @@ func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) Matc
 	return result
 }
 
-func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher, tvalue interface{}) {
+func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher, tvalue any) {
 	matcher = m
 	tvalue = m.transformedValue
 L:

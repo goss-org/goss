@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/onsi/gomega/format"
@@ -192,11 +193,8 @@ func newRegexPattern(str string) (*regexPattern, error) {
 		cleanStr = cleanStr[1:]
 	}
 	trimLeft := []rune{'\\', '/'}
-	for _, r := range trimLeft {
-		if rune(cleanStr[0]) == r {
-			cleanStr = cleanStr[1:]
-			break
-		}
+	if slices.Contains(trimLeft, rune(cleanStr[0])) {
+		cleanStr = cleanStr[1:]
 	}
 	// Strip trailing closing delimiter and any flags that follow it.
 	// Supported flags mirror Go's regexp inline flags: i, m, s.

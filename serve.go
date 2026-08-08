@@ -168,8 +168,8 @@ func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, ou
 	outputName := ""
 	for _, acceptCandidate := range acceptHeader {
 		acceptCandidate = strings.TrimSpace(acceptCandidate)
-		if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
-			outputName = strings.TrimPrefix(acceptCandidate, mediaTypePrefix)
+		if after, ok := strings.CutPrefix(acceptCandidate, mediaTypePrefix); ok {
+			outputName = after
 		} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
 			outputName = "json"
 		} else {

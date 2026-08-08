@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
 	"strconv"
 	"sync"
 
@@ -126,13 +127,7 @@ func SupportedPackageManagers() []string {
 
 // IsSupportedPackageManager determines if p is a supported package manager
 func IsSupportedPackageManager(p string) bool {
-	for _, m := range SupportedPackageManagers() {
-		if m == p {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(SupportedPackageManagers(), p)
 }
 
 // DetectPackageManager attempts to detect whether or not the system is using
@@ -214,11 +209,11 @@ func HasCommand(cmd string) bool {
 
 func isLegacySystemd() bool {
 	if b, err := os.ReadFile("/etc/debian_version"); err == nil {
-		i := bytes.Index(b, []byte("."))
-		if i < 0 {
+		before, _, ok := bytes.Cut(b, []byte("."))
+		if !ok {
 			return false
 		}
-		if major, err := strconv.Atoi(string(b[:i])); err == nil {
+		if major, err := strconv.Atoi(string(before)); err == nil {
 			return major < 9
 		}
 	}

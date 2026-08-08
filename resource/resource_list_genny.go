@@ -60,7 +60,7 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 
 func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[ResourceType]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -95,7 +95,7 @@ func (ret *ResourceTypeMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *ResourceTypeMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := ResourceType{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -111,7 +111,7 @@ func (ret *ResourceTypeMap) UnmarshalYAML(unmarshal func(v interface{}) error) e
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[ResourceType]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {

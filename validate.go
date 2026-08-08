@@ -174,19 +174,14 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 		close(in)
 	}()
 
-	workerCount := runtime.NumCPU() * 5
-	if workerCount > maxConcurrent {
-		workerCount = maxConcurrent
-	}
+	workerCount := min(runtime.NumCPU()*5, maxConcurrent)
 	var wg sync.WaitGroup
-	for i := 0; i < workerCount; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+	for range workerCount {
+		wg.Go(func() {
 			for f := range in {
 				out <- f.Validate(sys)
 			}
-		}()
+		})
 	}
 
 	go func() {

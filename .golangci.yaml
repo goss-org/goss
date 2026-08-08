@@ -6,6 +6,7 @@ linters:
     - ineffassign
     - staticcheck
     - unused
+    - modernize
   disable:
     - noinlineerr
   exclusions:

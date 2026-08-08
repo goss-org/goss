@@ -13,7 +13,7 @@ func Not(matcher GossMatcher) GossMatcher {
 	return &NotMatcher{Matcher: matcher}
 }
 
-func (m *NotMatcher) Match(actual interface{}) (bool, error) {
+func (m *NotMatcher) Match(actual any) (bool, error) {
 	success, err := m.Matcher.Match(actual)
 	if err != nil {
 		return false, err
@@ -21,16 +21,16 @@ func (m *NotMatcher) Match(actual interface{}) (bool, error) {
 	return !success, nil
 }
 
-func (m *NotMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *NotMatcher) FailureResult(actual any) MatcherResult {
 	return m.Matcher.NegatedFailureResult(actual)
 }
 
-func (m *NotMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *NotMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return m.Matcher.FailureResult(actual)
 }
 
 func (m *NotMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["not"] = m.Matcher
 	return json.Marshal(j)
 }
