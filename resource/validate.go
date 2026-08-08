@@ -159,10 +159,8 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 	case func() (any, error):
 		foundValue, err = f()
 	case func() (io.Reader, error):
-		r, err := f()
-		if err == nil {
-			i, err := matchers.ReaderToString{}.Transform(r)
-			if err == nil {
+		if r, err := f(); err == nil {
+			if i, err := matchers.ReaderToString{}.Transform(r); err == nil {
 				foundValue = i.(string)
 			}
 		}
