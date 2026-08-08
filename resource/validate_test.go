@@ -143,7 +143,7 @@ func TestValidateContainsFailureActual(t *testing.T) {
 	inFunc := func() (io.Reader, error) {
 		return strings.NewReader(fileContent), nil
 	}
-	got := ValidateValue(&FakeResource{""}, "contents", []interface{}{missingPattern}, inFunc, false)
+	got := ValidateValue(&FakeResource{""}, "contents", []any{missingPattern}, inFunc, false)
 
 	if got.Result != FAIL {
 		t.Fatalf("expected FAIL, got %v", got.Result)

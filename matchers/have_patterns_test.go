@@ -11,7 +11,7 @@ import (
 func TestHavePatternsMatchString(t *testing.T) {
 	content := "Banner /etc/issue.net\nLogLevel INFO\n"
 
-	m := HavePatterns([]interface{}{"Banner /etc/issue.net"})
+	m := HavePatterns([]any{"Banner /etc/issue.net"})
 	success, err := m.Match(content)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -28,7 +28,7 @@ func TestHavePatternsFailureResultString(t *testing.T) {
 	content := "Banner /etc/issue.net\nLogLevel INFO\n"
 	pattern := "nonexistent-pattern"
 
-	m := HavePatterns([]interface{}{pattern})
+	m := HavePatterns([]any{pattern})
 	success, err := m.Match(content)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -56,7 +56,7 @@ func TestHavePatternsFailureResultString(t *testing.T) {
 func TestHavePatternsMatchBytesReader(t *testing.T) {
 	content := "pam_faillock.so preauth\n"
 
-	m := HavePatterns([]interface{}{"pam_faillock.so"})
+	m := HavePatterns([]any{"pam_faillock.so"})
 	reader := bytes.NewReader([]byte(content))
 	success, err := m.Match(reader)
 	if err != nil {
