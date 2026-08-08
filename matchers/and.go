@@ -28,7 +28,22 @@ func (m *AndMatcher) Match(actual interface{}) (success bool, err error) {
 	return true, nil
 }
 
+// FailureResult reports the first matcher that failed. firstFailedMatcher is
+// only set once Match has actually run a child matcher, and that does not
+// always happen: WithSafeTransformMatcher.Match returns early when its
+// transform errors — a gjson path that does not exist, for example — so the
+// wrapped And never evaluates anything and its state stays nil. Dereferencing
+// it there panicked (#982). Report the And itself in that case, which keeps the
+// surrounding transform chain and raw value in the output so the user can see
+// which path they actually matched against.
 func (m *AndMatcher) FailureResult(actual interface{}) MatcherResult {
+	if m.firstFailedMatcher == nil {
+		return MatcherResult{
+			Actual:   actual,
+			Message:  "to satisfy all of these matchers",
+			Expected: m.Matchers,
+		}
+	}
 	return m.firstFailedMatcher.FailureResult(actual)
 }
 
