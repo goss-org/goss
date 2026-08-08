@@ -3,6 +3,7 @@ package outputs
 import (
 	"fmt"
 	"io"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -28,6 +29,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	perfdata = util.IsValueInList(foPerfData, outConfig.FormatOptions)
 	verbose = util.IsValueInList(foVerbose, outConfig.FormatOptions)
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
+	specFile := filepath.Base(outConfig.SpecFile)
 
 	var startTime time.Time
 	var endTime time.Time
@@ -55,23 +57,28 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	duration := endTime.Sub(startTime)
+	return writeNagiosResult(w, specFile, testCount, failed, skipped, duration, perfdata, verbose, summary)
+}
+
+func writeNagiosResult(w io.Writer, specFile string, testCount, failed, skipped int, duration time.Duration, perfdata, verbose bool, summary map[int]string) int {
+	nagiosState := "OK"
 	if failed > 0 {
-		fmt.Fprintf(w, "GOSS CRITICAL - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", testCount, failed, skipped, duration.Seconds())
-		if perfdata {
-			fmt.Fprintf(w, "|total=%d failed=%d skipped=%d duration=%.3fs", testCount, failed, skipped, duration.Seconds())
-		}
-		fmt.Fprint(w, "\n")
-		if verbose {
-			for i := 0; i < failed; i++ {
-				fmt.Fprintf(w, "%s", summary[i])
-			}
-		}
-		return 2
+		nagiosState = "CRITICAL"
 	}
-	fmt.Fprintf(w, "GOSS OK - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", testCount, failed, skipped, duration.Seconds())
+
+	fmt.Fprintf(w, "GOSS-%s %s - Count: %d, Failed: %d, Skipped: %d, Duration: %.3fs", specFile, nagiosState, testCount, failed, skipped, duration.Seconds())
 	if perfdata {
 		fmt.Fprintf(w, "|total=%d failed=%d skipped=%d duration=%.3fs", testCount, failed, skipped, duration.Seconds())
 	}
 	fmt.Fprint(w, "\n")
-	return 0
+	if verbose {
+		for i := 0; i < failed; i++ {
+			fmt.Fprintf(w, "%s", summary[i])
+		}
+	}
+	if failed > 0 {
+		return 2
+	} else {
+		return 0
+	}
 }
