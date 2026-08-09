@@ -79,14 +79,15 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
 	}
 }
 
-func HeaderToArray(header http.Header) (res []string) {
+func HeaderToArray(header http.Header) []string {
+	res := make([]string, 0, len(header))
 	for name, values := range header {
 		for _, value := range values {
 			res = append(res, fmt.Sprintf("%s: %s", name, value))
 		}
 	}
 	sort.Strings(res)
-	return
+	return res
 }
 
 func (u *DefHTTP) setup() error {
