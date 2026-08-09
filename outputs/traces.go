@@ -6,7 +6,7 @@ import (
 	"github.com/goss-org/goss/resource"
 )
 
-func logTrace(level string, msg string, testResult resource.TestResult, withIntResult bool) {
+func logTrace(level, msg string, testResult resource.TestResult, withIntResult bool) {
 	if withIntResult {
 		log.Printf(
 			"[%s] %s: %s => %s (%s %+v %+v) [%.02f] [%d]",

@@ -288,11 +288,11 @@ func LookupSRV(host, server string, c *dns.Client, m *dns.Msg) (addrs []string, 
 		}
 	}
 
-	return
+	return addrs, err
 }
 
 // SSHFP record lookup
-func LookupSSHFP(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+func LookupSSHFP(host, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSSHFP)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {

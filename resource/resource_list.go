@@ -1566,6 +1566,7 @@ func (r RegistryMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 }
 
 func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
+	// Curried json.Unmarshal
 	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
@@ -1573,6 +1574,7 @@ func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
+	// Validate configuration
 	zero := Registry{}
 	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
 	if err != nil {
@@ -1601,6 +1603,7 @@ func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
 }
 
 func (ret *RegistryMap) UnmarshalYAML(unmarshal func(v any) error) error {
+	// Validate configuration
 	zero := Registry{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
 	if err != nil {
