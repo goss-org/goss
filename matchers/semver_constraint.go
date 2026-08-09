@@ -21,6 +21,7 @@ func BeSemverConstraint(constraint any) GossMatcher {
 		Constraint: constraint,
 	}
 }
+
 func (m *BeSemverConstraintMatcher) Match(actual any) (success bool, err error) {
 	constraint, ok := toConstraint(m.Constraint)
 	if !ok {

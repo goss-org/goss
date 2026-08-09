@@ -12,7 +12,7 @@ import (
 func (f *DefFile) Mode() (string, error) {
 	mode, err := f.getFileInfo(func(fi os.FileInfo) string {
 		stat := fi.Sys().(*syscall.Stat_t)
-		return fmt.Sprintf("%04o", (stat.Mode & 07777))
+		return fmt.Sprintf("%04o", (stat.Mode & 0o7777))
 	})
 	if err != nil {
 		return "", err

@@ -37,6 +37,7 @@ func (t ToNumeric) Transform(e any) (any, error) {
 		return 0, fmt.Errorf("Expected numeric, Got:%s", format.Object(e, 1))
 	}
 }
+
 func (t ToNumeric) MarshalJSON() ([]byte, error) {
 	j := map[string]any{
 		"to-numeric": map[string]string{},
@@ -78,6 +79,7 @@ func (t ToArray) Transform(i any) (any, error) {
 		return i, nil
 	}
 }
+
 func (matcher ToArray) MarshalJSON() ([]byte, error) {
 	j := map[string]any{
 		"to-array": map[string]string{},
@@ -135,6 +137,7 @@ func (g Gjson) Transform(i any) (any, error) {
 
 	return r.Value(), nil
 }
+
 func (g Gjson) MarshalJSON() ([]byte, error) {
 	j := map[string]any{
 		"gjson": map[string]string{

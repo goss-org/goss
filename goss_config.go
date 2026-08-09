@@ -126,7 +126,8 @@ func mergeType[V any](m map[string]V, t, k string, v V) {
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands,
+	gm := genericConcatMaps(
+		c.Commands,
 		c.HTTPs,
 		c.Addrs,
 		c.DNS,

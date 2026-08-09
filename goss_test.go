@@ -21,7 +21,7 @@ func checkErr(t *testing.T, err error, format string, a ...any) {
 }
 
 func TestConfigMerge(t *testing.T) {
-	var g1json = `file:
+	g1json := `file:
   /etc/passwd:
     exists: true
     mode: "0644"
@@ -31,7 +31,7 @@ func TestConfigMerge(t *testing.T) {
     filetype: file
     contains: []`
 
-	var g2json = `service:
+	g2json := `service:
   sshd:
     enabled: true
     running: true

@@ -14,7 +14,7 @@ testgrp2:*:101:bob,jack
 testgrp3:*:102:jill
 testgrp4:*:103:`
 
-	var cases = []struct {
+	cases := []struct {
 		user   string
 		gid    int
 		expect []string

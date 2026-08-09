@@ -134,6 +134,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	}
 	return resp
 }
+
 func (h healthHandler) validate() [][]resource.TestResult {
 	h.sys = system.New(h.c.PackageManager)
 	res := make([][]resource.TestResult, 0)

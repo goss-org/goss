@@ -33,6 +33,7 @@ func NewDefAddr(_ context.Context, address string, system *System, config util.C
 func (a *DefAddr) ID() string {
 	return a.address
 }
+
 func (a *DefAddr) Address() string {
 	return a.address
 }

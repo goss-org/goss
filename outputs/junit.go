@@ -21,7 +21,8 @@ func (r JUnit) ValidOptions() []*formatOption {
 }
 
 func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
-	outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig,
+) (exitCode int) {
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
@@ -33,7 +34,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	// ISO8601 timeformat
 	timestamp := time.Now().Format(time.RFC3339)
 
-	var summary = make(map[int]string)
+	summary := make(map[int]string)
 
 	var startTime time.Time
 	var endTime time.Time

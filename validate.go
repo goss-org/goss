@@ -18,7 +18,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(varsFiles []string, varsInline, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string

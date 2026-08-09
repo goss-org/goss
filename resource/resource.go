@@ -39,8 +39,10 @@ type ResourceRead interface {
 	GetMeta() meta
 }
 
-type matcher any
-type meta map[string]any
+type (
+	matcher any
+	meta    map[string]any
+)
 
 func contains(a []string, s string) bool {
 	for _, e := range a {

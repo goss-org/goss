@@ -46,6 +46,7 @@ func (m *WithSafeTransformMatcher) FailureResult(actual any) MatcherResult {
 	result.UntransformedValue = actual
 	return result
 }
+
 func (m *WithSafeTransformMatcher) NegatedFailureResult(actual any) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
 	result := matcher.NegatedFailureResult(tvalue)

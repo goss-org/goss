@@ -320,7 +320,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 		return nil
 	}
 
-	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
+	if err := os.WriteFile(filePath, jsonData, 0o644); err != nil {
 		return fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 

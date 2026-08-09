@@ -272,6 +272,7 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	}
 	return slice
 }
+
 func subtractSlice(x, y []string) []string {
 	m := make(map[string]bool)
 

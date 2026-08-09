@@ -18,7 +18,8 @@ func (r Tap) ValidOptions() []*formatOption {
 }
 
 func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
-	outConfig util.OutputConfig) (exitCode int) {
+	outConfig util.OutputConfig,
+) (exitCode int) {
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
@@ -27,7 +28,7 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 	testCount := 0
 	failed := 0
 
-	var summary = make(map[int]string)
+	summary := make(map[int]string)
 
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
