@@ -36,7 +36,7 @@ func (m *AndMatcher) Match(actual interface{}) (success bool, err error) {
 // it there panicked (#982). Report the And itself in that case, which keeps the
 // surrounding transform chain and raw value in the output so the user can see
 // which path they actually matched against.
-func (m *AndMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *AndMatcher) FailureResult(actual any) MatcherResult {
 	if m.firstFailedMatcher == nil {
 		return MatcherResult{
 			Actual:   actual,
