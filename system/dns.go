@@ -140,6 +140,8 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 				addrs, err = LookupSRV(host, server, c, m)
 			case "TXT":
 				addrs, err = LookupTXT(host, server, c, m)
+			case "SSHFP":
+				addrs, err = LookupSSHFP(host, server, c, m)
 			case "CAA":
 				addrs, err = LookupCAA(host, server, c, m)
 			default:
@@ -283,6 +285,27 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 			port := strconv.Itoa(int(t.Port))
 			srvrec := strings.Join([]string{prio, weight, port, t.Target}, " ")
 			addrs = append(addrs, srvrec)
+		}
+	}
+
+	return
+}
+
+// SSHFP record lookup
+func LookupSSHFP(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+	m.SetQuestion(dns.Fqdn(host), dns.TypeSSHFP)
+	r, _, err := c.Exchange(m, parseServerString(server))
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ans := range r.Answer {
+		if t, ok := ans.(*dns.SSHFP); ok {
+			algo := strconv.Itoa(int(t.Algorithm))
+			fpType := strconv.Itoa(int(t.Type))
+			fingerprint := strings.ToUpper(t.FingerPrint)
+			sshfpRec := strings.Join([]string{algo, fpType, fingerprint}, " ")
+			addrs = append(addrs, sshfpRec)
 		}
 	}
 

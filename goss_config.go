@@ -24,6 +24,7 @@ type GossConfig struct {
 	Interfaces   resource.InterfaceMap   `json:"interface,omitempty" yaml:"interface,omitempty"`
 	HTTPs        resource.HTTPMap        `json:"http,omitempty" yaml:"http,omitempty"`
 	Matchings    resource.MatchingMap    `json:"matching,omitempty" yaml:"matching,omitempty"`
+	Registries   resource.RegistryMap    `json:"registry,omitempty" yaml:"registry,omitempty"`
 }
 
 func NewGossConfig() *GossConfig {
@@ -44,6 +45,7 @@ func NewGossConfig() *GossConfig {
 		Interfaces:   make(resource.InterfaceMap),
 		HTTPs:        make(resource.HTTPMap),
 		Matchings:    make(resource.MatchingMap),
+		Registries:   make(resource.RegistryMap),
 	}
 }
 
@@ -109,6 +111,9 @@ func (c *GossConfig) Merge(g2 GossConfig) []string {
 	for k, v := range g2.Matchings {
 		collect(mergeType(c.Matchings, "matching", k, v))
 	}
+	for k, v := range g2.Registries {
+    collect(mergeType(c.Registries, "registry", k, v))
+	}
 
 	return warnings
 }
@@ -144,6 +149,7 @@ func (c *GossConfig) Resources() []resource.Resource {
 		c.Mounts,
 		c.Interfaces,
 		c.Matchings,
+		c.Registries,
 	)
 
 	for _, m := range gm {
