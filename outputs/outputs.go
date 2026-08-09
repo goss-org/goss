@@ -13,7 +13,6 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 	"github.com/pmezard/go-difflib/difflib"
@@ -48,9 +47,6 @@ var (
 	foSort       = "sort"
 )
 
-var green = color.New(color.FgGreen).SprintfFunc()
-var red = color.New(color.FgRed).SprintfFunc()
-var yellow = color.New(color.FgYellow).SprintfFunc()
 var multiple_space = regexp.MustCompile(`\s+`)
 
 // disableColor sets color.NoColor=true at most once per process. It delegates

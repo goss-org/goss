@@ -47,8 +47,8 @@ This will install goss and [dgoss](https://github.com/goss-org/goss/tree/master/
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.4.8 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
+# Install v0.4.10 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.10 GOSS_DST=~/bin sh
 ```
 
 <!-- --8<-- [end:intro] -->
@@ -56,28 +56,22 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
 
 ### Manual installation
 
-#### Latest
+!!! warning
 
-```bash
-curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
-chmod +rx /usr/local/bin/goss
-
-curl -L https://github.com/goss-org/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
-# Alternatively, using the latest master
-# curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
-chmod +rx /usr/local/bin/dgoss
-```
+    If you're using goss in a CI pipeline, it's recommended that you don't
+    download the `latest` and instead use a specific release tag. Using the
+    latest release may lead to unexpected behaviour.
 
 #### Specific Version
 
 ```bash
 # See https://github.com/goss-org/goss/releases for release versions
-VERSION=v0.4.8
-curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
+VERSION=v0.4.10
+curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss_${VERSION#v}_linux_x86_64.tar.gz" | tar xz -C /usr/local/bin goss
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-VERSION=v0.4.8
+VERSION=v0.4.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```

@@ -5,6 +5,7 @@ import (
 	"context"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -109,6 +110,8 @@ func (sys *System) detectService() {
 		sys.NewService = NewServiceSystemdLegacy
 	case "alpineinit":
 		sys.NewService = NewAlpineServiceInit
+	case "windows":
+		sys.NewService = NewServiceWindows
 	default:
 		sys.NewService = NewServiceInit
 	}
@@ -165,6 +168,9 @@ func DetectService() string {
 			return "systemdlegacy"
 		}
 		return "systemd"
+	}
+	if runtime.GOOS == "windows" {
+		return "windows"
 	}
 	// Centos Docker container doesn't run systemd, so we detect it or use init.
 	switch DetectDistro() {

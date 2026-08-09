@@ -13,15 +13,14 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
-	err := setLogLevel(c)
+	if err := setLogLevel(c); err != nil {
+		return err
+	}
+	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
-	storeFormat, err := getStoreFormatFromFileName(fileName)
-	if err != nil {
-		return err
-	}
-	setStoreFormat(storeFormat)
+	setStoreFormat(format)
 
 	var gossConfig GossConfig
 	if _, err := os.Stat(fileName); err == nil {
@@ -122,11 +121,11 @@ func applyMarksIfUnset(res resource.ResourceRead, marks []string) {
 
 // AutoAddResources is a simple wrapper to add multiple resources
 func AutoAddResources(fileName string, keys []string, c *util.Config) error {
-	storeFormat, err := getStoreFormatFromFileName(fileName)
+	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
 	}
-	setStoreFormat(storeFormat)
+	setStoreFormat(format)
 
 	var gossConfig GossConfig
 	if _, err = os.Stat(fileName); err == nil {

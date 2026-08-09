@@ -24,31 +24,25 @@ const (
 	YAML
 )
 
-// storeStateMu guards the package-level store-configuration variables
-// (outStoreFormat, currentTemplateFilter, debug). These are written during
-// config load (RenderJSON, getGossConfig) and read during ReadJSONData. The
-// goss serve command drives this code path concurrently from multiple
-// goroutines, so accesses must be synchronised.
-var storeStateMu sync.RWMutex
-
-// The following package-level variables are protected by storeStateMu.
-// Do not read or write them directly from outside this file; use the
-// get*/set* helpers below.
+// These package-level variables hold state derived from the gossfile currently
+// being processed. `goss serve` and library consumers can drive the load path
+// from more than one goroutine, so every access goes through storeStateMu via
+// the helpers below rather than touching the variables directly.
 var (
-	outStoreFormat                       = UNSET
-	currentTemplateFilter TemplateFilter = nil
-	debug                                = false
+	storeStateMu          sync.RWMutex
+	outStoreFormat        = UNSET
+	currentTemplateFilter TemplateFilter
+	debug                 bool
 )
 
-// setStoreFormat atomically updates the package-level store format.
 func setStoreFormat(f int) {
 	storeStateMu.Lock()
 	defer storeStateMu.Unlock()
 	outStoreFormat = f
 }
 
-// getStoreFormat atomically reads the package-level store format.
-func getStoreFormat() int {
+// storeFormat atomically reads the package-level store format.
+func storeFormat() int {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
 	return outStoreFormat
@@ -61,8 +55,8 @@ func setTemplateFilter(tf TemplateFilter) {
 	currentTemplateFilter = tf
 }
 
-// getTemplateFilter atomically reads the package-level template filter.
-func getTemplateFilter() TemplateFilter {
+// templateFilter atomically reads the package-level template filter.
+func templateFilter() TemplateFilter {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
 	return currentTemplateFilter
@@ -75,8 +69,8 @@ func setDebug(d bool) {
 	debug = d
 }
 
-// getDebug atomically reads the package-level debug flag.
-func getDebug() bool {
+// debugEnabled atomically reads the package-level debug flag.
+func debugEnabled() bool {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
 	return debug
@@ -200,18 +194,18 @@ func varsFromString(varsString string) (map[string]any, error) {
 // ReadJSONData Reads json byte array returning GossConfig
 func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	var err error
-	if tf := getTemplateFilter(); tf != nil {
+	if tf := templateFilter(); tf != nil {
 		data, err = tf(data)
 		if err != nil {
 			return GossConfig{}, err
 		}
-		if getDebug() {
+		if debugEnabled() {
 			fmt.Println("DEBUG: file after text/template render")
 			fmt.Println(string(data))
 		}
 	}
 
-	format := getStoreFormat()
+	format := storeFormat()
 	if detectFormat {
 		format, err = getStoreFormatFromData(data)
 		if err != nil {
@@ -381,7 +375,7 @@ func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {
 }
 
 func marshal(gossConfig any) ([]byte, error) {
-	switch getStoreFormat() {
+	switch storeFormat() {
 	case JSON:
 		return marshalJSON(gossConfig)
 	case YAML:

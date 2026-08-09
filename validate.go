@@ -41,11 +41,11 @@ func getGossConfig(c *util.Config, varsFiles []string, varsInline, specFile stri
 		if err != nil {
 			return nil, err
 		}
-		storeFormat, err := getStoreFormatFromData(data)
+		format, err := getStoreFormatFromData(data)
 		if err != nil {
 			return nil, err
 		}
-		setStoreFormat(storeFormat)
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSONData(data, true)
 		if err != nil {
@@ -54,11 +54,11 @@ func getGossConfig(c *util.Config, varsFiles []string, varsInline, specFile stri
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		storeFormat, err := getStoreFormatFromFileName(specFile)
+		format, err := getStoreFormatFromFileName(specFile)
 		if err != nil {
 			return nil, err
 		}
-		setStoreFormat(storeFormat)
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSON(specFile)
 		if err != nil {
@@ -80,13 +80,11 @@ func getGossConfig(c *util.Config, varsFiles []string, varsInline, specFile stri
 }
 
 func getOutputer(c *bool, format string) (outputs.Outputer, error) {
-	// color.NoColor is a package-level global that was historically set
-	// directly here. To avoid races under parallel/serve workloads, we
-	// initialize it at most once per process. If the caller explicitly
-	// requested a value, honour it; otherwise leave the library's default
-	// (derived from terminal detection) in place.
-	if c != nil {
-		util.InitNoColor(*c)
+	if c != nil && *c {
+		outputs.SetNoColor(true)
+	}
+	if c != nil && !*c {
+		outputs.SetNoColor(false)
 	}
 
 	return outputs.GetOutputer(format)

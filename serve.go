@@ -16,6 +16,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// cacheMissLogFormat is logged whenever a health probe finds the result cache
+// cold and has to run the test suite. It carries a level prefix so that it can
+// be muted via --loglevel; without one it was emitted unconditionally and
+// flooded the logs of any container being polled by a load balancer.
+const cacheMissLogFormat = "[DEBUG] Stale cache[%s], running tests"
+
 func Serve(c *util.Config) error {
 	err := setLogLevel(c)
 	if err != nil {
@@ -33,10 +39,8 @@ func Serve(c *util.Config) error {
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
-	// The serve endpoint always produces machine-readable output, so disable
-	// ANSI color codes. Using util.InitNoColor (sync.Once) avoids racing with
-	// concurrent requests or other initialization paths.
-	util.InitNoColor(true)
+	// The health endpoint always emits machine-readable output.
+	outputs.SetNoColor(true)
 	cache := cache.New(c.Cache, 30*time.Second)
 
 	cfg, err := getGossConfig(c, c.VarsFiles, c.VarsInline, c.Spec)
@@ -148,7 +152,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 		logger.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
-		logger.Printf("Stale cache[%s], running tests", cacheKey)
+		logger.Printf(cacheMissLogFormat, cacheKey)
 		h.sys = system.New(h.c.PackageManager)
 		tra = h.validate(mf)
 		h.cache.SetDefault(cacheKey, tra)

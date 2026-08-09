@@ -27,7 +27,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 
-	disableColor()
+	SetNoColor(true)
 	var testCount, failed, skipped int
 
 	// ISO8601 timeformat

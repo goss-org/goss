@@ -88,10 +88,10 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if isSet(u.Headers) {
+	if isSetWarnEmpty(u.Headers, fmt.Sprintf("%s: http.headers", u.ID())) {
 		results = append(results, ValidateValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if isSet(u.Body) {
+	if isSetWarnEmpty(u.Body, fmt.Sprintf("%s: http.body", u.ID())) {
 		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 

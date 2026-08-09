@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -46,8 +47,8 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			t.Parallel()
-			tl := util.NewTestLogger(t)
+			var logOutput syncBuffer
+			log.SetOutput(&logOutput)
 
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
@@ -165,8 +166,8 @@ func TestServeNegotiatingContent(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			t.Parallel()
-			tl := util.NewTestLogger(t)
+			var logOutput syncBuffer
+			log.SetOutput(&logOutput)
 
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
@@ -197,8 +198,8 @@ func TestServeNegotiatingContent(t *testing.T) {
 }
 
 func TestServeCacheWithNoContentNegotiation(t *testing.T) {
-	t.Parallel()
-	tl := util.NewTestLogger(t)
+	var logOutput syncBuffer
+	log.SetOutput(&logOutput)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
@@ -245,8 +246,8 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 }
 
 func TestServeCacheNegotiatingContent(t *testing.T) {
-	t.Parallel()
-	tl := util.NewTestLogger(t)
+	var logOutput syncBuffer
+	log.SetOutput(&logOutput)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),

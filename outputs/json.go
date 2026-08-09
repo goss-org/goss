@@ -31,7 +31,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var startTime time.Time
 	var endTime time.Time
-	disableColor()
+	SetNoColor(true)
 	testCount := 0
 	failed := 0
 	skipped := 0
