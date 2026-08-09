@@ -164,12 +164,12 @@ func prettyPrint(i any, indent bool) string {
 
 // indents a block of text with an indent string
 func indentLines(text string) string {
-	indent := "    "
-	var result strings.Builder
+	var builder strings.Builder
 	for j := range strings.SplitSeq(strings.TrimRight(text, "\n"), "\n") {
-		result.WriteString(indent + j + "\n")
+		fmt.Fprintf(&builder, "    %v\n", j)
 	}
-	return result.String()[:len(result.String())-1]
+	result := builder.String()
+	return result[:len(result)-1]
 }
 
 func RegisterOutputer(name string, outputer Outputer) {
