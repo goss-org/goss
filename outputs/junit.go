@@ -49,13 +49,13 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 			duration := strconv.FormatFloat(testResult.Duration.Seconds(), 'f', 3, 64)
       testcaseName := fmt.Sprintf("%s %s %s",
         testResult.ResourceType,
-        escapeString(testResult.ResourceId),
+        testResult.ResourceId,
         testResult.Property);
       if (testResult.Title != "") {
-        testcaseName = escapeString(testResult.Title);
+        testcaseName = testResult.Title
       }
       summary[testCount] = fmt.Sprintf("<testcase name=\"%s\" time=\"%s\">\n",
-        testcaseName,
+        escapeString(testcaseName),
         duration,
       );
 
