@@ -10,7 +10,7 @@ import (
 // erroringTransform fails the way Gjson does when a path is absent.
 type erroringTransform struct{}
 
-func (erroringTransform) Transform(in interface{}) (interface{}, error) {
+func (erroringTransform) Transform(in any) (any, error) {
 	return in, errors.New("Path not found: this.is.typo")
 }
 
@@ -39,11 +39,11 @@ func TestAndMatcherFailureResultWhenNoChildMatcherRan(t *testing.T) {
 func TestAndMatcherFailureResultStillReportsTheFailedChild(t *testing.T) {
 	m := And(HaveKey("missing"))
 
-	success, err := m.Match(map[string]interface{}{"present": 1})
+	success, err := m.Match(map[string]any{"present": 1})
 	assert.False(t, success)
 	assert.NoError(t, err)
 
-	result := m.FailureResult(map[string]interface{}{"present": 1})
+	result := m.FailureResult(map[string]any{"present": 1})
 	assert.Equal(t, "to have key matching", result.Message,
 		"must delegate to the child that failed, not the And's own message")
 }
