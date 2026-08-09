@@ -991,7 +991,7 @@ Available functions:
     :   Changes piped input to UPPERCASE
 
     `findStringSubmatch regex string`
-    :   Returns map[string]interface{} with the names of the parenthesized subexpressions, like `(?P<first>[a-z])`
+    :   Returns map[string]any with the names of the parenthesized subexpressions, like `(?P<first>[a-z])`
 
         {{ $regexDBrc := "\\'mysql:\\/\\/(?P<login>[a-z0-9]+):(?P<password>[a-z0-9]+)@localhost\\/(?P<database>roundcube_[a-z0-9]+)\\';"}}
 

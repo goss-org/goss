@@ -11,7 +11,6 @@ import (
 type GossMatcher interface {
 	// This is needed due to oMegaMatcher test in some of the GomegaMatcher logic
 	types.GomegaMatcher
-	//Match(actual interface{}) (success bool, err error)
 	FailureResult(actual any) MatcherResult
 	NegatedFailureResult(actual any) MatcherResult
 	// This doesn't seem to make a difference, maybe not needed

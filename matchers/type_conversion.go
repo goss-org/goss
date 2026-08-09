@@ -87,22 +87,6 @@ func (matcher ToArray) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j)
 }
 
-//type ReaderToStrings struct{}
-//
-//func (t ReaderToStrings) Transform(i interface{}) (interface{}, error) {
-//	r, ok := i.(io.Reader)
-//	if !ok {
-//		return nil, fmt.Errorf("Expected io.reader, Got:%s", format.Object(i, 1))
-//	}
-//	var lines []string
-//	i, err := ReaderToString{}.Transform(r)
-//	if err != nil {
-//		return lines, err
-//	}
-//	s := i.(string)
-//	return strings.Split(s, "\n"), nil
-//}
-
 type ReaderToString struct{}
 
 func (t ReaderToString) Transform(i any) (any, error) {
