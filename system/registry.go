@@ -12,7 +12,11 @@ type Registry interface {
 	Type() (string, error)
 }
 
-var ErrRegistryUnsupported = errors.New("registry resource is only supported on Windows")
+var (
+	ErrRegistryUnsupported = errors.New("registry resource is only supported on Windows")
+	errInvalidRegistryKey  = errors.New("invalid registry key")
+	errInvalidRegistryHive = errors.New("invalid registry hive")
+)
 
 // registryPathParts holds the parsed components of a registry key path.
 type registryPathParts struct {
@@ -45,24 +49,24 @@ type registryPathParts struct {
 //     ValueName="\\*\NETLOGON"
 func parseRegistryKey(key string) (registryPathParts, error) {
 	if key == "" {
-		return registryPathParts{}, errors.New("empty registry key")
+		return registryPathParts{}, fmt.Errorf("%w: empty key", errInvalidRegistryKey)
 	}
 
 	parts := strings.SplitN(key, `\`, 2)
 	if len(parts) < 2 {
-		return registryPathParts{}, errors.New("invalid registry key: missing subkey path")
+		return registryPathParts{}, fmt.Errorf("%w: missing subkey path", errInvalidRegistryKey)
 	}
 
 	hive := strings.ToUpper(parts[0])
 	switch hive {
 	case "HKLM", "HKCU", "HKCR", "HKU", "HKCC":
 	default:
-		return registryPathParts{}, errors.New("invalid registry hive: " + parts[0])
+		return registryPathParts{}, fmt.Errorf("%w: %s", errInvalidRegistryHive, parts[0])
 	}
 
 	rest := parts[1]
 	if rest == "" {
-		return registryPathParts{}, errors.New("invalid registry key: empty subkey path")
+		return registryPathParts{}, fmt.Errorf("%w: empty subkey path", errInvalidRegistryKey)
 	}
 
 	// Check for explicit "::" separator first. This handles value names
