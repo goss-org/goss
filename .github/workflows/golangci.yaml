@@ -128,7 +128,7 @@ jobs:
               platform_spec="windows-amd64"
               # Workaround to avoid failing integration test when checking if
               # the MSDTC service is running.
-              sleep 2
+              powershell -NoProfile -NonInteractive -Command "(Get-Service MSDTC).WaitForStatus('Running', '00:00:05')"
               ;;
             *)
               echo "Unexpected platform"
