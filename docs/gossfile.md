@@ -226,7 +226,7 @@ dns:
     addrs:
     - "dns.google."
 
-  # Validate a SRV record
+  # Validate an SRV record
   SRV:_https._tcp.dnstest.io:
     resolvable: true
     server: 208.67.222.222
@@ -234,7 +234,7 @@ dns:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
 
-  # Validate a SSHFP record
+  # Validate an SSHFP record
   SSHFP:mars.yellowjacket.io:
     resolvable: true
     server: 8.8.8.8
