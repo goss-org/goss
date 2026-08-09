@@ -126,6 +126,9 @@ jobs:
               ;;
             windows-*)
               platform_spec="windows-amd64"
+              # Workaround to avoid failing integration test when checking if
+              # the MSDTC service is running.
+              sleep 2
               ;;
             *)
               echo "Unexpected platform"
