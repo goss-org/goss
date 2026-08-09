@@ -116,6 +116,7 @@ The following environment variables effect the behavior of kgoss.
 | GOSS\_FILES\_PATH | Location of the goss yaml files | `.` |
 | GOSS\_KUBECTL\_BIN | Kubenetes client tool to use | `$(which kubectl)` |
 | GOSS\_KUBECTL\_OPTS | Options to inject more options such as "--namespace=default" | "" |
+| GOSS\_KUBECTL\_TIMEOUT | Kubectl wait timout for the tester pod to reach ready condition | "60s" |
 | GOSS\_KUBECTL\_RUN\_OPTS | Options only for kubectl run (e.g. --overrides for serviceAccount) | "" |
 | GOSS\_OPTS | Options to use for the goss test run. | `--color --format documentation` |
 | GOSS\_WAIT\_OPTS | Options to use for the goss wait run, when `./goss_wait.yaml` exists. | `-r 30s -s 1s > /dev/null` |
