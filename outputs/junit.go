@@ -47,14 +47,14 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 				endTime = testResult.EndTime
 			}
 			duration := strconv.FormatFloat(testResult.Duration.Seconds(), 'f', 3, 64)
-			testcaseName := fmt.Sprintf(
-				"%s %s %s",
-				testResult.ResourceType,
-				testResult.ResourceId,
-				testResult.Property,
-			)
-			if (testResult.Title != "") {
-				testcaseName = testResult.Title
+			testcaseName := testResult.Title
+			if testcaseName == "" {
+				testcaseName = fmt.Sprintf(
+					"%s %s %s",
+					testResult.ResourceType,
+					testResult.ResourceId,
+					testResult.Property,
+				)
 			}
 			summary[testCount] = fmt.Sprintf(
 				"<testcase name=\"%s\" time=\"%s\">\n",
