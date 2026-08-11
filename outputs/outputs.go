@@ -13,7 +13,6 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 	"github.com/pmezard/go-difflib/difflib"
@@ -48,9 +47,6 @@ var (
 	foSort       = "sort"
 )
 
-var green = color.New(color.FgGreen).SprintfFunc()
-var red = color.New(color.FgRed).SprintfFunc()
-var yellow = color.New(color.FgYellow).SprintfFunc()
 var multiple_space = regexp.MustCompile(`\s+`)
 
 func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
@@ -231,7 +227,7 @@ func IsValidFormat(f string) bool {
 
 func GetOutputer(name string) (Outputer, error) {
 	if _, ok := outputers[name]; !ok {
-		return nil, fmt.Errorf("bad output format: " + name)
+		return nil, fmt.Errorf("bad output format: %v", name)
 	}
 	return outputers[name], nil
 }

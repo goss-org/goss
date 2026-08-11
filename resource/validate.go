@@ -182,7 +182,13 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 	case func() (any, error):
 		foundValue, err = f()
 	case func() (io.Reader, error):
-		foundValue, err = f()
+		r, err := f()
+		if err == nil {
+			i, err := matchers.ReaderToString{}.Transform(r)
+			if err == nil {
+				foundValue = i.(string)
+			}
+		}
 		gomegaMatcher = matchers.HavePatterns(expectedValue)
 	default:
 		err = fmt.Errorf("Unknown method signature: %t", f)

@@ -1,0 +1,14 @@
+FROM debian:bullseye
+
+RUN echo 'deb http://deb.debian.org/debian bullseye main contrib' > /etc/apt/sources.list
+RUN echo 'deb http://deb.debian.org/debian bullseye-updates main contrib' >> /etc/apt/sources.list
+RUN echo 'deb http://security.debian.org/debian-security/ bullseye-security main contrib' >> /etc/apt/sources.list
+
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install --yes \
+    systemd-sysv apache2 ca-certificates tinyproxy dnsmasq && \
+    apt-get clean
+
+COPY dnsmasq.conf /etc/dnsmasq.conf
+
+RUN systemctl enable apache2 tinyproxy dnsmasq
+RUN mkfifo /pipe
