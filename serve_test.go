@@ -1,7 +1,6 @@
 package goss
 
 import (
-	"bytes"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -44,7 +43,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			var logOutput bytes.Buffer
+			var logOutput syncBuffer
 			log.SetOutput(&logOutput)
 
 			config, err := util.NewConfig(
@@ -158,7 +157,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			var logOutput bytes.Buffer
+			var logOutput syncBuffer
 			log.SetOutput(&logOutput)
 
 			config, err := util.NewConfig(
@@ -189,7 +188,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 }
 
 func TestServeCacheWithNoContentNegotiation(t *testing.T) {
-	var logOutput bytes.Buffer
+	var logOutput syncBuffer
 	log.SetOutput(&logOutput)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(
@@ -236,7 +235,7 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 }
 
 func TestServeCacheNegotiatingContent(t *testing.T) {
-	var logOutput bytes.Buffer
+	var logOutput syncBuffer
 	log.SetOutput(&logOutput)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(

@@ -78,16 +78,17 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
+	defer sysHTTP.Close()
 
 	var results []TestResult
 	results = append(results, ValidateValue(u, "status", u.Status, sysHTTP.Status, skip))
 	if shouldSkip(results) {
 		skip = true
 	}
-	if isSet(u.Headers) {
+	if isSetWarnEmpty(u.Headers, fmt.Sprintf("%s: http.headers", u.ID())) {
 		results = append(results, ValidateValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if isSet(u.Body) {
+	if isSetWarnEmpty(u.Body, fmt.Sprintf("%s: http.body", u.ID())) {
 		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 

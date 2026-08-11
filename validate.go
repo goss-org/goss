@@ -18,16 +18,17 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
 
-	currentTemplateFilter, err = NewTemplateFilter(vars, varsInline)
+	tf, err := NewTemplateFilter(varsFiles, varsInline)
 	if err != nil {
 		return nil, err
 	}
+	setTemplateFilter(tf)
 
 	if specFile == "-" {
 		source = "STDIN"
@@ -36,10 +37,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 		if err != nil {
 			return nil, err
 		}
-		outStoreFormat, err = getStoreFormatFromData(data)
+		format, err := getStoreFormatFromData(data)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSONData(data, true)
 		if err != nil {
@@ -48,10 +50,11 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 	} else {
 		source = specFile
 		path = filepath.Dir(specFile)
-		outStoreFormat, err = getStoreFormatFromFileName(specFile)
+		format, err := getStoreFormatFromFileName(specFile)
 		if err != nil {
 			return nil, err
 		}
+		setStoreFormat(format)
 
 		gossConfig, err = ReadJSON(specFile)
 		if err != nil {
@@ -73,10 +76,10 @@ func getGossConfig(vars string, varsInline string, specFile string) (cfg *GossCo
 
 func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 	if c != nil && *c {
-		color.NoColor = true
+		outputs.SetNoColor(true)
 	}
 	if c != nil && !*c {
-		color.NoColor = false
+		outputs.SetNoColor(false)
 	}
 
 	return outputs.GetOutputer(format)
@@ -85,7 +88,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
 func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +107,7 @@ func Validate(c *util.Config) (code int, err error) {
 	if err != nil {
 		return 1, err
 	}
-	gossConfig, err := getGossConfig(c.Vars, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return 78, err
 	}

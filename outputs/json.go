@@ -7,7 +7,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/fatih/color"
 	"github.com/goss-org/goss/resource"
 	"github.com/goss-org/goss/util"
 )
@@ -24,7 +23,7 @@ func (r Json) ValidOptions() []*formatOption {
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
 
-	var pretty bool = util.IsValueInList(foPretty, outConfig.FormatOptions)
+	var pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
@@ -32,7 +31,7 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var startTime time.Time
 	var endTime time.Time
-	color.NoColor = true
+	SetNoColor(true)
 	testCount := 0
 	failed := 0
 	skipped := 0

@@ -1,8 +1,8 @@
 # Goss - Quick and Easy server validation
 
-[![Build Status](https://travis-ci.org/goss-org/goss.svg?branch=master)](https://travis-ci.org/goss-org/goss)
+[![Integration tests](https://github.com/goss-org/goss/actions/workflows/golangci.yaml/badge.svg)](https://github.com/goss-org/goss/actions/workflows/golangci.yaml)
 [![Github All Releases](https://img.shields.io/github/downloads/goss-org/goss/total.svg?maxAge=604800)](https://github.com/goss-org/goss/releases)
-[![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.rocks/)
+[![Documentation Status](https://readthedocs.org/projects/goss/badge/)](https://goss.readthedocs.io/en/stable/)
 **
 [![Blog](https://img.shields.io/badge/follow-blog-brightgreen.svg)](https://medium.com/@aelsabbahy)
 
@@ -19,8 +19,7 @@ Also, user submitted wrapper scripts for Kubernetes [kgoss](https://github.com/g
 and Docker Compose [dcgoss](https://github.com/goss-org/goss/tree/master/extras/dcgoss).
 
 **Note:** For some Docker/Kubernetes healthcheck, health endpoint, and
-container ordering examples, see my blog post
-[here][kubernetes-simplified-health-checks].
+container ordering examples, see [my blog post][kubernetes-simplified-health-checks].
 
 ## Introduction
 
@@ -48,8 +47,8 @@ This will install goss and [dgoss](https://github.com/goss-org/goss/tree/master/
 # Install latest version to /usr/local/bin
 curl -fsSL https://goss.rocks/install | sh
 
-# Install v0.4.8 version to ~/bin
-curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
+# Install v0.4.10 version to ~/bin
+curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.10 GOSS_DST=~/bin sh
 ```
 
 <!-- --8<-- [end:intro] -->
@@ -57,28 +56,22 @@ curl -fsSL https://goss.rocks/install | GOSS_VER=v0.4.8 GOSS_DST=~/bin sh
 
 ### Manual installation
 
-#### Latest
+!!! warning
 
-```bash
-curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss
-chmod +rx /usr/local/bin/goss
-
-curl -L https://github.com/goss-org/goss/releases/latest/download/dgoss -o /usr/local/bin/dgoss
-# Alternatively, using the latest master
-# curl -L https://raw.githubusercontent.com/goss-org/goss/master/extras/dgoss/dgoss -o /usr/local/bin/dgoss
-chmod +rx /usr/local/bin/dgoss
-```
+    If you're using goss in a CI pipeline, it's recommended that you don't
+    download the `latest` and instead use a specific release tag. Using the
+    latest release may lead to unexpected behaviour.
 
 #### Specific Version
 
 ```bash
 # See https://github.com/goss-org/goss/releases for release versions
-VERSION=v0.4.8
-curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss-linux-amd64" -o /usr/local/bin/goss
+VERSION=v0.4.10
+curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/goss_${VERSION#v}_linux_x86_64.tar.gz" | tar xz -C /usr/local/bin goss
 chmod +rx /usr/local/bin/goss
 
 # (optional) dgoss docker wrapper (use 'master' for latest version)
-VERSION=v0.4.8
+VERSION=v0.4.10
 curl -L "https://github.com/goss-org/goss/releases/download/${VERSION}/dgoss" -o /usr/local/bin/dgoss
 chmod +rx /usr/local/bin/dgoss
 ```
@@ -87,6 +80,53 @@ chmod +rx /usr/local/bin/dgoss
 
 ```bash
 make build
+```
+
+Alternatively, you can build it with [goreleaser](https://goreleaser.com/). To
+build a binary, use `gorelease build`, and to only build for the same OS and
+architecture as the machine you're building on, include the `--single-target`
+flag. The `--clean` flag will clean up any existing builds, and `--snapshot`
+will allow you to build against something other than a tag.
+
+Here's an example:
+
+```console
+$ goreleaser build --clean --single-target --snapshot
+  • skipping validate...
+  • cleaning distribution directory
+  • loading environment variables
+  • getting and validating git state
+    • ignoring errors because this is a snapshot     error=git doesn't contain any tags - either add a tag or use --snapshot
+    • using tags                                     previous=<unknown> current=v0.0.0
+    • pipe skipped or partially skipped              reason=disabled during snapshot mode
+  • parsing tag
+  • setting defaults
+  • partial
+  • snapshotting
+    • building snapshot...                           version=0.0.1-next
+  • running before hooks
+    • running                                        hook=go mod tidy
+  • ensuring distribution directory
+  • setting up metadata
+  • writing release metadata
+  • loading go mod information
+  • build prerequisites
+  • building binaries
+    • partial build                                  match=target=linux_arm64_v8.0
+    • building                                       paths=cmd/goss binaries=goss target=linux_arm64_v8.0
+      • took: 31s
+  • writing artifacts metadata
+  • build succeeded after 31s
+  • thanks for using GoReleaser!
+$ tree dist
+dist
+├── artifacts.json
+├── binaries_linux_arm64_v8.0
+│   └── goss                            <- your binary
+├── config.yaml
+└── metadata.json
+
+2 directories, 4 files
 ```
 
 <!-- --8<-- [end:install] -->
@@ -105,8 +145,8 @@ make build
 
 ### Writing a simple sshd test
 
-An initial set of tests can be derived from the system state by using the [add](https://goss.rocks/cli/#add)
-or [autoadd](https://goss.rocks/cli/#autoadd) commands.
+An initial set of tests can be derived from the system state by using the [add](https://goss.readthedocs.io/en/stable/cli/#add)
+or [autoadd](https://goss.readthedocs.io/en/stable/cli/#autoadd) commands.
 
 Let's write a simple sshd test using autoadd.
 
@@ -161,7 +201,7 @@ Total Duration: 0.021s # <- yeah, it's that fast..
 Count: 15, Failed: 0
 ```
 
-* Edit it to use [templates](https://goss.rocks/gossfile/#templates), and run with a vars file
+* Edit it to use [templates](https://goss.readthedocs.io/en/stable/gossfile/#templates), and run with a vars file
 
 ```console
 goss --vars vars.yaml validate
@@ -193,22 +233,23 @@ $ curl -H "Accept: application/vnd.goss-rspecish" localhost:8080/healthz
 Goss files can be manually edited to improve readability and expressiveness of tests.
 
 A [Json draft 7 schema](https://github.com/json-schema-org/json-schema-spec/blob/draft-07/schema.json) available
-at <https://goss.rocks/schema.yaml> makes it easier to edit simple goss.yaml files in IDEs,
+at <https://goss.readthedocs.io/en/stable/schema.yaml> makes it easier to edit simple goss.yaml files in IDEs,
 providing usual coding assistance such as inline documentation, completion and static analysis.
 See #793 for screenshots.
 
 For example, to configure the Json schema in JetBrains intellij IDEA,
 follow [documented instructions](https://www.jetbrains.com/help/idea/json.html#ws_json_schema_add_custom),
 with arguments such as:
-* `schema url=https://goss.rocks/schema.yaml`
+
+* `schema url=https://goss.readthedocs.io/en/stable/schema.yaml`
 * `schema version=Json schema version 7`
 * `file path pattern=*/goss.yaml`
 
 In addition, Goss files can also be further manually edited (without yet full json support) to use:
 
-* [Patterns](https://goss.rocks/gossfile/#patterns)
-* [Advanced Matchers](https://goss.rocks/gossfile/#advanced-matchers)
-* [Templates](https://goss.rocks/gossfile/#templates)
+* [Patterns](https://goss.readthedocs.io/en/stable/gossfile/#patterns)
+* [Advanced Matchers](https://goss.readthedocs.io/en/stable/gossfile/#advanced-matchers)
+* [Templates](https://goss.readthedocs.io/en/stable/gossfile/#templates)
 * `title` and `meta` (arbitrary data) attributes are persisted when adding other resources with `goss add`
 
 Some examples:
@@ -275,7 +316,7 @@ rendered_goss.yaml: fail: process.chrome: skip is required
 rendered_goss.yaml: fail: service.sshd: skip is required
 ```
 
-Full list of available Json schema validators can be found in <https://json-schema.org/implementations.html#validator-command%20line>
+JSON Schema maintains a [table of validators](https://json-schema.org/tools?query=&sortBy=name&sortOrder=ascending&groupBy=toolingTypes&licenses=&languages=&drafts=&toolingTypes=validator&environments=Command+Line&showObsolete=false).
 
 <!-- --8<-- [end:quickstart] -->
 <!-- --8<-- [start:about] -->
@@ -343,6 +384,6 @@ Service:
 * Upstart
 
 [kubernetes-simplified-health-checks]: https://medium.com/@aelsabbahy/docker-1-12-kubernetes-simplified-health-checks-and-container-ordering-with-goss-fa8debbe676c
-[platform-feature-parity]: https://goss.rocks/platforms
+[platform-feature-parity]: https://goss.readthedocs.io/en/stable/platforms/
 
 <!-- --8<-- [end:about] -->

@@ -13,22 +13,33 @@ import (
 )
 
 func setLogLevel(c *util.Config) error {
-	filter := &logutils.LevelFilter{
-		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR"},
-		MinLevel: logutils.LogLevel("INFO"),
-		Writer:   os.Stderr,
+	filter, err := newLogFilter(c.LogLevel, os.Stderr)
+	if err != nil {
+		return err
 	}
 	log.SetFlags(0) // Turn off standard timestamp flags
 	log.SetOutput(&timestampedWriter{filter})
+	log.Printf("[DEBUG] Setting log level to %v", strings.ToUpper(c.LogLevel))
+	return nil
+}
+
+// newLogFilter builds the level filter used to gate goss's log output. Levels
+// are expressed as a prefix on each message (for example "[DEBUG] ..."), so any
+// message logged without one is emitted regardless of the configured level.
+func newLogFilter(level string, w io.Writer) (*logutils.LevelFilter, error) {
+	filter := &logutils.LevelFilter{
+		Levels:   []logutils.LogLevel{"TRACE", "DEBUG", "INFO", "WARN", "ERROR"},
+		MinLevel: logutils.LogLevel("INFO"),
+		Writer:   w,
+	}
+	want := strings.ToUpper(level)
 	for _, lvl := range filter.Levels {
-		cLvl := strings.ToUpper(c.LogLevel)
-		if string(lvl) == cLvl {
+		if string(lvl) == want {
 			filter.MinLevel = lvl
-			log.Printf("[DEBUG] Setting log level to %v", cLvl)
-			return nil
+			return filter, nil
 		}
 	}
-	return fmt.Errorf("Unsupported log level: %s", c.LogLevel)
+	return nil, fmt.Errorf("Unsupported log level: %s", level)
 }
 
 type timestampedWriter struct {

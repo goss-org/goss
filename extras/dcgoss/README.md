@@ -5,7 +5,9 @@ containers. It is based on `dgoss`.
 
 ## Usage
 
-`dcgoss [run|edit] <docker_run_params>`
+```plain
+dcgoss [run|edit] <docker_run_params>
+```
 
 ### Run
 
@@ -21,11 +23,15 @@ Container configuration is used from the compose file, for example:
 
 **run:**
 
-`docker-compose up db`
+```sh
+docker-compose up db
+```
 
 **test:**
 
-`dcgoss run db`
+```sh
+dcgoss run db
+```
 
 `dcgoss run` will do the following:
 
@@ -43,7 +49,9 @@ This allows the user to leverage the `goss add|autoadd` commands to write tests 
 
 **Example:**
 
-`dcgoss edit db`
+```sh
+dcgoss edit db
+```
 
 ### Environment vars and defaults
 
@@ -59,7 +67,9 @@ When running in debug mode, the tmp dir with the container output will not be cl
 
 **Example:**
 
-`DEBUG=true dcgoss edit db`
+```sh
+DEBUG=true dcgoss edit db
+```
 
 #### GOSS_PATH
 
@@ -91,7 +101,9 @@ Location of the goss yaml files.
 
 **Example:**
 
-`GOSS_FILES_PATH=db dcgoss edit db`
+```sh
+GOSS_FILES_PATH=db dcgoss edit db
+```
 
 #### GOSS_FILE
 
@@ -99,7 +111,9 @@ Allows to specify a differing name for `goss.yaml`. Useful when the same image i
 
 **Example:**
 
-`GOSS_FILE=goss_config1.yaml dcgoss run db`
+```sh
+GOSS_FILE=goss_config1.yaml dcgoss run db
+```
 
 #### GOSS_VARS
 
@@ -129,4 +143,6 @@ When debugging test execution its beneficual to set both `DEBUG=true` and `GOSS_
 
 **Example:**
 
-`DEBUG=true GOSS_FILES_PATH=db GOSS_WAIT_OPTS="-r 60s -s 5s" dcgoss run db`
+```sh
+DEBUG=true GOSS_FILES_PATH=db GOSS_WAIT_OPTS="-r 60s -s 5s" dcgoss run db
+```
