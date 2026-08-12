@@ -924,7 +924,8 @@ matching:
 
 Execute an [XPath](https://www.w3.org/TR/xpath/) request on a XML string.
 
-This uses [xpath](https://github.com/antchfx/xpath) Go library under the hood, which supports [these](https://github.com/antchfx/xpath#supported-features) features.
+This uses [xpath](https://github.com/antchfx/xpath) Go library under the hood,
+which supports [these](https://github.com/antchfx/xpath#supported-features) features.
 
 Example:
 
