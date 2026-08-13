@@ -14,7 +14,11 @@ import (
 )
 
 func TestServeWithNoContentNegotiation(t *testing.T) {
-	t.Parallel()
+	// NOTE: cannot use t.Parallel() because this test and its peers call
+	// log.SetOutput to redirect the process-wide standard logger into a
+	// local bytes.Buffer and then read from it. Running in parallel with
+	// other tests that do the same causes races on both the shared logger
+	// and the buffers.
 	tests := map[string]struct {
 		outputFormat        string
 		specFile            string
@@ -49,6 +53,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
 				util.WithOutputFormat(tc.outputFormat),
+				util.WithLogger(tl),
 			)
 			require.NoError(t, err)
 
@@ -62,7 +67,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 
 			handler.ServeHTTP(rr, req)
 
-			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
+			t.Logf("testName %q log output:\n%s", testName, tl.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
 				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
@@ -72,7 +77,11 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 }
 
 func TestServeNegotiatingContent(t *testing.T) {
-	t.Parallel()
+	// NOTE: cannot use t.Parallel() because this test and its peers call
+	// log.SetOutput to redirect the process-wide standard logger into a
+	// local bytes.Buffer and then read from it. Running in parallel with
+	// other tests that do the same causes races on both the shared logger
+	// and the buffers.
 	tests := map[string]struct {
 		acceptHeader        []string
 		outputFormat        string
@@ -163,6 +172,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
 				util.WithOutputFormat(tc.outputFormat),
+				util.WithLogger(tl),
 			)
 			require.NoError(t, err)
 
@@ -178,7 +188,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 
 			handler.ServeHTTP(rr, req)
 
-			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
+			t.Logf("testName %q log output:\n%s", testName, tl.String())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
 				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
@@ -194,6 +204,7 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
+		util.WithLogger(tl),
 	)
 	require.NoError(t, err)
 
@@ -209,18 +220,18 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Contains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.NotContains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
@@ -228,9 +239,9 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Contains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 }
 
@@ -242,6 +253,7 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
 		util.WithOutputFormat("structured"),
+		util.WithLogger(tl),
 	)
 	require.NoError(t, err)
 
@@ -259,9 +271,9 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Contains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
@@ -271,9 +283,9 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.NotContains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 
 	t.Run("immediately re-request but different accept header, cache should be warm", func(t *testing.T) {
@@ -283,9 +295,9 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.NotContains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
@@ -296,9 +308,9 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Contains(t, tl.String(), "Stale cache")
+		t.Log(tl.String())
+		tl.Reset()
 	})
 }
 

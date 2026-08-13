@@ -9,13 +9,14 @@ import (
 )
 
 type Package struct {
-	Title     string  `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta      meta    `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id        string  `json:"-" yaml:"-"`
-	Name      string  `json:"name,omitempty" yaml:"name,omitempty"`
-	Installed matcher `json:"installed" yaml:"installed"`
-	Versions  matcher `json:"versions,omitempty" yaml:"versions,omitempty"`
-	Skip      bool    `json:"skip,omitempty" yaml:"skip,omitempty"`
+	Title     string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta      meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks     []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	id        string   `json:"-" yaml:"-"`
+	Name      string   `json:"name,omitempty" yaml:"name,omitempty"`
+	Installed matcher  `json:"installed" yaml:"installed"`
+	Versions  matcher  `json:"versions,omitempty" yaml:"versions,omitempty"`
+	Skip      bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
 }
 
 const (
@@ -33,12 +34,14 @@ func (p *Package) ID() string {
 	}
 	return p.id
 }
-func (p *Package) SetID(id string)  { p.id = id }
-func (p *Package) SetSkip()         { p.Skip = true }
-func (p *Package) TypeKey() string  { return PackageResourceKey }
-func (p *Package) TypeName() string { return PackageResourceName }
-func (p *Package) GetTitle() string { return p.Title }
-func (p *Package) GetMeta() meta    { return p.Meta }
+func (p *Package) SetID(id string)     { p.id = id }
+func (p *Package) SetSkip()            { p.Skip = true }
+func (p *Package) TypeKey() string     { return PackageResourceKey }
+func (p *Package) TypeName() string    { return PackageResourceName }
+func (p *Package) GetTitle() string    { return p.Title }
+func (p *Package) GetMeta() meta       { return p.Meta }
+func (p *Package) GetMarks() []string  { return p.Marks }
+func (p *Package) SetMarks(m []string) { p.Marks = m }
 func (p *Package) GetName() string {
 	if p.Name != "" {
 		return p.Name

@@ -6,11 +6,12 @@ import (
 )
 
 type Gossfile struct {
-	Title string `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta  meta   `json:"meta,omitempty" yaml:"meta,omitempty"`
-	Path  string `json:"-" yaml:"-"`
-	Skip  bool   `json:"skip,omitempty" yaml:"skip,omitempty"`
-	File  string `json:"file,omitempty" yaml:"file,omitempty"`
+	Title string   `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta  meta     `json:"meta,omitempty" yaml:"meta,omitempty"`
+	Marks []string `json:"marks,omitempty" yaml:"marks,omitempty"`
+	Path  string   `json:"-" yaml:"-"`
+	Skip  bool     `json:"skip,omitempty" yaml:"skip,omitempty"`
+	File  string   `json:"file,omitempty" yaml:"file,omitempty"`
 }
 
 const (
@@ -28,8 +29,10 @@ func (g *Gossfile) SetSkip()         {}
 func (g *Gossfile) TypeKey() string  { return GossFileResourceKey }
 func (g *Gossfile) TypeName() string { return GossFileResourceName }
 
-func (g *Gossfile) GetTitle() string { return g.Title }
-func (g *Gossfile) GetMeta() meta    { return g.Meta }
+func (g *Gossfile) GetTitle() string    { return g.Title }
+func (g *Gossfile) GetMeta() meta       { return g.Meta }
+func (g *Gossfile) GetMarks() []string  { return g.Marks }
+func (g *Gossfile) SetMarks(m []string) { g.Marks = m }
 
 func (g *Gossfile) GetSkip() bool { return g.Skip }
 

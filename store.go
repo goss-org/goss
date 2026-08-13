@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -42,30 +41,35 @@ func setStoreFormat(f int) {
 	outStoreFormat = f
 }
 
+// storeFormat atomically reads the package-level store format.
 func storeFormat() int {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
 	return outStoreFormat
 }
 
+// setTemplateFilter atomically updates the package-level template filter.
 func setTemplateFilter(tf TemplateFilter) {
 	storeStateMu.Lock()
 	defer storeStateMu.Unlock()
 	currentTemplateFilter = tf
 }
 
+// templateFilter atomically reads the package-level template filter.
 func templateFilter() TemplateFilter {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
 	return currentTemplateFilter
 }
 
+// setDebug atomically updates the package-level debug flag.
 func setDebug(d bool) {
 	storeStateMu.Lock()
 	defer storeStateMu.Unlock()
 	debug = d
 }
 
+// debugEnabled atomically reads the package-level debug flag.
 func debugEnabled() bool {
 	storeStateMu.RLock()
 	defer storeStateMu.RUnlock()
@@ -218,7 +222,11 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	return *gossConfig, nil
 }
 
-// RenderJSON reads json file recursively returning string
+// RenderJSON reads json file recursively returning string. Any merge
+// warnings accumulated while processing the spec (for example, duplicate
+// resource keys across gossfiles) are emitted via c.Log(); RenderJSON is
+// the edge layer between the pure config-merging core and the rest of the
+// application, so it is the place where warnings become log lines.
 func RenderJSON(c *util.Config) (string, error) {
 	setDebug(c.Debug)
 	tf, err := NewTemplateFilter(c.VarsFiles, c.VarsInline)
@@ -238,10 +246,11 @@ func RenderJSON(c *util.Config) (string, error) {
 		return "", err
 	}
 
-	gossConfig, err := mergeJSONData(j, 0, filepath.Dir(c.Spec))
+	gossConfig, warnings, err := mergeJSONData(j, 0, filepath.Dir(c.Spec))
 	if err != nil {
 		return "", err
 	}
+	logWarnings(c.Log(), warnings)
 
 	b, err := marshal(gossConfig)
 	if err != nil {
@@ -251,14 +260,21 @@ func RenderJSON(c *util.Config) (string, error) {
 	return string(b), nil
 }
 
-func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, error) {
+// mergeJSONData walks the gossfile graph (up to a fixed recursion depth),
+// merging the configs it reads along the way. It is intentionally pure with
+// respect to logging: any warnings produced during merging are accumulated
+// and returned for the caller to emit at the appropriate architectural
+// boundary (typically the edge layer that holds a *util.Config).
+func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, []string, error) {
 	depth++
 	if depth >= 50 {
-		return GossConfig{}, errMaxDepth
+		return GossConfig{}, nil, errMaxDepth
 	}
 	// Our return gossConfig
 	ret := *NewGossConfig()
-	ret = mergeGoss(ret, gossConfig)
+	var warnings []string
+	ret, w := mergeGoss(ret, gossConfig)
+	warnings = append(warnings, w...)
 
 	// Sort the gossfiles to ensure consistent ordering
 	var keys []string
@@ -282,50 +298,68 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 		}
 		matches, err := filepath.Glob(fpath)
 		if err != nil {
-			return ret, fmt.Errorf("error in expanding glob pattern: %w", err)
+			return ret, warnings, fmt.Errorf("error in expanding glob pattern: %w", err)
 		}
 		if matches == nil {
-			return ret, fmt.Errorf("no matched files were found: %q", fpath)
+			return ret, warnings, fmt.Errorf("no matched files were found: %q", fpath)
 		}
 		for _, match := range matches {
 			fdir := filepath.Dir(match)
 			j, err := ReadJSON(match)
 			if err != nil {
-				return GossConfig{}, fmt.Errorf("could not read json data in %s: %w", match, err)
+				return GossConfig{}, warnings, fmt.Errorf("could not read json data in %s: %w", match, err)
 			}
-			j, err = mergeJSONData(j, depth, fdir)
+			var childWarnings []string
+			j, childWarnings, err = mergeJSONData(j, depth, fdir)
+			warnings = append(warnings, childWarnings...)
 			if err != nil {
-				return ret, fmt.Errorf("could not write json data: %w", err)
+				return ret, warnings, fmt.Errorf("could not write json data: %w", err)
 			}
-			ret = mergeGoss(ret, j)
+			var mergeWarnings []string
+			ret, mergeWarnings = mergeGoss(ret, j)
+			warnings = append(warnings, mergeWarnings...)
 		}
 	}
-	return ret, nil
+	return ret, warnings, nil
 }
 
-func WriteJSON(filePath string, gossConfig GossConfig) error {
+// WriteJSON marshals gossConfig and writes it to filePath. It is a pure
+// function with respect to logging: if the configuration is empty (and
+// therefore nothing is written), a human-readable warning string is
+// returned alongside a nil error so the caller -- which has a *util.Config
+// in scope -- can emit it via c.Log(). An empty warning string means the
+// file was written normally.
+func WriteJSON(filePath string, gossConfig GossConfig) (string, error) {
 	jsonData, err := marshal(gossConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return "", fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return "", fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	if string(emptyData) == string(jsonData) {
-		log.Printf("Can't write empty configuration file. Please check resource name(s).")
-		return nil
+		return "Can't write empty configuration file. Please check resource name(s).", nil
 	}
 
 	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return "", fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
-	return nil
+	return "", nil
+}
+
+// logWarnings emits each entry of warnings via logger.Printf, preserving
+// the pre-refactor format (warnings already include a "[WARN] " prefix
+// where appropriate). It is a no-op for empty or nil slices.
+func logWarnings(logger util.Logger, warnings []string) {
+	for _, w := range warnings {
+		logger.Printf("%s", w)
+	}
 }
 
 func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {
