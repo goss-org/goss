@@ -18,19 +18,19 @@ const (
 type HavePatternsMatcher struct {
 	fakeOmegaMatcher
 
-	Elements        interface{}
+	Elements        any
 	missingElements []string
 	foundElements   []string
 }
 
-func HavePatterns(elements interface{}) GossMatcher {
+func HavePatterns(elements any) GossMatcher {
 	return &HavePatternsMatcher{
 		Elements: elements,
 	}
 }
 
-func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
-	t, ok := m.Elements.([]interface{})
+func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
+	t, ok := m.Elements.([]any)
 	if !ok {
 		return false, fmt.Errorf("HavePatterns matcher expects an array of matchers.  Got:\n%s", format.Object(m.Elements, 1))
 	}
@@ -117,8 +117,8 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 	return true, nil
 }
 
-func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
-	var a interface{}
+func (m *HavePatternsMatcher) FailureResult(actual any) MatcherResult {
+	var a any
 	switch actual.(type) {
 	case string, []string:
 		a = actual
@@ -134,7 +134,7 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HavePatternsMatcher) NegatedFailureResult(actual any) MatcherResult {
 	a, ok := actual.(string)
 	if !ok {
 		a = fmt.Sprintf("object: %T", actual)
@@ -198,12 +198,17 @@ func newRegexPattern(str string) (*regexPattern, error) {
 			break
 		}
 	}
-	trimRight := []rune{'/'}
-	for _, r := range trimRight {
-		if rune(cleanStr[len(cleanStr)-1]) == r {
-			cleanStr = cleanStr[:len(cleanStr)-1]
-			break
-		}
+	// Strip trailing closing delimiter and any flags that follow it.
+	// Supported flags mirror Go's regexp inline flags: i, m, s.
+	// E.g. /pattern/i  → compile as (?i)pattern
+	//      /pattern/ms → compile as (?ms)pattern
+	var flags string
+	if idx := strings.LastIndex(cleanStr, "/"); idx >= 0 {
+		flags = cleanStr[idx+1:]
+		cleanStr = cleanStr[:idx]
+	}
+	if flags != "" {
+		cleanStr = "(?" + flags + ")" + cleanStr
 	}
 
 	re, err := regexp.Compile(cleanStr)
@@ -223,10 +228,35 @@ func (re *regexPattern) Match(str string) bool {
 func (re *regexPattern) Pattern() string { return re.pattern }
 func (re *regexPattern) Inverse() bool   { return re.inverse }
 
+// isRegexPattern reports whether s looks like a /regex/ or /regex/flags pattern
+// (with an optional leading ! for negation).
+func isRegexPattern(s string) bool {
+	core := strings.TrimPrefix(s, "!")
+	if !strings.HasPrefix(core, "/") {
+		return false
+	}
+	// Find the closing '/' after the opening one.
+	closing := strings.LastIndex(core[1:], "/")
+	if closing < 0 {
+		return false
+	}
+	// Everything after the closing '/' must be valid regexp flag letters.
+	trailingFlags := core[1:][closing+1:]
+	for _, r := range trailingFlags {
+		switch r {
+		case 'i', 'm', 's':
+			// valid Go regexp inline flags
+		default:
+			return false
+		}
+	}
+	return true
+}
+
 func sliceToPatterns(slice []string) ([]patternMatcher, error) {
 	var patterns []patternMatcher
 	for _, s := range slice {
-		if (strings.HasPrefix(s, "/") || strings.HasPrefix(s, "!/")) && strings.HasSuffix(s, "/") {
+		if isRegexPattern(s) {
 			pat, err := newRegexPattern(s)
 			if err != nil {
 				return nil, err
@@ -265,7 +295,7 @@ func subtractSlice(x, y []string) []string {
 }
 
 func (matcher *HavePatternsMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["have-patterns"] = matcher.Elements
 	return json.Marshal(j)
 }
