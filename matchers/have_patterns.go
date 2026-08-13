@@ -18,19 +18,19 @@ const (
 type HavePatternsMatcher struct {
 	fakeOmegaMatcher
 
-	Elements        interface{}
+	Elements        any
 	missingElements []string
 	foundElements   []string
 }
 
-func HavePatterns(elements interface{}) GossMatcher {
+func HavePatterns(elements any) GossMatcher {
 	return &HavePatternsMatcher{
 		Elements: elements,
 	}
 }
 
-func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error) {
-	t, ok := m.Elements.([]interface{})
+func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
+	t, ok := m.Elements.([]any)
 	if !ok {
 		return false, fmt.Errorf("HavePatterns matcher expects an array of matchers.  Got:\n%s", format.Object(m.Elements, 1))
 	}
@@ -117,8 +117,8 @@ func (m *HavePatternsMatcher) Match(actual interface{}) (success bool, err error
 	return true, nil
 }
 
-func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
-	var a interface{}
+func (m *HavePatternsMatcher) FailureResult(actual any) MatcherResult {
+	var a any
 	switch actual.(type) {
 	case string, []string:
 		a = actual
@@ -134,7 +134,7 @@ func (m *HavePatternsMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *HavePatternsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HavePatternsMatcher) NegatedFailureResult(actual any) MatcherResult {
 	a, ok := actual.(string)
 	if !ok {
 		a = fmt.Sprintf("object: %T", actual)
@@ -231,10 +231,7 @@ func (re *regexPattern) Inverse() bool   { return re.inverse }
 // isRegexPattern reports whether s looks like a /regex/ or /regex/flags pattern
 // (with an optional leading ! for negation).
 func isRegexPattern(s string) bool {
-	core := s
-	if strings.HasPrefix(core, "!") {
-		core = core[1:]
-	}
+	core := strings.TrimPrefix(s, "!")
 	if !strings.HasPrefix(core, "/") {
 		return false
 	}
@@ -298,7 +295,7 @@ func subtractSlice(x, y []string) []string {
 }
 
 func (matcher *HavePatternsMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["have-patterns"] = matcher.Elements
 	return json.Marshal(j)
 }
