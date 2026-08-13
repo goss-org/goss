@@ -61,10 +61,10 @@ func (c *Command) Validate(sys *system.System) []TestResult {
 
 	cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.ID()))
 	results = append(results, ValidateValue(c, "exit-status", cExitStatus, sysCommand.ExitStatus, skip))
-	if isSet(c.Stdout) {
+	if isSetWarnEmpty(c.Stdout, fmt.Sprintf("%s: command.stdout", c.ID())) {
 		results = append(results, ValidateValue(c, "stdout", c.Stdout, sysCommand.Stdout, skip))
 	}
-	if isSet(c.Stderr) {
+	if isSetWarnEmpty(c.Stderr, fmt.Sprintf("%s: command.stderr", c.ID())) {
 		results = append(results, ValidateValue(c, "stderr", c.Stderr, sysCommand.Stderr, skip))
 	}
 	return results

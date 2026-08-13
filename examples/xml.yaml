@@ -1,0 +1,11 @@
+file:
+  examples/test.xml:
+    exists: true
+    contents:
+      and:
+        - xml:
+            xpath: "boolean(//book[title='Le seigneur des anneaux'])"
+            result: "true"
+        - xml:
+            xpath: "//book[title='Le seigneur des anneaux']/quantity/text()"
+            result: "1"

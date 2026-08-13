@@ -3,10 +3,10 @@
 
 package system
 
-import (
-	"fmt"
-)
+import "errors"
+
+var errUnsupportedOS = errors.New("unsupported operating system")
 
 func (u *DefUser) Shell() (string, error) {
-	return "", fmt.Errorf("unsupported operating system")
+	return "", errUnsupportedOS
 }

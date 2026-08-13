@@ -21,7 +21,7 @@ func (u *DefUser) Groups() ([]string, error) {
 	for _, gid := range ids {
 		group, err := user.LookupGroupId(gid)
 		if err != nil {
-			return nil, fmt.Errorf("Unable to find groups for user %v: %v", usr.Username, err)
+			return nil, fmt.Errorf("Unable to find groups for user %v: %w", usr.Username, err)
 		}
 		groupList = append(groupList, group.Name)
 	}

@@ -3,11 +3,13 @@
 *.bak
 /goss
 /release
+/dist
 /integration-tests/goss/goss
 /integration-tests/**/*-generated*
 /vendor/
 /integration-tests/**/goss-linux-386
 /integration-tests/**/goss-linux-amd64
+/extras/**/*.sha256
 
 # Random stuff for my local testing/development that I don't want checked in
 tmp/
@@ -23,3 +25,4 @@ tmp/
 /.venv
 ## MkDocs rendered site
 /site
+.cache/

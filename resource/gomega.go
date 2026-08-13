@@ -1,11 +1,14 @@
 package resource
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/goss-org/goss/matchers"
 	"github.com/samber/lo"
 )
+
+var errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
 
 func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	// Default matchers
@@ -28,7 +31,7 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		return matchers.ContainElements(interfaceSlice...), nil
 	}
 	if matcher == nil {
-		return nil, fmt.Errorf("Syntax Error: Missing required attribute")
+		return nil, errMissingRequiredAttribute
 	}
 	matcherMap, ok := matcher.(map[string]any)
 	if !ok {
@@ -153,6 +156,34 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 
 		}
 		return matchers.BeSemverConstraint(v), nil
+
+	case "xml":
+		vmap, ok := value.(map[string]any)
+		if !ok {
+			return nil, invalidArgSyntaxError("xml", "map", value)
+		}
+
+		dict := make(map[string]string, len(vmap))
+		for key, val := range vmap {
+			dict[key] = fmt.Sprintf("%v", val)
+		}
+
+		// Check if xpath and result key are in the map
+		var isXpath, isResult bool
+		for key := range dict {
+			switch key {
+			case "result":
+				isResult = true
+			case "xpath":
+				isXpath = true
+			}
+		}
+
+		if isXpath && isResult {
+			return matchers.XML(dict), nil
+		}
+		return nil, invalidArgSyntaxError("xml", "xpath and result to have", dict)
+
 	case "gjson":
 		var subMatchers []matchers.GossMatcher
 		valueI, ok := value.(map[string]any)
