@@ -32,12 +32,12 @@ func (m *XMLMatcher) Match(actual any) (success bool, err error) {
 
 	doc, err := xmlquery.Parse(strings.NewReader(xmlStr))
 	if err != nil {
-		return false, fmt.Errorf("Cannot parse XML string: %s\n%s", err, xmlStr)
+		return false, fmt.Errorf("Cannot parse XML string %q: %w", xmlStr, err)
 	}
 
 	xp, err := xpath.Compile(m.XPath)
 	if err != nil {
-		return false, fmt.Errorf("Invalid XPath query %q: %s", m.XPath, err)
+		return false, fmt.Errorf("Invalid XPath query %q: %w", m.XPath, err)
 	}
 
 	nav := xmlquery.CreateXPathNavigator(doc)
