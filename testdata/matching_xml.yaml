@@ -1,0 +1,98 @@
+matching:
+  # Node queries: the matched nodes are serialized and concatenated
+  xml_node_text:
+    content: &xml_doc |
+      <?xml version="1.0" encoding="utf-8"?>
+      <order date="2019-02-01">
+        <address xmlns:billing="http://localhost/XML/billing">
+          <billing:name>Mary Adams</billing:name>
+          <billing:city>Old Town</billing:city>
+        </address>
+        <items>
+          <book isbn="9781408845660">
+            <title>Harry Potter</title>
+            <quantity>1</quantity>
+            <price>25</price>
+          </book>
+          <book isbn="9780544003415">
+            <title>Le seigneur des anneaux</title>
+            <quantity>1</quantity>
+            <price>18</price>
+          </book>
+        </items>
+      </order>
+    matches:
+      xml:
+        xpath: "//book[title='Le seigneur des anneaux']/quantity/text()"
+        result: "1"
+
+  xml_node_serialized:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "//book[@isbn='9780544003415']/title"
+        result: "<title>Le seigneur des anneaux</title>"
+
+  xml_attribute:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "//book[1]/@isbn"
+        result: "<isbn>9781408845660</isbn>"
+
+  xml_namespaced_node:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "//address/*[local-name()='city']/text()"
+        result: "Old Town"
+
+  # An empty result only asserts that the node-set is not empty
+  xml_existence:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "//items/book"
+        result: ""
+
+  # XPath functions, converted to their string representation
+  xml_func_count:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "count(//book)"
+        result: "2"
+
+  xml_func_sum:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "sum(//price)"
+        result: "43"
+
+  xml_func_boolean:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "boolean(//book[title='Dune'])"
+        result: "false"
+
+  # A function inside a predicate still yields a node-set
+  xml_func_in_predicate:
+    content: *xml_doc
+    matches:
+      xml:
+        xpath: "//book[contains(title, 'anneaux')]/price"
+        result: "<price>18</price>"
+
+  # Composition with the other matchers
+  xml_and:
+    content: *xml_doc
+    matches:
+      and:
+        - xml:
+            xpath: "count(//book)"
+            result: "2"
+        - xml:
+            xpath: "//book[1]/title/text()"
+            result: "Harry Potter"

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Order SYSTEM "order.dtd">
+<?xml-stylesheet type="text/css" href="style.css"?>
+
+<order date="2019-02-01">
+    <address xmlns:shipping="http://localhost/XML/delivery" xmlns:billing="http://localhost/XML/billing">
+        <billing:name>Mary Adams</billing:name>
+        <billing:street>8 Oak Avenue</billing:street>
+        <billing:city>Old Town</billing:city>
+        <billing:state>PA</billing:state>
+        <billing:zip>95819</billing:zip>
+        <billing:country>USA</billing:country>
+    </address>
+    <comment>Please use a gift wrapper</comment>
+    <items>
+        <book isbn="9781408845660">
+            <title>Harry Potter et le prisonnier d’Azkaban</title>
+            <quantity>1</quantity>
+            <price>25</price>
+        </book>
+        <book isbn="9780544003415">
+            <title>Le seigneur des anneaux</title>
+            <quantity>1</quantity>
+            <price>18</price>
+        </book>
+    </items>
+</order>

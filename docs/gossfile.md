@@ -920,6 +920,40 @@ matching:
             - {not: {have-key: "nested2"}}
 ```
 
+##### XML
+
+Execute an [XPath](https://www.w3.org/TR/xpath/) request on a XML string.
+
+This uses [xpath](https://github.com/antchfx/xpath) Go library under the hood,
+which supports [these](https://github.com/antchfx/xpath#supported-features) features.
+
+Example:
+
+```yaml
+matching:
+  example:
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <order date="2019-02-01">
+        <items>
+          <book isbn="9781408845660">
+              <title>Harry Potter et le prisonnier d’Azkaban</title>
+              <quantity>1</quantity>
+              <price>25</price>
+          </book>
+          <book isbn="9780544003415">
+              <title>Le seigneur des anneaux</title>
+              <quantity>1</quantity>
+              <price>18</price>
+          </book>
+        </items>
+      </order>
+    matches:
+      xml:
+        xpath: "boolean(//book[title='Le seigneur des anneaux'])"
+        result: "true"
+```
+
 ## Templates
 
 Goss test files can leverage golang's [text/template](https://golang.org/pkg/text/template/)
