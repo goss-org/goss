@@ -164,22 +164,22 @@ func TestNewRegexPattern_CaseInsensitiveFlag(t *testing.T) {
 func TestHavePatternsMatcher_CaseInsensitiveFlag(t *testing.T) {
 	tests := []struct {
 		name     string
-		actual   string  // simulated command stdout
-		patterns []interface{}
+		actual   string // simulated command stdout
+		patterns []any
 		wantOK   bool
 	}{
 		// 5.1.14: loglevel INFO must match /loglevel (verbose|info)/i
 		{
 			name:     "5.1.14 loglevel INFO matches /i pattern",
 			actual:   "loglevel INFO\n",
-			patterns: []interface{}{"/loglevel (verbose|info)/i"},
+			patterns: []any{"/loglevel (verbose|info)/i"},
 			wantOK:   true,
 		},
 		// 5.1.14: both positive and negative patterns
 		{
 			name:   "5.1.14 loglevel INFO full pattern set",
 			actual: "loglevel INFO\n",
-			patterns: []interface{}{
+			patterns: []any{
 				"/loglevel (verbose|info)/i",
 				"!/loglevel debug/i",
 			},
@@ -189,7 +189,7 @@ func TestHavePatternsMatcher_CaseInsensitiveFlag(t *testing.T) {
 		{
 			name:   "5.1.6 cipher line matches all strong cipher patterns",
 			actual: "ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr\n",
-			patterns: []interface{}{
+			patterns: []any{
 				"/ciphers.*aes256-gcm@openssh\\.com/i",
 				"/ciphers.*aes128-gcm@openssh\\.com/i",
 				"/ciphers.*aes256-ctr/i",
@@ -202,7 +202,7 @@ func TestHavePatternsMatcher_CaseInsensitiveFlag(t *testing.T) {
 		{
 			name:   "5.1.15 macs line matches strong mac patterns",
 			actual: "macs hmac-sha2-512,hmac-sha2-256\n",
-			patterns: []interface{}{
+			patterns: []any{
 				"/macs.*hmac-sha2-512/i",
 				"/macs.*hmac-sha2-256/i",
 			},
@@ -212,7 +212,7 @@ func TestHavePatternsMatcher_CaseInsensitiveFlag(t *testing.T) {
 		{
 			name:   "5.1.12 kex line matches strong kex patterns",
 			actual: "kexalgorithms ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group16-sha512,diffie-hellman-group-exchange-sha256\n",
-			patterns: []interface{}{
+			patterns: []any{
 				"/kexalgorithms.*ecdh-sha2-nistp521/i",
 				"/kexalgorithms.*ecdh-sha2-nistp384/i",
 				"/kexalgorithms.*ecdh-sha2-nistp256/i",
@@ -225,7 +225,7 @@ func TestHavePatternsMatcher_CaseInsensitiveFlag(t *testing.T) {
 		{
 			name:     "5.1.14 loglevel DEBUG fails positive pattern",
 			actual:   "loglevel DEBUG\n",
-			patterns: []interface{}{"/loglevel (verbose|info)/i"},
+			patterns: []any{"/loglevel (verbose|info)/i"},
 			wantOK:   false,
 		},
 	}
