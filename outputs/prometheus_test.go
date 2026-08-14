@@ -14,9 +14,10 @@ import (
 
 func TestPrometheusOutput(t *testing.T) {
 	testCases := map[string]struct {
-		results         []resource.TestResult
-		formatOptions   []string
-		expectedMetrics []string
+		results          []resource.TestResult
+		formatOptions    []string
+		expectedMetrics  []string
+		expectedExitCode int
 	}{
 		"all-success-single-type": {
 			results: []resource.TestResult{
@@ -77,6 +78,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"all-unknown-single-type": {
 			results: []resource.TestResult{
@@ -155,6 +157,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"various-results-multiple-types": {
 			results: []resource.TestResult{
@@ -191,6 +194,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"unknown-skip": {
 			results: []resource.TestResult{
@@ -235,6 +239,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"unknown-success": {
 			results: []resource.TestResult{
@@ -301,6 +306,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"skip-success": {
 			results: []resource.TestResult{
@@ -345,6 +351,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"fail-skip": {
 			results: []resource.TestResult{
@@ -367,6 +374,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"fail-success": {
 			results: []resource.TestResult{
@@ -389,6 +397,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"success-unknown": {
 			results: []resource.TestResult{
@@ -455,6 +464,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 		"no-results": {
 			results: []resource.TestResult{},
@@ -495,6 +505,7 @@ func TestPrometheusOutput(t *testing.T) {
 				`goss_tests_run_duration_milliseconds{outcome="fail"}`,
 				`goss_tests_run_outcomes_total{outcome="fail"} 1`,
 			},
+			expectedExitCode: 1,
 		},
 	}
 
@@ -509,7 +520,7 @@ func TestPrometheusOutput(t *testing.T) {
 			defer resetMetrics()
 
 			exitCode := outputer.Output(buf, makeResults(testCase.results...), config)
-			assert.Equal(t, 0, exitCode)
+			assert.Equal(t, testCase.expectedExitCode, exitCode)
 
 			output := buf.String()
 			t.Log(output)
