@@ -44,7 +44,7 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 	outputs.SetNoColor(true)
 	cache := cache.New(c.Cache, 30*time.Second)
 
-	cfg, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
+	cfg, err := getGossConfig(c)
 	if err != nil {
 		return nil, err
 	}
