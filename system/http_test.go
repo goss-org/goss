@@ -1,7 +1,6 @@
 package system
 
 import (
-	"context"
 	"io"
 	"net/http"
 	"strings"
@@ -60,7 +59,7 @@ func TestNewDefHTTPRequestHeaderParsing(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			h := NewDefHTTP(context.Background(), "http://example.com", nil, util.Config{
+			h := NewDefHTTP(t.Context(), "http://example.com", nil, util.Config{
 				RequestHeader: []string{tc.header},
 			})
 			def, ok := h.(*DefHTTP)
