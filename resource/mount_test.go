@@ -34,7 +34,7 @@ func TestMountEmptyOptsWarns(t *testing.T) {
 	out := captureStderr(t, func() { m.Validate(sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.opts") {
-		t.Errorf("Validate with empty opts stderr = %q, want a WARNING naming mount.opts", out)
+		t.Errorf("Validate with empty 'opts' field, stderr = %q, want a WARNING naming mount.opts", out)
 	}
 }
 
@@ -50,6 +50,6 @@ func TestMountEmptyVfsOptsWarns(t *testing.T) {
 	out := captureStderr(t, func() { m.Validate(sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.vfs-opts") {
-		t.Errorf("Validate with empty vfs-opts stderr = %q, want a WARNING naming mount.vfs-opts", out)
+		t.Errorf("Validate with empty 'vfs-opts' field, stderr = %q, want a WARNING naming mount.vfs-opts", out)
 	}
 }
