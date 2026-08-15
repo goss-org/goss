@@ -109,10 +109,17 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
-		log.Printf(cacheMissLogFormat, cacheKey)
-		h.sys = system.New(h.c.PackageManager)
-		tra = h.validate()
-		h.cache.SetDefault(cacheKey, tra)
+		h.gossMu.Lock()
+		// another request may have filled the cache while we waited for the lock
+		if tmp, found := h.cache.Get(cacheKey); found {
+			tra = tmp.([][]resource.TestResult)
+		} else {
+			log.Printf(cacheMissLogFormat, cacheKey)
+			h.sys = system.New(h.c.PackageManager)
+			tra = h.validate()
+			h.cache.SetDefault(cacheKey, tra)
+		}
+		h.gossMu.Unlock()
 	}
 	trc := testResultArrayToChan(tra)
 	return h.output(trc, outputer)
