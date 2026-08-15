@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -59,7 +60,7 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
 	for _, r := range config.RequestHeader {
 		name, value, found := strings.Cut(r, ":")
 		if !found {
-			fmt.Fprintf(os.Stderr, "WARNING: ignoring malformed request header %q, expected \"Name: value\"\n", r)
+			log.Printf("[WARNING] ignoring malformed request header %q, expected \"Name: value\"", r)
 			continue
 		}
 		headers.Add(strings.TrimSpace(name), strings.TrimSpace(value))
