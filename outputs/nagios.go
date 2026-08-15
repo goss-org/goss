@@ -78,7 +78,6 @@ func writeNagiosResult(w io.Writer, specFile string, testCount, failed, skipped 
 	}
 	if failed > 0 {
 		return 2
-	} else {
-		return 0
 	}
+	return 0
 }
