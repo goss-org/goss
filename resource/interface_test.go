@@ -1,9 +1,11 @@
 package resource
 
 import (
+	"context"
 	"strings"
 	"testing"
 
+	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 	"gopkg.in/yaml.v3"
 )
@@ -53,5 +55,22 @@ func TestNewInterfaceKeepsAddrsWhenPresent(t *testing.T) {
 	}
 	if !strings.Contains(string(out), "10.0.0.1/24") {
 		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
+	}
+}
+
+// interface.addrs used a plain != nil check, so `addrs: []` asserted nothing
+// and passed silently. It must now warn like file.contents does.
+func TestInterfaceEmptyAddrsWarns(t *testing.T) {
+	sys := &system.System{
+		NewInterface: func(context.Context, string, *system.System, util.Config) system.Interface {
+			return &fakeSysInterface{addrs: []string{"10.0.0.1/24"}}
+		},
+	}
+
+	i := &Interface{id: "eth0", Exists: true, Addrs: []any{}}
+	out := captureStderr(t, func() { i.Validate(sys) })
+
+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "interface.addrs") {
+		t.Errorf("Validate with empty addrs stderr = %q, want a WARNING naming interface.addrs", out)
 	}
 }
