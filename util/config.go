@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"reflect"
 	"strings"
 	"time"
@@ -21,15 +22,22 @@ type ConfigOption func(c *Config) error
 // NewConfig can be used to create this which will default to what the CLI assumes
 // and allow manipulation via ConfigOption functions
 type Config struct {
-	AllowInsecure         bool
-	AnnounceToCLI         bool
-	Cache                 time.Duration
-	Debug                 bool
-	Endpoint              string
-	FormatOptions         []string
-	IgnoreList            []string
-	ListenAddress         string
-	LocalAddress          string
+	AllowInsecure bool
+	AnnounceToCLI bool
+	Cache         time.Duration
+	Debug         bool
+	Endpoint      string
+	FormatOptions []string
+	IgnoreList    []string
+	ListenAddress string
+	LocalAddress  string
+	// Logger is where goss writes its log records. It is nil unless one is
+	// supplied, and goss emits nothing at all in that case: there is
+	// deliberately no fallback to slog.Default(), because a library has no
+	// business choosing where an embedder's records go. Use WithLogger to set
+	// it, and util.LevelTrace with util.ReplaceTraceLevel if you want goss's
+	// most detailed records to render the way its CLI renders them.
+	Logger                *slog.Logger
 	LogLevel              string
 	MaxConcurrent         int
 	Method                string
@@ -241,6 +249,15 @@ func WithVarsString(v string) ConfigOption {
 	}
 }
 
+// WithLogger sets the logger goss writes its log records to. Without one goss
+// emits nothing.
+func WithLogger(l *slog.Logger) ConfigOption {
+	return func(c *Config) error {
+		c.Logger = l
+		return nil
+	}
+}
+
 // WithDisabledResourceTypes ensures that any resource matching types listed will be skipped when validating
 func WithDisabledResourceTypes(t ...string) ConfigOption {
 	return func(c *Config) error {
@@ -251,6 +268,9 @@ func WithDisabledResourceTypes(t ...string) ConfigOption {
 
 type OutputConfig struct {
 	FormatOptions []string
+	// Logger is where an outputer writes its log records. As with Config.Logger
+	// a nil value means silence, so this struct stays usable as a literal.
+	Logger *slog.Logger
 }
 
 type format string
