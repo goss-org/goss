@@ -11,6 +11,12 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
+// ContextKey is  for minting unique keys in a context.
+type ContextKey struct{}
+
+// CommandIDKey is the only instance that must be used everywhere.
+var CommandIDKey = ContextKey{}
+
 type Command interface {
 	Command() string
 	Exists() (bool, error)
@@ -54,7 +60,8 @@ func (c *DefCommand) setup() error {
 	c.exitStatus = cmd.Status
 	stdoutB := cmd.Stdout.Bytes()
 	stderrB := cmd.Stderr.Bytes()
-	id := c.Ctx.Value("id")
+
+	id := c.Ctx.Value(CommandIDKey)
 	logBytes(stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
 	logBytes(stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
 	c.stdout = bytes.NewReader(stdoutB)
