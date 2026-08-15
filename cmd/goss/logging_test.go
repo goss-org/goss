@@ -110,7 +110,9 @@ func TestCLIHandlerWritesOnlyToItsSink(t *testing.T) {
 
 	logger := slog.New(newCLIHandler(stderrSink, util.LevelTrace))
 
-	marker := "sink-destination-marker"
+	// A constant, because sloglint's static-msg rejects a variable message and
+	// this file is linted like any other.
+	const marker = "sink-destination-marker"
 	util.Trace(logger, marker)
 	logger.Debug(marker)
 	logger.Info(marker)
