@@ -1,9 +1,12 @@
 package goss
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -44,4 +47,37 @@ func TestServeHandlesConcurrentRequests(t *testing.T) {
 		}()
 	}
 	wg.Wait()
+}
+
+// TestServeDeduplicatesConcurrentCacheMisses covers the cold window: when many
+// probes arrive before any result is cached, they must share one validation
+// run rather than each executing every check against the machine.
+func TestServeDeduplicatesConcurrentCacheMisses(t *testing.T) {
+	var logOutput syncBuffer
+	log.SetOutput(&logOutput)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	config, err := util.NewConfig(
+		util.WithSpecFile(filepath.Join("testdata", "matching_basic.yaml")),
+		util.WithOutputFormat("json"),
+	)
+	require.NoError(t, err)
+
+	handler, err := newHealthHandler(config)
+	require.NoError(t, err)
+
+	const n = 16
+	var wg sync.WaitGroup
+	wg.Add(n)
+	for range n {
+		go func() {
+			defer wg.Done()
+			rr := httptest.NewRecorder()
+			handler.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+		}()
+	}
+	wg.Wait()
+
+	runs := strings.Count(logOutput.String(), "running tests")
+	require.Equal(t, 1, runs, "%d concurrent requests caused %d validation runs, want 1", n, runs)
 }
