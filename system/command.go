@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"time"
 
-
 	"github.com/goss-org/goss/util"
 )
 
