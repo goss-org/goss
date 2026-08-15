@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -238,7 +238,7 @@ func RenderJSON(c *util.Config) (string, error) {
 		return "", err
 	}
 
-	gossConfig, err := mergeJSONData(j, 0, filepath.Dir(c.Spec))
+	gossConfig, err := mergeJSONData(j, 0, filepath.Dir(c.Spec), duplicateWarner(c.Logger))
 	if err != nil {
 		return "", err
 	}
@@ -251,14 +251,27 @@ func RenderJSON(c *util.Config) (string, error) {
 	return string(b), nil
 }
 
-func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, error) {
+// duplicateWarner builds the reporter the gossfile-loading operations pass down
+// the merge path. The logger is guarded here so that every frame below can treat
+// the callback as always safe to call.
+func duplicateWarner(logger *slog.Logger) duplicateReporter {
+	l := util.LoggerOrDiscard(logger)
+
+	return func(resourceType, resourceID string) {
+		l.Warn("duplicate resource overwritten",
+			"resource_type", resourceType,
+			"resource_id", resourceID)
+	}
+}
+
+func mergeJSONData(gossConfig GossConfig, depth int, path string, report duplicateReporter) (GossConfig, error) {
 	depth++
 	if depth >= 50 {
 		return GossConfig{}, errMaxDepth
 	}
 	// Our return gossConfig
 	ret := *NewGossConfig()
-	ret = mergeGoss(ret, gossConfig)
+	ret = mergeGoss(ret, gossConfig, report)
 
 	// Sort the gossfiles to ensure consistent ordering
 	var keys []string
@@ -293,39 +306,53 @@ func mergeJSONData(gossConfig GossConfig, depth int, path string) (GossConfig, e
 			if err != nil {
 				return GossConfig{}, fmt.Errorf("could not read json data in %s: %w", match, err)
 			}
-			j, err = mergeJSONData(j, depth, fdir)
+			j, err = mergeJSONData(j, depth, fdir, report)
 			if err != nil {
 				return ret, fmt.Errorf("could not write json data: %w", err)
 			}
-			ret = mergeGoss(ret, j)
+			ret = mergeGoss(ret, j, report)
 		}
 	}
 	return ret, nil
 }
 
+// WriteJSON writes gossConfig to filePath, unless it holds no resources at all,
+// in which case it writes nothing and returns nil.
+//
+// Callers that need to tell those two outcomes apart use writeJSON. This
+// function keeps returning nil for the empty case so that no existing caller's
+// error handling changes.
 func WriteJSON(filePath string, gossConfig GossConfig) error {
+	_, err := writeJSON(filePath, gossConfig)
+
+	return err
+}
+
+// writeJSON reports whether it wrote the file. Declining to write an empty
+// configuration is worth telling a user about, but the message belongs to the
+// caller, which is the frame that has a logger.
+func writeJSON(filePath string, gossConfig GossConfig) (written bool, err error) {
 	jsonData, err := marshal(gossConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return false, fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	// check if the auto added json data is empty before writing to file.
 	emptyConfig := *NewGossConfig()
 	emptyData, err := marshal(emptyConfig)
 	if err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return false, fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
 	if string(emptyData) == string(jsonData) {
-		log.Printf("Can't write empty configuration file. Please check resource name(s).")
-		return nil
+		return false, nil
 	}
 
 	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
-		return fmt.Errorf("failed to write %s: %w", filePath, err)
+		return false, fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 
-	return nil
+	return true, nil
 }
 
 func resourcePrint(fileName string, res resource.ResourceRead, announce bool) {

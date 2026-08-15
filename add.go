@@ -41,7 +41,23 @@ func AddResources(ctx context.Context, fileName, resourceName string, keys []str
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	return writeConfig(fileName, gossConfig, c)
+}
+
+// writeConfig writes the assembled configuration, warning through the injected
+// logger when there was nothing worth writing. Both add roots return nil in that
+// case, as they always have.
+func writeConfig(fileName string, gossConfig GossConfig, c *util.Config) error {
+	written, err := writeJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+
+	if !written {
+		util.LoggerOrDiscard(c.Logger).Warn("empty configuration not written", "path", fileName)
+	}
+
+	return nil
 }
 
 // AddResource adds a single resource to fileName
@@ -122,7 +138,7 @@ func AutoAddResources(ctx context.Context, fileName string, keys []string, c *ut
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	return writeConfig(fileName, gossConfig, c)
 }
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource

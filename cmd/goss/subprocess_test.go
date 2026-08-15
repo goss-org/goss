@@ -146,6 +146,42 @@ func TestInvalidLevelFailsPastTheAlphaGate(t *testing.T) {
 	}
 }
 
+// TestStdoutCarriesNoLogRecords is the behavioural half of the stderr
+// guarantee, driven through the real binary so that stdout and stderr are
+// genuinely separate streams.
+func TestStdoutCarriesNoLogRecords(t *testing.T) {
+	dir := t.TempDir()
+	imported := filepath.Join(dir, "imported.yaml")
+	if err := os.WriteFile(imported, []byte("command:\n  probe:\n    exec: \"echo rendered-marker\"\n    exit-status: 0\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	spec := filepath.Join(dir, "goss.yaml")
+	contents := "command:\n  probe:\n    exec: \"echo main\"\n    exit-status: 0\ngossfile:\n  imported.yaml: {}\n"
+	if err := os.WriteFile(spec, []byte(contents), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got := runBinary(t, []string{"GOSS_USE_ALPHA=1"},
+		"--log-level", "TRACE", "--gossfile", spec, "render")
+
+	if got.exitCode != 0 {
+		t.Fatalf("expected success, got exit %d: %s", got.exitCode, got.stderr)
+	}
+	if !strings.Contains(got.stdout, "rendered-marker") {
+		t.Errorf("the rendered gossfile should reach stdout, got %q", got.stdout)
+	}
+	for _, marker := range []string{"level=", "msg="} {
+		if strings.Contains(got.stdout, marker) {
+			t.Errorf("stdout carries a log record: %q", got.stdout)
+		}
+	}
+	for _, marker := range []string{"level=WARN", `msg="duplicate resource overwritten"`, "resource_type=command", "resource_id=probe"} {
+		if !strings.Contains(got.stderr, marker) {
+			t.Errorf("expected duplicate warning containing %q on stderr, got %q", marker, got.stderr)
+		}
+	}
+}
+
 // TestInvalidLevelFromEnvironmentFails covers the same path with the value
 // arriving from GOSS_LOGLEVEL, which is indistinguishable from the flag.
 func TestInvalidLevelFromEnvironmentFails(t *testing.T) {
