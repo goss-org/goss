@@ -76,7 +76,7 @@ func regexMatch(re, s string) (bool, error) {
 	return compiled.MatchString(s), nil
 }
 
-// return named parenthesized subexpresions, if received, or stringfied (Sprig "get" need strings) keys like array
+// return named parenthesized subexpresions, if received, or stringfied (Sprig "get" need strings) keys like array.
 func findStringSubmatch(pattern, input string) map[string]any {
 	re := regexp.MustCompile(pattern)
 	els := re.FindStringSubmatch(input)

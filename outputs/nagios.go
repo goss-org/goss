@@ -62,7 +62,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 		}
 		fmt.Fprint(w, "\n")
 		if verbose {
-			for i := 0; i < failed; i++ {
+			for i := range failed {
 				fmt.Fprintf(w, "%s", summary[i])
 			}
 		}

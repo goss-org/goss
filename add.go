@@ -11,7 +11,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-// AddResources is a simple wrapper to add multiple resources
+// AddResources is a simple wrapper to add multiple resources.
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
 	if err := setLogLevel(c); err != nil {
 		return err
@@ -43,7 +43,7 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 	return WriteJSON(fileName, gossConfig)
 }
 
-// AddResource adds a single resource to fileName
+// AddResource adds a single resource to fileName.
 func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
 	var err error
 	var res resource.ResourceRead
@@ -95,7 +95,7 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 	return nil
 }
 
-// AutoAddResources is a simple wrapper to add multiple resources
+// AutoAddResources is a simple wrapper to add multiple resources.
 func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
@@ -124,7 +124,7 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 	return WriteJSON(fileName, gossConfig)
 }
 
-// AutoAddResource adds a single resource to fileName with automatic detection of the type of resource
+// AutoAddResource adds a single resource to fileName with automatic detection of the type of resource.
 func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
 	// file
 	if strings.Contains(key, "/") {

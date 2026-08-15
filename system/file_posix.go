@@ -23,7 +23,7 @@ func (f *DefFile) Mode() (string, error) {
 
 func (f *DefFile) Owner() (string, error) {
 	uidS, err := f.getFileInfo(func(fi os.FileInfo) string {
-		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
+		return strconv.FormatUint(uint64(fi.Sys().(*syscall.Stat_t).Uid), 10)
 	})
 	if err != nil {
 		return "", err
@@ -38,7 +38,7 @@ func (f *DefFile) Owner() (string, error) {
 
 func (f *DefFile) Uid() (int, error) {
 	uidS, err := f.getFileInfo(func(fi os.FileInfo) string {
-		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Uid)
+		return strconv.FormatUint(uint64(fi.Sys().(*syscall.Stat_t).Uid), 10)
 	})
 	if err != nil {
 		return -1, err
@@ -53,7 +53,7 @@ func (f *DefFile) Uid() (int, error) {
 
 func (f *DefFile) Group() (string, error) {
 	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
-		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
+		return strconv.FormatUint(uint64(fi.Sys().(*syscall.Stat_t).Gid), 10)
 	})
 	if err != nil {
 		return "", err
@@ -68,7 +68,7 @@ func (f *DefFile) Group() (string, error) {
 
 func (f *DefFile) Gid() (int, error) {
 	gidS, err := f.getFileInfo(func(fi os.FileInfo) string {
-		return fmt.Sprint(fi.Sys().(*syscall.Stat_t).Gid)
+		return strconv.FormatUint(uint64(fi.Sys().(*syscall.Stat_t).Gid), 10)
 	})
 	if err != nil {
 		return -1, err

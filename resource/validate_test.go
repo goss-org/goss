@@ -75,7 +75,7 @@ func BenchmarkValidateValue(b *testing.B) {
 	inFunc := func() (any, error) {
 		return "foo", nil
 	}
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		ValidateValue(&FakeResource{""}, "", "foo", inFunc, false)
 	}
 }

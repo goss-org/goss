@@ -19,7 +19,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-// converts a cli context into a goss Config
+// converts a cli context into a goss Config.
 func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 	cfg := &util.Config{
 		AllowInsecure:     c.Bool("insecure"),

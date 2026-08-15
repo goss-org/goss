@@ -50,7 +50,7 @@ func NewGossConfig() *GossConfig {
 }
 
 // Merge consumes all the resources in g2 into c, duplicate resources
-// will be overwritten with the ones in g2
+// will be overwritten with the ones in g2.
 func (c *GossConfig) Merge(g2 GossConfig) {
 	for k, v := range g2.Files {
 		mergeType(c.Files, "file", k, v)

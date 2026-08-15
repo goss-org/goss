@@ -86,7 +86,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 }
 
 // ValidateResults performs validation and provides programmatic access to validation results
-// no retries or outputs are supported
+// no retries or outputs are supported.
 func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
 	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
@@ -101,7 +101,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // Validate performs validation, writes formatted output to stdout by default
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
-// ValidateResults for programmatic access
+// ValidateResults for programmatic access.
 func Validate(c *util.Config) (code int, err error) {
 	err = setLogLevel(c)
 	if err != nil {

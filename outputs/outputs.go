@@ -162,7 +162,7 @@ func prettyPrint(i any, indent bool) string {
 	}
 }
 
-// indents a block of text with an indent string
+// indents a block of text with an indent string.
 func indentLines(text string) string {
 	var builder strings.Builder
 	for j := range strings.SplitSeq(strings.TrimRight(text, "\n"), "\n") {
@@ -197,7 +197,7 @@ func Outputers() []string {
 	return list
 }
 
-// FormatOptions returns a sorted list of all the valid options that outputers accept
+// FormatOptions returns a sorted list of all the valid options that outputers accept.
 func FormatOptions() []string {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
@@ -215,7 +215,7 @@ func FormatOptions() []string {
 	return list
 }
 
-// IsValidFormat determines if f is a valid format name based on Outputers()
+// IsValidFormat determines if f is a valid format name based on Outputers().
 func IsValidFormat(f string) bool {
 	return slices.Contains(Outputers(), f)
 }

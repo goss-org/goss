@@ -85,7 +85,7 @@ func (c *DefCommand) Stderr() (io.Reader, error) {
 	return c.stderr, err
 }
 
-// Stub out
+// Stub out.
 func (c *DefCommand) Exists() (bool, error) {
 	return false, nil
 }

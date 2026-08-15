@@ -18,7 +18,7 @@ import (
 )
 
 // This will generate the "golden files" prior to running the tests.
-// helpful when the output is changed and a user doesn't want to update every single expectation file by hand
+// helpful when the output is changed and a user doesn't want to update every single expectation file by hand.
 var update = flag.Bool("update", false, "update the golden files of this test")
 
 func TestMain(m *testing.M) {

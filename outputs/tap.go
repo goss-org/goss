@@ -43,13 +43,14 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 			default:
 				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}
+
 			testCount++
 		}
 	}
 
 	fmt.Fprintf(w, "1..%d\n", testCount)
 
-	for i := 0; i < testCount; i++ {
+	for i := range testCount {
 		fmt.Fprintf(w, "%s", summary[i])
 	}
 

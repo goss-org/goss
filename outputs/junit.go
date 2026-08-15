@@ -90,7 +90,7 @@ func (r JUnit) Output(w io.Writer, results <-chan []resource.TestResult,
 		"failures=\"%d\" skipped=\"%d\" time=\"%.3f\" timestamp=\"%s\">\n",
 		testCount, failed, skipped, duration.Seconds(), timestamp)
 
-	for i := 0; i < testCount; i++ {
+	for i := range testCount {
 		fmt.Fprintf(w, "%s", summary[i])
 	}
 

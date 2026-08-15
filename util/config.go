@@ -11,7 +11,7 @@ import (
 	"github.com/oleiade/reflections"
 )
 
-// ConfigOption manipulates Config
+// ConfigOption manipulates Config.
 type ConfigOption func(c *Config) error
 
 // Config is the runtime configuration for the goss system, the cli.Command gets
@@ -19,7 +19,7 @@ type ConfigOption func(c *Config) error
 // structure and using it when adding, validating etc.
 //
 // NewConfig can be used to create this which will default to what the CLI assumes
-// and allow manipulation via ConfigOption functions
+// and allow manipulation via ConfigOption functions.
 type Config struct {
 	AllowInsecure         bool
 	AnnounceToCLI         bool
@@ -57,12 +57,12 @@ type Config struct {
 	DisabledResourceTypes []string
 }
 
-// TimeOutMilliSeconds is the timeout as milliseconds
+// TimeOutMilliSeconds is the timeout as milliseconds.
 func (c *Config) TimeOutMilliSeconds() int {
 	return int(c.Timeout / time.Millisecond)
 }
 
-// NewConfig creates a default configuration modeled on the defaults the CLI sets, modified using opts
+// NewConfig creates a default configuration modeled on the defaults the CLI sets, modified using opts.
 func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 	rc = &Config{
 		AllowInsecure:         false,
@@ -108,7 +108,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 	return rc, nil
 }
 
-// WithSpecFile sets the path to the file holding spec contents
+// WithSpecFile sets the path to the file holding spec contents.
 func WithSpecFile(f string) ConfigOption {
 	return func(c *Config) error {
 		c.Spec = f
@@ -116,7 +116,7 @@ func WithSpecFile(f string) ConfigOption {
 	}
 }
 
-// WithOutputFormat is the formatter to use for output
+// WithOutputFormat is the formatter to use for output.
 func WithOutputFormat(f string) ConfigOption {
 	return func(c *Config) error {
 		c.OutputFormat = f
@@ -125,7 +125,7 @@ func WithOutputFormat(f string) ConfigOption {
 	}
 }
 
-// WithFormatOptions sets options used by the output format plugins, valid options are output.WithFormatOptions
+// WithFormatOptions sets options used by the output format plugins, valid options are output.WithFormatOptions.
 func WithFormatOptions(opts ...string) ConfigOption {
 	return func(c *Config) error {
 		c.FormatOptions = append(c.FormatOptions, opts...)
@@ -133,7 +133,7 @@ func WithFormatOptions(opts ...string) ConfigOption {
 	}
 }
 
-// WithResultWriter sets the writer to write output format to when validating
+// WithResultWriter sets the writer to write output format to when validating.
 func WithResultWriter(w io.Writer) ConfigOption {
 	return func(c *Config) error {
 		c.OutputWriter = w
@@ -141,7 +141,7 @@ func WithResultWriter(w io.Writer) ConfigOption {
 	}
 }
 
-// WithSleep sets the time to sleep between retries when WithRetryTimeout is set
+// WithSleep sets the time to sleep between retries when WithRetryTimeout is set.
 func WithSleep(d time.Duration) ConfigOption {
 	return func(c *Config) error {
 		c.Sleep = d
@@ -149,7 +149,7 @@ func WithSleep(d time.Duration) ConfigOption {
 	}
 }
 
-// WithRetryTimeout sets the maximum amount of time checks can be retried, it's runtime + WithSleep
+// WithRetryTimeout sets the maximum amount of time checks can be retried, it's runtime + WithSleep.
 func WithRetryTimeout(d time.Duration) ConfigOption {
 	return func(c *Config) error {
 		c.RetryTimeout = d
@@ -157,7 +157,7 @@ func WithRetryTimeout(d time.Duration) ConfigOption {
 	}
 }
 
-// WithCache sets how long results may be cached for
+// WithCache sets how long results may be cached for.
 func WithCache(d time.Duration) ConfigOption {
 	return func(c *Config) error {
 		c.Cache = d
@@ -165,7 +165,7 @@ func WithCache(d time.Duration) ConfigOption {
 	}
 }
 
-// WithMaxConcurrency is the maximum concurrent test that can be run
+// WithMaxConcurrency is the maximum concurrent test that can be run.
 func WithMaxConcurrency(mc int) ConfigOption {
 	return func(c *Config) error {
 		c.MaxConcurrent = mc
@@ -173,7 +173,7 @@ func WithMaxConcurrency(mc int) ConfigOption {
 	}
 }
 
-// WithNoColor disables colored output
+// WithNoColor disables colored output.
 func WithNoColor() ConfigOption {
 	return func(c *Config) error {
 		c.NoColor = func(b bool) *bool { return &b }(true)
@@ -181,7 +181,7 @@ func WithNoColor() ConfigOption {
 	}
 }
 
-// WithColor enables colored output
+// WithColor enables colored output.
 func WithColor() ConfigOption {
 	return func(c *Config) error {
 		c.NoColor = func(b bool) *bool { return &b }(false)
@@ -189,7 +189,7 @@ func WithColor() ConfigOption {
 	}
 }
 
-// WithPackageManager overrides the package manager to use
+// WithPackageManager overrides the package manager to use.
 func WithPackageManager(p string) ConfigOption {
 	return func(c *Config) error {
 		c.PackageManager = p
@@ -198,7 +198,7 @@ func WithPackageManager(p string) ConfigOption {
 	}
 }
 
-// WithDebug enables debug output
+// WithDebug enables debug output.
 func WithDebug() ConfigOption {
 	return func(c *Config) error {
 		c.Debug = true
@@ -206,7 +206,7 @@ func WithDebug() ConfigOption {
 	}
 }
 
-// WithVarsFiles are json or yaml files containing variables to pass to the validator
+// WithVarsFiles are json or yaml files containing variables to pass to the validator.
 func WithVarsFiles(files []string) ConfigOption {
 	return func(c *Config) error {
 		c.VarsFiles = files
@@ -214,7 +214,7 @@ func WithVarsFiles(files []string) ConfigOption {
 	}
 }
 
-// WithVarsData uses v as variables to pass to the Validator
+// WithVarsData uses v as variables to pass to the Validator.
 func WithVarsData(v any) ConfigOption {
 	return func(c *Config) error {
 		jv, err := json.Marshal(v)
@@ -228,12 +228,12 @@ func WithVarsData(v any) ConfigOption {
 	}
 }
 
-// WithVarsBytes is a yaml or json byte stream to use as variables passed to the Validator
+// WithVarsBytes is a yaml or json byte stream to use as variables passed to the Validator.
 func WithVarsBytes(v []byte) ConfigOption {
 	return WithVarsString(string(v))
 }
 
-// WithVarsString is a yaml or json string to use as variables passed to the Validator
+// WithVarsString is a yaml or json string to use as variables passed to the Validator.
 func WithVarsString(v string) ConfigOption {
 	return func(c *Config) error {
 		c.VarsInline = v
@@ -241,7 +241,7 @@ func WithVarsString(v string) ConfigOption {
 	}
 }
 
-// WithDisabledResourceTypes ensures that any resource matching types listed will be skipped when validating
+// WithDisabledResourceTypes ensures that any resource matching types listed will be skipped when validating.
 func WithDisabledResourceTypes(t ...string) ConfigOption {
 	return func(c *Config) error {
 		c.DisabledResourceTypes = append(c.DisabledResourceTypes, t...)
