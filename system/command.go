@@ -10,7 +10,6 @@ import (
 
 
 	"github.com/goss-org/goss/util"
-	
 )
 
 // ContextKey is  for minting unique keys in a context.
