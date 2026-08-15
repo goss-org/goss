@@ -37,9 +37,11 @@ func (r Prometheus) ValidOptions() []*formatOption {
 }
 
 // Output converts the results into the prometheus text-format.
-func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
+func (r Prometheus) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
 	outConfig util.OutputConfig,
-) (exitCode int) {
+) int {
 	verbose := util.IsValueInList(foVerbose, outConfig.FormatOptions)
 
 	if registry == nil {

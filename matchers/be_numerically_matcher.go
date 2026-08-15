@@ -20,7 +20,7 @@ func BeNumerically(comparator string, compareTo ...any) GossMatcher {
 	}
 }
 
-func (m *BeNumericallyMatcher) Match(actual any) (success bool, err error) {
+func (m *BeNumericallyMatcher) Match(actual any) (bool, error) {
 	comparator, err := strToSymbol(m.Comparator)
 	if err != nil {
 		return false, err

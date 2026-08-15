@@ -24,6 +24,7 @@ linters:
     #- nilerr
     - nilnesserr
     #- noctx
+    - nonamedreturns
     - nosprintfhostport
     #- perfsprint
     #- prealloc
@@ -37,7 +38,32 @@ linters:
     - whitespace
     #- wrapcheck
   disable:
+    - depguard
+    # Disabled because of genny
+    - dupl
+    - embeddedstructfieldcheck
+    - forbidigo
+    - funlen
+    - funcorder
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    - gomodguard
+    - exhaustive
+    - exhaustruct
+    - inamedparam
+    - ireturn
+    - lll
+    - mnd
+    - nlreturn
     - noinlineerr
+    - recvcheck
+    - tagalign
+    - tagliatelle
+    - testpackage
+    - varnamelen
+    - wsl
+    - wsl_v5
   exclusions:
     generated: lax
     presets:

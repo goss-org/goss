@@ -38,11 +38,11 @@ func getUnexported(i any, field string) any {
 type fakeOmegaMatcher struct{}
 
 // FailureMessage is a stub to honor omegaMatcher interface.
-func (m *fakeOmegaMatcher) FailureMessage(_ any) (message string) {
+func (m *fakeOmegaMatcher) FailureMessage(_ any) string {
 	return ""
 }
 
 // NegatedFailureMessage is a stub to honor omegaMatcher interface.
-func (m *fakeOmegaMatcher) NegatedFailureMessage(_ any) (message string) {
+func (m *fakeOmegaMatcher) NegatedFailureMessage(_ any) string {
 	return ""
 }

@@ -48,7 +48,7 @@ var (
 	foSort       = "sort"
 )
 
-var multiple_space = regexp.MustCompile(`\s+`)
+var multipleSpace = regexp.MustCompile(`\s+`)
 
 func humanizeResult(r resource.TestResult, compact, includeRaw bool) string {
 	sep := "\n"
@@ -80,7 +80,7 @@ func prettyPrintTestResult(t resource.TestResult, compact, includeRaw bool) stri
 	if t.Err != nil {
 		e := fmt.Sprint(t.Err)
 		if compact {
-			e = multiple_space.ReplaceAllString(e, " ")
+			e = multipleSpace.ReplaceAllString(e, " ")
 		} else {
 			e = indentLines(e)
 		}
@@ -157,9 +157,8 @@ func prettyPrint(i any, indent bool) string {
 	b = bytes.TrimRightFunc(b, unicode.IsSpace)
 	if indent {
 		return indentLines(string(b))
-	} else {
-		return string(b)
 	}
+	return string(b)
 }
 
 // indents a block of text with an indent string.

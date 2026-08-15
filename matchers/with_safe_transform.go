@@ -55,9 +55,10 @@ func (m *WithSafeTransformMatcher) NegatedFailureResult(actual any) MatcherResul
 	return result
 }
 
-func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher, tvalue any) {
-	matcher = m
-	tvalue = m.transformedValue
+func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() ([]Transformer, GossMatcher, any) {
+	var matcher GossMatcher = m
+	tchain := make([]Transformer, 0)
+	tvalue := m.transformedValue
 L:
 	for {
 		switch v := matcher.(type) {

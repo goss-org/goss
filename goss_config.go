@@ -155,7 +155,8 @@ func (c *GossConfig) Resources() []resource.Resource {
 	return tests
 }
 
-func genericConcatMaps(maps ...any) (ret []map[string]any) {
+func genericConcatMaps(maps ...any) []map[string]any {
+	ret := make([]map[string]any, 0, len(maps))
 	for _, slice := range maps {
 		im := interfaceMap(slice)
 		ret = append(ret, im)

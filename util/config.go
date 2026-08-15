@@ -63,8 +63,8 @@ func (c *Config) TimeOutMilliSeconds() int {
 }
 
 // NewConfig creates a default configuration modeled on the defaults the CLI sets, modified using opts.
-func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
-	rc = &Config{
+func NewConfig(opts ...ConfigOption) (*Config, error) {
+	rc := &Config{
 		AllowInsecure:         false,
 		AnnounceToCLI:         false,
 		Cache:                 5 * time.Second,
@@ -99,8 +99,7 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 	WithNoColor()(rc)
 
 	for _, opt := range opts {
-		err = opt(rc)
-		if err != nil {
+		if err := opt(rc); err != nil {
 			return nil, err
 		}
 	}

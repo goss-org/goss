@@ -57,7 +57,7 @@ func (a *DefAddr) Reachable() (bool, error) {
 	return true, nil
 }
 
-func splitAddress(fulladdress string) (network, address string) {
+func splitAddress(fulladdress string) (string, string) {
 	split := strings.SplitN(fulladdress, "://", 2)
 	if len(split) == 2 {
 		return split[0], split[1]

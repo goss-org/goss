@@ -30,7 +30,7 @@ const (
 	OutcomeUnknown = "unknown"
 )
 
-var humanOutcomes map[int]string = map[int]string{
+var humanOutcomes = map[int]string{
 	UNKNOWN: OutcomeUnknown,
 	SUCCESS: OutcomePass,
 	FAIL:    OutcomeFail,

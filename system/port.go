@@ -29,7 +29,7 @@ func NewDefPort(_ context.Context, port string, system *System, config util.Conf
 	}
 }
 
-func splitPort(fullport string) (network, port string) {
+func splitPort(fullport string) (string, string) {
 	split := strings.SplitN(fullport, ":", 2)
 	if len(split) == 2 {
 		return split[0], split[1]

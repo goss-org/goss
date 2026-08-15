@@ -30,7 +30,7 @@ func HavePatterns(elements any) GossMatcher {
 	}
 }
 
-func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
+func (m *HavePatternsMatcher) Match(actual any) (bool, error) {
 	t, ok := m.Elements.([]any)
 	if !ok {
 		return false, fmt.Errorf("HavePatterns matcher expects an array of matchers.  Got:\n%s", format.Object(m.Elements, 1))

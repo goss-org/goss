@@ -18,7 +18,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(varsFiles []string, varsInline, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(varsFiles []string, varsInline, specFile string) (*GossConfig, error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
@@ -87,7 +87,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported.
-func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
+func ValidateResults(c *util.Config) (<-chan []resource.TestResult, error) {
 	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
@@ -102,8 +102,8 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access.
-func Validate(c *util.Config) (code int, err error) {
-	err = setLogLevel(c)
+func Validate(c *util.Config) (int, error) {
+	err := setLogLevel(c)
 	if err != nil {
 		return 1, err
 	}
@@ -114,7 +114,7 @@ func Validate(c *util.Config) (code int, err error) {
 	return ValidateConfig(c, gossConfig)
 }
 
-func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
+func ValidateConfig(c *util.Config, gossConfig *GossConfig) (int, error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid

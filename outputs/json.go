@@ -20,9 +20,11 @@ func (r Json) ValidOptions() []*formatOption {
 	}
 }
 
-func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
+func (r Json) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
 	outConfig util.OutputConfig,
-) (exitCode int) {
+) int {
 	pretty := util.IsValueInList(foPretty, outConfig.FormatOptions)
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 

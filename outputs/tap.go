@@ -17,9 +17,11 @@ func (r Tap) ValidOptions() []*formatOption {
 	}
 }
 
-func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
+func (r Tap) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
 	outConfig util.OutputConfig,
-) (exitCode int) {
+) int {
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)

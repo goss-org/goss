@@ -22,7 +22,7 @@ func ContainElements(elements ...any) GossMatcher {
 	}
 }
 
-func (m *ContainElementsMatcher) Match(actual any) (success bool, err error) {
+func (m *ContainElementsMatcher) Match(actual any) (bool, error) {
 	if !isArrayOrSlice(actual) && !isMap(actual) {
 		return false, fmt.Errorf("ContainElements matcher expects an array/slice/map.  Got:\n%s", format.Object(actual, 1))
 	}

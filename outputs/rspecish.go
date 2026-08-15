@@ -17,9 +17,11 @@ func (r Rspecish) ValidOptions() []*formatOption {
 	return []*formatOption{}
 }
 
-func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
+func (r Rspecish) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
 	outConfig util.OutputConfig,
-) (exitCode int) {
+) int {
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
 

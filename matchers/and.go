@@ -16,7 +16,7 @@ func And(ms ...GossMatcher) GossMatcher {
 	return &AndMatcher{Matchers: ms}
 }
 
-func (m *AndMatcher) Match(actual any) (success bool, err error) {
+func (m *AndMatcher) Match(actual any) (bool, error) {
 	m.firstFailedMatcher = nil
 	for _, matcher := range m.Matchers {
 		success, err := matcher.Match(actual)

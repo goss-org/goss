@@ -17,7 +17,7 @@ func Or(ms ...GossMatcher) GossMatcher {
 	return &OrMatcher{Matchers: ms}
 }
 
-func (m *OrMatcher) Match(actual any) (success bool, err error) {
+func (m *OrMatcher) Match(actual any) (bool, error) {
 	m.firstSuccessfulMatcher = nil
 	for _, matcher := range m.Matchers {
 		success, err := matcher.Match(actual)

@@ -32,9 +32,9 @@ func (r ResourceTypeMap) AppendSysResource(sr string, sys *system.System, config
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -50,9 +50,9 @@ func (r ResourceTypeMap) AppendSysResourceIfExists(sr string, sys *system.System
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
