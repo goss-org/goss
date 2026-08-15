@@ -24,7 +24,7 @@ type File struct {
 	LinkedTo matcher `json:"linked-to,omitempty" yaml:"linked-to,omitempty"`
 	Filetype matcher `json:"filetype,omitempty" yaml:"filetype,omitempty"`
 	Contains matcher `json:"contains,omitempty" yaml:"contains,omitempty"`
-	Contents matcher `json:"contents" yaml:"contents"`
+	Contents matcher `json:"contents,omitempty" yaml:"contents,omitempty"`
 	Md5      matcher `json:"md5,omitempty" yaml:"md5,omitempty"`
 	Sha256   matcher `json:"sha256,omitempty" yaml:"sha256,omitempty"`
 	Sha512   matcher `json:"sha512,omitempty" yaml:"sha512,omitempty"`
@@ -120,9 +120,8 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 		return nil, err
 	}
 	f := &File{
-		id:       path,
-		Exists:   exists,
-		Contents: []string{},
+		id:     path,
+		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "mode") {
 		if mode, err := sysFile.Mode(); err == nil {
