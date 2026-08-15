@@ -13,11 +13,11 @@ import (
 	
 )
 
-// CommandIDKeyType is the unique key for command IDs in context.
-type CommandIDKeyType struct{}
+// ContextKey is  for minting unique keys in a context.
+type ContextKey struct{}
 
 // CommandIDKey is the only instance that must be used everywhere.
-var CommandIDKey = CommandIDKeyType{}
+var CommandIDKey = ContextKey{}
 
 type Command interface {
 	Command() string
