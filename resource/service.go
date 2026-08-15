@@ -59,7 +59,7 @@ func (s *Service) Validate(sys *system.System) []TestResult {
 	if s.Running != nil {
 		results = append(results, ValidateValue(s, "running", s.Running, sysservice.Running, skip))
 	}
-	if s.RunLevels != nil {
+	if isSetWarnEmpty(s.RunLevels, fmt.Sprintf("%s: service.runlevels", s.ID())) {
 		results = append(results, ValidateValue(s, "runlevels", s.RunLevels, sysservice.RunLevels, skip))
 	}
 	return results

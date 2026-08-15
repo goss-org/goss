@@ -71,7 +71,7 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	if u.Home != nil {
 		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip))
 	}
-	if u.Groups != nil {
+	if isSetWarnEmpty(u.Groups, fmt.Sprintf("%s: user.groups", u.ID())) {
 		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip))
 	}
 	if u.Shell != nil {

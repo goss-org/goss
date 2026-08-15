@@ -59,7 +59,7 @@ func (i *Interface) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if i.Addrs != nil {
+	if isSetWarnEmpty(i.Addrs, fmt.Sprintf("%s: interface.addrs", i.ID())) {
 		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip))
 	}
 	if i.MTU != nil {
