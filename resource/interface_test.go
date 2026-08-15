@@ -38,7 +38,7 @@ func TestNewInterfaceLeavesAddrsUnsetWhenEmpty(t *testing.T) {
 		t.Fatalf("yaml.Marshal returned error: %v", err)
 	}
 	if strings.Contains(string(out), "addrs:") {
-		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
+		t.Errorf("marshalled YAML contains an 'addrs' field, want it omitted:\n%s", out)
 	}
 }
 
@@ -54,7 +54,7 @@ func TestNewInterfaceKeepsAddrsWhenPresent(t *testing.T) {
 		t.Fatalf("yaml.Marshal returned error: %v", err)
 	}
 	if !strings.Contains(string(out), "10.0.0.1/24") {
-		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
+		t.Errorf("marshalled YAML is missing the 'addrs' field:\n%s", out)
 	}
 }
 
@@ -71,6 +71,6 @@ func TestInterfaceEmptyAddrsWarns(t *testing.T) {
 	out := captureStderr(t, func() { i.Validate(sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "interface.addrs") {
-		t.Errorf("Validate with empty addrs stderr = %q, want a WARNING naming interface.addrs", out)
+		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming interface.addrs", out)
 	}
 }
