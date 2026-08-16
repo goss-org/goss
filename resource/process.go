@@ -45,8 +45,8 @@ func (p *Process) GetComm() string {
 	return p.id
 }
 
-func (p *Process) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, p.ID())
+func (p *Process) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, p.ID())
 	skip := p.Skip
 	sysProcess := sys.NewProcess(ctx, p.GetComm(), sys, util.Config{})
 

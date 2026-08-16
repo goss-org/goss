@@ -48,8 +48,8 @@ func (c *Command) GetExec() string {
 	return c.id
 }
 
-func (c *Command) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), system.CommandIDKey, c.ID())
+func (c *Command) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, system.CommandIDKey, c.ID())
 	skip := c.Skip
 
 	if c.Timeout == 0 {

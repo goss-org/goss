@@ -29,6 +29,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestMatchers(t *testing.T) {
+	ctx := t.Context()
 	files, err := filepath.Glob(filepath.Join("testdata", "out_matching_*"))
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +58,7 @@ func TestMatchers(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			exitCode, err := Validate(cfg)
+			exitCode, err := Validate(ctx, cfg)
 			if err != nil {
 				t.Fatal(err)
 			}
