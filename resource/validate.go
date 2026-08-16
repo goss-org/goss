@@ -149,7 +149,7 @@ func ValidateValueWithRetry(res ResourceRead, property string, expectedValue any
 	return lastResult
 }
 
-func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+func ValidateGomegaValue(res ResourceRead, property string, expectedValue, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()
