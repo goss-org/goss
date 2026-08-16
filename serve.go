@@ -149,6 +149,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	var b bytes.Buffer
 	outputConfig := util.OutputConfig{
 		FormatOptions: h.c.FormatOptions,
+		Logger:        h.logger,
 	}
 	exitCode := outputer.Output(&b, trc, outputConfig)
 	resp := res{

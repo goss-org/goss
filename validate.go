@@ -100,7 +100,7 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 		return nil, err
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
 }
@@ -127,11 +127,13 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	// contain_element_matcher is needed because it's single entry to avoid
 	// transform message
 	format.UseStringerRepresentation = true
+	logger := util.LoggerOrDiscard(c.Logger)
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
+		Logger:        logger,
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(logger))
 	outputer, err := getOutputer(c.NoColor, c.OutputFormat)
 	if err != nil {
 		return 1, err
@@ -159,7 +161,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 		}
 		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
 		// Reset cache
-		sys = system.New(c.PackageManager)
+		sys = system.New(c.PackageManager, system.WithLogger(logger))
 		time.Sleep(sleep)
 		i++
 		fmt.Printf("Attempt #%d:\n", i)
