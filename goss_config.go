@@ -1,7 +1,6 @@
 package goss
 
 import (
-	"log"
 	"reflect"
 
 	"github.com/goss-org/goss/resource"
@@ -49,76 +48,93 @@ func NewGossConfig() *GossConfig {
 	}
 }
 
+// duplicateReporter is told about a resource a merge overwrote. Only mergeType
+// knows whether the destination already held the key, and it sits five frames
+// below any function that has a config to log through, so the callback crosses
+// that gap without the merge itself knowing what logging is.
+type duplicateReporter func(resourceType, resourceID string)
+
 // Merge consumes all the resources in g2 into c, duplicate resources
-// will be overwritten with the ones in g2
+// will be overwritten with the ones in g2.
+//
+// A direct call reports nothing: there is no logger to report through, and
+// writing to the process logger is the behaviour this package is moving away
+// from. The operations that load gossfiles do have one, and warn through it.
 func (c *GossConfig) Merge(g2 GossConfig) {
+	c.merge(g2, nil)
+}
+
+// merge is Merge with somewhere to report overwritten resources to. A nil
+// report is silent.
+func (c *GossConfig) merge(g2 GossConfig, report duplicateReporter) {
 	for k, v := range g2.Files {
-		mergeType(c.Files, "file", k, v)
+		mergeType(c.Files, "file", k, v, report)
 	}
 
 	for k, v := range g2.Packages {
-		mergeType(c.Packages, "package", k, v)
+		mergeType(c.Packages, "package", k, v, report)
 	}
 
 	for k, v := range g2.Addrs {
-		mergeType(c.Addrs, "addr", k, v)
+		mergeType(c.Addrs, "addr", k, v, report)
 	}
 
 	for k, v := range g2.Ports {
-		mergeType(c.Ports, "port", k, v)
+		mergeType(c.Ports, "port", k, v, report)
 	}
 
 	for k, v := range g2.Services {
-		mergeType(c.Services, "service", k, v)
+		mergeType(c.Services, "service", k, v, report)
 	}
 
 	for k, v := range g2.Users {
-		mergeType(c.Users, "user", k, v)
+		mergeType(c.Users, "user", k, v, report)
 	}
 
 	for k, v := range g2.Groups {
-		mergeType(c.Groups, "group", k, v)
+		mergeType(c.Groups, "group", k, v, report)
 	}
 
 	for k, v := range g2.Commands {
-		mergeType(c.Commands, "command", k, v)
+		mergeType(c.Commands, "command", k, v, report)
 	}
 
 	for k, v := range g2.DNS {
-		mergeType(c.DNS, "dns", k, v)
+		mergeType(c.DNS, "dns", k, v, report)
 	}
 
 	for k, v := range g2.Processes {
-		mergeType(c.Processes, "process", k, v)
+		mergeType(c.Processes, "process", k, v, report)
 	}
 
 	for k, v := range g2.KernelParams {
-		mergeType(c.KernelParams, "kernel-param", k, v)
+		mergeType(c.KernelParams, "kernel-param", k, v, report)
 	}
 
 	for k, v := range g2.Mounts {
-		mergeType(c.Mounts, "mount", k, v)
+		mergeType(c.Mounts, "mount", k, v, report)
 	}
 
 	for k, v := range g2.Interfaces {
-		mergeType(c.Interfaces, "interface", k, v)
+		mergeType(c.Interfaces, "interface", k, v, report)
 	}
 
 	for k, v := range g2.HTTPs {
-		mergeType(c.HTTPs, "http", k, v)
+		mergeType(c.HTTPs, "http", k, v, report)
 	}
 
 	for k, v := range g2.Matchings {
-		mergeType(c.Matchings, "matching", k, v)
+		mergeType(c.Matchings, "matching", k, v, report)
 	}
+
 	for k, v := range g2.Registries {
-		mergeType(c.Registries, "registry", k, v)
+		mergeType(c.Registries, "registry", k, v, report)
 	}
 }
 
-func mergeType[V any](m map[string]V, t, k string, v V) {
-	if _, ok := m[k]; ok {
-		log.Printf("[WARN] Duplicate key detected: '%s: %s'. The value from a later-loaded goss file has overwritten the previous value.", t, k)
+func mergeType[V any](m map[string]V, t, k string, v V, report duplicateReporter) {
+	if _, ok := m[k]; ok && report != nil {
+		report(t, k)
 	}
 	m[k] = v
 }
@@ -177,10 +193,10 @@ func interfaceMap(slice any) map[string]any {
 	return ret
 }
 
-func mergeGoss(g1, g2 GossConfig) GossConfig {
+func mergeGoss(g1, g2 GossConfig, report duplicateReporter) GossConfig {
 	g1.Gossfiles = nil
 
-	g1.Merge(g2)
+	g1.merge(g2, report)
 
 	return g1
 }

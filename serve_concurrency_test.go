@@ -1,12 +1,9 @@
 package goss
 
 import (
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"testing"
 
@@ -53,13 +50,16 @@ func TestServeHandlesConcurrentRequests(t *testing.T) {
 // probes arrive before any result is cached, they must share one validation
 // run rather than each executing every check against the machine.
 func TestServeDeduplicatesConcurrentCacheMisses(t *testing.T) {
-	var logOutput syncBuffer
-	log.SetOutput(&logOutput)
-	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+	t.Parallel()
+
+	// The run count comes from the cache-miss record, so the logger has to be
+	// this test's own and has to be listening below DEBUG.
+	logger, records := captureRecords(util.LevelTrace)
 
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "matching_basic.yaml")),
 		util.WithOutputFormat("json"),
+		util.WithLogger(logger),
 	)
 	require.NoError(t, err)
 
@@ -78,6 +78,6 @@ func TestServeDeduplicatesConcurrentCacheMisses(t *testing.T) {
 	}
 	wg.Wait()
 
-	runs := strings.Count(logOutput.String(), "running tests")
+	runs := countStaleCacheRecords(records)
 	require.Equal(t, 1, runs, "%d concurrent requests caused %d validation runs, want 1", n, runs)
 }

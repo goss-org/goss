@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"os/exec"
 	"time"
 
@@ -27,6 +28,7 @@ type Command interface {
 
 type DefCommand struct {
 	Ctx        context.Context
+	logger     *slog.Logger
 	command    string
 	exitStatus int
 	stdout     io.Reader
@@ -39,6 +41,7 @@ type DefCommand struct {
 func NewDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
 	return &DefCommand{
 		Ctx:     ctx,
+		logger:  system.loggerOrDiscard(),
 		command: command,
 		Timeout: config.TimeOutMilliSeconds(),
 	}
@@ -61,9 +64,12 @@ func (c *DefCommand) setup() error {
 	stdoutB := cmd.Stdout.Bytes()
 	stderrB := cmd.Stderr.Bytes()
 
-	id := c.Ctx.Value(CommandIDKey)
-	logBytes(stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
-	logBytes(stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
+	// Both identifiers, because they are frequently not the same string: the id
+	// is what the gossfile called the resource, the command is what actually
+	// ran. The old record carried only the id.
+	id, _ := c.Ctx.Value(CommandIDKey).(string)
+	logCommandOutput(c.logger, stdoutB, id, c.command, streamStdout)
+	logCommandOutput(c.logger, stderrB, id, c.command, streamStderr)
 	c.stdout = bytes.NewReader(stdoutB)
 	c.stderr = bytes.NewReader(stderrB)
 

@@ -13,7 +13,6 @@ require (
 	github.com/fatih/color v1.19.0
 	github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d
 	github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5
-	github.com/hashicorp/logutils v1.0.0
 	github.com/miekg/dns v1.1.72
 	github.com/moby/sys/mountinfo v0.7.2
 	github.com/oleiade/reflections v1.1.0

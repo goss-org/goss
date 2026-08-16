@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"runtime"
 	"strings"
@@ -19,14 +20,74 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-// converts a cli context into a goss Config
-func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
+// operations is the set of goss entry points the CLI drives, plus the process
+// exit it needs. Holding them in one value lets the app be built and driven with
+// fakes in a test, without replacing an Action or ending the test process, and
+// without any production branch that exists only to enable that.
+type operations struct {
+	validate         func(*util.Config) (int, error)
+	serve            func(*util.Config) error
+	renderJSON       func(*util.Config) (string, error)
+	autoAddResources func(string, []string, *util.Config) error
+	addResources     func(string, string, []string, *util.Config) error
+	exit             func(int)
+}
+
+// defaultOperations is what the goss binary runs with.
+func defaultOperations() operations {
+	return operations{
+		validate:         goss.Validate,
+		serve:            goss.Serve,
+		renderJSON:       goss.RenderJSON,
+		autoAddResources: goss.AutoAddResources,
+		addResources:     goss.AddResources,
+		exit:             os.Exit,
+	}
+}
+
+// action builds the Action for an executable subcommand. Every one of them does
+// the same two things first, in this order: the platform alpha gate, which may
+// end the process, and then runtime configuration construction, whose error is
+// returned without the operation being invoked. Alpha rejection therefore wins
+// when both the platform and the log level are unacceptable.
+func (o operations) action(fn func(context.Context, *cli.Command, *util.Config) error) func(context.Context, *cli.Command) error {
+	return func(ctx context.Context, c *cli.Command) error {
+		fatalAlphaIfNeeded(c)
+
+		cfg, err := newRuntimeConfigFromCLI(c)
+		if err != nil {
+			return err
+		}
+
+		return fn(ctx, c, cfg)
+	}
+}
+
+// addAction builds the Action for one of the add subcommands. They differ only
+// in the resource name they name, which stays with the subcommand that owns it.
+func (o operations) addAction(resourceName string) func(context.Context, *cli.Command) error {
+	return o.action(func(ctx context.Context, c *cli.Command, cfg *util.Config) error {
+		return o.addResources(c.String("gossfile"), resourceName, c.Args().Slice(), cfg)
+	})
+}
+
+// newRuntimeConfigFromCLI converts a cli context into a goss Config, including
+// the logger goss writes through. The level belongs to the handler, so it is
+// resolved here, at the edge, rather than being carried into the library as a
+// string for the library to interpret.
+func newRuntimeConfigFromCLI(c *cli.Command) (*util.Config, error) {
+	level, err := parseLogLevel(c.String("log-level"))
+	if err != nil {
+		return nil, err
+	}
+
 	cfg := &util.Config{
-		AllowInsecure:     c.Bool("insecure"),
-		AnnounceToCLI:     true,
-		Cache:             c.Duration("cache"),
-		Debug:             c.Bool("debug"),
-		LogLevel:          c.String("log-level"),
+		AllowInsecure: c.Bool("insecure"),
+		AnnounceToCLI: true,
+		Cache:         c.Duration("cache"),
+		Debug:         c.Bool("debug"),
+		Logger:        slog.New(newCLIHandler(os.Stderr, level)),
+
 		Endpoint:          c.String("endpoint"),
 		FormatOptions:     c.StringSlice("format-options"),
 		IgnoreList:        c.StringSlice("exclude-attr"),
@@ -55,7 +116,7 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		util.WithColor()(cfg)
 	}
 
-	return cfg
+	return cfg, nil
 }
 
 func timeoutFlag(value time.Duration) *cli.DurationFlag {
@@ -66,7 +127,19 @@ func timeoutFlag(value time.Duration) *cli.DurationFlag {
 }
 
 func main() {
-	app := &cli.Command{
+	app := newApp(defaultOperations())
+
+	addAlphaFlagIfNeeded(app)
+	err := app.Run(context.Background(), os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// newApp builds the goss CLI. ops is the far end of every action, so a test can
+// drive the real app, flags and actions against fakes.
+func newApp(ops operations) *cli.Command {
+	return &cli.Command{
 		EnableShellCompletion: true,
 		Version:               util.Version,
 		Name:                  "goss",
@@ -151,16 +224,15 @@ func main() {
 						Sources: cli.EnvVars("GOSS_MAX_CONCURRENT"),
 					},
 				},
-				Action: func(ctx context.Context, c *cli.Command) error {
-					fatalAlphaIfNeeded(c)
-					code, err := goss.Validate(newRuntimeConfigFromCLI(c))
+				Action: ops.action(func(ctx context.Context, c *cli.Command, cfg *util.Config) error {
+					code, err := ops.validate(cfg)
 					if err != nil {
 						color.Red(fmt.Sprintf("Error: %v\n", err))
 					}
-					os.Exit(code)
+					ops.exit(code)
 
 					return nil
-				},
+				}),
 			},
 			{
 				Name:    "serve",
@@ -208,10 +280,9 @@ func main() {
 						Sources: cli.EnvVars("GOSS_MAX_CONCURRENT"),
 					},
 				},
-				Action: func(ctx context.Context, c *cli.Command) error {
-					fatalAlphaIfNeeded(c)
-					return goss.Serve(newRuntimeConfigFromCLI(c))
-				},
+				Action: ops.action(func(ctx context.Context, c *cli.Command, cfg *util.Config) error {
+					return ops.serve(cfg)
+				}),
 			},
 			{
 				Name:    "render",
@@ -224,9 +295,8 @@ func main() {
 						Usage:   "Print debugging info when rendering",
 					},
 				},
-				Action: func(ctx context.Context, c *cli.Command) error {
-					fatalAlphaIfNeeded(c)
-					j, err := goss.RenderJSON(newRuntimeConfigFromCLI(c))
+				Action: ops.action(func(ctx context.Context, c *cli.Command, cfg *util.Config) error {
+					j, err := ops.renderJSON(cfg)
 					if err != nil {
 						return err
 					}
@@ -234,16 +304,15 @@ func main() {
 					fmt.Print(j)
 
 					return nil
-				},
+				}),
 			},
 			{
 				Name:    "autoadd",
 				Aliases: []string{"aa"},
 				Usage:   "automatically add all matching resource to the test suite",
-				Action: func(ctx context.Context, c *cli.Command) error {
-					fatalAlphaIfNeeded(c)
-					return goss.AutoAddResources(c.String("gossfile"), c.Args().Slice(), newRuntimeConfigFromCLI(c))
-				},
+				Action: ops.action(func(ctx context.Context, c *cli.Command, cfg *util.Config) error {
+					return ops.autoAddResources(c.String("gossfile"), c.Args().Slice(), cfg)
+				}),
 			},
 			{
 				Name:    "add",
@@ -257,20 +326,14 @@ func main() {
 				},
 				Commands: []*cli.Command{
 					{
-						Name:  resource.PackageResourceKey,
-						Usage: "add new package",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.PackageResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.PackageResourceKey,
+						Usage:  "add new package",
+						Action: ops.addAction(resource.PackageResourceName),
 					},
 					{
-						Name:  resource.FileResourceKey,
-						Usage: "add new file",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.FileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.FileResourceKey,
+						Usage:  "add new file",
+						Action: ops.addAction(resource.FileResourceName),
 					},
 					{
 						Name:  resource.AddrResourceKey,
@@ -278,42 +341,27 @@ func main() {
 						Flags: []cli.Flag{
 							timeoutFlag(500 * time.Millisecond),
 						},
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.AddResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Action: ops.addAction(resource.AddResourceName),
 					},
 					{
-						Name:  resource.PortResourceKey,
-						Usage: "add new listening [protocol]:port - ex: 80 or udp:123",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.PortResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.PortResourceKey,
+						Usage:  "add new listening [protocol]:port - ex: 80 or udp:123",
+						Action: ops.addAction(resource.PortResourceName),
 					},
 					{
-						Name:  resource.ServiceResourceKey,
-						Usage: "add new service",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.ServiceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.ServiceResourceKey,
+						Usage:  "add new service",
+						Action: ops.addAction(resource.ServiceResourceName),
 					},
 					{
-						Name:  resource.UserResourceKey,
-						Usage: "add new user",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.UserResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.UserResourceKey,
+						Usage:  "add new user",
+						Action: ops.addAction(resource.UserResourceName),
 					},
 					{
-						Name:  resource.GroupResourceKey,
-						Usage: "add new group",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.GroupResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.GroupResourceKey,
+						Usage:  "add new group",
+						Action: ops.addAction(resource.GroupResourceName),
 					},
 					{
 						Name:  resource.CommandResourceKey,
@@ -321,10 +369,7 @@ func main() {
 						Flags: []cli.Flag{
 							timeoutFlag(10 * time.Second),
 						},
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.CommandResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Action: ops.addAction(resource.CommandResourceName),
 					},
 					{
 						Name:  resource.DNSResourceKey,
@@ -336,18 +381,12 @@ func main() {
 								Usage: "The IP address of a DNS server to query",
 							},
 						},
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.DNSResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Action: ops.addAction(resource.DNSResourceName),
 					},
 					{
-						Name:  resource.ProcessResourceKey,
-						Usage: "add new process name",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.ProcessResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.ProcessResourceKey,
+						Usage:  "add new process name",
+						Action: ops.addAction(resource.ProcessResourceName),
 					},
 					{
 						Name:  resource.HTTPResourceKey,
@@ -378,27 +417,17 @@ func main() {
 								Usage:   "Proxy server to use. e.g. http://10.0.0.2:8080",
 							},
 						},
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.HTTPResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Action: ops.addAction(resource.HTTPResourceName),
 					},
 					{
-						Name:  "goss",
-						Usage: "add new goss file, it will be imported from this one",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.GossFileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-
-						},
+						Name:   "goss",
+						Usage:  "add new goss file, it will be imported from this one",
+						Action: ops.addAction(resource.GossFileResourceName),
 					},
 					{
-						Name:  resource.KernelParamResourceKey,
-						Usage: "add new goss kernel param",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.KernelParamResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.KernelParamResourceKey,
+						Usage:  "add new goss kernel param",
+						Action: ops.addAction(resource.KernelParamResourceName),
 					},
 					{
 						Name:  resource.MountResourceKey,
@@ -406,36 +435,21 @@ func main() {
 						Flags: []cli.Flag{
 							timeoutFlag(1000 * time.Millisecond),
 						},
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.MountResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Action: ops.addAction(resource.MountResourceName),
 					},
 					{
-						Name:  resource.InterfaceResourceKey,
-						Usage: "add new interface",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.InterfaceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.InterfaceResourceKey,
+						Usage:  "add new interface",
+						Action: ops.addAction(resource.InterfaceResourceName),
 					},
 					{
-						Name:  resource.RegistryResourceKey,
-						Usage: "add new registry key",
-						Action: func(ctx context.Context, c *cli.Command) error {
-							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.RegistryResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-						},
+						Name:   resource.RegistryResourceKey,
+						Usage:  "add new registry key",
+						Action: ops.addAction(resource.RegistryResourceName),
 					},
 				},
 			},
 		},
-	}
-
-	addAlphaFlagIfNeeded(app)
-	err := app.Run(context.Background(), os.Args)
-	if err != nil {
-		log.Fatal(err)
 	}
 }
 
@@ -450,19 +464,37 @@ func addAlphaFlagIfNeeded(cmd *cli.Command) {
 	}
 }
 
-func fatalAlphaIfNeeded(c *cli.Command) {
-	if runtime.GOOS == "darwin" || runtime.GOOS == "windows" {
-		if c.String("use-alpha") != "1" {
-			howto := map[string]string{
-				"darwin":  "export GOSS_USE_ALPHA=1",
-				"windows": "In cmd:        set GOSS_USE_ALPHA=1\nIn powershell: $env:GOSS_USE_ALPHA=1\nIn bash:       export GOSS_USE_ALPHA=1",
-			}
-			log.Printf(`Terminating.
+// alphaRejected is the platform gate's decision, as a pure function of the OS
+// name and the opt-in value. Keeping the decision separate from the process exit
+// is what makes the darwin and windows behaviour testable from any host.
+func alphaRejected(goos, useAlpha string) bool {
+	if goos != "darwin" && goos != "windows" {
+		return false
+	}
+	return useAlpha != "1"
+}
+
+// alphaMessage is the complete diagnostic the gate prints, including the
+// platform-specific bypass instructions.
+func alphaMessage(goos string) string {
+	howto := map[string]string{
+		"darwin":  "export GOSS_USE_ALPHA=1",
+		"windows": "In cmd:        set GOSS_USE_ALPHA=1\nIn powershell: $env:GOSS_USE_ALPHA=1\nIn bash:       export GOSS_USE_ALPHA=1",
+	}
+
+	return fmt.Sprintf(`Terminating.
 
 To bypass this and use the binary anyway:
 
-%s`, howto[runtime.GOOS])
-			os.Exit(1)
-		}
+%s`, howto[goos])
+}
+
+// fatalAlphaIfNeeded runs before anything else an action does, including runtime
+// configuration construction, so no logger exists yet. It stays on the standard
+// log package for that reason.
+func fatalAlphaIfNeeded(c *cli.Command) {
+	if alphaRejected(runtime.GOOS, c.String("use-alpha")) {
+		log.Print(alphaMessage(runtime.GOOS))
+		os.Exit(1)
 	}
 }
