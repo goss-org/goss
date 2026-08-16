@@ -117,7 +117,6 @@ func (u *DefHTTP) setupReal() error {
 		Renegotiation:      tls.RenegotiateFreelyAsClient,
 	}
 	if u.CAFile != "" {
-		// FIXME: iotutil
 		caCert, err := os.ReadFile(u.CAFile)
 		if err != nil {
 			return err

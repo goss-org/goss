@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/hex"
 	"fmt"
 	"hash"
 	"io"
@@ -207,7 +208,7 @@ func (f *DefFile) hash(hashFunc hashFuncType) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", hash.Sum(nil)), nil
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
 
 func (f *DefFile) Md5() (string, error) {

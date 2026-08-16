@@ -76,7 +76,6 @@ func prettyPrintTestResult(t resource.TestResult, compact, includeRaw bool) stri
 	}
 	m := t.MatcherResult
 	var ss []string
-	//var s string
 	if t.Err != nil {
 		e := fmt.Sprint(t.Err)
 		if compact {

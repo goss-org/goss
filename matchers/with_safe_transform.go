@@ -27,7 +27,6 @@ func WithSafeTransform(transform Transformer, matcher GossMatcher) GossMatcher {
 
 func (m *WithSafeTransformMatcher) Match(actual any) (bool, error) {
 	var err error
-	//log.Printf("%#v: input: %v", m.Transform, actual)
 	m.transformedValue, err = m.Transform.Transform(actual)
 	if !reflect.DeepEqual(actual, m.transformedValue) {
 		m.wasTransformed = true
@@ -35,7 +34,6 @@ func (m *WithSafeTransformMatcher) Match(actual any) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("%#v: %w", m.Transform, err)
 	}
-	//log.Printf("%#v: output: %v", m.Transform, m.transformedValue)
 	return m.Matcher.Match(m.transformedValue)
 }
 
