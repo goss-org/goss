@@ -1,32 +1,14 @@
 package goss
 
 import (
-	"bytes"
-	"encoding/json"
 	"log/slog"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/goss-org/goss/util"
 	"github.com/stretchr/testify/require"
 )
-
-func decodeJSONRecords(buf *bytes.Buffer) []map[string]any {
-	var out []map[string]any
-	for line := range strings.SplitSeq(strings.TrimSpace(buf.String()), "\n") {
-		if line == "" {
-			continue
-		}
-		var record map[string]any
-		if err := json.Unmarshal([]byte(line), &record); err != nil {
-			continue
-		}
-		out = append(out, record)
-	}
-	return out
-}
 
 // TestWriteJSONPreservesItsContractOnAnEmptyConfig pins the split. The exported
 // function still returns nil and writes nothing, so no embedder's error
@@ -124,12 +106,7 @@ func TestAddRootsAreSilentWithoutALogger(t *testing.T) {
 func assertEmptyConfigWarning(t *testing.T, records []map[string]any, path string) {
 	t.Helper()
 
-	var warnings []map[string]any
-	for _, record := range records {
-		if record["msg"] == "empty configuration not written" {
-			warnings = append(warnings, record)
-		}
-	}
+	warnings := recordsWithMessage(records, "empty configuration not written")
 
 	require.Len(t, warnings, 1, "records: %v", records)
 	require.Equal(t, "WARN", warnings[0]["level"])

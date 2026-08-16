@@ -9,46 +9,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestCacheMissLogIsGatedByLogLevel is the regression test for
-// https://github.com/goss-org/goss/issues/991: the cache-miss message emitted
-// on every health probe could not be muted at any --loglevel, because it was
-// logged without a level prefix for logutils to match on.
-func TestCacheMissLogIsGatedByLogLevel(t *testing.T) {
-	t.Parallel()
-
-	tests := map[string]struct {
-		level   string
-		visible bool
-	}{
-		"default INFO mutes it": {level: "INFO", visible: false},
-		"WARN mutes it":         {level: "WARN", visible: false},
-		"ERROR mutes it":        {level: "ERROR", visible: false},
-		"DEBUG shows it":        {level: "DEBUG", visible: true},
-		"TRACE shows it":        {level: "TRACE", visible: true},
-	}
-
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			t.Parallel()
-
-			var buf bytes.Buffer
-			filter, err := newLogFilter(tc.level, &buf)
-			require.NoError(t, err)
-
-			// Deliberately a local logger: the message must be gated by the
-			// filter itself, not by anything the global logger happens to do.
-			log.New(filter, "", 0).Printf(cacheMissLogFormat, "res")
-
-			if tc.visible {
-				require.Contains(t, buf.String(), "Stale cache[res], running tests",
-					"message should be emitted at level %s", tc.level)
-			} else {
-				require.Empty(t, buf.String(),
-					"message should be muted at level %s", tc.level)
-			}
-		})
-	}
-}
+// The cache-miss regression test that lived here has moved to
+// serve_logging_test.go, where it now asserts on structured records: the
+// message it used to match on carried its level as a text prefix, and no longer
+// exists.
 
 // TestNewLogFilterRejectsUnknownLevel pins the error path, and documents that
 // FATAL is not among the supported levels.

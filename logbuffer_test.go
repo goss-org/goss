@@ -7,11 +7,10 @@ import (
 
 // syncBuffer is a bytes.Buffer that is safe to write and read concurrently.
 //
-// The serve tests capture log output by pointing the process-wide logger at a
-// buffer with log.SetOutput. That destination is global, so a parallel test
-// still writes into whichever buffer was installed last while its owner reads
-// it — a data race on the buffer even though each test declares its own.
-// Guarding the buffer removes the race without giving up the shared logger.
+// Each test now owns the logger it captures, so buffers are no longer shared
+// between tests. The locking is still needed within one test: goss logs from
+// the goroutines serving requests, and slog only serialises writes from its own
+// side, so a test reading the buffer while a request is in flight races it.
 type syncBuffer struct {
 	mu  sync.Mutex
 	buf bytes.Buffer
@@ -27,10 +26,4 @@ func (b *syncBuffer) String() string {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	return b.buf.String()
-}
-
-func (b *syncBuffer) Reset() {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	b.buf.Reset()
 }

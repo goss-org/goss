@@ -1,7 +1,6 @@
 package goss
 
 import (
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -14,7 +13,6 @@ import (
 )
 
 func TestServeWithNoContentNegotiation(t *testing.T) {
-	t.Parallel()
 	tests := map[string]struct {
 		outputFormat        string
 		specFile            string
@@ -43,12 +41,11 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			var logOutput syncBuffer
-			log.SetOutput(&logOutput)
-
+			logger, records := captureRecords(util.LevelTrace)
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
 				util.WithOutputFormat(tc.outputFormat),
+				util.WithLogger(logger),
 			)
 			require.NoError(t, err)
 
@@ -62,7 +59,7 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 
 			handler.ServeHTTP(rr, req)
 
-			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
+			t.Logf("testName %q records: %v", testName, records())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
 				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
@@ -72,7 +69,6 @@ func TestServeWithNoContentNegotiation(t *testing.T) {
 }
 
 func TestServeNegotiatingContent(t *testing.T) {
-	t.Parallel()
 	tests := map[string]struct {
 		acceptHeader        []string
 		outputFormat        string
@@ -157,12 +153,11 @@ func TestServeNegotiatingContent(t *testing.T) {
 	for testName := range tests {
 		tc := tests[testName]
 		t.Run(testName, func(t *testing.T) {
-			var logOutput syncBuffer
-			log.SetOutput(&logOutput)
-
+			logger, records := captureRecords(util.LevelTrace)
 			config, err := util.NewConfig(
 				util.WithSpecFile(tc.specFile),
 				util.WithOutputFormat(tc.outputFormat),
+				util.WithLogger(logger),
 			)
 			require.NoError(t, err)
 
@@ -178,7 +173,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 
 			handler.ServeHTTP(rr, req)
 
-			t.Logf("testName %q log output:\n%s", testName, logOutput.String())
+			t.Logf("testName %q records: %v", testName, records())
 			assert.Equal(t, tc.expectedHTTPStatus, rr.Code)
 			if tc.expectedContentType != "" {
 				assert.Equal(t, tc.expectedContentType, rr.Result().Header.Get("Content-Type"))
@@ -188,12 +183,12 @@ func TestServeNegotiatingContent(t *testing.T) {
 }
 
 func TestServeCacheWithNoContentNegotiation(t *testing.T) {
-	var logOutput syncBuffer
-	log.SetOutput(&logOutput)
+	logger, records := captureRecords(util.LevelTrace)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
+		util.WithLogger(logger),
 	)
 	require.NoError(t, err)
 
@@ -201,105 +196,120 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 	require.NoError(t, err)
 
 	req := makeRequest(t, config, nil)
-	rr := httptest.NewRecorder()
 
 	handler := http.HandlerFunc(hh.ServeHTTP)
 
+	// Records accumulate for the lifetime of the logger, so each step compares
+	// against how many cache misses had been seen before it.
+	var seen int
+
 	t.Run("fresh cache", func(t *testing.T) {
+		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Greater(t, countStaleCacheRecords(records), seen,
+			"the cache should have been cold, so the suite should have run again")
+		seen = countStaleCacheRecords(records)
 	})
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
+		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Equal(t, seen, countStaleCacheRecords(records),
+			"a warm cache should not have run the suite again")
 	})
 
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
 		time.Sleep(cache + 5*time.Millisecond)
+		rr := httptest.NewRecorder()
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Greater(t, countStaleCacheRecords(records), seen,
+			"the cache should have been cold, so the suite should have run again")
+		seen = countStaleCacheRecords(records)
 	})
 }
 
 func TestServeCacheNegotiatingContent(t *testing.T) {
-	var logOutput syncBuffer
-	log.SetOutput(&logOutput)
+	logger, records := captureRecords(util.LevelTrace)
 	const cache = time.Duration(time.Millisecond * 100)
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
 		util.WithOutputFormat("structured"),
+		util.WithLogger(logger),
 	)
 	require.NoError(t, err)
 
 	hh, err := newHealthHandler(config)
 	require.NoError(t, err)
 
-	rr := httptest.NewRecorder()
-
 	handler := http.HandlerFunc(hh.ServeHTTP)
 
+	// Records accumulate for the lifetime of the logger, so each step compares
+	// against how many cache misses had been seen before it.
+	var seen int
+
 	t.Run("fresh cache", func(t *testing.T) {
+		rr := httptest.NewRecorder()
 		req := makeRequest(t, config, map[string][]string{
 			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Greater(t, countStaleCacheRecords(records), seen,
+			"the cache should have been cold, so the suite should have run again")
+		seen = countStaleCacheRecords(records)
 	})
 
 	t.Run("immediately re-request, cache should be warm", func(t *testing.T) {
+		rr := httptest.NewRecorder()
 		req := makeRequest(t, config, map[string][]string{
 			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Equal(t, seen, countStaleCacheRecords(records),
+			"a warm cache should not have run the suite again")
 	})
 
 	t.Run("immediately re-request but different accept header, cache should be warm", func(t *testing.T) {
+		rr := httptest.NewRecorder()
 		req := makeRequest(t, config, map[string][]string{
 			"accept": {"application/vnd.goss-rspecish"},
 		})
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.NotContains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Equal(t, seen, countStaleCacheRecords(records),
+			"a warm cache should not have run the suite again")
 	})
 
 	t.Run("allow cache to expire, cache should be cold", func(t *testing.T) {
 		time.Sleep(cache + 5*time.Millisecond)
+		rr := httptest.NewRecorder()
 		req := makeRequest(t, config, map[string][]string{
 			"accept": {"application/json"},
 		})
 		handler.ServeHTTP(rr, req)
 
 		assert.Equal(t, http.StatusOK, rr.Result().StatusCode)
-		assert.Contains(t, logOutput.String(), "Stale cache")
-		t.Log(logOutput.String())
-		logOutput.Reset()
+		assert.Greater(t, countStaleCacheRecords(records), seen,
+			"the cache should have been cold, so the suite should have run again")
+		seen = countStaleCacheRecords(records)
 	})
+}
+
+// countStaleCacheRecords is how a cache miss is observed now that the message
+// carries no data: one constant message, counted.
+func countStaleCacheRecords(records func() []map[string]any) int {
+	return len(recordsWithMessage(records(), "running validation for stale cache"))
 }
 
 func makeRequest(t *testing.T, config *util.Config, headers map[string][]string) *http.Request {
