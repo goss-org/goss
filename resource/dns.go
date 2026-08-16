@@ -51,8 +51,8 @@ func (d *DNS) GetResolve() string {
 	return d.id
 }
 
-func (d *DNS) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, d.ID())
+func (d *DNS) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, d.ID())
 	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500

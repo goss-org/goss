@@ -46,8 +46,8 @@ func (p *Package) GetName() string {
 	return p.id
 }
 
-func (p *Package) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, p.ID())
+func (p *Package) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, p.ID())
 	skip := p.Skip
 	sysPkg := sys.NewPackage(ctx, p.GetName(), sys, util.Config{})
 

@@ -49,8 +49,8 @@ func (k *KernelParam) GetName() string {
 	return k.id
 }
 
-func (k *KernelParam) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, k.ID())
+func (k *KernelParam) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, k.ID())
 	skip := k.Skip
 	sysKernelParam := sys.NewKernelParam(ctx, k.GetName(), sys, util.Config{})
 

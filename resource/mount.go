@@ -3,9 +3,10 @@ package resource
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"time"
 )
 
 type Mount struct {
@@ -53,8 +54,8 @@ func (m *Mount) GetMountPoint() string {
 	return m.id
 }
 
-func (m *Mount) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, m.ID())
+func (m *Mount) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, m.ID())
 	skip := m.Skip
 
 	if m.Timeout == 0 {
