@@ -33,7 +33,7 @@ func AddResources(ctx context.Context, fileName, resourceName string, keys []str
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	for _, key := range keys {
 		if err := AddResource(ctx, fileName, gossConfig, resourceName, key, *c, sys); err != nil {
@@ -130,7 +130,7 @@ func AutoAddResources(ctx context.Context, fileName string, keys []string, c *ut
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	for _, key := range keys {
 		if err := AutoAddResource(ctx, fileName, gossConfig, key, c, sys); err != nil {

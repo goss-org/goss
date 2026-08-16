@@ -3,8 +3,6 @@ package outputs
 import (
 	"fmt"
 	"io"
-	"log"
-	"strings"
 	"time"
 
 	"github.com/goss-org/goss/resource"
@@ -19,6 +17,8 @@ func (r Rspecish) ValidOptions() []*formatOption {
 
 func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
+
+	logger := util.LoggerOrDiscard(outConfig.Logger)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
 	results = getResults(results, sort)
@@ -42,15 +42,15 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			switch testResult.Result {
 			case resource.SUCCESS:
-				logTrace("TRACE", "SUCCESS", testResult, false)
+				logTrace(logger, outcomeSuccess, testResult, false)
 				fmt.Fprint(w, green("."))
 			case resource.SKIP:
-				logTrace("TRACE", "SKIP", testResult, false)
+				logTrace(logger, outcomeSkip, testResult, false)
 				fmt.Fprint(w, yellow("S"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				skipped++
 			case resource.FAIL:
-				logTrace("TRACE", "FAIL", testResult, false)
+				logTrace(logger, outcomeFail, testResult, false)
 				fmt.Fprint(w, red("F"))
 				failedOrSkippedGroup = append(failedOrSkippedGroup, testResult)
 				failed++
@@ -69,11 +69,22 @@ func (r Rspecish) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	outstr := summary(startTime, endTime, testCount, failed, skipped)
 	fmt.Fprint(w, outstr)
-	resstr := strings.ReplaceAll(outstr, "\n", " ")
+
+	// The counts and the duration were already the whole content of this
+	// outputer's summary record; as attributes they arrive without the colour
+	// escapes the printed version carries.
+	status := statusOK
+	exitCode = 0
 	if failed > 0 {
-		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
-		return 1
+		status = statusFail
+		exitCode = 1
 	}
-	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
-	return 0
+	logger.Debug("validation summary",
+		"status", status,
+		"total", testCount,
+		"failed", failed,
+		"skipped", skipped,
+		"duration_seconds", endTime.Sub(startTime).Seconds())
+
+	return exitCode
 }

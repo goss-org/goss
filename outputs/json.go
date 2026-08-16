@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"time"
 
 	"github.com/goss-org/goss/resource"
@@ -22,6 +21,8 @@ func (r Json) ValidOptions() []*formatOption {
 
 func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	outConfig util.OutputConfig) (exitCode int) {
+
+	logger := util.LoggerOrDiscard(outConfig.Logger)
 
 	var pretty = util.IsValueInList(foPretty, outConfig.FormatOptions)
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
@@ -46,13 +47,15 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 			}
 			if testResult.Result == resource.FAIL {
 				failed++
-				logTrace("TRACE", "FAIL", testResult, true)
-			} else {
-				logTrace("TRACE", "SUCCESS", testResult, true)
 			}
 			if testResult.Skipped {
 				skipped++
 			}
+			// The counters above are unchanged. The outcome is not: the old
+			// message said "SUCCESS" for a skipped result, which was survivable
+			// in prose next to the result number and is not survivable as an
+			// enum attribute called outcome.
+			logTrace(logger, outcomeFor(testResult), testResult, true)
 			m := struct2map(testResult)
 			m["successful"] = testResult.Result != resource.FAIL
 			m["summary-line"] = humanizeResult(testResult, false, includeRaw)
@@ -85,12 +88,15 @@ func (r Json) Output(w io.Writer, results <-chan []resource.TestResult,
 	resstr := string(j)
 	fmt.Fprintln(w, resstr)
 
+	// One record per Output call, carrying the same document written to w. The
+	// two summary sites this replaces differed only in the word they put in
+	// front of it, which is now an attribute.
 	if failed > 0 {
-		log.Printf("[DEBUG] FAIL SUMMARY: %s", resstr)
+		logger.Debug("validation summary", "status", statusFail, "results_json", resstr)
 		return 1
 	}
 
-	log.Printf("[DEBUG] OK SUMMARY: %s", resstr)
+	logger.Debug("validation summary", "status", statusOK, "results_json", resstr)
 	return 0
 }
 
