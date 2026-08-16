@@ -171,7 +171,7 @@ command:
     skip: false
 ```
 
-`stdout` and `stderr` can be a string or [pattern](#patterns)
+`stdout` and `stderr` can be a string or [pattern](#ioreaders)
 
 !!! warning "An empty list asserts nothing"
 
@@ -307,7 +307,7 @@ file:
     skip: false
 ```
 
-`contents` can be a string or a [pattern](#patterns)
+`contents` can be a string or a [pattern](#ioreaders)
 
 !!! warning "An empty list asserts nothing"
 
@@ -962,7 +962,7 @@ to allow for dynamic or conditional tests.
 Available variables:
 
 * `{{.Env}}`  - Containing environment variables
-* `{{.Vars}}` - Containing the values defined in [--vars](#global-options) file
+* `{{.Vars}}` - Containing the values defined in [--vars](cli.md#global-options) file
 
 Available functions:
 
