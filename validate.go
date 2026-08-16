@@ -111,10 +111,6 @@ func ValidateResults(ctx context.Context, c *util.Config) (results <-chan []reso
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(ctx context.Context, c *util.Config) (code int, err error) {
-	err = setLogLevel(c)
-	if err != nil {
-		return 1, err
-	}
 	gossConfig, err := getGossConfig(c)
 	if err != nil {
 		return 78, err
