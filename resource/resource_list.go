@@ -24,9 +24,9 @@ func (r AddrMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -42,9 +42,9 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -52,7 +52,7 @@ func (r AddrMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Addr
 
 func (ret *AddrMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -74,7 +74,7 @@ func (ret *AddrMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Addr]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -87,7 +87,7 @@ func (ret *AddrMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *AddrMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *AddrMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Addr{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -103,7 +103,7 @@ func (ret *AddrMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Addr]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -125,9 +125,9 @@ func (r CommandMap) AppendSysResource(sr string, sys *system.System, config util
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -143,9 +143,9 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -153,7 +153,7 @@ func (r CommandMap) AppendSysResourceIfExists(sr string, sys *system.System) (*C
 
 func (ret *CommandMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -175,7 +175,7 @@ func (ret *CommandMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Command]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -188,7 +188,7 @@ func (ret *CommandMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *CommandMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *CommandMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Command{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -204,7 +204,7 @@ func (ret *CommandMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Command]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -226,9 +226,9 @@ func (r DNSMap) AppendSysResource(sr string, sys *system.System, config util.Con
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -244,9 +244,9 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -254,7 +254,7 @@ func (r DNSMap) AppendSysResourceIfExists(sr string, sys *system.System) (*DNS, 
 
 func (ret *DNSMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -276,7 +276,7 @@ func (ret *DNSMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[DNS]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -289,7 +289,7 @@ func (ret *DNSMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *DNSMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *DNSMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := DNS{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -305,7 +305,7 @@ func (ret *DNSMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[DNS]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -327,9 +327,9 @@ func (r FileMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -345,9 +345,9 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -355,7 +355,7 @@ func (r FileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*File
 
 func (ret *FileMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -377,7 +377,7 @@ func (ret *FileMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[File]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -390,7 +390,7 @@ func (ret *FileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *FileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *FileMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := File{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -406,7 +406,7 @@ func (ret *FileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[File]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -428,9 +428,9 @@ func (r GossfileMap) AppendSysResource(sr string, sys *system.System, config uti
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -446,9 +446,9 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -456,7 +456,7 @@ func (r GossfileMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 
 func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -478,7 +478,7 @@ func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Gossfile]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -491,7 +491,7 @@ func (ret *GossfileMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Gossfile{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -507,7 +507,7 @@ func (ret *GossfileMap) UnmarshalYAML(unmarshal func(v interface{}) error) error
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Gossfile]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -529,9 +529,9 @@ func (r GroupMap) AppendSysResource(sr string, sys *system.System, config util.C
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -547,9 +547,9 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -557,7 +557,7 @@ func (r GroupMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Gro
 
 func (ret *GroupMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -579,7 +579,7 @@ func (ret *GroupMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Group]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -592,7 +592,7 @@ func (ret *GroupMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *GroupMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *GroupMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Group{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -608,7 +608,7 @@ func (ret *GroupMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Group]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -630,9 +630,9 @@ func (r PackageMap) AppendSysResource(sr string, sys *system.System, config util
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -648,9 +648,9 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -658,7 +658,7 @@ func (r PackageMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 
 func (ret *PackageMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -680,7 +680,7 @@ func (ret *PackageMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Package]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -693,7 +693,7 @@ func (ret *PackageMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *PackageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *PackageMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Package{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -709,7 +709,7 @@ func (ret *PackageMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Package]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -731,9 +731,9 @@ func (r PortMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -749,9 +749,9 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -759,7 +759,7 @@ func (r PortMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Port
 
 func (ret *PortMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -781,7 +781,7 @@ func (ret *PortMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Port]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -794,7 +794,7 @@ func (ret *PortMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *PortMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Port{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -810,7 +810,7 @@ func (ret *PortMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Port]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -832,9 +832,9 @@ func (r ProcessMap) AppendSysResource(sr string, sys *system.System, config util
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -850,9 +850,9 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -860,7 +860,7 @@ func (r ProcessMap) AppendSysResourceIfExists(sr string, sys *system.System) (*P
 
 func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -882,7 +882,7 @@ func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Process]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -895,7 +895,7 @@ func (ret *ProcessMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Process{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -911,7 +911,7 @@ func (ret *ProcessMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Process]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -933,9 +933,9 @@ func (r ServiceMap) AppendSysResource(sr string, sys *system.System, config util
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -951,9 +951,9 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -961,7 +961,7 @@ func (r ServiceMap) AppendSysResourceIfExists(sr string, sys *system.System) (*S
 
 func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -983,7 +983,7 @@ func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Service]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -996,7 +996,7 @@ func (ret *ServiceMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Service{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1012,7 +1012,7 @@ func (ret *ServiceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error 
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Service]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1034,9 +1034,9 @@ func (r UserMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1052,9 +1052,9 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -1062,7 +1062,7 @@ func (r UserMap) AppendSysResourceIfExists(sr string, sys *system.System) (*User
 
 func (ret *UserMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1084,7 +1084,7 @@ func (ret *UserMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[User]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1097,7 +1097,7 @@ func (ret *UserMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *UserMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := User{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1113,7 +1113,7 @@ func (ret *UserMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[User]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1135,9 +1135,9 @@ func (r KernelParamMap) AppendSysResource(sr string, sys *system.System, config 
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1153,9 +1153,9 @@ func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System)
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -1163,7 +1163,7 @@ func (r KernelParamMap) AppendSysResourceIfExists(sr string, sys *system.System)
 
 func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1185,7 +1185,7 @@ func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[KernelParam]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1198,7 +1198,7 @@ func (ret *KernelParamMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := KernelParam{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1214,7 +1214,7 @@ func (ret *KernelParamMap) UnmarshalYAML(unmarshal func(v interface{}) error) er
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[KernelParam]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1236,9 +1236,9 @@ func (r MountMap) AppendSysResource(sr string, sys *system.System, config util.C
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1254,9 +1254,9 @@ func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mou
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -1264,7 +1264,7 @@ func (r MountMap) AppendSysResourceIfExists(sr string, sys *system.System) (*Mou
 
 func (ret *MountMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1286,7 +1286,7 @@ func (ret *MountMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Mount]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1299,7 +1299,7 @@ func (ret *MountMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *MountMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *MountMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Mount{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1315,7 +1315,7 @@ func (ret *MountMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Mount]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1337,9 +1337,9 @@ func (r InterfaceMap) AppendSysResource(sr string, sys *system.System, config ut
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1355,9 +1355,9 @@ func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -1365,7 +1365,7 @@ func (r InterfaceMap) AppendSysResourceIfExists(sr string, sys *system.System) (
 
 func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1387,7 +1387,7 @@ func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Interface]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1400,7 +1400,7 @@ func (ret *InterfaceMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := Interface{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1416,7 +1416,7 @@ func (ret *InterfaceMap) UnmarshalYAML(unmarshal func(v interface{}) error) erro
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Interface]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1438,9 +1438,9 @@ func (r HTTPMap) AppendSysResource(sr string, sys *system.System, config util.Co
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1456,9 +1456,9 @@ func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
@@ -1466,7 +1466,7 @@ func (r HTTPMap) AppendSysResourceIfExists(sr string, sys *system.System) (*HTTP
 
 func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
 	// Curried json.Unmarshal
-	unmarshal := func(i interface{}) error {
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
@@ -1488,7 +1488,7 @@ func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[HTTP]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1501,7 +1501,7 @@ func (ret *HTTPMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	// Validate configuration
 	zero := HTTP{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
@@ -1517,7 +1517,7 @@ func (ret *HTTPMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[HTTP]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1539,9 +1539,9 @@ func (r RegistryMap) AppendSysResource(sr string, sys *system.System, config uti
 	if err != nil {
 		return nil, err
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, nil
@@ -1557,22 +1557,24 @@ func (r RegistryMap) AppendSysResourceIfExists(sr string, sys *system.System) (*
 	if e, _ := sysres.Exists(); !e {
 		return res, sysres, false, nil
 	}
-	if old_res, ok := r[res.ID()]; ok {
-		res.Title = old_res.Title
-		res.Meta = old_res.Meta
+	if oldRes, ok := r[res.ID()]; ok {
+		res.Title = oldRes.Title
+		res.Meta = oldRes.Meta
 	}
 	r[res.ID()] = res
 	return res, sysres, true, nil
 }
 
 func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
-	unmarshal := func(i interface{}) error {
+	// Curried json.Unmarshal
+	unmarshal := func(i any) error {
 		if err := json.Unmarshal(data, i); err != nil {
 			return err
 		}
 		return nil
 	}
 
+	// Validate configuration
 	zero := Registry{}
 	whitelist, err := util.WhitelistAttrs(zero, util.JSON)
 	if err != nil {
@@ -1587,7 +1589,7 @@ func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Registry]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -1600,7 +1602,8 @@ func (ret *RegistryMap) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (ret *RegistryMap) UnmarshalYAML(unmarshal func(v interface{}) error) error {
+func (ret *RegistryMap) UnmarshalYAML(unmarshal func(v any) error) error {
+	// Validate configuration
 	zero := Registry{}
 	whitelist, err := util.WhitelistAttrs(zero, util.YAML)
 	if err != nil {
@@ -1615,7 +1618,7 @@ func (ret *RegistryMap) UnmarshalYAML(unmarshal func(v interface{}) error) error
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Registry]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {

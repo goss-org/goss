@@ -27,7 +27,7 @@ func (p *DebPackage) setup() {
 	if err := cmd.Run(); err != nil {
 		return
 	}
-	for _, l := range strings.Split(strings.TrimSpace(cmd.Stdout.String()), "\n") {
+	for l := range strings.SplitSeq(strings.TrimSpace(cmd.Stdout.String()), "\n") {
 		if !strings.HasPrefix(l, "install ok installed") && !strings.HasPrefix(l, "hold ok installed") {
 			continue
 		}

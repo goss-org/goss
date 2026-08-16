@@ -14,7 +14,7 @@ type ContainElementsMatcher struct {
 	matchers.ContainElementsMatcher
 }
 
-func ContainElements(elements ...interface{}) GossMatcher {
+func ContainElements(elements ...any) GossMatcher {
 	return &ContainElementsMatcher{
 		matchers.ContainElementsMatcher{
 			Elements: elements,
@@ -22,16 +22,16 @@ func ContainElements(elements ...interface{}) GossMatcher {
 	}
 }
 
-func (m *ContainElementsMatcher) Match(actual any) (success bool, err error) {
+func (m *ContainElementsMatcher) Match(actual any) (bool, error) {
 	if !isArrayOrSlice(actual) && !isMap(actual) {
 		return false, fmt.Errorf("ContainElements matcher expects an array/slice/map.  Got:\n%s", format.Object(actual, 1))
 	}
 	return m.ContainElementsMatcher.Match(actual)
 }
 
-func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementsMatcher) FailureResult(actual any) MatcherResult {
 	missingElements := getUnexported(m, "missingElements")
-	missingEl, ok := missingElements.([]interface{})
+	missingEl, ok := missingElements.([]any)
 	var foundElements any
 	if ok {
 		foundElements, _ = lo.Difference(m.Elements, missingEl)
@@ -45,7 +45,7 @@ func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult
 	}
 }
 
-func (m *ContainElementsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementsMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to contain elements matching",
@@ -54,7 +54,7 @@ func (m *ContainElementsMatcher) NegatedFailureResult(actual interface{}) Matche
 }
 
 func (m *ContainElementsMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["contain-elements"] = m.Elements
 	return json.Marshal(j)
 }

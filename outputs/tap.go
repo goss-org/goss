@@ -17,8 +17,11 @@ func (r Tap) ValidOptions() []*formatOption {
 	}
 }
 
-func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
-	outConfig util.OutputConfig) (exitCode int) {
+func (r Tap) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
+	outConfig util.OutputConfig,
+) int {
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)
@@ -27,7 +30,7 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 	testCount := 0
 	failed := 0
 
-	var summary = make(map[int]string)
+	summary := make(map[int]string)
 
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -42,13 +45,14 @@ func (r Tap) Output(w io.Writer, results <-chan []resource.TestResult,
 			default:
 				panic(fmt.Sprintf("Unexpected Result Code: %v\n", testResult.Result))
 			}
+
 			testCount++
 		}
 	}
 
 	fmt.Fprintf(w, "1..%d\n", testCount)
 
-	for i := 0; i < testCount; i++ {
+	for i := range testCount {
 		fmt.Fprintf(w, "%s", summary[i])
 	}
 

@@ -72,11 +72,11 @@ func parseRegistryKey(key string) (registryPathParts, error) {
 
 	// Check for explicit "::" separator first. This handles value names
 	// that contain backslashes (e.g. HardenedPaths UNC entries).
-	if idx := strings.Index(rest, "::"); idx >= 0 {
+	if before, after, ok := strings.Cut(rest, "::"); ok {
 		return registryPathParts{
 			Hive:      hive,
-			SubKey:    rest[:idx],
-			ValueName: rest[idx+2:],
+			SubKey:    before,
+			ValueName: after,
 		}, nil
 	}
 

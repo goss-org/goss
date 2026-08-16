@@ -75,7 +75,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 		KeyFile:           u.KeyFile,
 		NoFollowRedirects: u.NoFollowRedirects,
 		Timeout:           time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
-		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
+		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method,
+	})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 	defer sysHTTP.Close()

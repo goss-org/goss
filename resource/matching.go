@@ -41,7 +41,7 @@ func (r *Matching) GetMeta() meta    { return r.Meta }
 func (a *Matching) Validate(sys *system.System) []TestResult {
 	skip := a.Skip
 
-	var stub interface{}
+	var stub any
 	if a.AsReader {
 		s := fmt.Sprintf("%v", a.Content)
 		// ValidateValue expects a function
@@ -84,7 +84,7 @@ func (ret *MatchingMap) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Matching]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {
@@ -113,7 +113,7 @@ func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v any) error) error {
 		return err
 	}
 
-	typ := reflect.TypeOf(zero)
+	typ := reflect.TypeFor[Matching]()
 	typs := strings.Split(typ.String(), ".")[1]
 	for id, res := range tmp {
 		if res == nil {

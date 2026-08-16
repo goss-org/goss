@@ -13,9 +13,11 @@ func (r Silent) ValidOptions() []*formatOption {
 	return []*formatOption{}
 }
 
-func (r Silent) Output(w io.Writer, results <-chan []resource.TestResult,
-	outConfig util.OutputConfig) (exitCode int) {
-
+func (r Silent) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
+	outConfig util.OutputConfig,
+) int {
 	var failed int
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {

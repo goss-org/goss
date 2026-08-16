@@ -16,7 +16,7 @@ func And(ms ...GossMatcher) GossMatcher {
 	return &AndMatcher{Matchers: ms}
 }
 
-func (m *AndMatcher) Match(actual interface{}) (success bool, err error) {
+func (m *AndMatcher) Match(actual any) (bool, error) {
 	m.firstFailedMatcher = nil
 	for _, matcher := range m.Matchers {
 		success, err := matcher.Match(actual)
@@ -47,7 +47,7 @@ func (m *AndMatcher) FailureResult(actual any) MatcherResult {
 	return m.firstFailedMatcher.FailureResult(actual)
 }
 
-func (m *AndMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *AndMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to satisfy all of these matchers",
@@ -59,7 +59,7 @@ func (m *AndMatcher) MarshalJSON() ([]byte, error) {
 	if len(m.Matchers) == 1 {
 		return json.Marshal(m.Matchers[0])
 	}
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["and"] = m.Matchers
 	return json.Marshal(j)
 }

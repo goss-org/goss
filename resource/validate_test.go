@@ -75,25 +75,25 @@ func BenchmarkValidateValue(b *testing.B) {
 	inFunc := func() (any, error) {
 		return "foo", nil
 	}
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		ValidateValue(&FakeResource{""}, "", "foo", inFunc, false)
 	}
 }
 
 var containsTests = []struct {
-	in   []interface{}
+	in   []any
 	in2  string
 	want int
 }{
-	{[]interface{}{""}, "", SUCCESS},
-	{[]interface{}{"foo"}, "foo\nbar", SUCCESS},
-	{[]interface{}{"!foo"}, "foo\nbar", FAIL},
-	{[]interface{}{"!moo"}, "foo\nbar", SUCCESS},
-	{[]interface{}{"/fo.*/"}, "foo\nbar", SUCCESS},
-	{[]interface{}{"!/fo.*/"}, "foo\nbar", FAIL},
-	{[]interface{}{"!/mo.*/"}, "foo\nbar", SUCCESS},
-	{[]interface{}{"foo"}, "", FAIL},
-	{[]interface{}{`/\s/tmp\b/`}, "test /tmp bar", SUCCESS},
+	{[]any{""}, "", SUCCESS},
+	{[]any{"foo"}, "foo\nbar", SUCCESS},
+	{[]any{"!foo"}, "foo\nbar", FAIL},
+	{[]any{"!moo"}, "foo\nbar", SUCCESS},
+	{[]any{"/fo.*/"}, "foo\nbar", SUCCESS},
+	{[]any{"!/fo.*/"}, "foo\nbar", FAIL},
+	{[]any{"!/mo.*/"}, "foo\nbar", SUCCESS},
+	{[]any{"foo"}, "", FAIL},
+	{[]any{`/\s/tmp\b/`}, "test /tmp bar", SUCCESS},
 }
 
 func TestValidateContains(t *testing.T) {
@@ -127,7 +127,7 @@ func TestValidateContainsBadRegexErr(t *testing.T) {
 		reader := strings.NewReader("dummy")
 		return reader, nil
 	}
-	got := ValidateValue(&FakeResource{""}, "", []interface{}{"/*\\.* @@.*/"}, inFunc, false)
+	got := ValidateValue(&FakeResource{""}, "", []any{"/*\\.* @@.*/"}, inFunc, false)
 	if got.Err == nil {
 		t.Errorf("Expected bad regex to raise error, got nil")
 	}

@@ -24,7 +24,7 @@ func XML(dict map[string]string) GossMatcher {
 	}
 }
 
-func (m *XMLMatcher) Match(actual any) (success bool, err error) {
+func (m *XMLMatcher) Match(actual any) (bool, error) {
 	xmlStr, ok := actual.(string)
 	if !ok {
 		return false, fmt.Errorf("XML expect pattern to be a string: \n%s", actual)

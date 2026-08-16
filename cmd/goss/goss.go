@@ -19,7 +19,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-// converts a cli context into a goss Config
+// converts a cli context into a goss Config.
 func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 	cfg := &util.Config{
 		AllowInsecure:     c.Bool("insecure"),
@@ -389,7 +389,6 @@ func main() {
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
 							return goss.AddResources(c.String("gossfile"), resource.GossFileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
-
 						},
 					},
 					{

@@ -1,5 +1,4 @@
 //go:build darwin || dragonfly || freebsd || linux || netbsd || openbsd || solaris
-// +build darwin dragonfly freebsd linux netbsd openbsd solaris
 
 package system
 
@@ -44,7 +43,7 @@ func groupsForUser(user string, pgid int, grp io.Reader) ([]string, error) {
 			}
 		}
 
-		for _, g := range strings.Split(parts[3], ",") {
+		for g := range strings.SplitSeq(parts[3], ",") {
 			if g == user {
 				out = append(out, parts[0])
 				continue

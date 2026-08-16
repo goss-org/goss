@@ -44,8 +44,10 @@ type Retryable interface {
 	GetRetryDelay() RetryDelay
 }
 
-type matcher any
-type meta map[string]any
+type (
+	matcher any
+	meta    map[string]any
+)
 
 func contains(a []string, s string) bool {
 	for _, e := range a {
@@ -79,9 +81,9 @@ func shouldSkip(results []TestResult) bool {
 	return false
 }
 
-func isSet(i interface{}) bool {
+func isSet(i any) bool {
 	switch v := i.(type) {
-	case []interface{}:
+	case []any:
 		return len(v) > 0
 	default:
 		return i != nil

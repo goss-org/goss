@@ -16,8 +16,10 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-const USER_AGENT_HEADER_PREFIX = "user-agent:"
-const DEFAULT_USER_AGENT_PREFIX = "goss/"
+const (
+	USER_AGENT_HEADER_PREFIX  = "user-agent:"
+	DEFAULT_USER_AGENT_PREFIX = "goss/"
+)
 
 type HTTP interface {
 	HTTP() string
@@ -77,14 +79,15 @@ func NewDefHTTP(_ context.Context, httpStr string, system *System, config util.C
 	}
 }
 
-func HeaderToArray(header http.Header) (res []string) {
+func HeaderToArray(header http.Header) []string {
+	res := make([]string, 0, len(header))
 	for name, values := range header {
 		for _, value := range values {
 			res = append(res, fmt.Sprintf("%s: %s", name, value))
 		}
 	}
 	sort.Strings(res)
-	return
+	return res
 }
 
 func (u *DefHTTP) setup() error {
@@ -96,13 +99,12 @@ func (u *DefHTTP) setup() error {
 		u.err = err
 	}
 	return u.err
-
 }
+
 func (u *DefHTTP) setupReal() error {
 	proxyURL := http.ProxyFromEnvironment
 	if u.Proxy != "" {
 		parseProxy, err := url.Parse(u.Proxy)
-
 		if err != nil {
 			return err
 		}
@@ -115,7 +117,6 @@ func (u *DefHTTP) setupReal() error {
 		Renegotiation:      tls.RenegotiateFreelyAsClient,
 	}
 	if u.CAFile != "" {
-		// FIXME: iotutil
 		caCert, err := os.ReadFile(u.CAFile)
 		if err != nil {
 			return err
@@ -207,7 +208,7 @@ func (u *DefHTTP) Headers() (io.Reader, error) {
 		return nil, err
 	}
 
-	var headerString = strings.Join(HeaderToArray(u.resp.Header), "\n")
+	headerString := strings.Join(HeaderToArray(u.resp.Header), "\n")
 	return strings.NewReader(headerString), nil
 }
 

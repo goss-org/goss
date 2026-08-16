@@ -17,11 +17,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	// This will generate the "golden files" prior to running the tests.
-	// helpful when the output is changed and a user doesn't want to update every single expectation file by hand
-	update = flag.Bool("update", false, "update the golden files of this test")
-)
+// This will generate the "golden files" prior to running the tests.
+// helpful when the output is changed and a user doesn't want to update every single expectation file by hand.
+var update = flag.Bool("update", false, "update the golden files of this test")
 
 func TestMain(m *testing.M) {
 	flag.Parse()
@@ -35,7 +33,6 @@ func TestMatchers(t *testing.T) {
 	}
 
 	for _, outFile := range files {
-		outFile := outFile
 		parts := strings.Split(outFile, ".")
 		specName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
 		specFile := filepath.Join("testdata", specName)
@@ -65,7 +62,7 @@ func TestMatchers(t *testing.T) {
 			actualOut = sanitizeTrailingWhitespace(sanitizeOutput(actualOut))
 
 			if *update {
-				os.WriteFile(outFile, []byte(actualOut), 0644)
+				os.WriteFile(outFile, []byte(actualOut), 0o644)
 			}
 			wantOutB, err := os.ReadFile(outFile)
 			if err != nil {
