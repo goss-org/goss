@@ -1,8 +1,6 @@
 package goss
 
 import (
-	"bytes"
-	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -11,18 +9,6 @@ import (
 	"github.com/goss-org/goss/util"
 	"github.com/stretchr/testify/require"
 )
-
-// captureRecords returns a logger writing JSON records into a buffer, and a
-// function decoding the ones emitted so far. slog serialises handler writes, so
-// this is safe even when goss logs from several goroutines.
-func captureRecords(level slog.Level) (*slog.Logger, func() []map[string]any) {
-	buf := &bytes.Buffer{}
-	handler := slog.NewJSONHandler(buf, &slog.HandlerOptions{
-		Level:       level,
-		ReplaceAttr: util.ReplaceTraceLevel,
-	})
-	return slog.New(handler), func() []map[string]any { return decodeJSONRecords(buf) }
-}
 
 // duplicateFixture writes a gossfile that imports a second one redefining the
 // same resource, which is the only way a duplicate reaches the merge path.
@@ -83,12 +69,7 @@ func TestDuplicateResourceIsReportedThroughTheInjectedLogger(t *testing.T) {
 func assertDuplicateWarning(t *testing.T, records []map[string]any) {
 	t.Helper()
 
-	var warnings []map[string]any
-	for _, record := range records {
-		if record["msg"] == "duplicate resource overwritten" {
-			warnings = append(warnings, record)
-		}
-	}
+	warnings := recordsWithMessage(records, "duplicate resource overwritten")
 
 	require.Len(t, warnings, 1, "records: %v", records)
 	require.Equal(t, "WARN", warnings[0]["level"])
@@ -141,22 +122,4 @@ func TestDirectMergeIsSilent(t *testing.T) {
 	require.Empty(t, global(), "a direct Merge has no logger and must stay silent")
 	require.Equal(t, "echo second", first.Commands["duplicated-command"].Exec,
 		"the merge itself must still overwrite")
-}
-
-// captureGlobalLogger redirects the standard logger for the duration of a test
-// and returns what was written to it. Tests using it cannot run in parallel,
-// which is the point: the whole change is about not writing there.
-func captureGlobalLogger(t *testing.T) func() string {
-	t.Helper()
-
-	buf := &bytes.Buffer{}
-	originalWriter := log.Writer()
-	originalFlags := log.Flags()
-	log.SetOutput(buf)
-	t.Cleanup(func() {
-		log.SetOutput(originalWriter)
-		log.SetFlags(originalFlags)
-	})
-
-	return buf.String
 }

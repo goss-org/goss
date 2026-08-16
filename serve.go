@@ -2,8 +2,9 @@ package goss
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"sync"
@@ -17,17 +18,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-// cacheMissLogFormat is logged whenever a health probe finds the result cache
-// cold and has to run the test suite. It carries a level prefix so that it can
-// be muted via --loglevel; without one it was emitted unconditionally and
-// flooded the logs of any container being polled by a load balancer.
-const cacheMissLogFormat = "[DEBUG] Stale cache[%s], running tests"
-
 func Serve(c *util.Config) error {
 	err := setLogLevel(c)
 	if err != nil {
 		return err
 	}
+	logger := util.LoggerOrDiscard(c.Logger)
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
@@ -35,8 +31,29 @@ func Serve(c *util.Config) error {
 	}
 	http.Handle(endpoint, health)
 	http.Handle("/metrics", promhttp.Handler())
-	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
-	return http.ListenAndServe(c.ListenAddress, nil)
+	logger.Info("server listening", "listen_addr", c.ListenAddress)
+	return newServer(c, nil).ListenAndServe()
+}
+
+// newServer builds the server Serve runs.
+//
+// Production passes a nil handler, which is what http.ListenAndServe does and
+// keeps the endpoints on http.DefaultServeMux exactly as before. The parameter
+// exists so that a test can drive a real server without registering on a
+// process-global mux, which can only be done once per process.
+func newServer(c *util.Config, h http.Handler) *http.Server {
+	logger := util.LoggerOrDiscard(c.Logger)
+
+	return &http.Server{
+		Addr:    c.ListenAddress,
+		Handler: h,
+		// http.Server reports through a *log.Logger, so what arrives here is
+		// one preformatted message with no structure to recover. Routing it at
+		// ERROR through the configured handler is the whole of what this
+		// bridge can do, and is the reason the message is the only goss record
+		// that is not built from attributes.
+		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
+	}
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
@@ -54,10 +71,13 @@ func newHealthHandler(c *util.Config) (*healthHandler, error) {
 		return nil, err
 	}
 
+	logger := util.LoggerOrDiscard(c.Logger)
+
 	health := &healthHandler{
 		c:             c,
+		logger:        logger,
 		gossConfig:    *cfg,
-		sys:           system.New(c.PackageManager),
+		sys:           system.New(c.PackageManager, system.WithLogger(logger)),
 		outputer:      output,
 		cache:         cache,
 		gossMu:        &sync.Mutex{},
@@ -72,6 +92,7 @@ type res struct {
 }
 type healthHandler struct {
 	c             *util.Config
+	logger        *slog.Logger
 	gossConfig    GossConfig
 	sys           *system.System
 	outputer      outputs.Outputer
@@ -83,36 +104,38 @@ type healthHandler struct {
 func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	outputFormat, outputer, err := h.negotiateResponseContentType(r)
 	if err != nil {
-		log.Printf("[DEBUG] Warn: Using process-level output-format. %s", err)
+		h.logger.Debug("using configured output format", slog.Any("error", err))
 		outputFormat = h.c.OutputFormat
 		outputer = h.outputer
 	}
 	negotiatedContentType := h.responseContentType(outputFormat)
 
-	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
-	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
+	util.TraceContext(r.Context(), h.logger, "request received", "client_addr", r.RemoteAddr)
+	resp := h.processAndEnsureCached(r.Context(), negotiatedContentType, outputer)
 	w.Header().Set("Content-Type", negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
-	logBody := ""
+	// The response body is only worth logging when something went wrong, and
+	// keeping that gate matters: it is what stops a successful probe writing
+	// every check's result into the log on every request.
+	attrs := []any{"client_addr", r.RemoteAddr, "http_status", resp.statusCode}
 	if resp.statusCode != http.StatusOK {
-		logBody = " - " + resp.body.String()
+		attrs = append(attrs, "response_body", resp.body.String())
 	}
 	resp.body.WriteTo(w)
-	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
+	h.logger.Debug("request complete", attrs...)
 }
 
-func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
+func (h healthHandler) processAndEnsureCached(ctx context.Context, negotiatedContentType string, outputer outputs.Outputer) res {
 	var tra [][]resource.TestResult
 	cacheKey := "res"
 	// Held across the lookup so a miss does not let a second request start its
 	// own validate() before the first one has filled the cache.
 	h.gossMu.Lock()
 	if tmp, found := h.cache.Get(cacheKey); found {
-		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+		util.TraceContext(ctx, h.logger, "returning cached result", "cache_key", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
-		log.Printf(cacheMissLogFormat, cacheKey)
-		h.sys = system.New(h.c.PackageManager)
+		util.TraceContext(ctx, h.logger, "running validation for stale cache", "cache_key", cacheKey)
 		tra = h.validate()
 		h.cache.SetDefault(cacheKey, tra)
 	}
@@ -139,7 +162,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	return resp
 }
 func (h healthHandler) validate() [][]resource.TestResult {
-	h.sys = system.New(h.c.PackageManager)
+	h.sys = system.New(h.c.PackageManager, system.WithLogger(h.logger))
 	res := make([][]resource.TestResult, 0)
 	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
 	for i := range tr {
