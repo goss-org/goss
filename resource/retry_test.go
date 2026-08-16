@@ -202,7 +202,7 @@ func TestPackageValidateRetries(t *testing.T) {
 	pkg := &Package{
 		id:         "nginx",
 		Installed:  true,
-		Versions:   []interface{}{"1.0.0"},
+		Versions:   []any{"1.0.0"},
 		RetryCount: 1,
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
@@ -244,7 +244,7 @@ func TestDNSValidateRetries(t *testing.T) {
 	dns := &DNS{
 		id:         "localhost",
 		Resolvable: true,
-		Addrs:      []interface{}{"127.0.0.1"},
+		Addrs:      []any{"127.0.0.1"},
 		RetryCount: 1,
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
@@ -292,7 +292,7 @@ func TestCommandValidateRetries(t *testing.T) {
 		id:         "echo ok",
 		Exec:       "echo ok",
 		ExitStatus: 0,
-		Stdout:     []interface{}{"ok"},
+		Stdout:     []any{"ok"},
 		RetryCount: 1,
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
