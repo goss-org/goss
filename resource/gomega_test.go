@@ -162,3 +162,29 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
 	assert.Equal(t, got, want)
 }
+
+// An empty matcher map used to panic with an index out of range instead of
+// being reported as a syntax error.
+func TestMatcherToGomegaMatcherEmptyMap(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+	}{
+		{name: "top level", in: `{}`},
+		{name: "nested in and", in: `{"and": [{}]}`},
+		{name: "nested in not", in: `{"not": {}}`},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var dat any
+			if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := matcherToGomegaMatcher(dat)
+			assert.Nil(t, got)
+			assert.ErrorIs(t, err, errEmptyMatcher)
+		})
+	}
+}
