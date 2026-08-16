@@ -13,11 +13,11 @@ import (
 )
 
 // TestServeStatusMatrix covers every registered format, negotiated over the
-// Accept header, against a passing and a failing suite.
-// The status is derived from the exit code, so the one outputer that returns 0
-// for a failing suite, structured, answers 200 for one. That is pinned here for
-// the same reason the exit codes themselves are: it is existing behaviour, and
-// this change is not the place to alter it.
+// Accept header, against a passing and a failing suite. The status is derived
+// from the exit code, so structured, the one outputer that returns 0 for a
+// failing suite, answers 200 for one. That is pinned here for the same reason
+// the exit codes themselves are: it is existing behaviour, and this change is
+// not the place to alter it.
 func TestServeStatusMatrix(t *testing.T) {
 	t.Parallel()
 

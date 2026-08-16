@@ -19,10 +19,6 @@ import (
 )
 
 func Serve(c *util.Config) error {
-	err := setLogLevel(c)
-	if err != nil {
-		return err
-	}
 	logger := util.LoggerOrDiscard(c.Logger)
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)

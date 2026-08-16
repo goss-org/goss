@@ -38,7 +38,6 @@ type Config struct {
 	// it, and util.LevelTrace with util.ReplaceTraceLevel if you want goss's
 	// most detailed records to render the way its CLI renders them.
 	Logger                *slog.Logger
-	LogLevel              string
 	MaxConcurrent         int
 	Method                string
 	NoColor               *bool
@@ -83,7 +82,6 @@ func NewConfig(opts ...ConfigOption) (rc *Config, err error) {
 		DisabledResourceTypes: []string{},
 		ListenAddress:         ":8080",
 		LocalAddress:          "",
-		LogLevel:              "ERROR",
 		MaxConcurrent:         50,
 		NoColor:               nil,
 		NoFollowRedirects:     false,

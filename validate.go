@@ -110,10 +110,6 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(c *util.Config) (code int, err error) {
-	err = setLogLevel(c)
-	if err != nil {
-		return 1, err
-	}
 	gossConfig, err := getGossConfig(c)
 	if err != nil {
 		return 78, err

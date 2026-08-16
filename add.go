@@ -13,9 +13,6 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
-	if err := setLogLevel(c); err != nil {
-		return err
-	}
 	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err

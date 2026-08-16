@@ -87,10 +87,7 @@ func newRuntimeConfigFromCLI(c *cli.Command) (*util.Config, error) {
 		Cache:         c.Duration("cache"),
 		Debug:         c.Bool("debug"),
 		Logger:        slog.New(newCLIHandler(os.Stderr, level)),
-		// Transitional: setLogLevel still reads this on the validate, serve and
-		// add paths. Both it and this assignment go when the last call site has
-		// been converted.
-		LogLevel:          strings.ToUpper(c.String("log-level")),
+
 		Endpoint:          c.String("endpoint"),
 		FormatOptions:     c.StringSlice("format-options"),
 		IgnoreList:        c.StringSlice("exclude-attr"),

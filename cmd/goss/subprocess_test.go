@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -143,6 +144,72 @@ func TestInvalidLevelFailsPastTheAlphaGate(t *testing.T) {
 	}
 	if got.stdout != "" {
 		t.Errorf("nothing should reach stdout, got %q", got.stdout)
+	}
+}
+
+// TestTerminalErrorDiagnostic pins the terminal path. When an action returns an
+// error, main still reports it through the standard logger and exits 1. Nothing
+// about that path changes here, and this pins it because the standard logger no
+// longer has setLogLevel's writer underneath it: the envelope is now Go's
+// default, local time and all.
+func TestTerminalErrorDiagnostic(t *testing.T) {
+	// A gossfile that cannot exist, so the failure is the operation's and not a
+	// flag parse error, which would print usage instead.
+	missing := filepath.Join(t.TempDir(), "definitely-not-here.yaml")
+
+	got := runBinary(t, []string{"GOSS_USE_ALPHA=1"}, "--gossfile", missing, "render")
+
+	if got.exitCode != 1 {
+		t.Errorf("expected exit status 1, got %d", got.exitCode)
+	}
+	if got.stdout != "" {
+		t.Errorf("the diagnostic does not belong on stdout, got %q", got.stdout)
+	}
+	if !strings.Contains(got.stderr, "definitely-not-here.yaml") {
+		t.Errorf("expected the diagnostic to name the input, got %q", got.stderr)
+	}
+	// Exactly one line, and it is the standard logger's, not a structured
+	// record: the terminal path has no injected logger to use. Counting matters
+	// because the failure that would follow a half-finished conversion is the
+	// same error reported twice, once by each logger, which a content check
+	// would pass.
+	lines := strings.Split(strings.TrimSpace(got.stderr), "\n")
+	if len(lines) != 1 {
+		t.Errorf("expected exactly one diagnostic, got %d: %q", len(lines), got.stderr)
+	}
+	if strings.Contains(got.stderr, "level=ERROR") {
+		t.Errorf("the terminal path should not be emitting slog records: %q", got.stderr)
+	}
+	// The standard logger's own envelope: a date and time, then the message.
+	// Anything else means something reconfigured it on the way out.
+	if !regexp.MustCompile(`^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} `).MatchString(lines[0]) {
+		t.Errorf("expected the standard logger's envelope, got %q", lines[0])
+	}
+}
+
+// TestStdoutCarriesNoLogRecords is the behavioural half of the stderr
+// guarantee, driven through the real binary so that stdout and stderr are
+// genuinely separate streams.
+func TestStdoutCarriesNoLogRecords(t *testing.T) {
+	spec := filepath.Join(t.TempDir(), "goss.yaml")
+	contents := "command:\n  probe:\n    exec: \"echo rendered-marker\"\n    exit-status: 0\n"
+	if err := os.WriteFile(spec, []byte(contents), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got := runBinary(t, []string{"GOSS_USE_ALPHA=1"},
+		"--log-level", "TRACE", "--gossfile", spec, "render")
+
+	if got.exitCode != 0 {
+		t.Fatalf("expected success, got exit %d: %s", got.exitCode, got.stderr)
+	}
+	if !strings.Contains(got.stdout, "rendered-marker") {
+		t.Errorf("the rendered gossfile should reach stdout, got %q", got.stdout)
+	}
+	for _, marker := range []string{"level=", "msg="} {
+		if strings.Contains(got.stdout, marker) {
+			t.Errorf("stdout carries a log record: %q", got.stdout)
+		}
 	}
 }
 
