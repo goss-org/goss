@@ -70,7 +70,9 @@ func NewPort(sysPort system.Port, config util.Config) (*Port, error) {
 		Listening: listening,
 	}
 	if !contains(config.IgnoreList, "ip") {
-		if ip, err := sysPort.IP(); err == nil {
+		// An empty list asserts nothing, so leave IP unset and let omitempty
+		// drop it rather than generating `ip: []`.
+		if ip, err := sysPort.IP(); err == nil && len(ip) > 0 {
 			p.IP = ip
 		}
 	}
