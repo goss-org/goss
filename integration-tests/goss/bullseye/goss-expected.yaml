@@ -33,10 +33,8 @@ port:
     - 0.0.0.0
   tcp:9999:
     listening: false
-    ip: []
   tcp6:80:
     listening: false
-    ip: []
 service:
   apache2:
     enabled: true
