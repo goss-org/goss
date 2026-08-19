@@ -34,7 +34,7 @@ fi
 network=goss-test
 $DOCKER_BIN network create --driver bridge --subnet '172.19.0.0/16' $network
 $DOCKER_BIN run -d --name httpbin --network $network docker.io/kennethreitz/httpbin
-opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
+opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -v "$PWD/dnsmasq.conf:/etc/dnsmasq.conf:ro" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
 id=$($DOCKER_BIN run "${opts[@]}" --network $network "$image_name" /sbin/init)
 ip=$($DOCKER_BIN inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
 trap "rv=\$?; $DOCKER_BIN rm -vf $id || :;$DOCKER_BIN rm -vf httpbin || :;$DOCKER_BIN network rm $network || :; exit \$rv" INT TERM EXIT
