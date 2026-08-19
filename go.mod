@@ -14,7 +14,7 @@ require (
 	github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d
 	github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5
 	github.com/hashicorp/logutils v1.0.0
-	github.com/miekg/dns v1.1.72
+	github.com/miekg/dns v1.1.73
 	github.com/moby/sys/mountinfo v0.7.2
 	github.com/oleiade/reflections v1.1.0
 	github.com/onsi/gomega v1.42.1
@@ -54,10 +54,7 @@ require (
 	github.com/tidwall/pretty v1.2.1 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
-	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
-	golang.org/x/tools v0.49.0 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 )
