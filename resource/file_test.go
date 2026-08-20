@@ -8,7 +8,7 @@ import (
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // NewFile used to set Contents to an empty list, so every generated gossfile

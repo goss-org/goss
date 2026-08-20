@@ -3,9 +3,10 @@ package resource
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"time"
 )
 
 type Mount struct {
