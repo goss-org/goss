@@ -126,6 +126,9 @@ jobs:
               ;;
             windows-*)
               platform_spec="windows-amd64"
+              # Workaround to avoid failing integration test when checking if
+              # the EventLog service is running.
+              powershell -NoProfile -NonInteractive -Command "(Get-Service EventLog).WaitForStatus('Running', '00:00:30')"
               ;;
             *)
               echo "Unexpected platform"
