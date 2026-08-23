@@ -104,8 +104,10 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
 	var tra [][]resource.TestResult
 	cacheKey := "res"
-	tmp, found := h.cache.Get(cacheKey)
-	if found {
+	// Held across the lookup so a miss does not let a second request start its
+	// own validate() before the first one has filled the cache.
+	h.gossMu.Lock()
+	if tmp, found := h.cache.Get(cacheKey); found {
 		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
 		tra = tmp.([][]resource.TestResult)
 	} else {
@@ -114,6 +116,8 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 		tra = h.validate()
 		h.cache.SetDefault(cacheKey, tra)
 	}
+	h.gossMu.Unlock()
+
 	trc := testResultArrayToChan(tra)
 	return h.output(trc, outputer)
 }

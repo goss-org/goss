@@ -103,7 +103,6 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 		Status:            status,
 		RequestHeader:     []string{},
 		Headers:           nil,
-		Body:              []string{},
 		AllowInsecure:     config.AllowInsecure,
 		NoFollowRedirects: config.NoFollowRedirects,
 		Timeout:           config.TimeOutMilliSeconds(),

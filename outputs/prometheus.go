@@ -46,9 +46,10 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 	}
 
 	overallOutcome := resource.OutcomeUnknown
+	first := true
 	var startTime time.Time
 	for resultGroup := range results {
-		for i, tr := range resultGroup {
+		for _, tr := range resultGroup {
 			if startTime.IsZero() || tr.StartTime.Before(startTime) {
 				startTime = tr.StartTime
 			}
@@ -62,8 +63,11 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 				testOutcomes.WithLabelValues(resType, outcome).Inc()
 				testDurations.WithLabelValues(resType, outcome).Add(float64(tr.Duration.Milliseconds()))
 			}
-			if i == 0 || canChangeOverallOutcome(overallOutcome, outcome) {
+			// seed once across all groups, not once per group: results arrive
+			// in several groups in a nondeterministic order
+			if first || canChangeOverallOutcome(overallOutcome, outcome) {
 				overallOutcome = outcome
+				first = false
 			}
 		}
 	}
@@ -84,6 +88,9 @@ func (r Prometheus) Output(w io.Writer, results <-chan []resource.TestResult,
 		}
 	}
 
+	if overallOutcome == resource.OutcomeFail {
+		return 1
+	}
 	return 0
 }
 

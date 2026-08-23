@@ -169,6 +169,8 @@ command:
     stderr: []
     timeout: 10000 # in milliseconds
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
@@ -211,6 +213,8 @@ dns:
     - ::1
     server: 8.8.8.8 # Also supports server:port
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
+    retry_count: 1  # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 It is possible to validate the following types of DNS records, but requires the ```server``` attribute be set:
@@ -223,6 +227,7 @@ It is possible to validate the following types of DNS records, but requires the 
 * `NS`
 * `PTR`
 * `SRV`
+* `SSHFP`
 * `TXT`
 
 To validate specific DNS address types, prepend the hostname with the type and a colon, a few examples:
@@ -235,6 +240,8 @@ dns:
     server: 208.67.222.222
     addrs:
     - "a.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate a PTR record
   PTR:8.8.8.8:
@@ -242,14 +249,30 @@ dns:
     server: 8.8.8.8
     addrs:
     - "dns.google."
+    retry_count: 2
+    retry_delay: 250ms
 
-  # Validate and SRV record
+  # Validate an SRV record
   SRV:_https._tcp.dnstest.io:
     resolvable: true
     server: 208.67.222.222
     addrs:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
+
+  # Validate an SSHFP record
+  SSHFP:mars.yellowjacket.io:
+    resolvable: true
+    server: 8.8.8.8
+    addrs:
+    - "1 2 422F22EFB548FEAC403A633A86F74553599B85AC93E7EC3BB0A46B6CD6DDABF8"
+    - "3 1 1B28EEA699B1C784DC16F1122EEDDCF3131C89D2"
+    - "3 2 F5982E00758BF5016B9FDDF26D8E495C376E657BAAC4C7DB1B363C06F0D093CC"
+    - "4 1 5802C65FB3F3B62242055A12455C8E9C5B5A3CDA"
+    - "4 2 99DB27696110BB3918599BF35D932D35DAA3DE09D6F42506FDAA08EBD2AD7311"
+    - "1 1 B6B05D527AE206A2A7163AB349166E15D1AFC7E9"
 ```
 
 Please note that if you want `localhost` to **only** resolve `127.0.0.1` you'll need to use [Advanced Matchers](#advanced-matchers)
@@ -516,6 +539,8 @@ package:
     versions:
     - 2.2.15
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 10000  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 !!! note
@@ -905,6 +930,40 @@ matching:
           and:
             - {have-key: "nested"}
             - {not: {have-key: "nested2"}}
+```
+
+##### XML
+
+Execute an [XPath](https://www.w3.org/TR/xpath/) request on a XML string.
+
+This uses [xpath](https://github.com/antchfx/xpath) Go library under the hood,
+which supports [these](https://github.com/antchfx/xpath#supported-features) features.
+
+Example:
+
+```yaml
+matching:
+  example:
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <order date="2019-02-01">
+        <items>
+          <book isbn="9781408845660">
+              <title>Harry Potter et le prisonnier d’Azkaban</title>
+              <quantity>1</quantity>
+              <price>25</price>
+          </book>
+          <book isbn="9780544003415">
+              <title>Le seigneur des anneaux</title>
+              <quantity>1</quantity>
+              <price>18</price>
+          </book>
+        </items>
+      </order>
+    matches:
+      xml:
+        xpath: "boolean(//book[title='Le seigneur des anneaux'])"
+        result: "true"
 ```
 
 ## Templates
