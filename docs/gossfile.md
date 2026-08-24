@@ -173,7 +173,11 @@ command:
     retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
-`stdout` and `stderr` can be a string or [pattern](#patterns)
+`stdout` and `stderr` can be a string or [pattern](#patterns). A list of
+patterns each has to be found somewhere in the output, while a single string is
+compared for an exact match, so whitespace and line breaks have to line up. That
+exact form is handy for golden master or approval style tests where the whole
+output matters; `goss add command --exact-match` generates it for you.
 
 !!! warning "An empty list asserts nothing"
 
