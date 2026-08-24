@@ -144,6 +144,12 @@ dns:
     - 10 10 443 b.dnstest.io.
     timeout: 2000
     server: 127.0.0.1:8053
+  SSHFP:mars.dnstest.io:
+    resolvable: true
+    addrs:
+    - 1 2 422F22EFB548FEAC403A633A86F74553599B85AC93E7EC3BB0A46B6CD6DDABF8
+    timeout: 2000
+    server: 127.0.0.1:8053
   TXT:txt._test.dnstest.io:
     resolvable: true
     addrs:
