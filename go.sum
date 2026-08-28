@@ -37,8 +37,6 @@ github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d h1:50mlZKtg8BUv
 github.com/goss-org/GOnetstat v0.0.0-20230101144325-22be0bd9e64d/go.mod h1:MBdRlloGIbpQVDuH5Gxg3hjqwZBCZsmFqbYPaeR6r0M=
 github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5 h1:NW0Jo4leMIrQxNOyOkBu4yBnygI37m0Ey0EUUgvzr+8=
 github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5/go.mod h1:FYj70SLmogHdTTDGnIVaaK0iczROlsxmoMCwfAUuIE8=
-github.com/hashicorp/logutils v1.0.0 h1:dLEQVugN8vlakKOUE3ihGLTZJRB4j+M2cdTm/ORI65Y=
-github.com/hashicorp/logutils v1.0.0/go.mod h1:QIAnNjmIWmVIIkWDTG1z5v++HQmx9WQRO+LraFDTW64=
 github.com/huandu/xstrings v1.5.0 h1:2ag3IFq9ZDANvthTwTiqSSZLjDc+BedvHPAp5tJy2TI=
 github.com/huandu/xstrings v1.5.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=

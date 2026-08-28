@@ -63,9 +63,10 @@ GLOBAL OPTIONS:
     * `rpm`
 
 `--loglevel <level>`, `-L <level>`
-:   Goss logging verbosity level (default: `INFO`).
-    This is a global option: it applies to every command, and may be given either
-    before or after the command name.
+:   Goss logging verbosity level (default: `INFO`), also settable with
+    `$GOSS_LOGLEVEL`.
+    This is a global option, so it must be given before the command name:
+    `goss --loglevel DEBUG validate`, not `goss validate --loglevel DEBUG`.
     Lower levels of tracing include all upper levels traces also
     (ie. `INFO` includes `WARN` and `ERROR`).
     `level` can be one of:
@@ -78,6 +79,9 @@ GLOBAL OPTIONS:
         output is needed (e.g. goss serve).
     * `DEBUG` - Information useful for the goss user to debug.
     * `TRACE` - Detailed internal system activities useful for goss developers to debug.
+
+    See [Logging](logging.md) for what goss emits at each level, and for
+    configuring it when using goss as a library.
 
 ## Commands
 
