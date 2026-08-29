@@ -13,17 +13,17 @@ import (
 )
 
 type Command struct {
-	Title      string     `json:"title,omitempty" yaml:"title,omitempty"`
-	Meta       meta       `json:"meta,omitempty" yaml:"meta,omitempty"`
-	id         string     `json:"-" yaml:"-"`
-	Exec       string     `json:"exec,omitempty" yaml:"exec,omitempty"`
-	ExitStatus matcher    `json:"exit-status" yaml:"exit-status"`
-	Stdout     matcher    `json:"stdout" yaml:"stdout"`
-	Stderr     matcher    `json:"stderr" yaml:"stderr"`
-	Timeout    int        `json:"timeout" yaml:"timeout"`
-	Skip       bool       `json:"skip,omitempty" yaml:"skip,omitempty"`
-	RetryCount int        `json:"retry_count,omitempty" yaml:"retry_count,omitempty"`
-	RetryDelay RetryDelay `json:"retry_delay,omitempty" yaml:"retry_delay,omitempty"`
+	Title      string            `json:"title,omitempty" yaml:"title,omitempty"`
+	Meta       meta              `json:"meta,omitempty" yaml:"meta,omitempty"`
+	id         string            `json:"-" yaml:"-"`
+	Exec       *util.ExecCommand `json:"exec,omitempty" yaml:"exec,omitempty"`
+	ExitStatus matcher           `json:"exit-status" yaml:"exit-status"`
+	Stdout     matcher           `json:"stdout" yaml:"stdout"`
+	Stderr     matcher           `json:"stderr" yaml:"stderr"`
+	Timeout    int               `json:"timeout" yaml:"timeout"`
+	Skip       bool              `json:"skip,omitempty" yaml:"skip,omitempty"`
+	RetryCount int               `json:"retry_count,omitempty" yaml:"retry_count,omitempty"`
+	RetryDelay RetryDelay        `json:"retry_delay,omitempty" yaml:"retry_delay,omitempty"`
 }
 
 const (
@@ -43,9 +43,17 @@ func (c *Command) TypeName() string { return CommandResourceName }
 
 func (c *Command) GetTitle() string { return c.Title }
 func (c *Command) GetMeta() meta    { return c.Meta }
-func (c *Command) GetExec() string {
-	if c.Exec != "" {
-		return c.Exec
+
+// GetExec returns the command to run: shell style as a string, exec style as a
+// []string, or the resource id when no exec was specified.
+func (c *Command) GetExec() any {
+	if c.Exec != nil {
+		if c.Exec.CmdStr != "" {
+			return c.Exec.CmdStr
+		}
+		if len(c.Exec.CmdSlice) > 0 {
+			return c.Exec.CmdSlice
+		}
 	}
 	return c.id
 }
@@ -91,10 +99,14 @@ func allTestsPassed(results []TestResult) bool {
 }
 
 func NewCommand(sysCommand system.Command, config util.Config) (*Command, error) {
-	command := sysCommand.Command()
+	exec := sysCommand.Command()
+	id := exec.CmdStr
+	if id == "" && len(exec.CmdSlice) > 0 {
+		id = exec.CmdSlice[0]
+	}
 	exitStatus, err := sysCommand.ExitStatus()
 	c := &Command{
-		id:         command,
+		id:         id,
 		ExitStatus: exitStatus,
 		Stdout:     "",
 		Stderr:     "",

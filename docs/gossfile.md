@@ -173,6 +173,23 @@ command:
     retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
+The `exec` attribute specifies the command to run.
+It defaults to the name of the hash key and can be given in two forms:
+
+* A **string**, which is executed through the shell (e.g. `/bin/sh -c "<string>"` on Unix).
+* An **array of strings**, where the first element is the program and the rest are its arguments.
+  The command is invoked directly, without a shell.
+  This is useful in environments that have no shell, such as `scratch`/distroless containers.
+  It also allows arguments containing spaces or special characters to be passed verbatim.
+
+```yaml
+command:
+  figlet:
+    exit-status: 0
+    # exec style: run /figlet directly with argument "test"
+    exec: ["/figlet", "test"]
+```
+
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
 !!! warning "An empty list asserts nothing"
