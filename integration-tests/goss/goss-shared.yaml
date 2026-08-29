@@ -17,6 +17,16 @@ command:
     exec: false
     exit-status: 0
     skip: true
+  command-exec-style:
+    exec: [uname]
+    exit-status: 0
+    stdout:
+    - /Linux/
+  command-exec-style-args:
+    exec: ["uname", "-s"]
+    exit-status: 0
+    stdout:
+    - /Linux/
 file:
 {{range mkSlice "/etc/PAsswD" "/etc/group"}}
   {{. | toLower}}:
