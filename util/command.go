@@ -24,6 +24,10 @@ type ExecCommand struct {
 	CmdSlice []string
 }
 
+// errExecCommandType is returned when a command value is neither a string
+// (shell style) nor a list of strings (exec style).
+var errExecCommandType = errors.New("command must be a string or a list of strings")
+
 // UnmarshalJSON accepts either a JSON string (shell style) or a JSON array of
 // strings (exec style). Anything else is an error.
 func (e *ExecCommand) UnmarshalJSON(data []byte) error {
@@ -34,7 +38,7 @@ func (e *ExecCommand) UnmarshalJSON(data []byte) error {
 	// Fall back to exec style.
 	e.CmdStr = ""
 	if err := json.Unmarshal(data, &e.CmdSlice); err != nil {
-		return errors.New("command must be a string or a list of strings")
+		return errExecCommandType
 	}
 	return nil
 }
@@ -50,7 +54,7 @@ func (e *ExecCommand) UnmarshalYAML(unmarshal func(any) error) error {
 	// Fall back to exec style.
 	e.CmdStr = ""
 	if err := unmarshal(&e.CmdSlice); err != nil {
-		return errors.New("command must be a string or a list of strings")
+		return errExecCommandType
 	}
 	return nil
 }

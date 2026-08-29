@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
@@ -16,6 +17,10 @@ type ContextKey struct{}
 
 // CommandIDKey is the only instance that must be used everywhere.
 var CommandIDKey = ContextKey{}
+
+// errEmptyCommand is returned when a command has neither a shell string nor an
+// exec-style argument list.
+var errEmptyCommand = errors.New("empty command")
 
 type Command interface {
 	Command() util.ExecCommand
@@ -72,7 +77,7 @@ func (c *DefCommand) setup() error {
 	case len(c.command.CmdSlice) > 0:
 		cmd = util.NewCommand(c.command.CmdSlice[0], c.command.CmdSlice[1:]...)
 	default:
-		c.err = fmt.Errorf("empty command")
+		c.err = errEmptyCommand
 		return c.err
 	}
 	err := runCommand(cmd, c.Timeout)
