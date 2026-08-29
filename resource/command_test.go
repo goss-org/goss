@@ -12,7 +12,7 @@ import (
 
 func newFakeCommand(stdout, stderr string) *fakeCommand {
 	return &fakeCommand{
-		command:      "some-command",
+		command:      util.ExecCommand{CmdStr: "some-command"},
 		exitStatusFn: func() (int, error) { return 0, nil },
 		stdoutFn:     func() (io.Reader, error) { return strings.NewReader(stdout), nil },
 		stderrFn:     func() (io.Reader, error) { return strings.NewReader(stderr), nil },
