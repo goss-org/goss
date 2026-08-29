@@ -50,13 +50,13 @@ func (f *fakeDNS) Resolvable() (bool, error) { return f.resolvableFn() }
 func (f *fakeDNS) Addrs() ([]string, error)  { return f.addrsFn() }
 
 type fakeCommand struct {
-	command      string
+	command      util.ExecCommand
 	exitStatusFn func() (int, error)
 	stdoutFn     func() (io.Reader, error)
 	stderrFn     func() (io.Reader, error)
 }
 
-func (f *fakeCommand) Command() string            { return f.command }
+func (f *fakeCommand) Command() util.ExecCommand  { return f.command }
 func (f *fakeCommand) Exists() (bool, error)      { return true, nil }
 func (f *fakeCommand) ExitStatus() (int, error)   { return f.exitStatusFn() }
 func (f *fakeCommand) Stdout() (io.Reader, error) { return f.stdoutFn() }
@@ -267,11 +267,18 @@ func TestDNSValidateRetries(t *testing.T) {
 func TestCommandValidateRetries(t *testing.T) {
 	commandCalls := 0
 	sys := &system.System{
-		NewCommand: func(_ context.Context, command string, _ *system.System, _ util.Config) system.Command {
+		NewCommand: func(_ context.Context, command any, _ *system.System, _ util.Config) system.Command {
 			commandCalls++
 			attempt := commandCalls
+			var exec util.ExecCommand
+			switch c := command.(type) {
+			case string:
+				exec = util.ExecCommand{CmdStr: c}
+			case []string:
+				exec = util.ExecCommand{CmdSlice: c}
+			}
 			return &fakeCommand{
-				command: command,
+				command: exec,
 				exitStatusFn: func() (int, error) {
 					if attempt == 1 {
 						return 1, nil
@@ -290,7 +297,7 @@ func TestCommandValidateRetries(t *testing.T) {
 
 	cmd := &Command{
 		id:         "echo ok",
-		Exec:       "echo ok",
+		Exec:       &util.ExecCommand{CmdStr: "echo ok"},
 		ExitStatus: 0,
 		Stdout:     []any{"ok"},
 		RetryCount: 1,
