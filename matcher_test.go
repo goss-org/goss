@@ -5,7 +5,6 @@ package goss
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -34,7 +33,7 @@ func TestMatchers(t *testing.T) {
 
 	for _, outFile := range files {
 		parts := strings.Split(outFile, ".")
-		specName := fmt.Sprintf("%s.yaml", strings.TrimPrefix(parts[0], "testdata/out_"))
+		specName := strings.TrimPrefix(parts[0], "testdata/out_") + ".yaml"
 		specFile := filepath.Join("testdata", specName)
 		outFormat := parts[2]
 		wantCode, err := strconv.Atoi(parts[1])

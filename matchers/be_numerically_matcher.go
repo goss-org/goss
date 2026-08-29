@@ -35,7 +35,7 @@ func (m *BeNumericallyMatcher) Match(actual any) (bool, error) {
 func (m *BeNumericallyMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("to be numerically %s", m.Comparator),
+		Message:  "to be numerically " + m.Comparator,
 		Expected: m.CompareTo[0],
 	}
 }
@@ -43,7 +43,7 @@ func (m *BeNumericallyMatcher) FailureResult(actual any) MatcherResult {
 func (m *BeNumericallyMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
-		Message:  fmt.Sprintf("not to be numerically %s", m.Comparator),
+		Message:  "not to be numerically " + m.Comparator,
 		Expected: m.CompareTo[0],
 	}
 }
