@@ -76,7 +76,7 @@ func TestNewCommandExactMatchHonorsIgnoreList(t *testing.T) {
 	}
 	if got, ok := c.Stderr.(string); !ok || got != "some error\n" {
 		t.Fatalf("Stderr = %#v, want captured raw string", c.Stderr)
-  }
+	}
 }
 
 func TestCommandGetExec(t *testing.T) {
