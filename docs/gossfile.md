@@ -173,11 +173,30 @@ command:
     retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
+The `exec` attribute specifies the command to run.
+It defaults to the name of the hash key and can be given in two forms:
+
+* A **string**, which is executed through the shell (e.g. `/bin/sh -c "<string>"` on Unix).
+* An **array of strings**, where the first element is the program and the rest are its arguments.
+  The command is invoked directly, without a shell.
+  This is useful in environments that have no shell, such as `scratch`/distroless containers.
+  It also allows arguments containing spaces or special characters to be passed verbatim.
+
+```yaml
+command:
+  figlet:
+    exit-status: 0
+    # exec style: run /figlet directly with argument "test"
+    exec: ["/figlet", "test"]
+```
+
 `stdout` and `stderr` can be a string or [pattern](#patterns). A list of
 patterns each has to be found somewhere in the output, while a single string is
 compared for an exact match, so whitespace and line breaks have to line up. That
 exact form is handy for golden master or approval style tests where the whole
 output matters; `goss add command --exact-match` generates it for you.
+
+`stdout` and `stderr` can be a string or [pattern](#patterns)
 
 !!! warning "An empty list asserts nothing"
 
@@ -196,9 +215,6 @@ output matters; `goss add command --exact-match` generates it for you.
     `goss validate` prints a warning to stderr for each empty list it finds. The
     check is still skipped and still passes — the warning only tells you that the
     line asserts nothing.
-
-The `exec` attribute is the command to run; this defaults to the name of
-the hash for backwards compatibility
 
 ### dns
 
