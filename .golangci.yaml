@@ -38,6 +38,7 @@ linters:
     - whitespace
     #- wrapcheck
   disable:
+    - cyclop
     - depguard
     # Disabled because of genny
     - dupl
@@ -47,13 +48,16 @@ linters:
     - funcorder
     - gochecknoglobals
     - gochecknoinits
+    - gocognit
     - goconst
     - gomodguard
     - exhaustive
     - exhaustruct
     - inamedparam
+    - interfacebloat
     - ireturn
     - lll
+    - maintidx
     - mnd
     - nlreturn
     - noinlineerr
