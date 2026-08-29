@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
@@ -17,8 +18,12 @@ type ContextKey struct{}
 // CommandIDKey is the only instance that must be used everywhere.
 var CommandIDKey = ContextKey{}
 
+// errEmptyCommand is returned when a command has neither a shell string nor an
+// exec-style argument list.
+var errEmptyCommand = errors.New("empty command")
+
 type Command interface {
-	Command() string
+	Command() util.ExecCommand
 	Exists() (bool, error)
 	ExitStatus() (int, error)
 	Stdout() (io.Reader, error)
@@ -27,7 +32,7 @@ type Command interface {
 
 type DefCommand struct {
 	Ctx        context.Context
-	command    string
+	command    util.ExecCommand
 	exitStatus int
 	stdout     io.Reader
 	stderr     io.Reader
@@ -36,12 +41,27 @@ type DefCommand struct {
 	err        error
 }
 
-func NewDefCommand(ctx context.Context, command string, system *System, config util.Config) Command {
-	return &DefCommand{
+// NewDefCommand accepts a command specified either shell style (string) or exec
+// style ([]string). The concrete type is validated here; an unexpected type is
+// recorded as an error on the returned Command so it surfaces as a failing test
+// result rather than a panic. Values loaded from a gossfile are already
+// validated by util.ExecCommand's unmarshalers, so this only guards against
+// programming errors.
+func NewDefCommand(ctx context.Context, command any, system *System, config util.Config) Command {
+	c := &DefCommand{
 		Ctx:     ctx,
-		command: command,
 		Timeout: config.TimeOutMilliSeconds(),
 	}
+	switch cmd := command.(type) {
+	case string:
+		c.command = util.ExecCommand{CmdStr: cmd}
+	case []string:
+		c.command = util.ExecCommand{CmdSlice: cmd}
+	default:
+		c.err = fmt.Errorf("command type must be either a string or a list of strings, got %T", command)
+		c.loaded = true
+	}
+	return c
 }
 
 func (c *DefCommand) setup() error {
@@ -50,7 +70,16 @@ func (c *DefCommand) setup() error {
 	}
 	c.loaded = true
 
-	cmd := commandWrapper(c.command)
+	var cmd *util.Command
+	switch {
+	case c.command.CmdStr != "":
+		cmd = commandWrapper(c.command.CmdStr)
+	case len(c.command.CmdSlice) > 0:
+		cmd = util.NewCommand(c.command.CmdSlice[0], c.command.CmdSlice[1:]...)
+	default:
+		c.err = errEmptyCommand
+		return c.err
+	}
 	err := runCommand(cmd, c.Timeout)
 
 	// We don't care about ExitError since it's covered by status
@@ -70,7 +99,7 @@ func (c *DefCommand) setup() error {
 	return c.err
 }
 
-func (c *DefCommand) Command() string {
+func (c *DefCommand) Command() util.ExecCommand {
 	return c.command
 }
 

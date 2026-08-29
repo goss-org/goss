@@ -55,6 +55,7 @@ This matrix attempts to track parity across platforms.
 |                     | local-address       | {{ fully_supported }}   | {{ no_data }}          | {{ work_partially }}    |
 |                     | timeout             | {{ fully_supported }}   | {{ not_automated }}    | {{ not_automated }}     |
 | **command**         |                     | {{ fully_supported }}   | {{ work_partially }}   | {{ work_partially }}    |
+|                     | exec                | {{ fully_supported }}   | {{ fully_supported }}  | {{ fully_supported }}   |
 |                     | exit-status         | {{ fully_supported }}   | {{ work_partially }}   | {{ work_partially }}    |
 |                     | stdout              | {{ fully_supported }}   | {{ work_partially }}   | {{ work_partially }}    |
 |                     | stderr              | {{ fully_supported }}   | {{ not_automated }}    | {{ not_automated }}     |
