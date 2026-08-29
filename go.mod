@@ -17,7 +17,7 @@ require (
 	github.com/miekg/dns v1.1.73
 	github.com/moby/sys/mountinfo v0.7.2
 	github.com/oleiade/reflections v1.1.0
-	github.com/onsi/gomega v1.42.1
+	github.com/onsi/gomega v1.43.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/prometheus/client_golang v1.24.1
