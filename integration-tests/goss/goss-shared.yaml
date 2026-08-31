@@ -27,6 +27,12 @@ command:
     exit-status: 0
     stdout:
     - /Linux/
+  command-exact-match:
+    exec: printf 'goss-exact-match'
+    exit-status: 0
+    # A single string (rather than a list) is matched exactly, which is what
+    # `goss add command --exact-match` generates.
+    stdout: goss-exact-match
 file:
 {{range mkSlice "/etc/PAsswD" "/etc/group"}}
   {{. | toLower}}:

@@ -115,13 +115,21 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 
 	if !contains(config.IgnoreList, "stdout") {
 		stdout, _ := sysCommand.Stdout()
-		if out := readerToMatcher(stdout, config.ExactMatch); out != nil {
+		out, rerr := readerToMatcher(stdout, config.ExactMatch)
+		if rerr != nil {
+			return c, rerr
+		}
+		if out != nil {
 			c.Stdout = out
 		}
 	}
 	if !contains(config.IgnoreList, "stderr") {
 		stderr, _ := sysCommand.Stderr()
-		if out := readerToMatcher(stderr, config.ExactMatch); out != nil {
+		out, rerr := readerToMatcher(stderr, config.ExactMatch)
+		if rerr != nil {
+			return c, rerr
+		}
+		if out != nil {
 			c.Stderr = out
 		}
 	}
@@ -134,19 +142,22 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 // exactMatch it's the raw output as a single string, which goss validates for
 // an exact (whitespace and newline sensitive) match. It returns nil when there
 // is nothing to assert so the caller can leave the default empty value in place.
-func readerToMatcher(reader io.Reader, exactMatch bool) matcher {
+func readerToMatcher(reader io.Reader, exactMatch bool) (matcher, error) {
 	if exactMatch {
-		b, _ := io.ReadAll(reader)
-		if len(b) == 0 {
-			return nil
+		b, err := io.ReadAll(reader)
+		if err != nil {
+			return nil, err
 		}
-		return string(b)
+		if len(b) == 0 {
+			return nil, nil
+		}
+		return string(b), nil
 	}
 	slice := readerToSlice(reader)
 	if len(slice) == 0 {
-		return nil
+		return nil, nil
 	}
-	return slice
+	return slice, nil
 }
 
 func escapePattern(s string) string {
