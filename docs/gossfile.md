@@ -169,7 +169,32 @@ command:
     stderr: []
     timeout: 10000 # in milliseconds
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
+
+The `exec` attribute specifies the command to run.
+It defaults to the name of the hash key and can be given in two forms:
+
+* A **string**, which is executed through the shell (e.g. `/bin/sh -c "<string>"` on Unix).
+* An **array of strings**, where the first element is the program and the rest are its arguments.
+  The command is invoked directly, without a shell.
+  This is useful in environments that have no shell, such as `scratch`/distroless containers.
+  It also allows arguments containing spaces or special characters to be passed verbatim.
+
+```yaml
+command:
+  figlet:
+    exit-status: 0
+    # exec style: run /figlet directly with argument "test"
+    exec: ["/figlet", "test"]
+```
+
+`stdout` and `stderr` can be a string or [pattern](#patterns). A list of
+patterns each has to be found somewhere in the output, while a single string is
+compared for an exact match, so whitespace and line breaks have to line up. That
+exact form is handy for golden master or approval style tests where the whole
+output matters; `goss add command --exact-match` generates it for you.
 
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
@@ -191,9 +216,6 @@ command:
     check is still skipped and still passes — the warning only tells you that the
     line asserts nothing.
 
-The `exec` attribute is the command to run; this defaults to the name of
-the hash for backwards compatibility
-
 ### dns
 
 Validates that the provided address is resolvable and the addrs it resolves to.
@@ -211,6 +233,8 @@ dns:
     - ::1
     server: 8.8.8.8 # Also supports server:port
     timeout: 500 # in milliseconds (Only used when server attribute is provided)
+    retry_count: 1  # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 It is possible to validate the following types of DNS records, but requires the ```server``` attribute be set:
@@ -236,6 +260,8 @@ dns:
     server: 208.67.222.222
     addrs:
     - "a.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate a PTR record
   PTR:8.8.8.8:
@@ -243,6 +269,8 @@ dns:
     server: 8.8.8.8
     addrs:
     - "dns.google."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate an SRV record
   SRV:_https._tcp.dnstest.io:
@@ -251,6 +279,8 @@ dns:
     addrs:
     - "0 5 443 a.dnstest.io."
     - "10 10 443 b.dnstest.io."
+    retry_count: 2
+    retry_delay: 250ms
 
   # Validate an SSHFP record
   SSHFP:mars.yellowjacket.io:
@@ -529,6 +559,8 @@ package:
     versions:
     - 2.2.15
     skip: false
+    retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
+    retry_delay: 10000  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
 ```
 
 !!! note

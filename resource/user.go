@@ -98,7 +98,9 @@ func NewUser(sysUser system.User, config util.Config) (*User, error) {
 		}
 	}
 	if !contains(config.IgnoreList, "groups") {
-		if groups, err := sysUser.Groups(); err == nil {
+		// An empty list asserts nothing, so leave Groups unset and let omitempty
+		// drop it rather than generating `groups: []`.
+		if groups, err := sysUser.Groups(); err == nil && len(groups) > 0 {
 			u.Groups = groups
 		}
 	}

@@ -17,6 +17,22 @@ command:
     exec: false
     exit-status: 0
     skip: true
+  command-exec-style:
+    exec: [uname]
+    exit-status: 0
+    stdout:
+    - /Linux/
+  command-exec-style-args:
+    exec: ["uname", "-s"]
+    exit-status: 0
+    stdout:
+    - /Linux/
+  command-exact-match:
+    exec: printf 'goss-exact-match'
+    exit-status: 0
+    # A single string (rather than a list) is matched exactly, which is what
+    # `goss add command --exact-match` generates.
+    stdout: goss-exact-match
 file:
 {{range mkSlice "/etc/PAsswD" "/etc/group"}}
   {{. | toLower}}:
@@ -142,6 +158,12 @@ dns:
     addrs:
     - 0 5 443 a.dnstest.io.
     - 10 10 443 b.dnstest.io.
+    timeout: 2000
+    server: 127.0.0.1:8053
+  SSHFP:mars.dnstest.io:
+    resolvable: true
+    addrs:
+    - 1 2 422F22EFB548FEAC403A633A86F74553599B85AC93E7EC3BB0A46B6CD6DDABF8
     timeout: 2000
     server: 127.0.0.1:8053
   TXT:txt._test.dnstest.io:
