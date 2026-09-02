@@ -115,20 +115,49 @@ func NewCommand(sysCommand system.Command, config util.Config) (*Command, error)
 
 	if !contains(config.IgnoreList, "stdout") {
 		stdout, _ := sysCommand.Stdout()
-		outSlice := readerToSlice(stdout)
-		if len(outSlice) != 0 {
-			c.Stdout = outSlice
+		out, rerr := readerToMatcher(stdout, config.ExactMatch)
+		if rerr != nil {
+			return c, rerr
+		}
+		if out != nil {
+			c.Stdout = out
 		}
 	}
 	if !contains(config.IgnoreList, "stderr") {
 		stderr, _ := sysCommand.Stderr()
-		errSlice := readerToSlice(stderr)
-		if len(errSlice) != 0 {
-			c.Stderr = errSlice
+		out, rerr := readerToMatcher(stderr, config.ExactMatch)
+		if rerr != nil {
+			return c, rerr
+		}
+		if out != nil {
+			c.Stderr = out
 		}
 	}
 
 	return c, err
+}
+
+// readerToMatcher turns captured command output into the matcher goss writes
+// for it. By default that's a list of trimmed lines, matched as patterns. With
+// exactMatch it's the raw output as a single string, which goss validates for
+// an exact (whitespace and newline sensitive) match. It returns nil when there
+// is nothing to assert so the caller can leave the default empty value in place.
+func readerToMatcher(reader io.Reader, exactMatch bool) (matcher, error) {
+	if exactMatch {
+		b, err := io.ReadAll(reader)
+		if err != nil {
+			return nil, err
+		}
+		if len(b) == 0 {
+			return nil, nil
+		}
+		return string(b), nil
+	}
+	slice := readerToSlice(reader)
+	if len(slice) == 0 {
+		return nil, nil
+	}
+	return slice, nil
 }
 
 func escapePattern(s string) string {
