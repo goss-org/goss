@@ -75,7 +75,8 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 		KeyFile:           u.KeyFile,
 		NoFollowRedirects: u.NoFollowRedirects,
 		Timeout:           time.Duration(u.Timeout) * time.Millisecond, Username: u.Username, Password: u.Password, Proxy: u.Proxy,
-		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method})
+		RequestHeader: u.RequestHeader, RequestBody: u.RequestBody, Method: u.Method,
+	})
 	sysHTTP.SetAllowInsecure(u.AllowInsecure)
 	sysHTTP.SetNoFollowRedirects(u.NoFollowRedirects)
 	defer sysHTTP.Close()
@@ -85,10 +86,10 @@ func (u *HTTP) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if isSetWarnEmpty(u.Headers, fmt.Sprintf("%s: http.headers", u.ID())) {
+	if isSetWarnEmpty(u.Headers, u.ID()+": http.headers") {
 		results = append(results, ValidateValue(u, "Headers", u.Headers, sysHTTP.Headers, skip))
 	}
-	if isSetWarnEmpty(u.Body, fmt.Sprintf("%s: http.body", u.ID())) {
+	if isSetWarnEmpty(u.Body, u.ID()+": http.body") {
 		results = append(results, ValidateValue(u, "Body", u.Body, sysHTTP.Body, skip))
 	}
 

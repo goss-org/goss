@@ -7,6 +7,7 @@ import (
 	"io"
 	"reflect"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -47,9 +48,9 @@ var (
 	foSort       = "sort"
 )
 
-var multiple_space = regexp.MustCompile(`\s+`)
+var multipleSpace = regexp.MustCompile(`\s+`)
 
-func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string {
+func humanizeResult(r resource.TestResult, compact, includeRaw bool) string {
 	sep := "\n"
 	if compact {
 		sep = " "
@@ -68,18 +69,17 @@ func humanizeResult(r resource.TestResult, compact bool, includeRaw bool) string
 	}
 }
 
-func prettyPrintTestResult(t resource.TestResult, compact bool, includeRaw bool) string {
+func prettyPrintTestResult(t resource.TestResult, compact, includeRaw bool) string {
 	sep := "\n"
 	if compact {
 		sep = " "
 	}
 	m := t.MatcherResult
 	var ss []string
-	//var s string
 	if t.Err != nil {
 		e := fmt.Sprint(t.Err)
 		if compact {
-			e = multiple_space.ReplaceAllString(e, " ")
+			e = multipleSpace.ReplaceAllString(e, " ")
 		} else {
 			e = indentLines(e)
 		}
@@ -141,7 +141,7 @@ func maybeAddDiff(ss []string, expected, actual any, compact bool) []string {
 	return ss
 }
 
-func prettyPrint(i interface{}, indent bool) string {
+func prettyPrint(i any, indent bool) string {
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
@@ -156,18 +156,17 @@ func prettyPrint(i interface{}, indent bool) string {
 	b = bytes.TrimRightFunc(b, unicode.IsSpace)
 	if indent {
 		return indentLines(string(b))
-	} else {
-		return string(b)
 	}
+	return string(b)
 }
 
-// indents a block of text with an indent string
+// indents a block of text with an indent string.
 func indentLines(text string) string {
-	indent := "    "
-	result := ""
-	for _, j := range strings.Split(strings.TrimRight(text, "\n"), "\n") {
-		result += indent + j + "\n"
+	var builder strings.Builder
+	for j := range strings.SplitSeq(strings.TrimRight(text, "\n"), "\n") {
+		fmt.Fprintf(&builder, "    %v\n", j)
 	}
+	result := builder.String()
 	return result[:len(result)-1]
 }
 
@@ -196,7 +195,7 @@ func Outputers() []string {
 	return list
 }
 
-// FormatOptions returns a sorted list of all the valid options that outputers accept
+// FormatOptions returns a sorted list of all the valid options that outputers accept.
 func FormatOptions() []string {
 	outputersMu.Lock()
 	defer outputersMu.Unlock()
@@ -214,15 +213,9 @@ func FormatOptions() []string {
 	return list
 }
 
-// IsValidFormat determines if f is a valid format name based on Outputers()
+// IsValidFormat determines if f is a valid format name based on Outputers().
 func IsValidFormat(f string) bool {
-	for _, o := range Outputers() {
-		if o == f {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(Outputers(), f)
 }
 
 func GetOutputer(name string) (Outputer, error) {
@@ -233,9 +226,9 @@ func GetOutputer(name string) (Outputer, error) {
 }
 
 func header(t resource.TestResult) string {
-	var out string
+	var out strings.Builder
 	if t.Title != "" {
-		out += fmt.Sprintf("Title: %s\n", t.Title)
+		fmt.Fprintf(&out, "Title: %s\n", t.Title)
 	}
 	if t.Meta != nil {
 		var keys []string
@@ -244,12 +237,12 @@ func header(t resource.TestResult) string {
 		}
 		sort.Strings(keys)
 
-		out += "Meta:\n"
+		out.WriteString("Meta:\n")
 		for _, k := range keys {
-			out += fmt.Sprintf("    %v: %v\n", k, t.Meta[k])
+			fmt.Fprintf(&out, "    %v: %v\n", k, t.Meta[k])
 		}
 	}
-	return out
+	return out.String()
 }
 
 func summary(startTime, endTime time.Time, count, failed, skipped int) string {
@@ -264,9 +257,9 @@ func summary(startTime, endTime time.Time, count, failed, skipped int) string {
 }
 
 func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw bool) string {
-	var s string
+	var s strings.Builder
 	if len(failedOrSkipped) > 0 {
-		s += "Failures/Skipped:\n\n"
+		s.WriteString("Failures/Skipped:\n\n")
 		sort.Slice(failedOrSkipped, func(i, j int) bool {
 			return failedOrSkipped[i][0].SortKey() < failedOrSkipped[j][0].SortKey()
 		})
@@ -274,15 +267,15 @@ func failedOrSkippedSummary(failedOrSkipped [][]resource.TestResult, includeRaw 
 			first := failedGroup[0]
 			header := header(first)
 			if header != "" {
-				s += fmt.Sprint(header)
+				fmt.Fprint(&s, header)
 			}
 			for _, testResult := range failedGroup {
-				s += fmt.Sprintln(humanizeResult(testResult, false, includeRaw))
+				fmt.Fprintln(&s, humanizeResult(testResult, false, includeRaw))
 			}
-			s += "\n"
+			s.WriteString("\n")
 		}
 	}
-	return s
+	return s.String()
 }
 
 func getResults(tr <-chan []resource.TestResult, doSort bool) <-chan []resource.TestResult {

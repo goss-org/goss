@@ -72,7 +72,7 @@ func (d *DefDNS) setup() error {
 	}
 	d.loaded = true
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		addrs, err := DNSlookup(d.host, d.server, d.qtype, d.Timeout)
 		if err != nil || len(addrs) == 0 {
 			d.resolvable = false
@@ -105,12 +105,12 @@ func (d *DefDNS) Resolvable() (bool, error) {
 	return d.resolvable, err
 }
 
-// Stub out
+// Stub out.
 func (d *DefDNS) Exists() (bool, error) {
 	return false, nil
 }
 
-func DNSlookup(host string, server string, qtype string, timeout int) ([]string, error) {
+func DNSlookup(host, server, qtype string, timeout int) ([]string, error) {
 	c1 := make(chan []string, 1)
 	e1 := make(chan error, 1)
 	timeoutD := time.Duration(timeout) * time.Millisecond
@@ -165,30 +165,30 @@ func DNSlookup(host string, server string, qtype string, timeout int) ([]string,
 	}
 }
 
-// A and AAAA record lookup - similar to net.LookupHost
-func LookupHost(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// A and AAAA record lookup - similar to net.LookupHost.
+func LookupHost(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	a, _ := LookupA(host, server, c, m)
 	aaaa, _ := LookupAAAA(host, server, c, m)
-	addrs = append(a, aaaa...)
-
-	return
+	addrs := append(a, aaaa...)
+	return addrs, nil
 }
 
-// A record lookup
-func LookupA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// A record lookup.
+func LookupA(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.A); ok {
 			addrs = append(addrs, t.A.String())
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
 // parseServerString - Check if the DNS Server in server config has a port, if not ensure 53 is prefixed.
@@ -201,48 +201,51 @@ func parseServerString(server string) string {
 	return net.JoinHostPort(srvhost, srvport)
 }
 
-// AAAA (IPv6) record lookup
-func LookupAAAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// AAAA (IPv6) record lookup.
+func LookupAAAA(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.AAAA); ok {
 			addrs = append(addrs, t.AAAA.String())
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// CNAME record lookup
-func LookupCNAME(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// CNAME record lookup.
+func LookupCNAME(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCNAME)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.CNAME); ok {
 			addrs = append(addrs, t.Target)
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// MX record lookup
-func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// MX record lookup.
+func LookupMX(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeMX)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.MX); ok {
 			mxstring := strconv.Itoa(int(t.Preference)) + " " + t.Mx
@@ -250,34 +253,36 @@ func LookupMX(host string, server string, c *dns.Client, m *dns.Msg) (addrs []st
 		}
 	}
 
-	return
+	return addrs, err
 }
 
-// NS record lookup
-func LookupNS(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// NS record lookup.
+func LookupNS(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeNS)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.NS); ok {
 			addrs = append(addrs, t.Ns)
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// SRV record lookup
-func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// SRV record lookup.
+func LookupSRV(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSRV)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.SRV); ok {
 			prio := strconv.Itoa(int(t.Priority))
@@ -288,17 +293,18 @@ func LookupSRV(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// SSHFP record lookup
-func LookupSSHFP(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// SSHFP record lookup.
+func LookupSSHFP(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeSSHFP)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.SSHFP); ok {
 			algo := strconv.Itoa(int(t.Algorithm))
@@ -309,29 +315,29 @@ func LookupSSHFP(host string, server string, c *dns.Client, m *dns.Msg) (addrs [
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// TXT record lookup
-func LookupTXT(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// TXT record lookup.
+func LookupTXT(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeTXT)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.TXT); ok {
 			addrs = append(addrs, t.Txt...)
 		}
 	}
 
-	return
+	return addrs, nil
 }
 
-// PTR record lookup
-func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []string, err error) {
-
+// PTR record lookup.
+func LookupPTR(addr, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	reverse, err := dns.ReverseAddr(addr)
 	if err != nil {
 		return nil, err
@@ -344,21 +350,23 @@ func LookupPTR(addr string, server string, c *dns.Client, m *dns.Msg) (name []st
 		return nil, err
 	}
 
+	name := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		name = append(name, ans.(*dns.PTR).Ptr)
 	}
 
-	return
+	return name, nil
 }
 
-// CAA record lookup
-func LookupCAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []string, err error) {
+// CAA record lookup.
+func LookupCAA(host, server string, c *dns.Client, m *dns.Msg) ([]string, error) {
 	m.SetQuestion(dns.Fqdn(host), dns.TypeCAA)
 	r, _, err := c.Exchange(m, parseServerString(server))
 	if err != nil {
 		return nil, err
 	}
 
+	addrs := make([]string, 0, len(r.Answer))
 	for _, ans := range r.Answer {
 		if t, ok := ans.(*dns.CAA); ok {
 			flag := strconv.Itoa(int(t.Flag))
@@ -367,5 +375,5 @@ func LookupCAA(host string, server string, c *dns.Client, m *dns.Msg) (addrs []s
 		}
 	}
 
-	return
+	return addrs, nil
 }

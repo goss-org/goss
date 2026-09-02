@@ -18,7 +18,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+func getGossConfig(varsFiles []string, varsInline, specFile string) (*GossConfig, error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
@@ -86,8 +86,8 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 }
 
 // ValidateResults performs validation and provides programmatic access to validation results
-// no retries or outputs are supported
-func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
+// no retries or outputs are supported.
+func ValidateResults(c *util.Config) (<-chan []resource.TestResult, error) {
 	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
@@ -101,9 +101,9 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 // Validate performs validation, writes formatted output to stdout by default
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
-// ValidateResults for programmatic access
-func Validate(c *util.Config) (code int, err error) {
-	err = setLogLevel(c)
+// ValidateResults for programmatic access.
+func Validate(c *util.Config) (int, error) {
+	err := setLogLevel(c)
 	if err != nil {
 		return 1, err
 	}
@@ -114,7 +114,7 @@ func Validate(c *util.Config) (code int, err error) {
 	return ValidateConfig(c, gossConfig)
 }
 
-func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
+func ValidateConfig(c *util.Config, gossConfig *GossConfig) (int, error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid
@@ -174,19 +174,14 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 		close(in)
 	}()
 
-	workerCount := runtime.NumCPU() * 5
-	if workerCount > maxConcurrent {
-		workerCount = maxConcurrent
-	}
+	workerCount := min(runtime.NumCPU()*5, maxConcurrent)
 	var wg sync.WaitGroup
-	for i := 0; i < workerCount; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+	for range workerCount {
+		wg.Go(func() {
 			for f := range in {
 				out <- f.Validate(sys)
 			}
-		}()
+		})
 	}
 
 	go func() {

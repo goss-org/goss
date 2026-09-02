@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"maps"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -102,7 +103,7 @@ func getStoreFormatFromData(data []byte) (int, error) {
 	return 0, errCannotDetermineFormat
 }
 
-// ReadJSON Reads json file returning GossConfig
+// ReadJSON Reads json file returning GossConfig.
 func ReadJSON(filePath string) (GossConfig, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
@@ -144,9 +145,7 @@ func loadVars(varsFiles []string, varsInline string) (map[string]any, error) {
 	}
 
 	// Note: This algorithm replaces value under key even if it's nested map
-	for k, v := range varsExtra {
-		mergedVars[k] = v
-	}
+	maps.Copy(mergedVars, varsExtra)
 
 	return mergedVars, nil
 }
@@ -187,7 +186,7 @@ func varsFromString(varsString string) (map[string]any, error) {
 	return vars, nil
 }
 
-// ReadJSONData Reads json byte array returning GossConfig
+// ReadJSONData Reads json byte array returning GossConfig.
 func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	var err error
 	if tf := templateFilter(); tf != nil {
@@ -218,7 +217,7 @@ func ReadJSONData(data []byte, detectFormat bool) (GossConfig, error) {
 	return *gossConfig, nil
 }
 
-// RenderJSON reads json file recursively returning string
+// RenderJSON reads json file recursively returning string.
 func RenderJSON(c *util.Config) (string, error) {
 	setDebug(c.Debug)
 	tf, err := NewTemplateFilter(c.VarsFiles, c.VarsInline)
@@ -321,7 +320,7 @@ func WriteJSON(filePath string, gossConfig GossConfig) error {
 		return nil
 	}
 
-	if err := os.WriteFile(filePath, jsonData, 0644); err != nil {
+	if err := os.WriteFile(filePath, jsonData, 0o644); err != nil {
 		return fmt.Errorf("failed to write %s: %w", filePath, err)
 	}
 

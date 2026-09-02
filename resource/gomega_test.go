@@ -31,7 +31,8 @@ var gomegaTests = []struct {
 		in: `["foo", "bar"]`,
 		want: matchers.ContainElements(
 			matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("foo")),
-			matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("bar"))),
+			matchers.WithSafeTransform(matchers.ToString{}, matchers.Equal("bar")),
+		),
 		useNegateTester: true,
 	},
 
@@ -79,7 +80,8 @@ var gomegaTests = []struct {
 		want: matchers.WithSafeTransform(matchers.ToArray{},
 			matchers.ContainElement(
 				matchers.WithSafeTransform(matchers.ToString{},
-					matchers.Equal("foo")))),
+					matchers.Equal("foo")),
+			)),
 	},
 	{
 		in:   `{"have-len": 3}`,
@@ -120,7 +122,8 @@ var gomegaTests = []struct {
 		in: `{"not": {"have-prefix": "foo"}}`,
 		want: matchers.Not(
 			matchers.WithSafeTransform(matchers.ToString{},
-				matchers.HavePrefix("foo"))),
+				matchers.HavePrefix("foo")),
+		),
 	},
 	{
 		in: `{"or": ["foo", "foo"]}`,
@@ -128,14 +131,17 @@ var gomegaTests = []struct {
 			matchers.WithSafeTransform(matchers.ToString{},
 				matchers.Equal("foo")),
 			matchers.WithSafeTransform(matchers.ToString{},
-				matchers.Equal("foo"))),
+				matchers.Equal("foo")),
+		),
 	},
 	{
 		in: `{"not": {"and": [{"have-prefix": "foo"}]}}`,
 		want: matchers.Not(
 			matchers.And(
 				matchers.WithSafeTransform(matchers.ToString{},
-					matchers.HavePrefix("foo")))),
+					matchers.HavePrefix("foo")),
+			),
+		),
 	},
 
 	// Semver Constraint
@@ -160,5 +166,5 @@ func TestMatcherToGomegaMatcher(t *testing.T) {
 }
 
 func gomegaTestEqual(t *testing.T, got, want any, useNegateTester bool, in string) {
-	assert.Equal(t, got, want)
+	assert.Equal(t, want, got)
 }

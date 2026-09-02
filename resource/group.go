@@ -57,7 +57,7 @@ func (g *Group) Validate(sys *system.System) []TestResult {
 		skip = true
 	}
 	if g.GID != nil {
-		gGID := deprecateAtoI(g.GID, fmt.Sprintf("%s: group.gid", g.ID()))
+		gGID := deprecateAtoI(g.GID, g.ID()+": group.gid")
 		results = append(results, ValidateValue(g, "gid", gGID, sysgroup.GID, skip))
 	}
 	return results

@@ -61,11 +61,11 @@ func (u *User) Validate(sys *system.System) []TestResult {
 		skip = true
 	}
 	if u.UID != nil {
-		uUID := deprecateAtoI(u.UID, fmt.Sprintf("%s: user.uid", u.Username))
+		uUID := deprecateAtoI(u.UID, u.Username+": user.uid")
 		results = append(results, ValidateValue(u, "uid", uUID, sysuser.UID, skip))
 	}
 	if u.GID != nil {
-		uGID := deprecateAtoI(u.GID, fmt.Sprintf("%s: user.gid", u.Username))
+		uGID := deprecateAtoI(u.GID, u.Username+": user.gid")
 		results = append(results, ValidateValue(u, "gid", uGID, sysuser.GID, skip))
 	}
 	if u.Home != nil {
