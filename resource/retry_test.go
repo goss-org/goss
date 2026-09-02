@@ -207,7 +207,7 @@ func TestPackageValidateRetries(t *testing.T) {
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
 
-	results := pkg.Validate(sys)
+	results := pkg.Validate(t.Context(), sys)
 
 	if installedCalls != 2 {
 		t.Fatalf("expected installed to be retried once, got %d calls", installedCalls)
@@ -249,7 +249,7 @@ func TestDNSValidateRetries(t *testing.T) {
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
 
-	results := dns.Validate(sys)
+	results := dns.Validate(t.Context(), sys)
 
 	if resolvableCalls != 2 {
 		t.Fatalf("expected resolvable to be retried once, got %d calls", resolvableCalls)
@@ -304,7 +304,7 @@ func TestCommandValidateRetries(t *testing.T) {
 		RetryDelay: RetryDelay(10 * time.Millisecond),
 	}
 
-	results := cmd.Validate(sys)
+	results := cmd.Validate(t.Context(), sys)
 
 	if commandCalls != 2 {
 		t.Fatalf("expected command to be retried once, got %d attempts", commandCalls)

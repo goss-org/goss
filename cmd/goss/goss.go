@@ -154,7 +154,7 @@ func main() {
 				},
 				Action: func(ctx context.Context, c *cli.Command) error {
 					fatalAlphaIfNeeded(c)
-					code, err := goss.Validate(newRuntimeConfigFromCLI(c))
+					code, err := goss.Validate(ctx, newRuntimeConfigFromCLI(c))
 					if err != nil {
 						color.Red(fmt.Sprintf("Error: %v\n", err))
 					}
@@ -243,7 +243,7 @@ func main() {
 				Usage:   "automatically add all matching resource to the test suite",
 				Action: func(ctx context.Context, c *cli.Command) error {
 					fatalAlphaIfNeeded(c)
-					return goss.AutoAddResources(c.String("gossfile"), c.Args().Slice(), newRuntimeConfigFromCLI(c))
+					return goss.AutoAddResources(ctx, c.String("gossfile"), c.Args().Slice(), newRuntimeConfigFromCLI(c))
 				},
 			},
 			{
@@ -262,7 +262,7 @@ func main() {
 						Usage: "add new package",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.PackageResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.PackageResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -270,7 +270,7 @@ func main() {
 						Usage: "add new file",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.FileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.FileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -281,7 +281,7 @@ func main() {
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.AddResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.AddResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -289,7 +289,7 @@ func main() {
 						Usage: "add new listening [protocol]:port - ex: 80 or udp:123",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.PortResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.PortResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -297,7 +297,7 @@ func main() {
 						Usage: "add new service",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.ServiceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.ServiceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -305,7 +305,7 @@ func main() {
 						Usage: "add new user",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.UserResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.UserResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -313,7 +313,7 @@ func main() {
 						Usage: "add new group",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.GroupResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.GroupResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -328,7 +328,7 @@ func main() {
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.CommandResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.CommandResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -343,7 +343,7 @@ func main() {
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.DNSResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.DNSResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -351,7 +351,7 @@ func main() {
 						Usage: "add new process name",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.ProcessResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.ProcessResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -385,7 +385,7 @@ func main() {
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.HTTPResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.HTTPResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -393,7 +393,7 @@ func main() {
 						Usage: "add new goss file, it will be imported from this one",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.GossFileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.GossFileResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 
 						},
 					},
@@ -402,7 +402,7 @@ func main() {
 						Usage: "add new goss kernel param",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.KernelParamResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.KernelParamResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -413,7 +413,7 @@ func main() {
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.MountResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.MountResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -421,7 +421,7 @@ func main() {
 						Usage: "add new interface",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.InterfaceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.InterfaceResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 					{
@@ -429,7 +429,7 @@ func main() {
 						Usage: "add new registry key",
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)
-							return goss.AddResources(c.String("gossfile"), resource.RegistryResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+							return goss.AddResources(ctx, c.String("gossfile"), resource.RegistryResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
 				},

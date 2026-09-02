@@ -50,8 +50,8 @@ func (p *Package) GetName() string {
 func (p *Package) GetRetryCount() int        { return p.RetryCount }
 func (p *Package) GetRetryDelay() RetryDelay { return p.RetryDelay }
 
-func (p *Package) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, p.ID())
+func (p *Package) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, p.ID())
 	skip := p.Skip
 
 	var results []TestResult

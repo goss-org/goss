@@ -60,8 +60,8 @@ func (c *Command) GetExec() any {
 func (c *Command) GetRetryCount() int        { return c.RetryCount }
 func (c *Command) GetRetryDelay() RetryDelay { return c.RetryDelay }
 
-func (c *Command) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), system.CommandIDKey, c.ID())
+func (c *Command) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, system.CommandIDKey, c.ID())
 	skip := c.Skip
 
 	if c.Timeout == 0 {

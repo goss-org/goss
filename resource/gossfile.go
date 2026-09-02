@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"context"
+
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 )
@@ -40,7 +42,7 @@ func (g *Gossfile) GetGossfile() string {
 	return g.Path
 }
 
-func (g *Gossfile) Validate(sys *system.System) []TestResult {
+func (g *Gossfile) Validate(_ context.Context, _ *system.System) []TestResult {
 	return []TestResult{}
 }
 
