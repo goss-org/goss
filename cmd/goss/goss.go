@@ -28,6 +28,7 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		Debug:             c.Bool("debug"),
 		LogLevel:          c.String("log-level"),
 		Endpoint:          c.String("endpoint"),
+		ExactMatch:        c.Bool("exact-match"),
 		FormatOptions:     c.StringSlice("format-options"),
 		IgnoreList:        c.StringSlice("exclude-attr"),
 		ListenAddress:     c.String("listen-addr"),
@@ -320,6 +321,10 @@ func main() {
 						Usage: "add new command",
 						Flags: []cli.Flag{
 							timeoutFlag(10 * time.Second),
+							&cli.BoolFlag{
+								Name:  "exact-match",
+								Usage: "capture stdout/stderr as a single string and assert an exact, whitespace-sensitive match instead of per-line patterns",
+							},
 						},
 						Action: func(ctx context.Context, c *cli.Command) error {
 							fatalAlphaIfNeeded(c)

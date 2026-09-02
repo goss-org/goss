@@ -105,12 +105,18 @@ A sub-command *resource type* has to be provided when running `add`.
 :   Ignore **non-required** attribute(s) matching the provided glob when adding a new resource,
     may be specified multiple times.
 
+`--exact-match`
+:   Only for `command`. Capture `stdout`/`stderr` as a single string so `goss validate`
+    asserts an exact, whitespace and newline sensitive match rather than per-line patterns.
+    Useful for golden master / approval style tests.
+
 !!! example
     ```console
     goss add file /etc/passwd
     goss a user nobody
     goss add --exclude-attr home --exclude-attr shell user nobody
     goss a --exclude-attr '*' user nobody
+    goss add command --exact-match 'kubectl get pod mypod -o yaml'
     ```
 
 #### Resources types
