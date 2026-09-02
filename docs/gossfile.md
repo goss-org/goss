@@ -190,6 +190,12 @@ command:
     exec: ["/figlet", "test"]
 ```
 
+`stdout` and `stderr` can be a string or [pattern](#patterns). A list of
+patterns each has to be found somewhere in the output, while a single string is
+compared for an exact match, so whitespace and line breaks have to line up. That
+exact form is handy for golden master or approval style tests where the whole
+output matters; `goss add command --exact-match` generates it for you.
+
 `stdout` and `stderr` can be a string or [pattern](#patterns)
 
 !!! warning "An empty list asserts nothing"
@@ -209,9 +215,6 @@ command:
     `goss validate` prints a warning to stderr for each empty list it finds. The
     check is still skipped and still passes — the warning only tells you that the
     line asserts nothing.
-
-The `exec` attribute is the command to run; this defaults to the name of
-the hash for backwards compatibility
 
 ### dns
 

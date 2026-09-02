@@ -26,6 +26,7 @@ type Config struct {
 	Cache                 time.Duration
 	Debug                 bool
 	Endpoint              string
+	ExactMatch            bool
 	FormatOptions         []string
 	IgnoreList            []string
 	ListenAddress         string
