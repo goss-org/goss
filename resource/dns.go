@@ -80,7 +80,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if d.Addrs != nil {
+	if isSetWarnEmpty(d.Addrs, fmt.Sprintf("%s: dns.addrs", d.ID())) {
 		if d.RetryCount > 0 {
 			results = append(results, ValidateValueWithRetry(d, "addrs", d.Addrs, func() (any, error) {
 				sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
