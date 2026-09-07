@@ -112,8 +112,11 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 		Server:     server,
 	}
 	if !contains(config.IgnoreList, "addrs") {
-		addrs, _ := sysDNS.Addrs()
-		d.Addrs = addrs
+		// An empty list asserts nothing, so leave Addrs unset and let omitempty
+		// drop it rather than generating `addrs: []`.
+		if addrs, _ := sysDNS.Addrs(); len(addrs) > 0 {
+			d.Addrs = addrs
+		}
 	}
 	return d, err
 }

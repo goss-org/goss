@@ -76,7 +76,9 @@ func NewInterface(sysInterface system.Interface, config util.Config) (*Interface
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "addrs") {
-		if addrs, err := sysInterface.Addrs(); err == nil {
+		// An empty list asserts nothing, so leave Addrs unset and let omitempty
+		// drop it rather than generating `addrs: []`.
+		if addrs, err := sysInterface.Addrs(); err == nil && len(addrs) > 0 {
 			i.Addrs = addrs
 		}
 	}

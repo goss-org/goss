@@ -8,7 +8,10 @@ import (
 	"github.com/samber/lo"
 )
 
-var errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
+var (
+	errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
+	errEmptyMatcher             = errors.New("Syntax Error: Invalid matcher configuration. An empty map asserts nothing, exactly one matcher is required")
+)
 
 func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 	// Default matchers
@@ -39,6 +42,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
 		//panic(fmt.Sprintf("Syntax Error: Unexpected matcher type: %T\n\n", matcher))
 	}
 	keys := lo.Keys(matcherMap)
+	if len(keys) == 0 {
+		return nil, errEmptyMatcher
+	}
 	if len(keys) > 1 {
 		return nil, fmt.Errorf("Syntax Error: Invalid matcher configuration. At a given nesting level, only one matcher is allowed. Found multiple matchers: %q", keys)
 	}
