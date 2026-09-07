@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysUser is a minimal system.User implementation used to drive NewUser
