@@ -1,6 +1,6 @@
 module github.com/goss-org/goss
 
-go 1.26.0
+go 1.26.8
 
 require (
 	dario.cat/mergo v1.0.2
