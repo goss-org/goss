@@ -1,9 +1,11 @@
 package resource
 
 import (
+	"context"
 	"strings"
 	"testing"
 
+	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 	"gopkg.in/yaml.v3"
 )
@@ -39,7 +41,7 @@ func TestNewDNSLeavesAddrsUnsetWhenEmpty(t *testing.T) {
 		t.Fatalf("yaml.Marshal returned error: %v", err)
 	}
 	if strings.Contains(string(out), "addrs:") {
-		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
+		t.Errorf("marshalled YAML contains an 'addrs' field, want it omitted:\n%s", out)
 	}
 }
 
@@ -55,6 +57,23 @@ func TestNewDNSKeepsAddrsWhenPresent(t *testing.T) {
 		t.Fatalf("yaml.Marshal returned error: %v", err)
 	}
 	if !strings.Contains(string(out), "127.0.0.1") {
-		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
+		t.Errorf("marshalled YAML is missing the 'addrs' field:\n%s", out)
+	}
+}
+
+// dns.addrs used a plain != nil check, so `addrs: []` asserted nothing and
+// passed silently. It must now warn like file.contents does.
+func TestDNSEmptyAddrsWarns(t *testing.T) {
+	sys := &system.System{
+		NewDNS: func(context.Context, string, *system.System, util.Config) system.DNS {
+			return &fakeSysDNS{addrs: []string{"127.0.0.1"}}
+		},
+	}
+
+	d := &DNS{id: "localhost", Resolvable: false, Addrs: []any{}}
+	out := captureStderr(t, func() { d.Validate(sys) })
+
+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "dns.addrs") {
+		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming dns.addrs", out)
 	}
 }

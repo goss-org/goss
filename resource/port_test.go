@@ -1,9 +1,11 @@
 package resource
 
 import (
+	"context"
 	"strings"
 	"testing"
 
+	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 	"gopkg.in/yaml.v3"
 )
@@ -54,5 +56,22 @@ func TestNewPortKeepsIPWhenPresent(t *testing.T) {
 	}
 	if !strings.Contains(string(out), "0.0.0.0") {
 		t.Errorf("marshalled yaml is missing the ip value:\n%s", out)
+	}
+}
+
+// port.ip used a plain != nil check, so `ip: []` asserted nothing and passed
+// silently. It must now warn like file.contents does.
+func TestPortEmptyIPWarns(t *testing.T) {
+	sys := &system.System{
+		NewPort: func(context.Context, string, *system.System, util.Config) system.Port {
+			return &fakeSysPort{ips: []string{"0.0.0.0"}}
+		},
+	}
+
+	p := &Port{id: "tcp:9999", Listening: false, IP: []any{}}
+	out := captureStderr(t, func() { p.Validate(sys) })
+
+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "port.ip") {
+		t.Errorf("Validate with empty ip stderr = %q, want a WARNING naming port.ip", out)
 	}
 }

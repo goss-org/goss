@@ -56,7 +56,7 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if p.IP != nil {
+	if isSetWarnEmpty(p.IP, fmt.Sprintf("%s: port.ip", p.ID())) {
 		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip))
 	}
 	return results
