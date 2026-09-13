@@ -306,6 +306,12 @@ dns:
     timeout: 500 # in milliseconds
 ```
 
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `addrs: []` is a list of zero
+    conditions and always passes. `goss validate` warns on stderr about each
+    one.
+
 ### file
 
 Validates the state of a file, directory, socket, or symbolic link
@@ -442,6 +448,12 @@ interface:
     mtu: 1500
 ```
 
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `addrs: []` is a list of zero
+    conditions and always passes. `goss validate` warns on stderr about each
+    one.
+
 ### kernel-param
 
 Validates kernel param (sysctl) value.
@@ -484,6 +496,12 @@ mount:
     usage: #% of blocks used in this mountpoint
       lt: 95
 ```
+
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `opts: []` and `vfs-opts: []`
+    are lists of zero conditions and always pass. `goss validate` warns on
+    stderr about each one.
 
 ### matching
 
@@ -589,6 +607,13 @@ port:
     skip: false
 ```
 
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `ip: []` is a list of zero
+    conditions and always passes. `goss validate` warns on stderr about each
+    one. `goss add port` only writes `ip` when the port has addresses, so it
+    never generates an empty list.
+
 ### process
 
 Validates if a process is running.
@@ -651,6 +676,12 @@ user:
     shell: /sbin/nologin
     skip: false
 ```
+
+!!! warning "An empty list asserts nothing"
+
+    As with [`stdout` and `stderr`](#command), `groups: []` is a list of zero
+    conditions and always passes. `goss validate` warns on stderr about each
+    one.
 
 !!! note
     This check is inspecting the contents of local passwd file `/etc/passwd`,
@@ -815,6 +846,29 @@ Count: 1, Failed: 1, Skipped: 0
 ### Advanced Matchers
 
 Goss supports advanced matchers by converting YAML input to [gomega](https://onsi.github.io/gomega/) matchers.
+
+!!! warning "An empty matcher group is a syntax error"
+
+    A matcher group is a set of conditions that must all be satisfied. A group
+    holding no conditions asserts nothing and would report a pass without the
+    value ever being looked at, so goss rejects it:
+
+    ```yaml
+    and: []               # syntax error
+    contain-elements: []  # syntax error
+    gjson: {}             # syntax error
+    ```
+
+    Two others look similar and are still accepted, because neither can pass
+    without checking the value:
+
+    ```yaml
+    consist-of: []        # asserts the value is empty
+    or: []                # can never be satisfied
+    ```
+
+    This is a change in behaviour. A gossfile containing one of the first three
+    used to be reported as passing.
 
 #### String Matchers
 
