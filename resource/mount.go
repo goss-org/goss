@@ -68,10 +68,10 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if m.Opts != nil {
+	if isSetWarnEmpty(m.Opts, fmt.Sprintf("%s: mount.opts", m.ID())) {
 		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
 	}
-	if m.VfsOpts != nil {
+	if isSetWarnEmpty(m.VfsOpts, fmt.Sprintf("%s: mount.vfs-opts", m.ID())) {
 		results = append(results, ValidateValue(m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
 	}
 	if m.Source != nil {
