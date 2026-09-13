@@ -847,6 +847,29 @@ Count: 1, Failed: 1, Skipped: 0
 
 Goss supports advanced matchers by converting YAML input to [gomega](https://onsi.github.io/gomega/) matchers.
 
+!!! warning "An empty matcher group is a syntax error"
+
+    A matcher group is a set of conditions that must all be satisfied. A group
+    holding no conditions asserts nothing and would report a pass without the
+    value ever being looked at, so goss rejects it:
+
+    ```yaml
+    and: []               # syntax error
+    contain-elements: []  # syntax error
+    gjson: {}             # syntax error
+    ```
+
+    Two others look similar and are still accepted, because neither can pass
+    without checking the value:
+
+    ```yaml
+    consist-of: []        # asserts the value is empty
+    or: []                # can never be satisfied
+    ```
+
+    This is a change in behaviour. A gossfile containing one of the first three
+    used to be reported as passing.
+
 #### String Matchers
 
 These will convert the system attribute to a string prior to matching.

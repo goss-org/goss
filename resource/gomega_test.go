@@ -188,3 +188,45 @@ func TestMatcherToGomegaMatcherEmptyMap(t *testing.T) {
 		})
 	}
 }
+
+// A matcher group with no sub-matchers is vacuously true in Gomega, so these
+// used to be reported as passing without ever looking at the value.
+func TestMatcherToGomegaMatcherEmptyGroup(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+	}{
+		{name: "and", in: `{"and": []}`},
+		{name: "contain-elements", in: `{"contain-elements": []}`},
+		{name: "gjson", in: `{"gjson": {}}`},
+		{name: "nested in not", in: `{"not": {"and": []}}`},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var dat any
+			if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
+				t.Fatal(err)
+			}
+
+			got, err := matcherToGomegaMatcher(dat)
+			assert.Nil(t, got)
+			assert.ErrorIs(t, err, errEmptyMatcherGroup)
+		})
+	}
+}
+
+// consist-of and or are meaningful when empty: the first asserts that the value
+// is empty, the second can never be satisfied. Neither reports a false pass.
+func TestMatcherToGomegaMatcherEmptyGroupExceptions(t *testing.T) {
+	for _, in := range []string{`{"consist-of": []}`, `{"or": []}`} {
+		var dat any
+		if err := json.Unmarshal([]byte(in), &dat); err != nil {
+			t.Fatal(err)
+		}
+
+		got, err := matcherToGomegaMatcher(dat)
+		assert.NoError(t, err, in)
+		assert.NotNil(t, got, in)
+	}
+}
