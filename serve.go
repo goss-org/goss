@@ -2,6 +2,7 @@ package goss
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -90,7 +91,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	negotiatedContentType := h.responseContentType(outputFormat)
 
 	log.Printf("[TRACE] %v: requesting health probe", r.RemoteAddr)
-	resp := h.processAndEnsureCached(negotiatedContentType, outputer)
+	resp := h.processAndEnsureCached(r.Context(), negotiatedContentType, outputer)
 	w.Header().Set("Content-Type", negotiatedContentType)
 	w.WriteHeader(resp.statusCode)
 	logBody := ""
@@ -101,7 +102,7 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[DEBUG] %v: status %d%s", r.RemoteAddr, resp.statusCode, logBody)
 }
 
-func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
+func (h healthHandler) processAndEnsureCached(ctx context.Context, negotiatedContentType string, outputer outputs.Outputer) res {
 	var tra [][]resource.TestResult
 	cacheKey := "res"
 	// Held across the lookup so a miss does not let a second request start its
@@ -113,7 +114,7 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
 	} else {
 		log.Printf(cacheMissLogFormat, cacheKey)
 		h.sys = system.New(h.c.PackageManager)
-		tra = h.validate()
+		tra = h.validate(ctx)
 		h.cache.SetDefault(cacheKey, tra)
 	}
 	h.gossMu.Unlock()
@@ -138,10 +139,10 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	}
 	return resp
 }
-func (h healthHandler) validate() [][]resource.TestResult {
+func (h healthHandler) validate(ctx context.Context) [][]resource.TestResult {
 	h.sys = system.New(h.c.PackageManager)
 	res := make([][]resource.TestResult, 0)
-	tr := validate(h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
+	tr := validate(ctx, h.sys, h.gossConfig, h.c.DisabledResourceTypes, h.maxConcurrent)
 	for i := range tr {
 		res = append(res, i)
 	}

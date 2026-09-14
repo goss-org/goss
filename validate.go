@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -87,7 +88,7 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
-func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err error) {
+func ValidateResults(ctx context.Context, c *util.Config) (results <-chan []resource.TestResult, err error) {
 	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
 	if err != nil {
 		return nil, err
@@ -95,14 +96,14 @@ func ValidateResults(c *util.Config) (results <-chan []resource.TestResult, err 
 
 	sys := system.New(c.PackageManager)
 
-	return validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
+	return validate(ctx, sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
 }
 
 // Validate performs validation, writes formatted output to stdout by default
 // and supports retries and more, this is the full featured Validate used
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
-func Validate(c *util.Config) (code int, err error) {
+func Validate(ctx context.Context, c *util.Config) (code int, err error) {
 	err = setLogLevel(c)
 	if err != nil {
 		return 1, err
@@ -111,10 +112,10 @@ func Validate(c *util.Config) (code int, err error) {
 	if err != nil {
 		return 78, err
 	}
-	return ValidateConfig(c, gossConfig)
+	return ValidateConfig(ctx, c, gossConfig)
 }
 
-func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error) {
+func ValidateConfig(ctx context.Context, c *util.Config, gossConfig *GossConfig) (code int, err error) {
 	// Needed for contains-elements
 	// Maybe we don't use this and use custom
 	// contain_element_matcher is needed because it's single entry to avoid
@@ -141,7 +142,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	i := 1
 	startTime := time.Now()
 	for {
-		out := validate(sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
+		out := validate(ctx, sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
 		exitCode := outputer.Output(ofh, out, outputConfig)
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
@@ -159,7 +160,7 @@ func ValidateConfig(c *util.Config, gossConfig *GossConfig) (code int, err error
 	}
 }
 
-func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {
+func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	in := make(chan resource.Resource)
 
@@ -184,7 +185,7 @@ func validate(sys *system.System, gossConfig GossConfig, skipList []string, maxC
 		go func() {
 			defer wg.Done()
 			for f := range in {
-				out <- f.Validate(sys)
+				out <- f.Validate(ctx, sys)
 			}
 		}()
 	}

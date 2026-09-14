@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 )
 
 // AddResources is a simple wrapper to add multiple resources
-func AddResources(fileName, resourceName string, keys []string, c *util.Config) error {
+func AddResources(ctx context.Context, fileName, resourceName string, keys []string, c *util.Config) error {
 	if err := setLogLevel(c); err != nil {
 		return err
 	}
@@ -35,7 +36,7 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 	sys := system.New(c.PackageManager)
 
 	for _, key := range keys {
-		if err := AddResource(fileName, gossConfig, resourceName, key, *c, sys); err != nil {
+		if err := AddResource(ctx, fileName, gossConfig, resourceName, key, *c, sys); err != nil {
 			return err
 		}
 	}
@@ -44,44 +45,44 @@ func AddResources(fileName, resourceName string, keys []string, c *util.Config) 
 }
 
 // AddResource adds a single resource to fileName
-func AddResource(fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
+func AddResource(ctx context.Context, fileName string, gossConfig GossConfig, resourceName, key string, config util.Config, sys *system.System) error {
 	var err error
 	var res resource.ResourceRead
 
 	// Need to figure out a good way to refactor this
 	switch resourceName {
 	case resource.AddResourceName:
-		res, err = gossConfig.Addrs.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Addrs.AppendSysResource(ctx, key, sys, config)
 	case resource.CommandResourceName:
-		res, err = gossConfig.Commands.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Commands.AppendSysResource(ctx, key, sys, config)
 	case resource.DNSResourceName:
-		res, err = gossConfig.DNS.AppendSysResource(key, sys, config)
+		res, err = gossConfig.DNS.AppendSysResource(ctx, key, sys, config)
 	case resource.FileResourceName:
-		res, err = gossConfig.Files.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Files.AppendSysResource(ctx, key, sys, config)
 	case resource.GroupResourceName:
-		res, err = gossConfig.Groups.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Groups.AppendSysResource(ctx, key, sys, config)
 	case resource.PackageResourceName:
-		res, err = gossConfig.Packages.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Packages.AppendSysResource(ctx, key, sys, config)
 	case resource.PortResourceName:
-		res, err = gossConfig.Ports.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Ports.AppendSysResource(ctx, key, sys, config)
 	case resource.ProcessResourceName:
-		res, err = gossConfig.Processes.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Processes.AppendSysResource(ctx, key, sys, config)
 	case resource.ServiceResourceName:
-		res, err = gossConfig.Services.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Services.AppendSysResource(ctx, key, sys, config)
 	case resource.UserResourceName:
-		res, err = gossConfig.Users.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Users.AppendSysResource(ctx, key, sys, config)
 	case resource.GossFileResourceName:
-		res, err = gossConfig.Gossfiles.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Gossfiles.AppendSysResource(ctx, key, sys, config)
 	case resource.KernelParamResourceName:
-		res, err = gossConfig.KernelParams.AppendSysResource(key, sys, config)
+		res, err = gossConfig.KernelParams.AppendSysResource(ctx, key, sys, config)
 	case resource.MountResourceName:
-		res, err = gossConfig.Mounts.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Mounts.AppendSysResource(ctx, key, sys, config)
 	case resource.InterfaceResourceName:
-		res, err = gossConfig.Interfaces.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Interfaces.AppendSysResource(ctx, key, sys, config)
 	case resource.HTTPResourceName:
-		res, err = gossConfig.HTTPs.AppendSysResource(key, sys, config)
+		res, err = gossConfig.HTTPs.AppendSysResource(ctx, key, sys, config)
 	case resource.RegistryResourceName:
-		res, err = gossConfig.Registries.AppendSysResource(key, sys, config)
+		res, err = gossConfig.Registries.AppendSysResource(ctx, key, sys, config)
 	default:
 		err = fmt.Errorf("undefined resource name: %s", resourceName)
 	}
@@ -96,7 +97,7 @@ func AddResource(fileName string, gossConfig GossConfig, resourceName, key strin
 }
 
 // AutoAddResources is a simple wrapper to add multiple resources
-func AutoAddResources(fileName string, keys []string, c *util.Config) error {
+func AutoAddResources(ctx context.Context, fileName string, keys []string, c *util.Config) error {
 	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
@@ -116,7 +117,7 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 	sys := system.New(c.PackageManager)
 
 	for _, key := range keys {
-		if err := AutoAddResource(fileName, gossConfig, key, c, sys); err != nil {
+		if err := AutoAddResource(ctx, fileName, gossConfig, key, c, sys); err != nil {
 			return err
 		}
 	}
@@ -125,10 +126,10 @@ func AutoAddResources(fileName string, keys []string, c *util.Config) error {
 }
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource
-func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
+func AutoAddResource(ctx context.Context, fileName string, gossConfig GossConfig, key string, c *util.Config, sys *system.System) error {
 	// file
 	if strings.Contains(key, "/") {
-		res, _, ok, err := gossConfig.Files.AppendSysResourceIfExists(key, sys)
+		res, _, ok, err := gossConfig.Files.AppendSysResourceIfExists(ctx, key, sys)
 		if err != nil {
 			return err
 		}
@@ -138,32 +139,28 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	}
 
 	// group
-	if res, _, ok, err := gossConfig.Groups.AppendSysResourceIfExists(key, sys); err != nil {
+	if res, _, ok, err := gossConfig.Groups.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// package
-	if res, _, ok, err := gossConfig.Packages.AppendSysResourceIfExists(key, sys); err != nil {
-
+	if res, _, ok, err := gossConfig.Packages.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// port
-	if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(key, sys); err != nil {
+	if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
-
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// process
-	if res, sysres, ok, err := gossConfig.Processes.AppendSysResourceIfExists(key, sys); err != nil {
+	if res, sysres, ok, err := gossConfig.Processes.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
@@ -175,7 +172,7 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 				for _, entry := range entries {
 					if entry.Pid == pidS {
 						// port
-						if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(port, sys); err != nil {
+						if res, _, ok, err := gossConfig.Ports.AppendSysResourceIfExists(ctx, port, sys); err != nil {
 							return err
 						} else if ok {
 							resourcePrint(fileName, res, c.AnnounceToCLI)
@@ -187,14 +184,14 @@ func AutoAddResource(fileName string, gossConfig GossConfig, key string, c *util
 	}
 
 	// Service
-	if res, _, ok, err := gossConfig.Services.AppendSysResourceIfExists(key, sys); err != nil {
+	if res, _, ok, err := gossConfig.Services.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)
 	}
 
 	// user
-	if res, _, ok, err := gossConfig.Users.AppendSysResourceIfExists(key, sys); err != nil {
+	if res, _, ok, err := gossConfig.Users.AppendSysResourceIfExists(ctx, key, sys); err != nil {
 		return err
 	} else if ok {
 		resourcePrint(fileName, res, c.AnnounceToCLI)

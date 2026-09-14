@@ -62,8 +62,8 @@ func (r *HTTP) getURL() string {
 	return r.id
 }
 
-func (u *HTTP) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, u.ID())
+func (u *HTTP) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, u.ID())
 	skip := u.Skip
 	if u.Timeout == 0 {
 		u.Timeout = 5000

@@ -49,8 +49,8 @@ func (i *Interface) GetName() string {
 	return i.id
 }
 
-func (i *Interface) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, i.ID())
+func (i *Interface) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, i.ID())
 	skip := i.Skip
 	sysInterface := sys.NewInterface(ctx, i.GetName(), sys, util.Config{})
 
