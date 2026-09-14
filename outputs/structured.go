@@ -97,5 +97,9 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, ou
 
 	fmt.Fprintln(w, string(j))
 
+	if result.Summary.Failed > 0 {
+		return 1
+	}
+
 	return 0
 }

@@ -46,8 +46,8 @@ func (p *Port) GetPort() string {
 	return p.id
 }
 
-func (p *Port) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, p.ID())
+func (p *Port) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, p.ID())
 	skip := p.Skip
 	sysPort := sys.NewPort(ctx, p.GetPort(), sys, util.Config{})
 

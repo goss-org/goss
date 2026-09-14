@@ -55,8 +55,8 @@ func (d *DNS) GetResolve() string {
 func (d *DNS) GetRetryCount() int        { return d.RetryCount }
 func (d *DNS) GetRetryDelay() RetryDelay { return d.RetryDelay }
 
-func (d *DNS) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, d.ID())
+func (d *DNS) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, d.ID())
 	skip := d.Skip
 	if d.Timeout == 0 {
 		d.Timeout = 500
