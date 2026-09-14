@@ -11,7 +11,7 @@ RUN --mount=target=. \
     -o "/release/goss" \
     ./cmd/goss
 
-FROM alpine:3.24
+FROM alpine:3.24.1
 
 COPY --from=base /release/* /usr/bin/
 
