@@ -4,9 +4,8 @@
 package util
 
 import (
-	"strings"
-
 	"os/exec"
+	"strings"
 	"syscall"
 )
 

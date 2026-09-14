@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysInterface is a minimal system.Interface implementation used to drive
@@ -68,7 +68,7 @@ func TestInterfaceEmptyAddrsWarns(t *testing.T) {
 	}
 
 	i := &Interface{id: "eth0", Exists: true, Addrs: []any{}}
-	out := captureStderr(t, func() { i.Validate(sys) })
+	out := captureStderr(t, func() { i.Validate(t.Context(), sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "interface.addrs") {
 		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming interface.addrs", out)

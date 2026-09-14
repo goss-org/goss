@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysUser is a minimal system.User implementation used to drive NewUser
@@ -71,7 +71,7 @@ func TestUserEmptyGroupsWarns(t *testing.T) {
 	}
 
 	u := &User{id: "nobody", Exists: true, Groups: []any{}}
-	out := captureStderr(t, func() { u.Validate(sys) })
+	out := captureStderr(t, func() { u.Validate(t.Context(), sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "user.groups") {
 		t.Errorf("Validate with empty groups stderr = %q, want a WARNING naming user.groups", out)

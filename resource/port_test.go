@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysPort is a minimal system.Port implementation used to drive NewPort
@@ -69,7 +69,7 @@ func TestPortEmptyIPWarns(t *testing.T) {
 	}
 
 	p := &Port{id: "tcp:9999", Listening: false, IP: []any{}}
-	out := captureStderr(t, func() { p.Validate(sys) })
+	out := captureStderr(t, func() { p.Validate(t.Context(), sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "port.ip") {
 		t.Errorf("Validate with empty ip stderr = %q, want a WARNING naming port.ip", out)

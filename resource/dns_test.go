@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysDNS is a minimal system.DNS implementation used to drive NewDNS
@@ -71,7 +71,7 @@ func TestDNSEmptyAddrsWarns(t *testing.T) {
 	}
 
 	d := &DNS{id: "localhost", Resolvable: false, Addrs: []any{}}
-	out := captureStderr(t, func() { d.Validate(sys) })
+	out := captureStderr(t, func() { d.Validate(t.Context(), sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "dns.addrs") {
 		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming dns.addrs", out)
