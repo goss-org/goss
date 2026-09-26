@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysHTTP is a minimal system.HTTP implementation used to drive NewHTTP
