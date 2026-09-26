@@ -104,7 +104,7 @@ func ValidateResults(ctx context.Context, c *util.Config) (<-chan []resource.Tes
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access.
 func Validate(ctx context.Context, c *util.Config) (int, error) {
-  err := setLogLevel(c)
+	err := setLogLevel(c)
 	if err != nil {
 		return 1, err
 	}
