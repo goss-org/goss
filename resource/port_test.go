@@ -69,7 +69,7 @@ func TestPortEmptyIPWarns(t *testing.T) {
 	}
 
 	p := &Port{id: "tcp:9999", Listening: false, IP: []any{}}
-	out := captureStderr(t, func() { p.Validate(sys) })
+	out := captureStderr(t, func() { p.Validate(t.Context(), sys) })
 
 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "port.ip") {
 		t.Errorf("Validate with empty ip stderr = %q, want a WARNING naming port.ip", out)
