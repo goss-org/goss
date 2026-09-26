@@ -46,8 +46,8 @@ func (g *Group) GetGroupname() string {
 	return g.id
 }
 
-func (g *Group) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, g.ID())
+func (g *Group) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, g.ID())
 	skip := g.Skip
 	sysgroup := sys.NewGroup(ctx, g.GetGroupname(), sys, util.Config{})
 

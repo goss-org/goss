@@ -10,8 +10,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// NewFile used to set Contents to an empty list, so every generated gossfile
-// warned about asserting nothing. It must stay unset and marshal away.
+// Contents must stay unset and marshal away: an empty list asserts nothing, so
+// every generated gossfile would warn about it.
 func TestNewFileLeavesContentsUnset(t *testing.T) {
 	sysFile := system.NewDefFile(t.Context(), "/etc/hostname", nil, util.Config{})
 	f, err := NewFile(sysFile, util.Config{})

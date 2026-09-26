@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,7 +12,7 @@ import (
 )
 
 type Resource interface {
-	Validate(sys *system.System) []TestResult
+	Validate(ctx context.Context, sys *system.System) []TestResult
 	SetID(string)
 	SetSkip()
 	TypeKey() string

@@ -46,8 +46,8 @@ func (p *Port) GetPort() string {
 	return p.id
 }
 
-func (p *Port) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, p.ID())
+func (p *Port) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, p.ID())
 	skip := p.Skip
 	sysPort := sys.NewPort(ctx, p.GetPort(), sys, util.Config{})
 
@@ -56,7 +56,7 @@ func (p *Port) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if p.IP != nil {
+	if isSetWarnEmpty(p.IP, fmt.Sprintf("%s: port.ip", p.ID())) {
 		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip))
 	}
 	return results
@@ -70,7 +70,9 @@ func NewPort(sysPort system.Port, config util.Config) (*Port, error) {
 		Listening: listening,
 	}
 	if !contains(config.IgnoreList, "ip") {
-		if ip, err := sysPort.IP(); err == nil {
+		// An empty list asserts nothing, so leave IP unset and let omitempty
+		// drop it rather than generating `ip: []`.
+		if ip, err := sysPort.IP(); err == nil && len(ip) > 0 {
 			p.IP = ip
 		}
 	}

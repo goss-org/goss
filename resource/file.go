@@ -60,8 +60,8 @@ func (f *File) GetPath() string {
 	return f.id
 }
 
-func (f *File) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, f.ID())
+func (f *File) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, f.ID())
 	skip := f.Skip
 	sysFile := sys.NewFile(ctx, f.GetPath(), sys, util.Config{})
 

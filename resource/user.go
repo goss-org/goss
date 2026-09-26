@@ -50,8 +50,8 @@ func (u *User) GetUsername() string {
 	return u.id
 }
 
-func (u *User) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, u.ID())
+func (u *User) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, u.ID())
 	skip := u.Skip
 	sysuser := sys.NewUser(ctx, u.GetUsername(), sys, util.Config{})
 
@@ -71,7 +71,7 @@ func (u *User) Validate(sys *system.System) []TestResult {
 	if u.Home != nil {
 		results = append(results, ValidateValue(u, "home", u.Home, sysuser.Home, skip))
 	}
-	if u.Groups != nil {
+	if isSetWarnEmpty(u.Groups, fmt.Sprintf("%s: user.groups", u.ID())) {
 		results = append(results, ValidateValue(u, "groups", u.Groups, sysuser.Groups, skip))
 	}
 	if u.Shell != nil {
@@ -98,7 +98,9 @@ func NewUser(sysUser system.User, config util.Config) (*User, error) {
 		}
 	}
 	if !contains(config.IgnoreList, "groups") {
-		if groups, err := sysUser.Groups(); err == nil {
+		// An empty list asserts nothing, so leave Groups unset and let omitempty
+		// drop it rather than generating `groups: []`.
+		if groups, err := sysUser.Groups(); err == nil && len(groups) > 0 {
 			u.Groups = groups
 		}
 	}

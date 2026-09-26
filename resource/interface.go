@@ -49,8 +49,8 @@ func (i *Interface) GetName() string {
 	return i.id
 }
 
-func (i *Interface) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, i.ID())
+func (i *Interface) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, i.ID())
 	skip := i.Skip
 	sysInterface := sys.NewInterface(ctx, i.GetName(), sys, util.Config{})
 
@@ -59,7 +59,7 @@ func (i *Interface) Validate(sys *system.System) []TestResult {
 	if shouldSkip(results) {
 		skip = true
 	}
-	if i.Addrs != nil {
+	if isSetWarnEmpty(i.Addrs, fmt.Sprintf("%s: interface.addrs", i.ID())) {
 		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip))
 	}
 	if i.MTU != nil {
@@ -76,7 +76,9 @@ func NewInterface(sysInterface system.Interface, config util.Config) (*Interface
 		Exists: exists,
 	}
 	if !contains(config.IgnoreList, "addrs") {
-		if addrs, err := sysInterface.Addrs(); err == nil {
+		// An empty list asserts nothing, so leave Addrs unset and let omitempty
+		// drop it rather than generating `addrs: []`.
+		if addrs, err := sysInterface.Addrs(); err == nil && len(addrs) > 0 {
 			i.Addrs = addrs
 		}
 	}

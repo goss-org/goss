@@ -52,8 +52,8 @@ func (a *Addr) GetAddress() string {
 	return a.id
 }
 
-func (a *Addr) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, a.ID())
+func (a *Addr) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, a.ID())
 	skip := a.Skip
 
 	if a.Timeout == 0 {

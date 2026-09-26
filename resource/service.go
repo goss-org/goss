@@ -47,8 +47,8 @@ func (s *Service) GetName() string {
 	return s.id
 }
 
-func (s *Service) Validate(sys *system.System) []TestResult {
-	ctx := context.WithValue(context.Background(), idKey{}, s.ID())
+func (s *Service) Validate(ctx context.Context, sys *system.System) []TestResult {
+	ctx = context.WithValue(ctx, idKey{}, s.ID())
 	skip := s.Skip
 	sysservice := sys.NewService(ctx, s.GetName(), sys, util.Config{})
 
