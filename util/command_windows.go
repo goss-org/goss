@@ -4,14 +4,12 @@
 package util
 
 import (
-	"strings"
-
 	"os/exec"
+	"strings"
 	"syscall"
 )
 
 func NewCommandForWindowsCmd(name string, arg ...string) *Command {
-	//fmt.Println(arg)
 	command := new(Command)
 	command.name = name
 

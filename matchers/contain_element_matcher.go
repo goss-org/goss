@@ -10,7 +10,7 @@ type ContainElementMatcher struct {
 	matchers.ContainElementMatcher
 }
 
-func ContainElement(element interface{}) GossMatcher {
+func ContainElement(element any) GossMatcher {
 	return &ContainElementMatcher{
 		matchers.ContainElementMatcher{
 			Element: element,
@@ -18,7 +18,7 @@ func ContainElement(element interface{}) GossMatcher {
 	}
 }
 
-func (m *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to contain element matching",
@@ -26,7 +26,7 @@ func (m *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult 
 	}
 }
 
-func (m *ContainElementMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ContainElementMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to contain element matching",
@@ -35,7 +35,7 @@ func (m *ContainElementMatcher) NegatedFailureResult(actual interface{}) Matcher
 }
 
 func (m *ContainElementMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["contain-element"] = m.Element
 	return json.Marshal(j)
 }

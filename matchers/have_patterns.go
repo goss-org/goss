@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/onsi/gomega/format"
@@ -29,7 +30,7 @@ func HavePatterns(elements any) GossMatcher {
 	}
 }
 
-func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
+func (m *HavePatternsMatcher) Match(actual any) (bool, error) {
 	t, ok := m.Elements.([]any)
 	if !ok {
 		return false, fmt.Errorf("HavePatterns matcher expects an array of matchers.  Got:\n%s", format.Object(m.Elements, 1))
@@ -61,7 +62,6 @@ func (m *HavePatternsMatcher) Match(actual any) (success bool, err error) {
 		fh = strings.NewReader(strings.Join(av, "\n"))
 	default:
 		err = fmt.Errorf("Incorrect type %T", actual)
-
 	}
 	if err != nil {
 		return false, err
@@ -192,11 +192,8 @@ func newRegexPattern(str string) (*regexPattern, error) {
 		cleanStr = cleanStr[1:]
 	}
 	trimLeft := []rune{'\\', '/'}
-	for _, r := range trimLeft {
-		if rune(cleanStr[0]) == r {
-			cleanStr = cleanStr[1:]
-			break
-		}
+	if slices.Contains(trimLeft, rune(cleanStr[0])) {
+		cleanStr = cleanStr[1:]
 	}
 	// Strip trailing closing delimiter and any flags that follow it.
 	// Supported flags mirror Go's regexp inline flags: i, m, s.
@@ -218,7 +215,6 @@ func newRegexPattern(str string) (*regexPattern, error) {
 		re:      re,
 		inverse: inverse,
 	}, err
-
 }
 
 func (re *regexPattern) Match(str string) bool {
@@ -276,6 +272,7 @@ func patternsToSlice(patterns []patternMatcher) []string {
 	}
 	return slice
 }
+
 func subtractSlice(x, y []string) []string {
 	m := make(map[string]bool)
 

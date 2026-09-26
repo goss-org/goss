@@ -19,7 +19,7 @@ func (g *DefGossfile) Path() string {
 	return g.path
 }
 
-// Stub out
+// Stub out.
 func (g *DefGossfile) Exists() (bool, error) {
 	return false, nil
 }
