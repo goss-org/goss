@@ -40,9 +40,16 @@ func (m *OrMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *OrMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	firstSuccessfulMatcher := getUnexported(m, "firstSuccessfulMatcher")
-	return firstSuccessfulMatcher.(GossMatcher).NegatedFailureResult(actual)
+func (m *OrMatcher) NegatedFailureResult(actual any) MatcherResult {
+	// Unset when no child matched, e.g. a transform or a child errored (#1128).
+	if m.firstSuccessfulMatcher == nil {
+		return MatcherResult{
+			Actual:   actual,
+			Message:  "not to satisfy any of these matchers",
+			Expected: m.Matchers,
+		}
+	}
+	return m.firstSuccessfulMatcher.NegatedFailureResult(actual)
 }
 
 func (m *OrMatcher) MarshalJSON() ([]byte, error) {
