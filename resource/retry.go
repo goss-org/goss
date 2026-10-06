@@ -127,7 +127,7 @@ func runWithRetry(retryCount int, retryDelay RetryDelay, validate func() bool) {
 	attempts := retryAttempts(retryCount)
 	delay := normalizedRetryDelay(retryDelay)
 
-	for attempt := 0; attempt < attempts; attempt++ {
+	for attempt := range attempts {
 		if validate() {
 			return
 		}

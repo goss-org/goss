@@ -6,11 +6,12 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"slices"
 	"strconv"
 	"sync"
 
 	"github.com/goss-org/GOnetstat"
-	// This needs a better name
+	// This needs a better name.
 	"github.com/goss-org/go-ps"
 
 	util2 "github.com/goss-org/goss/util"
@@ -84,7 +85,7 @@ func New(packageManager string) *System {
 	return sys
 }
 
-// detectPackage adds the correct package creation function to a System struct
+// detectPackage adds the correct package creation function to a System struct.
 func (sys *System) detectPackage(p string) {
 	if p != "dpkg" && p != "apk" && p != "pacman" && p != "rpm" {
 		p = DetectPackageManager()
@@ -101,7 +102,7 @@ func (sys *System) detectPackage(p string) {
 	}
 }
 
-// detectService adds the correct service creation function to a System struct
+// detectService adds the correct service creation function to a System struct.
 func (sys *System) detectService() {
 	switch DetectService() {
 	case "upstart":
@@ -119,20 +120,14 @@ func (sys *System) detectService() {
 	}
 }
 
-// SupportedPackageManagers is a list of package managers we support
+// SupportedPackageManagers is a list of package managers we support.
 func SupportedPackageManagers() []string {
 	return []string{"apk", "dpkg", "pacman", "rpm"}
 }
 
-// IsSupportedPackageManager determines if p is a supported package manager
+// IsSupportedPackageManager determines if p is a supported package manager.
 func IsSupportedPackageManager(p string) bool {
-	for _, m := range SupportedPackageManagers() {
-		if m == p {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(SupportedPackageManagers(), p)
 }
 
 // DetectPackageManager attempts to detect whether or not the system is using
@@ -214,11 +209,11 @@ func HasCommand(cmd string) bool {
 
 func isLegacySystemd() bool {
 	if b, err := os.ReadFile("/etc/debian_version"); err == nil {
-		i := bytes.Index(b, []byte("."))
-		if i < 0 {
+		before, _, ok := bytes.Cut(b, []byte("."))
+		if !ok {
 			return false
 		}
-		if major, err := strconv.Atoi(string(b[:i])); err == nil {
+		if major, err := strconv.Atoi(string(before)); err == nil {
 			return major < 9
 		}
 	}

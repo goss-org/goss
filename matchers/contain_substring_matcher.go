@@ -10,7 +10,7 @@ type ContainSubstringMatcher struct {
 	matchers.ContainSubstringMatcher
 }
 
-func ContainSubstring(substr string, args ...interface{}) GossMatcher {
+func ContainSubstring(substr string, args ...any) GossMatcher {
 	return &ContainSubstringMatcher{
 		matchers.ContainSubstringMatcher{
 			Substr: substr,
@@ -19,7 +19,7 @@ func ContainSubstring(substr string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (m *ContainSubstringMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *ContainSubstringMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to contain substring",
@@ -27,7 +27,7 @@ func (m *ContainSubstringMatcher) FailureResult(actual interface{}) MatcherResul
 	}
 }
 
-func (m *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *ContainSubstringMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to contain substring",
@@ -36,7 +36,7 @@ func (m *ContainSubstringMatcher) NegatedFailureResult(actual interface{}) Match
 }
 
 func (m *ContainSubstringMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["contain-substring"] = m.Substr
 	return json.Marshal(j)
 }

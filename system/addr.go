@@ -33,6 +33,7 @@ func NewDefAddr(_ context.Context, address string, system *System, config util.C
 func (a *DefAddr) ID() string {
 	return a.address
 }
+
 func (a *DefAddr) Address() string {
 	return a.address
 }
@@ -56,7 +57,7 @@ func (a *DefAddr) Reachable() (bool, error) {
 	return true, nil
 }
 
-func splitAddress(fulladdress string) (network, address string) {
+func splitAddress(fulladdress string) (string, string) {
 	split := strings.SplitN(fulladdress, "://", 2)
 	if len(split) == 2 {
 		return split[0], split[1]

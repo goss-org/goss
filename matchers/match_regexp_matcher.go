@@ -10,7 +10,7 @@ type MatchRegexpMatcher struct {
 	matchers.MatchRegexpMatcher
 }
 
-func MatchRegexp(regexp string, args ...interface{}) GossMatcher {
+func MatchRegexp(regexp string, args ...any) GossMatcher {
 	return &MatchRegexpMatcher{
 		matchers.MatchRegexpMatcher{
 			Regexp: regexp,
@@ -19,7 +19,7 @@ func MatchRegexp(regexp string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (m *MatchRegexpMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *MatchRegexpMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to match regular expression",
@@ -27,7 +27,7 @@ func (m *MatchRegexpMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *MatchRegexpMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *MatchRegexpMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to match regular expression",
@@ -36,7 +36,7 @@ func (m *MatchRegexpMatcher) NegatedFailureResult(actual interface{}) MatcherRes
 }
 
 func (m *MatchRegexpMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["match-regexp"] = m.Regexp
 	return json.Marshal(j)
 }
