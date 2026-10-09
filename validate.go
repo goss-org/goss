@@ -1,6 +1,7 @@
 package goss
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -137,27 +138,103 @@ func ValidateConfig(ctx context.Context, c *util.Config, gossConfig *GossConfig)
 		ofh = c.OutputWriter
 	}
 
+	return runValidationAttempts(
+		c,
+		outputer,
+		ofh,
+		outputConfig,
+		func() <-chan []resource.TestResult {
+			return validate(ctx, sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
+		},
+		func() {
+			sys = system.New(c.PackageManager)
+		},
+		time.Now,
+		time.Sleep,
+		os.Stderr,
+	)
+}
+
+func runValidationAttempts(
+	c *util.Config,
+	outputer outputs.Outputer,
+	ofh io.Writer,
+	outputConfig util.OutputConfig,
+	validateAttempt func() <-chan []resource.TestResult,
+	resetSystem func(),
+	now func() time.Time,
+	sleepFor func(time.Duration),
+	progress io.Writer,
+) (int, error) {
 	sleep := c.Sleep
 	retryTimeout := c.RetryTimeout
-	i := 1
-	startTime := time.Now()
+	discoveryRetry := c.OutputFormat == "discovery" && retryTimeout > 0
+	attemptNumber := 1
+	startTime := now()
 	for {
-		out := validate(ctx, sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent)
-		exitCode := outputer.Output(ofh, out, outputConfig)
+		attemptWriter := ofh
+		var attempt bytes.Buffer
+		if discoveryRetry {
+			attemptWriter = &attempt
+		}
+
+		exitCode := outputer.Output(attemptWriter, validateAttempt(), outputConfig)
+		if discoveryRetry {
+			switch exitCode {
+			case 0:
+				if err := writeValidationOutput(ofh, attempt.Bytes()); err != nil {
+					fmt.Fprintf(progress, "discovery format: output failure: %v\n", err)
+					return 2, nil
+				}
+				return 0, nil
+			case 1:
+				// A validation result may change on the next attempt.
+			default:
+				// Contract and encoding failures cannot be repaired by retrying.
+				return exitCode, nil
+			}
+		}
 		if retryTimeout == 0 || exitCode == 0 {
 			return exitCode, nil
 		}
-		elapsed := time.Since(startTime)
+		elapsed := now().Sub(startTime)
 		if elapsed+sleep > retryTimeout {
+			if discoveryRetry {
+				if err := writeValidationOutput(ofh, attempt.Bytes()); err != nil {
+					fmt.Fprintf(progress, "discovery format: output failure: %v\n", err)
+					return 2, nil
+				}
+				fmt.Fprintf(progress, "discovery format: timeout of %s reached before tests entered a passing state\n", retryTimeout)
+				return exitCode, nil
+			}
 			return 3, fmt.Errorf("timeout of %s reached before tests entered a passing state", retryTimeout)
 		}
-		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
+		if discoveryRetry {
+			fmt.Fprintf(progress, "Retrying in %s (elapsed/timeout time: %.3fs/%s)\n", sleep, elapsed.Seconds(), retryTimeout)
+		} else {
+			color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
+		}
 		// Reset cache
-		sys = system.New(c.PackageManager)
-		time.Sleep(sleep)
-		i++
-		fmt.Printf("Attempt #%d:\n", i)
+		resetSystem()
+		sleepFor(sleep)
+		attemptNumber++
+		if discoveryRetry {
+			fmt.Fprintf(progress, "Attempt #%d:\n", attemptNumber)
+		} else {
+			fmt.Printf("Attempt #%d:\n", attemptNumber)
+		}
 	}
+}
+
+func writeValidationOutput(w io.Writer, document []byte) error {
+	written, err := w.Write(document)
+	if err != nil {
+		return err
+	}
+	if written != len(document) {
+		return io.ErrShortWrite
+	}
+	return nil
 }
 
 func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, skipList []string, maxConcurrent int) <-chan []resource.TestResult {

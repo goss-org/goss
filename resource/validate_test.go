@@ -59,6 +59,39 @@ func TestValidateValueErr(t *testing.T) {
 	}
 }
 
+func TestValidateValueRetainsSuccessfulTransformObservation(t *testing.T) {
+	result := ValidateValue(&FakeResource{"transform-pass"}, "stdout", 42, func() (any, error) {
+		return "42", nil
+	}, false)
+	if result.Result != SUCCESS {
+		t.Fatalf("expected success, got %d (%v)", result.Result, result.Err)
+	}
+	if got, ok := result.MatcherResult.Actual.(float64); !ok || got != 42 {
+		t.Fatalf("expected transformed actual 42, got %T %v", result.MatcherResult.Actual, result.MatcherResult.Actual)
+	}
+	if got, ok := result.MatcherResult.UntransformedValue.(string); !ok || got != "42" {
+		t.Fatalf("expected original value 42, got %T %v", result.MatcherResult.UntransformedValue, result.MatcherResult.UntransformedValue)
+	}
+	if len(result.MatcherResult.TransformerChain) != 1 {
+		t.Fatalf("expected one transformer, got %d", len(result.MatcherResult.TransformerChain))
+	}
+}
+
+func TestValidateValueRetainsTransformErrorObservation(t *testing.T) {
+	result := ValidateValue(&FakeResource{"transform-error"}, "stdout", 42, func() (any, error) {
+		return "not-a-number", nil
+	}, false)
+	if result.Result != FAIL || result.Err == nil {
+		t.Fatalf("expected transform failure, got result=%d err=%v", result.Result, result.Err)
+	}
+	if got, ok := result.MatcherResult.UntransformedValue.(string); !ok || got != "not-a-number" {
+		t.Fatalf("expected original value, got %T %v", result.MatcherResult.UntransformedValue, result.MatcherResult.UntransformedValue)
+	}
+	if len(result.MatcherResult.TransformerChain) != 1 {
+		t.Fatalf("expected attempted transformer, got %d", len(result.MatcherResult.TransformerChain))
+	}
+}
+
 func TestValidateValueSkip(t *testing.T) {
 	for _, c := range stringTests {
 		inFunc := func() (any, error) {
