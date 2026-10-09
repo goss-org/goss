@@ -345,6 +345,9 @@ JSON Schema maintains a [table of validators](https://json-schema.org/tools?quer
 * rspecish - **(default)** Similar to rspec output
 * documentation - Verbose test results
 * json - JSON, detailed test result
+* discovery - One JSON document of validation results loadable unchanged with `--vars`.
+  Variables use a non-empty string `meta.register`, or the resource ID when absent.
+  Supports `pretty`, `sort`, and `exclude_raw` format options.
 * tap - TAP style
 * junit - JUnit style
 * nagios - Nagios/Sensu compatible output /w exit code 2 for failures.

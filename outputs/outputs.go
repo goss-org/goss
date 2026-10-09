@@ -30,6 +30,7 @@ type Outputer interface {
 var (
 	outputersMu sync.Mutex
 	outputers   = map[string]Outputer{
+		"discovery":     &Discovery{},
 		"documentation": &Documentation{},
 		"json":          &Json{},
 		"junit":         &JUnit{},
