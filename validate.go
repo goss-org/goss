@@ -19,13 +19,20 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg *GossConfig, err error) {
+// getGossConfig loads the gossfile named by the config, following its imports.
+//
+// It takes the whole config rather than the three fields it reads from it
+// because the merge below reports duplicate resources, and that needs the
+// config's logger.
+func getGossConfig(c *util.Config) (cfg *GossConfig, err error) {
 	// handle stdin
 	var fh *os.File
 	var path, source string
 	var gossConfig GossConfig
 
-	tf, err := NewTemplateFilter(varsFiles, varsInline)
+	specFile := c.Spec
+
+	tf, err := NewTemplateFilter(c.VarsFiles, c.VarsInline)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +70,7 @@ func getGossConfig(varsFiles []string, varsInline string, specFile string) (cfg 
 		}
 	}
 
-	gossConfig, err = mergeJSONData(gossConfig, 0, path)
+	gossConfig, err = mergeJSONData(gossConfig, 0, path, duplicateWarner(c.Logger))
 	if err != nil {
 		return nil, err
 	}
@@ -89,12 +96,12 @@ func getOutputer(c *bool, format string) (outputs.Outputer, error) {
 // ValidateResults performs validation and provides programmatic access to validation results
 // no retries or outputs are supported
 func ValidateResults(ctx context.Context, c *util.Config) (results <-chan []resource.TestResult, err error) {
-	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c)
 	if err != nil {
 		return nil, err
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	return validate(ctx, sys, *gossConfig, c.DisabledResourceTypes, c.MaxConcurrent), nil
 }
@@ -104,11 +111,7 @@ func ValidateResults(ctx context.Context, c *util.Config) (results <-chan []reso
 // by the typical CLI invocation and will produce output to StdOut.  Use
 // ValidateResults for programmatic access
 func Validate(ctx context.Context, c *util.Config) (code int, err error) {
-	err = setLogLevel(c)
-	if err != nil {
-		return 1, err
-	}
-	gossConfig, err := getGossConfig(c.VarsFiles, c.VarsInline, c.Spec)
+	gossConfig, err := getGossConfig(c)
 	if err != nil {
 		return 78, err
 	}
@@ -121,11 +124,13 @@ func ValidateConfig(ctx context.Context, c *util.Config, gossConfig *GossConfig)
 	// contain_element_matcher is needed because it's single entry to avoid
 	// transform message
 	format.UseStringerRepresentation = true
+	logger := util.LoggerOrDiscard(c.Logger)
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
+		Logger:        logger,
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(logger))
 	outputer, err := getOutputer(c.NoColor, c.OutputFormat)
 	if err != nil {
 		return 1, err
@@ -153,7 +158,7 @@ func ValidateConfig(ctx context.Context, c *util.Config, gossConfig *GossConfig)
 		}
 		color.Red("Retrying in %s (elapsed/timeout time: %.3fs/%s)\n\n\n", sleep, elapsed.Seconds(), retryTimeout)
 		// Reset cache
-		sys = system.New(c.PackageManager)
+		sys = system.New(c.PackageManager, system.WithLogger(logger))
 		time.Sleep(sleep)
 		i++
 		fmt.Printf("Attempt #%d:\n", i)
