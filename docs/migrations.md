@@ -1,5 +1,18 @@
 # Migration guide
 
+## v0.5 migration
+
+### Log output is structured and no longer global
+
+goss now logs through `log/slog`. The `[LEVEL]` prefix and the prefix-matching
+filter behind it are gone, record messages are constant with the variable data
+in attributes, and as a library goss emits nothing until it is given a logger.
+`util.Config.LogLevel` has been removed: set the level on that logger's handler
+instead.
+
+See [Logging](logging.md#migrating-from-earlier-versions) for the full list of
+changes and the record schema.
+
 ## v4 migration
 
 ### Array matchers (e.g. user.groups) no longer allows duplicates

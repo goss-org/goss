@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os/exec"
 	"time"
 
@@ -32,6 +33,7 @@ type Command interface {
 
 type DefCommand struct {
 	Ctx        context.Context
+	logger     *slog.Logger
 	command    util.ExecCommand
 	exitStatus int
 	stdout     io.Reader
@@ -50,6 +52,7 @@ type DefCommand struct {
 func NewDefCommand(ctx context.Context, command any, system *System, config util.Config) Command {
 	c := &DefCommand{
 		Ctx:     ctx,
+		logger:  system.loggerOrDiscard(),
 		Timeout: config.TimeOutMilliSeconds(),
 	}
 	switch cmd := command.(type) {
@@ -90,9 +93,17 @@ func (c *DefCommand) setup() error {
 	stdoutB := cmd.Stdout.Bytes()
 	stderrB := cmd.Stderr.Bytes()
 
-	id := c.Ctx.Value(CommandIDKey)
-	logBytes(stdoutB, fmt.Sprintf("[Command][%s][stdout] ", id))
-	logBytes(stderrB, fmt.Sprintf("[Command][%s][stderr] ", id))
+	// Construct the command display once, only when its records are enabled.
+	if c.logger.Enabled(context.Background(), slog.LevelDebug) {
+		display := c.command.CmdStr
+		if display == "" {
+			encoded, _ := c.command.MarshalJSON()
+			display = string(encoded)
+		}
+		id, _ := c.Ctx.Value(CommandIDKey).(string)
+		logCommandOutput(c.logger, stdoutB, id, display, streamStdout)
+		logCommandOutput(c.logger, stderrB, id, display, streamStderr)
+	}
 	c.stdout = bytes.NewReader(stdoutB)
 	c.stderr = bytes.NewReader(stderrB)
 

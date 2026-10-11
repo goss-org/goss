@@ -14,9 +14,6 @@ import (
 
 // AddResources is a simple wrapper to add multiple resources
 func AddResources(ctx context.Context, fileName, resourceName string, keys []string, c *util.Config) error {
-	if err := setLogLevel(c); err != nil {
-		return err
-	}
 	format, err := getStoreFormatFromFileName(fileName)
 	if err != nil {
 		return err
@@ -33,7 +30,7 @@ func AddResources(ctx context.Context, fileName, resourceName string, keys []str
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	for _, key := range keys {
 		if err := AddResource(ctx, fileName, gossConfig, resourceName, key, *c, sys); err != nil {
@@ -41,7 +38,23 @@ func AddResources(ctx context.Context, fileName, resourceName string, keys []str
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	return writeConfig(fileName, gossConfig, c)
+}
+
+// writeConfig writes the assembled configuration, warning through the injected
+// logger when there was nothing worth writing. Both add roots return nil in that
+// case, as they always have.
+func writeConfig(fileName string, gossConfig GossConfig, c *util.Config) error {
+	written, err := writeJSON(fileName, gossConfig)
+	if err != nil {
+		return err
+	}
+
+	if !written {
+		util.LoggerOrDiscard(c.Logger).Warn("empty configuration not written", "path", fileName)
+	}
+
+	return nil
 }
 
 // AddResource adds a single resource to fileName
@@ -114,7 +127,7 @@ func AutoAddResources(ctx context.Context, fileName string, keys []string, c *ut
 		gossConfig = *NewGossConfig()
 	}
 
-	sys := system.New(c.PackageManager)
+	sys := system.New(c.PackageManager, system.WithLogger(util.LoggerOrDiscard(c.Logger)))
 
 	for _, key := range keys {
 		if err := AutoAddResource(ctx, fileName, gossConfig, key, c, sys); err != nil {
@@ -122,7 +135,7 @@ func AutoAddResources(ctx context.Context, fileName string, keys []string, c *ut
 		}
 	}
 
-	return WriteJSON(fileName, gossConfig)
+	return writeConfig(fileName, gossConfig, c)
 }
 
 // AutoAddResource adds a single resource to fileName with automatic detection of the type of resource
