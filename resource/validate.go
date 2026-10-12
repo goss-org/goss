@@ -219,10 +219,18 @@ func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, a
 	var matcherResult matchers.MatcherResult
 	result := SUCCESS
 	if success {
-		matcherResult = matchers.MatcherResult{
-			Actual:   foundValue,
-			Message:  "matches expectation",
-			Expected: expectedValue,
+		if observer, ok := gomegaMatcher.(interface {
+			SuccessResult(interface{}) matchers.MatcherResult
+		}); ok {
+			matcherResult = observer.SuccessResult(foundValue)
+			matcherResult.Message = "matches expectation"
+			matcherResult.Expected = expectedValue
+		} else {
+			matcherResult = matchers.MatcherResult{
+				Actual:   foundValue,
+				Message:  "matches expectation",
+				Expected: expectedValue,
+			}
 		}
 	} else {
 		matcherResult = gomegaMatcher.FailureResult(foundValue)
