@@ -123,6 +123,7 @@ func ValidateConfig(ctx context.Context, c *util.Config, gossConfig *GossConfig)
 	format.UseStringerRepresentation = true
 	outputConfig := util.OutputConfig{
 		FormatOptions: c.FormatOptions,
+		SpecFile:      c.Spec,
 	}
 
 	sys := system.New(c.PackageManager)
