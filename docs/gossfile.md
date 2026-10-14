@@ -1067,6 +1067,11 @@ Available functions:
         !!! note
             Goss will error out during the parsing phase if the file does not exist, no tests will be executed.
 
+    `glob "pattern"`
+    :   Returns the sorted list of paths matching the pattern, or an empty list if none match.
+        The pattern uses [Go's `filepath.Match` syntax](https://pkg.go.dev/path/filepath#Match) (`*`, `?`, `[...]`),
+        `**` is not supported. Paths are listed when the gossfile is rendered, before any test runs.
+
     `regexMatch "(some)?reg[eE]xp"`
     :   Tests the piped input against the regular expression argument.
 
@@ -1130,6 +1135,43 @@ file:
     filetype: file
 {{end}}
 ```
+
+Using `glob` to generate tests for every path matching a pattern, here to check all the cron jobs.
+
+```yaml+jinja
+file:
+{{- range glob "/etc/cron.d/*" }}
+  {{.}}:
+    exists: true
+    owner: root
+    mode: "0644"
+{{- end }}
+```
+
+Using `glob` with `matching` to test the content of each matching file.
+Unlike a `file` resource, the key of a `matching` test is free, so several tests can read the same file.
+
+```yaml+jinja
+matching:
+{{- range glob "/etc/myapp/conf.d/*.conf" }}
+  {{ printf "myapp_no_debug %s" . | toJson }}:
+    content: {{ readFile . | toJson }}
+    matches:
+      not:
+        match-regexp: "(?m)^debug\\s*=\\s*true"
+{{- else }}
+  myapp_no_debug:
+    content: "no configuration file found"
+    matches: "at least one configuration file"
+{{- end }}
+```
+
+!!! tip
+    `readFile` inserts the raw file content in the gossfile. Pipe it to `toJson` to get a valid YAML string
+    whatever the file contains (quotes, new lines...).
+
+    The `{{ else }}` branch of `range` runs when `glob` finds nothing: use it to fail explicitly,
+    otherwise no test is generated and the run succeeds.
 
 Using `upper` function from Sprig.
 
