@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysPort is a minimal system.Port implementation used to drive NewPort
