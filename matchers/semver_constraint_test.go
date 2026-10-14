@@ -345,7 +345,7 @@ func Test_toVersions(t *testing.T) {
 
 				for i, version := range gotVersions {
 					if versions, ok := tt.args.in.([]string); ok {
-						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
+						assert.Equal(t, versions[i], version.String())
 					} else if versions, ok := tt.args.in.([]any); ok {
 						assert.Equal(t, fmt.Sprint(versions[i]), version.String())
 					} else {

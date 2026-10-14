@@ -190,7 +190,7 @@ func TestServeNegotiatingContent(t *testing.T) {
 func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 	var logOutput syncBuffer
 	log.SetOutput(&logOutput)
-	const cache = time.Duration(time.Millisecond * 100)
+	const cache = time.Millisecond * 100
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
@@ -237,7 +237,7 @@ func TestServeCacheWithNoContentNegotiation(t *testing.T) {
 func TestServeCacheNegotiatingContent(t *testing.T) {
 	var logOutput syncBuffer
 	log.SetOutput(&logOutput)
-	const cache = time.Duration(time.Millisecond * 100)
+	const cache = time.Millisecond * 100
 	config, err := util.NewConfig(
 		util.WithSpecFile(filepath.Join("testdata", "passing.goss.yaml")),
 		util.WithCache(cache),
@@ -303,7 +303,7 @@ func TestServeCacheNegotiatingContent(t *testing.T) {
 }
 
 func makeRequest(t *testing.T, config *util.Config, headers map[string][]string) *http.Request {
-	req, err := http.NewRequest("GET", config.Endpoint, nil)
+	req, err := http.NewRequest(http.MethodGet, config.Endpoint, nil)
 	require.NoError(t, err)
 	for header, vals := range headers {
 		for _, v := range vals {

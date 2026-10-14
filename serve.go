@@ -139,6 +139,7 @@ func (h healthHandler) output(trc <-chan []resource.TestResult, outputer outputs
 	}
 	return resp
 }
+
 func (h healthHandler) validate(ctx context.Context) [][]resource.TestResult {
 	h.sys = system.New(h.c.PackageManager)
 	res := make([][]resource.TestResult, 0)
@@ -173,8 +174,8 @@ func (h healthHandler) negotiateResponseContentType(r *http.Request) (string, ou
 	outputName := ""
 	for _, acceptCandidate := range acceptHeader {
 		acceptCandidate = strings.TrimSpace(acceptCandidate)
-		if strings.HasPrefix(acceptCandidate, mediaTypePrefix) {
-			outputName = strings.TrimPrefix(acceptCandidate, mediaTypePrefix)
+		if after, ok := strings.CutPrefix(acceptCandidate, mediaTypePrefix); ok {
+			outputName = after
 		} else if strings.EqualFold("application/json", acceptCandidate) || strings.EqualFold("text/json", acceptCandidate) {
 			outputName = "json"
 		} else {

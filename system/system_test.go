@@ -8,7 +8,7 @@ import (
 
 type noInputs func() string
 
-// test that a function with no inputs returns one of the expected strings
+// test that a function with no inputs returns one of the expected strings.
 func testOutputs(f noInputs, validOutputs []string, t *testing.T) {
 	output := f()
 	// use reflect to get the name of the function

@@ -10,7 +10,7 @@ type EqualMatcher struct {
 	matchers.EqualMatcher
 }
 
-func Equal(element interface{}) GossMatcher {
+func Equal(element any) GossMatcher {
 	return &EqualMatcher{
 		matchers.EqualMatcher{
 			Expected: element,
@@ -18,7 +18,7 @@ func Equal(element interface{}) GossMatcher {
 	}
 }
 
-func (m *EqualMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *EqualMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to equal",
@@ -26,7 +26,7 @@ func (m *EqualMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *EqualMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *EqualMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to equal",

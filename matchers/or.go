@@ -17,7 +17,7 @@ func Or(ms ...GossMatcher) GossMatcher {
 	return &OrMatcher{Matchers: ms}
 }
 
-func (m *OrMatcher) Match(actual interface{}) (success bool, err error) {
+func (m *OrMatcher) Match(actual any) (bool, error) {
 	m.firstSuccessfulMatcher = nil
 	for _, matcher := range m.Matchers {
 		success, err := matcher.Match(actual)
@@ -32,7 +32,7 @@ func (m *OrMatcher) Match(actual interface{}) (success bool, err error) {
 	return false, nil
 }
 
-func (m *OrMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *OrMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to satisfy at least one of these matchers",
@@ -40,13 +40,13 @@ func (m *OrMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *OrMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *OrMatcher) NegatedFailureResult(actual any) MatcherResult {
 	firstSuccessfulMatcher := getUnexported(m, "firstSuccessfulMatcher")
 	return firstSuccessfulMatcher.(GossMatcher).NegatedFailureResult(actual)
 }
 
 func (m *OrMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["or"] = m.Matchers
 	return json.Marshal(j)
 }

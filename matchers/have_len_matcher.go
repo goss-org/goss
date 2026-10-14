@@ -18,7 +18,7 @@ func HaveLen(count int) GossMatcher {
 	}
 }
 
-func (m *HaveLenMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HaveLenMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to have length",
@@ -26,7 +26,7 @@ func (m *HaveLenMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HaveLenMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to have length",
@@ -35,7 +35,7 @@ func (m *HaveLenMatcher) NegatedFailureResult(actual interface{}) MatcherResult 
 }
 
 func (m *HaveLenMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["have-len"] = m.Count
 	return json.Marshal(j)
 }

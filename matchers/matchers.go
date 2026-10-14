@@ -11,25 +11,24 @@ import (
 type GossMatcher interface {
 	// This is needed due to oMegaMatcher test in some of the GomegaMatcher logic
 	types.GomegaMatcher
-	//Match(actual interface{}) (success bool, err error)
-	FailureResult(actual interface{}) MatcherResult
-	NegatedFailureResult(actual interface{}) MatcherResult
+	FailureResult(actual any) MatcherResult
+	NegatedFailureResult(actual any) MatcherResult
 	// This doesn't seem to make a difference, maybe not needed
 	json.Marshaler
 }
 
 type MatcherResult struct {
-	Actual             interface{}   `json:"actual"`
+	Actual             any           `json:"actual"`
 	Message            string        `json:"message"`
-	Expected           interface{}   `json:"expected"`
-	MissingElements    interface{}   `json:"missing-elements"`
-	FoundElements      interface{}   `json:"found-elements"`
-	ExtraElements      interface{}   `json:"extra-elements"`
+	Expected           any           `json:"expected"`
+	MissingElements    any           `json:"missing-elements"`
+	FoundElements      any           `json:"found-elements"`
+	ExtraElements      any           `json:"extra-elements"`
 	TransformerChain   []Transformer `json:"transform-chain"`
-	UntransformedValue interface{}   `json:"untransformed-value"`
+	UntransformedValue any           `json:"untransformed-value"`
 }
 
-func getUnexported(i interface{}, field string) interface{} {
+func getUnexported(i any, field string) any {
 	rs := reflect.ValueOf(i).Elem()
 	rf := rs.FieldByName(field)
 	rf = reflect.NewAt(rf.Type(), unsafe.Pointer(rf.UnsafeAddr())).Elem()
@@ -38,12 +37,12 @@ func getUnexported(i interface{}, field string) interface{} {
 
 type fakeOmegaMatcher struct{}
 
-// FailureMessage is a stub to honor omegaMatcher interface
-func (m *fakeOmegaMatcher) FailureMessage(_ interface{}) (message string) {
+// FailureMessage is a stub to honor omegaMatcher interface.
+func (m *fakeOmegaMatcher) FailureMessage(_ any) string {
 	return ""
 }
 
-// NegatedFailureMessage is a stub to honor omegaMatcher interface
-func (m *fakeOmegaMatcher) NegatedFailureMessage(_ interface{}) (message string) {
+// NegatedFailureMessage is a stub to honor omegaMatcher interface.
+func (m *fakeOmegaMatcher) NegatedFailureMessage(_ any) string {
 	return ""
 }
