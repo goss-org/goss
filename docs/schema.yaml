@@ -96,6 +96,159 @@ definitions:
         type: integer
         default: 500
         description: in milliseconds (Only used when server attribute is provided)
+  ethtoolTest:
+    description: |
+      Validates the link settings, offload features, interrupt coalescing
+      settings, ring buffers and private flags that ethtool(8) reports for a
+      network interface. Linux only, and requires the ethtool binary.
+      At least one of speed, duplex, rx_checksum, tx_checksum, adaptive_rx,
+      adaptive_tx, rx_usecs, tx_usecs, rx_ring, tx_ring, rx_mini_ring,
+      rx_jumbo_ring, rx_ring_max, tx_ring_max, rx_mini_ring_max,
+      rx_jumbo_ring_max or priv_flags must be set.
+      The reserved "default" key holds a baseline that is expanded onto every
+      interface on the host, minus the ones listed in exclude_interfaces and the
+      ones driven by a driver listed in exclude_drivers.
+    properties:
+      title: { "$ref":"#/definitions/title" }
+      meta: { "$ref":"#/definitions/meta" }
+      name:
+        type: string
+        description: interface to read, defaults to the hash key
+      speed:
+        type: string
+        default: 10000Mb/s
+        description: '"Speed" as reported by ethtool <iface>'
+      duplex:
+        type: string
+        default: Full
+        description: '"Duplex" as reported by ethtool <iface>'
+      rx_checksum:
+        type: string
+        default: "on"
+        description: '"rx-checksumming" as reported by ethtool -k <iface>'
+      tx_checksum:
+        type: string
+        default: "on"
+        description: '"tx-checksumming" as reported by ethtool -k <iface>'
+      adaptive_rx:
+        type: string
+        default: "off"
+        description: |
+          "Adaptive RX" as reported by ethtool -c <iface>, the first half of the
+          "Adaptive RX: off  TX: off" line. Drivers that report no adaptive
+          coalescing leave it unreported, which fails rather than matching an
+          empty value.
+      adaptive_tx:
+        type: string
+        default: "off"
+        description: |
+          The TX half of the "Adaptive RX: off  TX: off" line reported by
+          ethtool -c <iface>.
+      rx_usecs:
+        type: string
+        default: "3"
+        description: '"rx-usecs" as reported by ethtool -c <iface>'
+      tx_usecs:
+        type: string
+        default: "3"
+        description: '"tx-usecs" as reported by ethtool -c <iface>'
+      rx_ring:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "512"
+        description: |
+          "RX" under "Current hardware settings" as reported by ethtool -g
+          <iface>: the receive ring size the interface is using, in descriptors.
+      tx_ring:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "512"
+        description: |
+          "TX" under "Current hardware settings" as reported by ethtool -g
+          <iface>: the transmit ring size the interface is using.
+      rx_mini_ring:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "0"
+        description: |
+          "RX Mini" under "Current hardware settings" as reported by
+          ethtool -g <iface>.
+      rx_jumbo_ring:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "0"
+        description: |
+          "RX Jumbo" under "Current hardware settings" as reported by
+          ethtool -g <iface>.
+      rx_ring_max:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "4096"
+        description: |
+          "RX" under "Pre-set maximums" as reported by ethtool -g <iface>: the
+          largest receive ring the driver can be asked for.
+      tx_ring_max:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "4096"
+        description: |
+          "TX" under "Pre-set maximums" as reported by ethtool -g <iface>: the
+          largest transmit ring the driver can be asked for.
+      rx_mini_ring_max:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "0"
+        description: |
+          "RX Mini" under "Pre-set maximums" as reported by ethtool -g <iface>.
+      rx_jumbo_ring_max:
+        oneOf:
+          - type: object  # matcher
+          - type: [string, integer]
+        default: "0"
+        description: |
+          "RX Jumbo" under "Pre-set maximums" as reported by ethtool -g <iface>.
+      priv_flags:
+        type: array
+        description: |
+          Private flags the driver exposes, as "<flag>: <on|off>" strings, for
+          example ["rx-gro-hw: off", "loopback: off"], as reported by
+          ethtool --show-priv-flags <iface>. The list is matched with goss's
+          default list matcher, so the flags listed here have to be contained in
+          the flags the interface reports and a flag a newer kernel adds does not
+          fail the rule. Flag names are driver specific.
+        items:
+          type: string
+        default: ["rx-gro-hw: off", "loopback: off"]
+      exclude_interfaces:
+        type: array
+        description: |
+          Interfaces skipped when this entry is the "default" baseline. Exact
+          names and glob patterns are both accepted, e.g. ["lo", "veth*"].
+          Ignored for a per-interface entry.
+        items:
+          type: string
+        default: ["lo", "docker0", "veth*"]
+      exclude_drivers:
+        type: array
+        description: |
+          Interfaces skipped when this entry is the "default" baseline because
+          ethtool -i reports one of these drivers for them. Exact driver names
+          and glob patterns are both accepted, e.g. ["veth", "bridge"].
+          Interfaces whose driver cannot be determined are never skipped by a
+          driver pattern. Ignored for a per-interface entry.
+        items:
+          type: string
+        default: ["veth", "bridge"]
+      skip:
+        type: boolean
+        default: false
   fileTest:
     required:
       - exists
@@ -620,6 +773,52 @@ properties:
           <span class="pl-ent">timeout</span>: <span class="pl-c1">500</span> <span class="pl-c"><span class="pl-c">#</span> in milliseconds</span>
     additionalProperties:
       $ref: "#/definitions/dnsTest"
+
+  ethtool:
+    type: object
+    description: |
+      Validates the link settings, offload features, interrupt coalescing
+      settings, ring buffers and private flags reported by ethtool(8). Linux
+      only.
+      The reserved "default" key holds a baseline that every interface on the
+      host must satisfy, minus exclude_interfaces and exclude_drivers.
+    x-intellij-html-description: |
+      <p dir="auto">Validates the link settings, offload features, interrupt coalescing settings, ring buffers and private flags reported by <code>ethtool(8)</code>. Linux only.</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">ethtool</span>:
+        <span class="pl-ent">eth0</span>:
+          <span class="pl-ent">speed</span>: <span class="pl-s">10000Mb/s</span>
+          <span class="pl-ent">duplex</span>: <span class="pl-s">Full</span>
+          <span class="pl-ent">rx_checksum</span>: <span class="pl-s">"on"</span>
+          <span class="pl-ent">tx_checksum</span>: <span class="pl-s">"on"</span>
+          <span class="pl-ent">adaptive_rx</span>: <span class="pl-s">"off"</span>
+          <span class="pl-ent">rx_usecs</span>: <span class="pl-c1">0</span>
+          <span class="pl-ent">rx_ring</span>: <span class="pl-c1">512</span>
+          <span class="pl-ent">tx_ring_max</span>: <span class="pl-c1">4096</span>
+          <span class="pl-ent">priv_flags</span>:
+            - <span class="pl-s">"rx-gro-hw: off"</span></pre></div>
+      <p dir="auto">A single reserved <code>default</code> entry holds a baseline that is expanded onto every interface on the host:</p>
+      <div class="highlight highlight-source-yaml notranslate position-relative overflow-auto" dir="auto"><pre><span class="pl-ent">ethtool</span>:
+        <span class="pl-ent">default</span>:
+          <span class="pl-ent">speed</span>: <span class="pl-s">"10000Mb/s"</span>
+          <span class="pl-ent">duplex</span>: <span class="pl-s">"Full"</span>
+          <span class="pl-ent">adaptive_rx</span>: <span class="pl-s">"off"</span>
+          <span class="pl-ent">adaptive_tx</span>: <span class="pl-s">"off"</span>
+          <span class="pl-ent">rx_usecs</span>: <span class="pl-c1">0</span>
+          <span class="pl-ent">tx_usecs</span>: <span class="pl-c1">0</span>
+          <span class="pl-ent">rx_ring_max</span>: <span class="pl-c1">4096</span>
+          <span class="pl-ent">tx_ring_max</span>: <span class="pl-c1">4096</span>
+          <span class="pl-ent">priv_flags</span>:
+            - <span class="pl-s">"loopback: off"</span>
+          <span class="pl-ent">exclude_interfaces</span>:
+            - <span class="pl-s">lo</span>
+            - <span class="pl-s">docker0</span>
+            - <span class="pl-s">veth*</span>
+          <span class="pl-ent">exclude_drivers</span>:
+            - <span class="pl-s">veth</span>
+            - <span class="pl-s">bridge</span></pre></div>
+      <p dir="auto">Each expanded check is reported under <code>default: &lt;interface&gt;</code>, so a failure names the offending interface and attribute. <code>exclude_interfaces</code> skips interface names, while <code>exclude_drivers</code> skips the drivers that <code>ethtool -i</code> reports, which exempts a whole class of interface whatever it is called. An interface whose driver cannot be determined is never skipped by a driver pattern.</p>
+    additionalProperties:
+      $ref: "#/definitions/ethtoolTest"
 
   file:
     type: object
