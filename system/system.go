@@ -37,10 +37,21 @@ type System struct {
 	NewInterface   func(context.Context, string, *System, util2.Config) Interface
 	NewHTTP        func(context.Context, string, *System, util2.Config) HTTP
 	NewRegistry    func(context.Context, string, *System, util2.Config) Registry
+	NewEthtool     func(context.Context, string, *System, util2.Config) Ethtool
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
 	procOnce       sync.Once
+
+	// InterfaceNames lists the network interfaces present on the host. It is a
+	// field so that embedders and tests can supply a fixed list; a nil field
+	// falls back to the package-level InterfaceNames.
+	InterfaceNames func() ([]string, error)
+
+	// InterfaceDrivers maps interface names to the kernel driver used by each
+	// one. It is a field so that embedders and tests can supply a fixed map; a
+	// nil field falls back to the package-level InterfaceDrivers.
+	InterfaceDrivers func() (map[string]string, error)
 }
 
 func (s *System) Ports() map[string][]GOnetstat.Process {
@@ -62,20 +73,23 @@ func (s *System) ProcMap() (map[string][]ps.Process, error) {
 
 func New(packageManager string) *System {
 	sys := &System{
-		NewFile:        NewDefFile,
-		NewAddr:        NewDefAddr,
-		NewPort:        NewDefPort,
-		NewUser:        NewDefUser,
-		NewGroup:       NewDefGroup,
-		NewCommand:     NewDefCommand,
-		NewDNS:         NewDefDNS,
-		NewProcess:     NewDefProcess,
-		NewGossfile:    NewDefGossfile,
-		NewKernelParam: NewDefKernelParam,
-		NewMount:       NewDefMount,
-		NewInterface:   NewDefInterface,
-		NewHTTP:        NewDefHTTP,
-		NewRegistry:    NewDefRegistry,
+		NewFile:          NewDefFile,
+		NewAddr:          NewDefAddr,
+		NewPort:          NewDefPort,
+		NewUser:          NewDefUser,
+		NewGroup:         NewDefGroup,
+		NewCommand:       NewDefCommand,
+		NewDNS:           NewDefDNS,
+		NewProcess:       NewDefProcess,
+		NewGossfile:      NewDefGossfile,
+		NewKernelParam:   NewDefKernelParam,
+		NewMount:         NewDefMount,
+		NewInterface:     NewDefInterface,
+		NewHTTP:          NewDefHTTP,
+		NewRegistry:      NewDefRegistry,
+		NewEthtool:       NewDefEthtool,
+		InterfaceNames:   InterfaceNames,
+		InterfaceDrivers: InterfaceDrivers,
 	}
 
 	sys.detectService()
