@@ -432,6 +432,14 @@ func main() {
 							return goss.AddResources(ctx, c.String("gossfile"), resource.RegistryResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
 						},
 					},
+					{
+						Name:  resource.EthtoolResourceKey,
+						Usage: "add new interface link settings (Linux only)",
+						Action: func(ctx context.Context, c *cli.Command) error {
+							fatalAlphaIfNeeded(c)
+							return goss.AddResources(ctx, c.String("gossfile"), resource.EthtoolResourceName, c.Args().Slice(), newRuntimeConfigFromCLI(c))
+						},
+					},
 				},
 			},
 		},
