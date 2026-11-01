@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -105,6 +106,7 @@ func findStringSubmatch(pattern, input string) map[string]interface{} {
 var funcMap = template.FuncMap{
 	"mkSlice":            mkSlice,
 	"readFile":           readFile,
+	"glob":               filepath.Glob,
 	"getEnv":             getEnv,
 	"regexMatch":         regexMatch,
 	"toUpper":            strings.ToUpper,
