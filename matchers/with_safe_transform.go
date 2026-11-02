@@ -16,6 +16,7 @@ type WithSafeTransformMatcher struct {
 	// state
 	transformedValue interface{}
 	wasTransformed   bool
+	transformError   bool
 }
 
 func WithSafeTransform(transform Transformer, matcher GossMatcher) GossMatcher {
@@ -30,6 +31,7 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	var err error
 	//log.Printf("%#v: input: %v", m.Transform, actual)
 	m.transformedValue, err = m.Transform.Transform(actual)
+	m.transformError = err != nil
 	if !reflect.DeepEqual(actual, m.transformedValue) {
 		m.wasTransformed = true
 	}
@@ -46,6 +48,19 @@ func (m *WithSafeTransformMatcher) FailureResult(actual interface{}) MatcherResu
 	result.TransformerChain = tchain
 	result.UntransformedValue = actual
 	return result
+}
+
+// SuccessResult preserves the transform observation for output formats that
+// need both the value matched and the original value. Gomega's success path
+// does not otherwise ask a matcher to build a result, so validation calls this
+// explicitly when the matcher passes.
+func (m *WithSafeTransformMatcher) SuccessResult(actual interface{}) MatcherResult {
+	tchain, _, tvalue := m.getTransformerChainAndMatcher()
+	return MatcherResult{
+		Actual:             tvalue,
+		TransformerChain:   tchain,
+		UntransformedValue: actual,
+	}
 }
 func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
@@ -64,7 +79,7 @@ L:
 		case *WithSafeTransformMatcher:
 			matcher = v.Matcher
 			tvalue = v.transformedValue
-			if v.wasTransformed {
+			if v.wasTransformed || v.transformError {
 				tchain = append(tchain, v.Transform)
 			}
 		default:

@@ -1,11 +1,18 @@
 package goss
 
 import (
+	"bytes"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/goss-org/goss/matchers"
+	"github.com/goss-org/goss/outputs"
+	"github.com/goss-org/goss/resource"
+	"github.com/goss-org/goss/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_varsFromString(t *testing.T) {
@@ -120,6 +127,41 @@ func Test_varsFromString(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil, "has error")
 		})
 	}
+}
+
+func TestDiscoveryOutputLoadsAsVarsFile(t *testing.T) {
+	result := resource.TestResult{
+		Successful:   true,
+		ResourceId:   "operating-system",
+		ResourceType: "command",
+		Property:     "stdout",
+		Meta: map[string]any{
+			"register": "host_facts",
+		},
+		Result: resource.SUCCESS,
+		MatcherResult: matchers.MatcherResult{
+			Actual: "linux",
+		},
+	}
+	stream := make(chan []resource.TestResult, 1)
+	stream <- []resource.TestResult{result}
+	close(stream)
+
+	var document bytes.Buffer
+	outputer, err := outputs.GetOutputer("discovery")
+	require.NoError(t, err)
+	assert.Equal(t, 0, outputer.Output(&document, stream, util.OutputConfig{}))
+
+	varsFile := filepath.Join(t.TempDir(), "discovery.json")
+	require.NoError(t, os.WriteFile(varsFile, document.Bytes(), 0o600))
+	vars, err := loadVars([]string{varsFile}, "")
+	require.NoError(t, err)
+
+	hostFacts := vars["host_facts"].(map[string]any)
+	assert.Equal(t, "command", hostFacts["resource-type"])
+	assert.Equal(t, "operating-system", hostFacts["resource-id"])
+	assert.Equal(t, true, hostFacts["successful"])
+	assert.Equal(t, map[string]any{"stdout": "linux"}, hostFacts["values"])
 }
 
 func Test_loadVars(t *testing.T) {

@@ -324,6 +324,9 @@ Exits with status 0 on success, non-0 otherwise.
 
     - `documentation` - Verbose test results
     - `json` - Detailed test result on a single line (See `pretty` format option)
+    - `discovery` - One newline-terminated JSON variables document loadable unchanged
+      with `--vars`. Each variable uses a non-empty string `meta.register` as its name,
+      falling back to the resource ID when absent.
     - `junit`
     - `nagios` - Nagios/Sensu compatible output /w exit code 2 for failures
     - `rspecish` **(default)** - Similar to rspec output
@@ -336,8 +339,9 @@ Exits with status 0 on success, non-0 otherwise.
 
     - `perfdata` - Outputs Nagios "performance data". Applies to `nagios` output
     - `verbose`  - Gives verbose output. Applies to `nagios` and `prometheus` output
-    - `pretty`   - Pretty printing for the `json` output
-    - `sort`     - Sorts the results
+    - `pretty`   - Pretty printing for `json` and `discovery` output
+    - `sort`     - Sorts results; `discovery` also accepts canonical ordering
+    - `exclude_raw` - Omits pre-transform `raw-values` from `discovery` output
 
 `--max-concurrent <num>`
 :   Max number of tests to run concurrently
