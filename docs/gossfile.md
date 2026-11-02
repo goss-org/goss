@@ -121,6 +121,7 @@ with arguments such as:
 * [addr](#addr)
 * [command](#command)
 * [dns](#dns)
+* [ethtool](#ethtool)
 * [file](#file)
 * [gossfile](#gossfile)
 * [group](#group)
@@ -311,6 +312,173 @@ dns:
     As with [`stdout` and `stderr`](#command), `addrs: []` is a list of zero
     conditions and always passes. `goss validate` warns on stderr about each
     one.
+
+### ethtool
+
+Validates the link settings, offload features, interrupt coalescing settings,
+ring buffers and private flags that `ethtool(8)` reports for a network
+interface. This resource requires the `ethtool` binary and is only available on
+Linux; on other platforms every attribute fails with
+`ethtool resource is only supported on Linux`.
+
+```yaml
+ethtool:
+  eth0:
+    # optional attributes
+    # defaults to hash key
+    name: eth0
+    speed: 10000Mb/s
+    duplex: Full
+    rx_checksum: "on"
+    tx_checksum: "on"
+    adaptive_rx: "off"
+    adaptive_tx: "off"
+    rx_usecs: 0
+    tx_usecs: 0
+    rx_ring: 512
+    tx_ring: 512
+    rx_mini_ring: 0
+    rx_jumbo_ring: 0
+    rx_ring_max: 4096
+    tx_ring_max: 4096
+    rx_mini_ring_max: 0
+    rx_jumbo_ring_max: 0
+    priv_flags:
+      - "rx-gro-hw: off"
+      - "loopback: off"
+```
+
+| Attribute           | Reported by                                  | Example     |
+| ------------------- | -------------------------------------------- | ----------- |
+| `speed`             | `Speed` from `ethtool <iface>`               | `10000Mb/s` |
+| `duplex`            | `Duplex` from `ethtool <iface>`              | `Full`      |
+| `rx_checksum`       | `rx-checksumming` from `ethtool -k <iface>`  | `on`        |
+| `tx_checksum`       | `tx-checksumming` from `ethtool -k <iface>`  | `on`        |
+| `adaptive_rx`       | `Adaptive RX` from `ethtool -c <iface>`      | `off`       |
+| `adaptive_tx`       | `Adaptive TX` from `ethtool -c <iface>`      | `off`       |
+| `rx_usecs`          | `rx-usecs` from `ethtool -c <iface>`         | `3`         |
+| `tx_usecs`          | `tx-usecs` from `ethtool -c <iface>`         | `3`         |
+| `rx_ring`           | `RX` (current) from `ethtool -g <iface>`     | `512`       |
+| `tx_ring`           | `TX` (current) from `ethtool -g <iface>`     | `512`       |
+| `rx_mini_ring`      | `RX Mini` (current) from `ethtool -g`        | `0`         |
+| `rx_jumbo_ring`     | `RX Jumbo` (current) from `ethtool -g`       | `0`         |
+| `rx_ring_max`       | `RX` (maximums) from `ethtool -g <iface>`    | `4096`      |
+| `tx_ring_max`       | `TX` (maximums) from `ethtool -g <iface>`    | `4096`      |
+| `rx_mini_ring_max`  | `RX Mini` (maximums) from `ethtool -g`       | `0`         |
+| `rx_jumbo_ring_max` | `RX Jumbo` (maximums) from `ethtool -g`      | `0`         |
+| `priv_flags`        | every flag from `ethtool --show-priv-flags`  | list below  |
+
+Values are matched exactly as `ethtool` prints them, so `on`/`off` and
+`Full`/`Half` are case sensitive. The coalescing attributes come from
+`ethtool -c`: `adaptive_rx` and `adaptive_tx` are the two halves of the single
+`Adaptive RX: off  TX: off` line, and `rx_usecs`/`tx_usecs` are the interrupt
+coalescing delays in microseconds. A driver that does not report adaptive
+coalescing leaves those two attributes unreported, so a rule asserting them
+fails with a message naming the interface rather than comparing against an
+empty value.
+
+The ring buffers come from `ethtool -g`, which prints the same four labels
+twice: once under `Pre-set maximums` and once under `Current hardware settings`.
+The current sizes are `rx_ring`, `tx_ring`, `rx_mini_ring` and `rx_jumbo_ring`,
+and the ceilings the driver allows are the same names with a `_max` suffix. A
+rule can assert the size in use, the ceiling, or both: pinning `rx_ring` catches
+a host that never applied its tuning, pinning `rx_ring_max` catches a host whose
+driver cannot grow the ring at all. Sizes are compared like any other value, so
+numeric matchers work:
+
+```yaml
+ethtool:
+  default:
+    rx_ring_max:
+      gt: 2048
+```
+
+`priv_flags` comes from `ethtool --show-priv-flags` and is a list of
+`"<flag>: <on|off>"` strings, sorted. Because it is a list, goss's default
+matcher applies: the flags you list have to be contained in the flags the
+interface reports, so a private flag that a newer kernel adds does not fail a
+rule that never mentioned it. The flags are driver specific -- `rx-gro-hw` and
+`tx-nocache-copy` are common ones -- so the list is the place to pin the few
+flags your host depends on, rather than all of them:
+
+```yaml
+ethtool:
+  eth0:
+    priv_flags:
+      - "rx-gro-hw: off"
+      - "loopback: off"
+```
+
+All attributes are optional, but at least one of them has to be set: an entry
+with no attribute is rejected rather than silently passing, and an attribute
+that `ethtool` does not report for an interface (for example `Speed` on a bridge
+or veth pair) fails with a message naming the interface.
+
+#### The `default` entry
+
+Writing one entry per interface does not scale, so a reserved `default` key
+holds a baseline that every interface on the host must satisfy:
+
+```yaml
+ethtool:
+  default:
+    speed: "10000Mb/s"
+    duplex: "Full"
+    rx_checksum: "on"
+    tx_checksum: "on"
+    adaptive_rx: "off"
+    adaptive_tx: "off"
+    rx_usecs: 0
+    tx_usecs: 0
+    rx_ring_max: 4096
+    tx_ring_max: 4096
+    priv_flags:
+      - "loopback: off"
+    exclude_interfaces:
+      - lo
+      - docker0
+      - veth* # glob patterns match, so this covers every veth pair
+    exclude_drivers:
+      - veth
+      - bridge
+```
+
+`default` is expanded while validating: every interface reported by the host is
+checked against the baseline, minus the ones listed in `exclude_interfaces` and
+the ones driven by a driver listed in `exclude_drivers`. Both lists accept exact
+values and glob patterns.
+
+`exclude_interfaces` matches the interface name. `exclude_drivers` matches the
+driver `ethtool -i` reports for the interface (`ixgbe`, `virtio_net`, `veth`,
+`bridge`, …), which is the sturdier way to exempt a whole class of interface:
+`veth*` only covers the kernel's current naming of veth pairs, while `veth`
+covers every interface the kernel says is driven by veth, whatever it is called.
+
+An interface whose driver cannot be determined -- `lo`, or anything `ethtool -i`
+has no information for -- is never excluded by a driver pattern, not even by a
+catch-all `*`; list it in `exclude_interfaces` instead. Drivers are only looked
+up when `exclude_drivers` is set, so the usual case does not pay for an extra
+`ethtool` call per interface.
+
+Each expanded check is reported under `default: <interface>`, so a failure names
+both the offending interface and the attribute that did not match:
+
+```console
+$ goss validate --format documentation
+Ethtool: default: eth0: speed: matches expectation: "10000Mb/s"
+Ethtool: default: eth1: speed:
+Expected
+    "1000Mb/s"
+to equal
+    "10000Mb/s"
+```
+
+An entry whose key is `default` **and** which sets an explicit `name` is an
+ordinary entry for that interface, so a host with an interface literally called
+`default` still works.
+
+`default` applies in addition to any per-interface entry, so an interface can
+be held to the baseline and to extra expectations of its own.
 
 ### file
 

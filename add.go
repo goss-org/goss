@@ -83,6 +83,8 @@ func AddResource(ctx context.Context, fileName string, gossConfig GossConfig, re
 		res, err = gossConfig.HTTPs.AppendSysResource(ctx, key, sys, config)
 	case resource.RegistryResourceName:
 		res, err = gossConfig.Registries.AppendSysResource(ctx, key, sys, config)
+	case resource.EthtoolResourceName:
+		res, err = gossConfig.Ethtools.AppendSysResource(ctx, key, sys, config)
 	default:
 		err = fmt.Errorf("undefined resource name: %s", resourceName)
 	}

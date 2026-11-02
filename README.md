@@ -332,6 +332,7 @@ JSON Schema maintains a [table of validators](https://json-schema.org/tools?quer
 * group - add new group
 * command - add new command
 * dns - add new dns
+* ethtool - add new interface link settings, ring buffers and private flags (Linux only)
 * process - add new process name
 * kernel-param - add new kernel-param
 * mount - add new mount

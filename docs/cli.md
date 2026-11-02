@@ -126,8 +126,9 @@ A sub-command *resource type* has to be provided when running `add`.
 | [`addr`](gossfile.md#addr)                 | Verify if a remote `address:port` is reachable                                                                                  |
 | [`command`](gossfile.md#command)           | Run a [command](gossfile.md#command) and validate the exit status and/or output                                                 |
 | [`dns`](gossfile.md#dns)                   | Resolves a [dns](gossfile.md#dns) name and validates the addresses                                                              |
+| [`ethtool`](gossfile.md#ethtool)           | Validate an interface's link settings, offloads, coalescing, ring buffers and private flags, with a per-host baseline           |
 | [`file`](gossfile.md#file)                 | Validate a [file](gossfile.md#file) existence, permissions, stats (size, etc) and contents                                      |
-| [`goss`](gossfile.md#gossfile)             | Includes the contents of another [gossfile](gossfile.md)                                                                        |
+| [`goss`](gossfile.md#gossfile)             | Includes the contents of another [gossfile](gossfile.md#gossfile)                                                               |
 | [`group`](gossfile.md#group)               | can validate the existence and values of a [group](gossfile.md#group) on the system                                             |
 | [`http`](gossfile.md#http)                 | Validate the HTTP response code, headers, and content of a URI                                                                  |
 | [`interface`](gossfile.md#interface)       | Validate the existence and values (es. the addresses) of a network interface                                                    |
@@ -164,6 +165,7 @@ Will **NOT** automatically add:
 * `addr`
 * `command` - for safety
 * `dns`
+* `ethtool`
 * `http`
 * `interface`
 * `kernel-param`

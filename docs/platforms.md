@@ -65,6 +65,26 @@ This matrix attempts to track parity across platforms.
 |                     | addrs               | {{ fully_supported }}   | {{ work_partially }}   | {{ work_partially }}    |
 |                     | server              | {{ fully_supported }}   | {{ no_data }}          | {{ work_partially }}    |
 |                     | timeout             | {{ fully_supported }}   | {{ not_automated }}    | {{ work_partially }}    |
+| **ethtool**         |                     | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | speed               | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | duplex              | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_checksum         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | tx_checksum         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | adaptive_rx         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | adaptive_tx         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_usecs            | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | tx_usecs            | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_ring             | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | tx_ring             | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_mini_ring        | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_jumbo_ring       | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_ring_max         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | tx_ring_max         | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_mini_ring_max    | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | rx_jumbo_ring_max   | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | priv_flags          | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | exclude_interfaces  | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
+|                     | exclude_drivers     | {{ not_automated }}     | {{ n_a }}              | {{ n_a }}               |
 | **file**            |                     | {{ fully_supported }}   | {{ work_partially }}   | {{ work_partially }}    |
 |                     | exists              | {{ fully_supported }}   | {{ work_partially }}   | {{community_supported}} |
 |                     | mode                | {{ fully_supported }}   | {{ work_partially }}   | {{ n_a }}               |
