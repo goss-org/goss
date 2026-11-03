@@ -300,3 +300,61 @@ func TestHavePatternsMatchBytesReader(t *testing.T) {
 		t.Fatal("expected Match to return true")
 	}
 }
+
+// TestHavePatternsMatcher_StringPatternPrefix verifies that a string pattern
+// keeps its leading characters, apart from the "!" inverse marker and a
+// single escaping backslash.
+func TestHavePatternsMatcher_StringPatternPrefix(t *testing.T) {
+	tests := []struct {
+		name     string
+		actual   string
+		patterns []any
+		wantOK   bool
+	}{
+		{
+			name:     "escaped ! matches the literal",
+			actual:   "!foo\n",
+			patterns: []any{"\\!foo"},
+			wantOK:   true,
+		},
+		{
+			name:     "escaped ! needs the ! to be present",
+			actual:   "foo\n",
+			patterns: []any{"\\!foo"},
+			wantOK:   false,
+		},
+		{
+			name:     "escaped / needs the / to be present",
+			actual:   "usr/bin/foo\n",
+			patterns: []any{"\\/usr/bin/foo"},
+			wantOK:   false,
+		},
+		{
+			name:     "leading / is kept",
+			actual:   "tmpfs /run tmpfs defaults 0 0\n",
+			patterns: []any{"/tmp"},
+			wantOK:   false,
+		},
+		{
+			name:     "inverse keeps the leading /",
+			actual:   "tmpfs /run tmpfs defaults 0 0\n",
+			patterns: []any{"!/tmp"},
+			wantOK:   true,
+		},
+		{
+			name:     "inverse still fails when the pattern is present",
+			actual:   "tmpfs /tmp tmpfs defaults 0 0\n",
+			patterns: []any{"!/tmp"},
+			wantOK:   false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := HavePatterns(tt.patterns)
+			ok, err := m.Match(strings.NewReader(tt.actual))
+			require.NoError(t, err)
+			assert.Equal(t, tt.wantOK, ok,
+				"HavePatterns(%v).Match(%q) = %v, want %v", tt.patterns, tt.actual, ok, tt.wantOK)
+		})
+	}
+}
