@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -19,14 +20,34 @@ type Port interface {
 type DefPort struct {
 	port     string
 	sysPorts map[string][]GOnetstat.Process
+	err      error
 }
+
+// portNetworks are the network names GetPorts records listeners under.
+var portNetworks = []string{"tcp", "tcp6", "udp", "udp6"}
 
 func NewDefPort(_ context.Context, port string, system *System, config util.Config) Port {
 	p := normalizePort(port)
 	return &DefPort{
 		port:     p,
 		sysPorts: system.Ports(),
+		err:      validatePortNetwork(p),
 	}
+}
+
+// validatePortNetwork rejects a network name GetPorts never records, such as
+// "tcp4" or a typo. Without this, such a port can never be found, so
+// `listening: false` passes without checking anything and
+// `listening: true` fails with a misleading "expected false to equal true".
+func validatePortNetwork(port string) error {
+	network, _ := splitPort(port)
+	for _, n := range portNetworks {
+		if network == n {
+			return nil
+		}
+	}
+	return fmt.Errorf("unknown network %q in port %q: must be one of %s",
+		network, port, strings.Join(portNetworks, ", "))
 }
 
 func splitPort(fullport string) (network, port string) {
@@ -50,6 +71,9 @@ func (p *DefPort) Port() string {
 func (p *DefPort) Exists() (bool, error) { return p.Listening() }
 
 func (p *DefPort) Listening() (bool, error) {
+	if p.err != nil {
+		return false, p.err
+	}
 	if _, ok := p.sysPorts[p.port]; ok {
 		return true, nil
 	}
@@ -57,6 +81,9 @@ func (p *DefPort) Listening() (bool, error) {
 }
 
 func (p *DefPort) IP() ([]string, error) {
+	if p.err != nil {
+		return nil, p.err
+	}
 	var ips []string
 	for _, entry := range p.sysPorts[p.port] {
 		ips = append(ips, entry.Ip)

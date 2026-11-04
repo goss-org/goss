@@ -607,6 +607,11 @@ port:
     skip: false
 ```
 
+The network must be one of `tcp`, `tcp6`, `udp` or `udp6`; a bare port
+number means `tcp`. Any other network, such as `tcp4` or a typo, makes the
+test fail with an error. Goss never records listeners under other names, so
+such a test could not check the port at all.
+
 !!! warning "An empty list asserts nothing"
 
     As with [`stdout` and `stderr`](#command), `ip: []` is a list of zero
