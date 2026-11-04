@@ -160,10 +160,14 @@ type stringPattern struct {
 
 func newStringPattern(str string) *stringPattern {
 	var inverse bool
-	if strings.HasPrefix(str, "!") {
+	cleanPattern := str
+	if strings.HasPrefix(cleanPattern, "!") {
 		inverse = true
+		cleanPattern = cleanPattern[1:]
 	}
-	cleanPattern := strings.TrimLeft(str, "\\/!")
+	// A leading backslash escapes the next character, so "\!foo" matches the
+	// literal "!foo" and "\/foo" matches the literal "/foo".
+	cleanPattern = strings.TrimPrefix(cleanPattern, "\\")
 	return &stringPattern{
 		pattern:      str,
 		cleanPattern: cleanPattern,
