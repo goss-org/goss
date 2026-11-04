@@ -75,3 +75,25 @@ func TestPortEmptyIPWarns(t *testing.T) {
 		t.Errorf("Validate with empty ip stderr = %q, want a WARNING naming port.ip", out)
 	}
 }
+
+// A port key with a network goss does not record (here "tcp4") can never be
+// found. `listening: false` used to pass on it without checking anything; it
+// must now fail and say why (goss-org/goss#1006).
+func TestPortUnknownNetworkFailsInsteadOfPassing(t *testing.T) {
+	sys := &system.System{NewPort: system.NewDefPort}
+
+	for _, want := range []bool{false, true} {
+		p := &Port{id: "tcp4:65535", Listening: want}
+		results := p.Validate(t.Context(), sys)
+		if len(results) == 0 {
+			t.Fatalf("listening: %v: Validate returned no results", want)
+		}
+		r := results[0]
+		if r.Result != FAIL {
+			t.Errorf("listening: %v: result = %s, want fail", want, r.ToOutcome())
+		}
+		if r.Err == nil || !strings.Contains(r.Err.Error(), "unknown network \"tcp4\"") {
+			t.Errorf("listening: %v: err = %v, want it to name the unknown network", want, r.Err)
+		}
+	}
+}
