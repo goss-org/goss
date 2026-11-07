@@ -190,13 +190,11 @@ command:
     exec: ["/figlet", "test"]
 ```
 
-`stdout` and `stderr` can be a string or [pattern](#patterns). A list of
+`stdout` and `stderr` can be a string or [pattern](#ioreaders). A list of
 patterns each has to be found somewhere in the output, while a single string is
 compared for an exact match, so whitespace and line breaks have to line up. That
 exact form is handy for golden master or approval style tests where the whole
 output matters; `goss add command --exact-match` generates it for you.
-
-`stdout` and `stderr` can be a string or [pattern](#patterns)
 
 !!! warning "An empty list asserts nothing"
 
@@ -343,7 +341,7 @@ file:
     skip: false
 ```
 
-`contents` can be a string or a [pattern](#patterns)
+`contents` can be a string or a [pattern](#ioreaders)
 
 !!! warning "An empty list asserts nothing"
 
@@ -1048,7 +1046,7 @@ to allow for dynamic or conditional tests.
 Available variables:
 
 * `{{.Env}}`  - Containing environment variables
-* `{{.Vars}}` - Containing the values defined in [--vars](#global-options) file
+* `{{.Vars}}` - Containing the values defined in [--vars](cli.md#global-options) file
 
 Available functions:
 

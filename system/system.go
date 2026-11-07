@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"context"
+	"log/slog"
 	"os"
 	"os/exec"
 	"runtime"
@@ -37,6 +38,7 @@ type System struct {
 	NewInterface   func(context.Context, string, *System, util2.Config) Interface
 	NewHTTP        func(context.Context, string, *System, util2.Config) HTTP
 	NewRegistry    func(context.Context, string, *System, util2.Config) Registry
+	logger         *slog.Logger
 	ports          map[string][]GOnetstat.Process
 	portsOnce      sync.Once
 	procMap        map[string][]ps.Process
@@ -60,7 +62,30 @@ func (s *System) ProcMap() (map[string][]ps.Process, error) {
 	return s.procMap, err
 }
 
-func New(packageManager string) *System {
+// Option configures a System. New takes these variadically so that existing
+// positional calls keep compiling.
+type Option func(*System)
+
+// WithLogger sets the logger the System and the resources it creates emit
+// through, most visibly the stdout and stderr of the commands they run. A nil
+// logger means silence.
+func WithLogger(l *slog.Logger) Option {
+	return func(s *System) {
+		s.logger = l
+	}
+}
+
+// loggerOrDiscard is the guarded accessor every logging site in this package
+// uses. System is constructible as a literal and New is callable without
+// options, so the field is routinely nil, and a nil *slog.Logger panics.
+func (s *System) loggerOrDiscard() *slog.Logger {
+	if s == nil {
+		return util2.LoggerOrDiscard(nil)
+	}
+	return util2.LoggerOrDiscard(s.logger)
+}
+
+func New(packageManager string, opts ...Option) *System {
 	sys := &System{
 		NewFile:        NewDefFile,
 		NewAddr:        NewDefAddr,
@@ -76,6 +101,10 @@ func New(packageManager string) *System {
 		NewInterface:   NewDefInterface,
 		NewHTTP:        NewDefHTTP,
 		NewRegistry:    NewDefRegistry,
+	}
+
+	for _, opt := range opts {
+		opt(sys)
 	}
 
 	sys.detectService()

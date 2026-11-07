@@ -4,6 +4,7 @@ linters:
   enable:
     - govet
     - ineffassign
+    - sloglint
     - staticcheck
     - unused
   disable:
@@ -20,6 +21,23 @@ linters:
       - builtin$
       - examples$
   settings:
+    sloglint:
+      # The point of #1093 is that log output belongs to the caller, so a global
+      # logger is the one thing that must not come back.
+      no-global: all
+      static-msg: true
+      msg-style: lowercased
+      key-naming-case: snake
+      # util.Trace and util.TraceContext wrap Log/LogAttrs, so sloglint cannot
+      # find the message and attributes without being told where they sit.
+      # Positions are zero-based.
+      custom-funcs:
+        - name: github.com/goss-org/goss/util.Trace
+          msg-pos: 1
+          args-pos: 2
+        - name: github.com/goss-org/goss/util.TraceContext
+          msg-pos: 2
+          args-pos: 3
     staticcheck:
       checks:
         - all
@@ -32,6 +50,13 @@ linters:
         - "-ST1022"
         # Incorrectly formatted error string: there are a lot of these
         - "-ST1005"
+# The defaults cap each linter at 50 issues and each identical message at 3,
+# which would let a violation hide behind three of its own kind. A gate that
+# reports part of the tree is not a gate.
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
 formatters:
   enable:
     - gofmt
