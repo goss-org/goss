@@ -36,7 +36,7 @@ $DOCKER_BIN network create --driver bridge --subnet '172.19.0.0/16' $network
 $DOCKER_BIN run -d --name httpbin --network $network docker.io/kennethreitz/httpbin
 opts=(--env OS=$os --cap-add SYS_ADMIN -v "$PWD/goss:/goss" -v "$PWD/dnsmasq.conf:/etc/dnsmasq.conf:ro" -d --name "$container_name" --security-opt seccomp:unconfined --security-opt label:disable --privileged)
 id=$($DOCKER_BIN run "${opts[@]}" --network $network "$image_name" /sbin/init)
-ip=$($DOCKER_BIN inspect --format '{{ .NetworkSettings.IPAddress }}' "$id")
+ip=$($DOCKER_BIN inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$id")
 trap "rv=\$?; $DOCKER_BIN rm -vf $id || :;$DOCKER_BIN rm -vf httpbin || :;$DOCKER_BIN network rm $network || :; exit \$rv" INT TERM EXIT
 # Give httpd time to start up, adding 1 second to see if it helps with intermittent CI failures
 docker_exec "/goss/$os/goss-linux-$arch" -g "/goss/goss-wait.yaml" validate -r 10s -s 100ms && sleep 1
