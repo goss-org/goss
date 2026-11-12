@@ -176,7 +176,9 @@ func validate(ctx context.Context, sys *system.System, gossConfig GossConfig, sk
 	}()
 
 	workerCount := runtime.NumCPU() * 5
-	if workerCount > maxConcurrent {
+	// A limit below 1 can't be honoured: with no workers no test would run and
+	// validation would silently pass, so treat it as "use the default".
+	if maxConcurrent > 0 && workerCount > maxConcurrent {
 		workerCount = maxConcurrent
 	}
 	var wg sync.WaitGroup

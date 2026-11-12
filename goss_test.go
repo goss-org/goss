@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/goss-org/goss/outputs"
@@ -153,5 +154,36 @@ func TestSkipResourcesByType(t *testing.T) {
 
 	if skipped != 5 {
 		t.Fatalf("Expected to skip 5 tests, skipped %d", skipped)
+	}
+}
+
+// A max-concurrent below 1 used to start no workers, so no test ran and
+// validation passed with "Count: 0".
+func TestValidateRunsTestsWithNonPositiveMaxConcurrent(t *testing.T) {
+	for _, mc := range []int{0, -1} {
+		cfg, err := util.NewConfig(util.WithMaxConcurrency(mc))
+		checkErr(t, err, "new config failed")
+
+		specFile := filepath.Join(t.TempDir(), "goss.yaml")
+		missing := filepath.Join(t.TempDir(), "does-not-exist")
+		spec := "file:\n  " + missing + ":\n    exists: true\n"
+		checkErr(t, os.WriteFile(specFile, []byte(spec), 0o644), "write spec failed")
+		cfg.Spec = specFile
+
+		results, err := ValidateResults(t.Context(), cfg)
+		checkErr(t, err, "check failed")
+
+		count, failed := 0, 0
+		for rg := range results {
+			for _, r := range rg {
+				count++
+				if r.Result == resource.FAIL {
+					failed++
+				}
+			}
+		}
+		if count != 1 || failed != 1 {
+			t.Errorf("max-concurrent %d: ran %d tests with %d failed, want 1 and 1", mc, count, failed)
+		}
 	}
 }
