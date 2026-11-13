@@ -133,14 +133,14 @@ func Test_loadVars(t *testing.T) {
 	defer fileSimpleClose1()
 	fileSimple2, fileSimpleClose2 := fileMaker(`{b: b}`)
 	defer fileSimpleClose2()
-	fileSimple3, fileSimpleClose3 := fileMaker(`{a: overriden, c: c}`)
+	fileSimple3, fileSimpleClose3 := fileMaker(`{a: overridden, c: c}`)
 	defer fileSimpleClose3()
 
 	fileComplex1, fileComplexClose1 := fileMaker(`{vars: {a: a}}`)
 	defer fileComplexClose1()
 	fileComplex2, fileComplexClose2 := fileMaker(`{vars: {b: b}}`)
 	defer fileComplexClose2()
-	fileComplex3, fileComplexClose3 := fileMaker(`{vars: {a: overriden}}`)
+	fileComplex3, fileComplexClose3 := fileMaker(`{vars: {a: overridden}}`)
 	defer fileComplexClose3()
 
 	type args struct {
@@ -236,7 +236,7 @@ func Test_loadVars(t *testing.T) {
 				varsInline: `{}`,
 			},
 			want: map[string]any{
-				"a": "overriden",
+				"a": "overridden",
 				"b": "b",
 				"c": "c",
 			},
@@ -246,12 +246,12 @@ func Test_loadVars(t *testing.T) {
 			name: "multiple files, overlapped keys, inline vars",
 			args: args{
 				varsFiles:  []string{fileSimple1, fileSimple2, fileSimple3},
-				varsInline: `{c: overriden, b: b}`,
+				varsInline: `{c: overridden, b: b}`,
 			},
 			want: map[string]any{
-				"a": "overriden",
+				"a": "overridden",
 				"b": "b",
-				"c": "overriden",
+				"c": "overridden",
 			},
 			wantErr: false,
 		},
@@ -263,7 +263,7 @@ func Test_loadVars(t *testing.T) {
 			},
 			want: map[string]any{
 				"vars": map[string]any{
-					"a": "overriden",
+					"a": "overridden",
 					"b": "b",
 				},
 			},

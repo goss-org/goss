@@ -534,11 +534,9 @@ func TestPrometheusOutput(t *testing.T) {
 func makeResults(results ...resource.TestResult) <-chan []resource.TestResult {
 	out := make(chan []resource.TestResult)
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		out <- append([]resource.TestResult{}, results...)
-	}()
+	})
 
 	go func() {
 		wg.Wait()

@@ -5,7 +5,6 @@ import (
 )
 
 func TestParseServerString(t *testing.T) {
-
 	tables := []struct {
 		x string
 		n string

@@ -148,7 +148,6 @@ func getMount(mountpoint string, timeout int) (*mountinfo.Info, error) {
 	case <-time.After(timeoutD):
 		return nil, fmt.Errorf("getMount operation timed out after %s milliseconds", timeoutD)
 	}
-
 }
 
 func splitMountInfo(s string) []string {

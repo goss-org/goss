@@ -19,9 +19,11 @@ func (r Nagios) ValidOptions() []*formatOption {
 	}
 }
 
-func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
-	outConfig util.OutputConfig) (exitCode int) {
-
+func (r Nagios) Output(
+	w io.Writer,
+	results <-chan []resource.TestResult,
+	outConfig util.OutputConfig,
+) int {
 	var testCount, failed, skipped int
 
 	var perfdata, verbose bool
@@ -31,7 +33,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 
 	var startTime time.Time
 	var endTime time.Time
-	var summary = make(map[int]string)
+	summary := make(map[int]string)
 
 	for resultGroup := range results {
 		for _, testResult := range resultGroup {
@@ -62,7 +64,7 @@ func (r Nagios) Output(w io.Writer, results <-chan []resource.TestResult,
 		}
 		fmt.Fprint(w, "\n")
 		if verbose {
-			for i := 0; i < failed; i++ {
+			for i := range failed {
 				fmt.Fprintf(w, "%s", summary[i])
 			}
 		}

@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/goss-org/goss/util"
@@ -36,7 +35,7 @@ func (s *ServiceSystemd) Exists() (bool, error) {
 	}
 	cmd := util.NewCommand("systemctl", "-q", "list-unit-files", "--type=service")
 	cmd.Run()
-	if strings.Contains(cmd.Stdout.String(), fmt.Sprintf("%s.service", s.service)) {
+	if strings.Contains(cmd.Stdout.String(), s.service+".service") {
 		return true, cmd.Err
 	}
 	if s.legacy {

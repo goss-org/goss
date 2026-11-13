@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -36,7 +35,7 @@ func (s *ServiceInit) Exists() (bool, error) {
 	if invalidService(s.service) {
 		return false, nil
 	}
-	if _, err := os.Stat(fmt.Sprintf("/etc/init.d/%s", s.service)); err == nil {
+	if _, err := os.Stat(filepath.Join("/etc/init.d", s.service)); err == nil {
 		return true, err
 	}
 	return false, nil
@@ -81,7 +80,7 @@ func (s *ServiceInit) Running() (bool, error) {
 
 func initServiceRunLevels(service string) ([]string, error) {
 	var runLevels []string
-	matches, err := filepath.Glob(fmt.Sprintf("/etc/rc*.d/S[0-9][0-9]%s", service))
+	matches, err := filepath.Glob("/etc/rc*.d/S[0-9][0-9]" + service)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +96,7 @@ func initServiceRunLevels(service string) ([]string, error) {
 
 func alpineServiceRunLevels(service string) ([]string, error) {
 	var runLevels []string
-	matches, err := filepath.Glob(fmt.Sprintf("/etc/runlevels/*/%s", service))
+	matches, err := filepath.Glob("/etc/runlevels/*/" + service)
 	if err != nil {
 		return nil, err
 	}

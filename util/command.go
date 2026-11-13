@@ -3,8 +3,6 @@ package util
 import (
 	"bytes"
 	"encoding/json"
-
-	//"fmt"
 	"errors"
 	"os/exec"
 	"syscall"
@@ -86,7 +84,6 @@ type Command struct {
 }
 
 func NewCommand(name string, arg ...string) *Command {
-	//fmt.Println(arg)
 	command := new(Command)
 	command.name = name
 	command.Cmd = exec.Command(name, arg...)

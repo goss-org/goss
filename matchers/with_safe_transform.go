@@ -14,21 +14,19 @@ type WithSafeTransformMatcher struct {
 	Matcher   GossMatcher
 
 	// state
-	transformedValue interface{}
+	transformedValue any
 	wasTransformed   bool
 }
 
 func WithSafeTransform(transform Transformer, matcher GossMatcher) GossMatcher {
-
 	return &WithSafeTransformMatcher{
 		Transform: transform,
 		Matcher:   matcher,
 	}
 }
 
-func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
+func (m *WithSafeTransformMatcher) Match(actual any) (bool, error) {
 	var err error
-	//log.Printf("%#v: input: %v", m.Transform, actual)
 	m.transformedValue, err = m.Transform.Transform(actual)
 	if !reflect.DeepEqual(actual, m.transformedValue) {
 		m.wasTransformed = true
@@ -36,18 +34,18 @@ func (m *WithSafeTransformMatcher) Match(actual interface{}) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("%#v: %w", m.Transform, err)
 	}
-	//log.Printf("%#v: output: %v", m.Transform, m.transformedValue)
 	return m.Matcher.Match(m.transformedValue)
 }
 
-func (m *WithSafeTransformMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *WithSafeTransformMatcher) FailureResult(actual any) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
 	result := matcher.FailureResult(tvalue)
 	result.TransformerChain = tchain
 	result.UntransformedValue = actual
 	return result
 }
-func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+
+func (m *WithSafeTransformMatcher) NegatedFailureResult(actual any) MatcherResult {
 	tchain, matcher, tvalue := m.getTransformerChainAndMatcher()
 	result := matcher.NegatedFailureResult(tvalue)
 	result.TransformerChain = tchain
@@ -55,9 +53,10 @@ func (m *WithSafeTransformMatcher) NegatedFailureResult(actual interface{}) Matc
 	return result
 }
 
-func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() (tchain []Transformer, matcher GossMatcher, tvalue interface{}) {
-	matcher = m
-	tvalue = m.transformedValue
+func (m *WithSafeTransformMatcher) getTransformerChainAndMatcher() ([]Transformer, GossMatcher, any) {
+	var matcher GossMatcher = m
+	tchain := make([]Transformer, 0)
+	tvalue := m.transformedValue
 L:
 	for {
 		switch v := matcher.(type) {
@@ -69,11 +68,9 @@ L:
 			}
 		default:
 			break L
-
 		}
 	}
 	return tchain, matcher, tvalue
-
 }
 
 func (m *WithSafeTransformMatcher) MarshalJSON() ([]byte, error) {

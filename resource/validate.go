@@ -30,7 +30,7 @@ const (
 	OutcomeUnknown = "unknown"
 )
 
-var humanOutcomes map[int]string = map[int]string{
+var humanOutcomes = map[int]string{
 	UNKNOWN: OutcomeUnknown,
 	SUCCESS: OutcomePass,
 	FAIL:    OutcomeFail,
@@ -91,7 +91,7 @@ func (t TestResult) SortKey() string {
 	return fmt.Sprintf("%s:%s", t.ResourceType, t.ResourceId)
 }
 
-func skipResult(typeS string, id string, title string, meta meta, property string, startTime time.Time) TestResult {
+func skipResult(typeS, id, title string, meta meta, property string, startTime time.Time) TestResult {
 	endTime := time.Now()
 	return TestResult{
 		Result:       SKIP,
@@ -107,7 +107,7 @@ func skipResult(typeS string, id string, title string, meta meta, property strin
 	}
 }
 
-func ValidateValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+func ValidateValue(res ResourceRead, property string, expectedValue, actual any, skip bool) TestResult {
 	if f, ok := actual.(func() (io.Reader, error)); ok {
 		if _, ok := expectedValue.([]any); !ok {
 			actual = func() (string, error) {
@@ -149,7 +149,7 @@ func ValidateValueWithRetry(res ResourceRead, property string, expectedValue any
 	return lastResult
 }
 
-func ValidateGomegaValue(res ResourceRead, property string, expectedValue any, actual any, skip bool) TestResult {
+func ValidateGomegaValue(res ResourceRead, property string, expectedValue, actual any, skip bool) TestResult {
 	id := res.ID()
 	title := res.GetTitle()
 	meta := res.GetMeta()

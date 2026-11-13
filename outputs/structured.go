@@ -10,7 +10,7 @@ import (
 	"github.com/goss-org/goss/util"
 )
 
-// Structured is a output formatter that logs into a StructuredOutput structure
+// Structured is a output formatter that logs into a StructuredOutput structure.
 type Structured struct{}
 
 func (r Structured) ValidOptions() []*formatOption {
@@ -20,34 +20,34 @@ func (r Structured) ValidOptions() []*formatOption {
 	}
 }
 
-// StructuredTestResult is an individual test result with additional human friendly summary
+// StructuredTestResult is an individual test result with additional human friendly summary.
 type StructuredTestResult struct {
 	resource.TestResult
 	SummaryLine        string `json:"summary-line"`
 	SummaryLineCompact string `json:"summary-line-compact"`
 }
 
-// StructureTestSummary holds summary information about a test run
+// StructureTestSummary holds summary information about a test run.
 type StructureTestSummary struct {
 	TestCount     int           `json:"test-count"`
 	Failed        int           `json:"failed-count"`
 	TotalDuration time.Duration `json:"total-duration"`
 }
 
-// StructuredOutput is the full output structure for the structured output format
+// StructuredOutput is the full output structure for the structured output format.
 type StructuredOutput struct {
 	Results     []StructuredTestResult `json:"results"`
 	Summary     StructureTestSummary   `json:"summary"`
 	SummaryLine string                 `json:"summary-line"`
 }
 
-// String represents human friendly representation of the test summary
+// String represents human friendly representation of the test summary.
 func (s *StructureTestSummary) String() string {
 	return fmt.Sprintf("Count: %d, Failed: %d, Duration: %.3fs", s.TestCount, s.Failed, s.TotalDuration.Seconds())
 }
 
-// Output processes output from tests into StructuredOutput written to w as a string
-func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, outConfig util.OutputConfig) (exitCode int) {
+// Output processes output from tests into StructuredOutput written to w as a string.
+func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, outConfig util.OutputConfig) int {
 	includeRaw := !util.IsValueInList(foExcludeRaw, outConfig.FormatOptions)
 
 	sort := util.IsValueInList(foSort, outConfig.FormatOptions)

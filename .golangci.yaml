@@ -6,8 +6,68 @@ linters:
     - ineffassign
     - staticcheck
     - unused
+    - modernize
+    - dupword
+    - copyloopvar
+    - durationcheck
+    - errname
+    # - errorlint
+    - ginkgolinter
+    - gocheckcompilerdirectives
+    - grouper
+    - iface
+    - importas
+    - ineffassign
+    - ineffassign
+    - mirror
+    - misspell
+    #- nilerr
+    - nilnesserr
+    #- noctx
+    - nonamedreturns
+    - nosprintfhostport
+    #- perfsprint
+    #- prealloc
+    #- promlinter
+    - reassign
+    #- revive
+    #- testifylint
+    #- tparallel
+    #- unconvert
+    - usetesting
+    - whitespace
+    #- wrapcheck
   disable:
+    - cyclop
+    - depguard
+    # Disabled because of genny
+    - dupl
+    - embeddedstructfieldcheck
+    - forbidigo
+    - funlen
+    - funcorder
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gomodguard
+    - exhaustive
+    - exhaustruct
+    - inamedparam
+    - interfacebloat
+    - ireturn
+    - lll
+    - maintidx
+    - mnd
+    - nlreturn
     - noinlineerr
+    - recvcheck
+    - tagalign
+    - tagliatelle
+    - testpackage
+    - varnamelen
+    - wsl
+    - wsl_v5
   exclusions:
     generated: lax
     presets:
@@ -32,6 +92,10 @@ linters:
         - "-ST1022"
         # Incorrectly formatted error string: there are a lot of these
         - "-ST1005"
+    usetesting:
+      os-temp-dir: true
+      context-background: true
+      context-todo: true
 formatters:
   enable:
     - gofmt

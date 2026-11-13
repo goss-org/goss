@@ -10,7 +10,7 @@ type HavePrefixMatcher struct {
 	matchers.HavePrefixMatcher
 }
 
-func HavePrefix(prefix string, args ...interface{}) GossMatcher {
+func HavePrefix(prefix string, args ...any) GossMatcher {
 	return &HavePrefixMatcher{
 		matchers.HavePrefixMatcher{
 			Prefix: prefix,
@@ -19,7 +19,7 @@ func HavePrefix(prefix string, args ...interface{}) GossMatcher {
 	}
 }
 
-func (m *HavePrefixMatcher) FailureResult(actual interface{}) MatcherResult {
+func (m *HavePrefixMatcher) FailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "to have prefix",
@@ -27,7 +27,7 @@ func (m *HavePrefixMatcher) FailureResult(actual interface{}) MatcherResult {
 	}
 }
 
-func (m *HavePrefixMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
+func (m *HavePrefixMatcher) NegatedFailureResult(actual any) MatcherResult {
 	return MatcherResult{
 		Actual:   actual,
 		Message:  "not to have prefix",
@@ -36,7 +36,7 @@ func (m *HavePrefixMatcher) NegatedFailureResult(actual interface{}) MatcherResu
 }
 
 func (m *HavePrefixMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
+	j := make(map[string]any)
 	j["have-prefix"] = m.Prefix
 	return json.Marshal(j)
 }

@@ -50,7 +50,7 @@ func NewGossConfig() *GossConfig {
 }
 
 // Merge consumes all the resources in g2 into c, duplicate resources
-// will be overwritten with the ones in g2
+// will be overwritten with the ones in g2.
 func (c *GossConfig) Merge(g2 GossConfig) {
 	for k, v := range g2.Files {
 		mergeType(c.Files, "file", k, v)
@@ -126,7 +126,8 @@ func mergeType[V any](m map[string]V, t, k string, v V) {
 func (c *GossConfig) Resources() []resource.Resource {
 	var tests []resource.Resource
 
-	gm := genericConcatMaps(c.Commands,
+	gm := genericConcatMaps(
+		c.Commands,
 		c.HTTPs,
 		c.Addrs,
 		c.DNS,
@@ -154,7 +155,8 @@ func (c *GossConfig) Resources() []resource.Resource {
 	return tests
 }
 
-func genericConcatMaps(maps ...any) (ret []map[string]any) {
+func genericConcatMaps(maps ...any) []map[string]any {
+	ret := make([]map[string]any, 0, len(maps))
 	for _, slice := range maps {
 		im := interfaceMap(slice)
 		ret = append(ret, im)
