@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysInterface is a minimal system.Interface implementation used to drive

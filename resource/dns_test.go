@@ -7,7 +7,7 @@ import (
 
 	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 // fakeSysDNS is a minimal system.DNS implementation used to drive NewDNS
