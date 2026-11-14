@@ -1,4 +1,4 @@
-FROM alpine:3.24.3
+FROM alpine:3.24.4
 
 ARG TARGETPLATFORM
 COPY $TARGETPLATFORM/goss /usr/bin/
