@@ -40,6 +40,8 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		Proxy:             c.String("proxy"),
 		RetryTimeout:      c.Duration("retry-timeout"),
 		Server:            c.String("server"),
+		ServeCertFile:     c.String("tls-cert"),
+		ServeKeyFile:      c.String("tls-key"),
 		Sleep:             c.Duration("sleep"),
 		Spec:              c.String("gossfile"),
 		Timeout:           c.Duration("timeout"),
@@ -201,6 +203,16 @@ func main() {
 						Value:   "/healthz",
 						Usage:   "Endpoint to expose",
 						Sources: cli.EnvVars("GOSS_ENDPOINT"),
+					},
+					&cli.StringFlag{
+						Name:    "tls-cert",
+						Usage:   "Serve over HTTPS using this PEM certificate file (requires --tls-key)",
+						Sources: cli.EnvVars("GOSS_TLS_CERT"),
+					},
+					&cli.StringFlag{
+						Name:    "tls-key",
+						Usage:   "PEM private key file for --tls-cert",
+						Sources: cli.EnvVars("GOSS_TLS_KEY"),
 					},
 					&cli.IntFlag{
 						Name:    "max-concurrent",

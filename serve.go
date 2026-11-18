@@ -3,6 +3,8 @@ package goss
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,6 +31,10 @@ func Serve(c *util.Config) error {
 	if err != nil {
 		return err
 	}
+	tlsConfig, err := serveTLSConfig(c)
+	if err != nil {
+		return err
+	}
 	endpoint := c.Endpoint
 	health, err := newHealthHandler(c)
 	if err != nil {
@@ -36,8 +42,33 @@ func Serve(c *util.Config) error {
 	}
 	http.Handle(endpoint, health)
 	http.Handle("/metrics", promhttp.Handler())
+	srv := &http.Server{Addr: c.ListenAddress, TLSConfig: tlsConfig}
+	if tlsConfig != nil {
+		log.Printf("[INFO] Starting to listen on: %s (https)", c.ListenAddress)
+		return srv.ListenAndServeTLS("", "")
+	}
 	log.Printf("[INFO] Starting to listen on: %s", c.ListenAddress)
-	return http.ListenAndServe(c.ListenAddress, nil)
+	return srv.ListenAndServe()
+}
+
+// serveTLSConfig returns the TLS config for serve, or nil when no certificate
+// was given. The key pair is loaded up front so a bad cert or key fails before
+// the listener starts.
+func serveTLSConfig(c *util.Config) (*tls.Config, error) {
+	if c.ServeCertFile == "" && c.ServeKeyFile == "" {
+		return nil, nil
+	}
+	if c.ServeCertFile == "" || c.ServeKeyFile == "" {
+		return nil, errors.New("serving https needs both --tls-cert and --tls-key")
+	}
+	cert, err := tls.LoadX509KeyPair(c.ServeCertFile, c.ServeKeyFile)
+	if err != nil {
+		return nil, fmt.Errorf("loading tls key pair: %w", err)
+	}
+	return &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		MinVersion:   tls.VersionTLS12,
+	}, nil
 }
 
 func newHealthHandler(c *util.Config) (*healthHandler, error) {
