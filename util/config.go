@@ -56,6 +56,9 @@ type Config struct {
 	VarsFiles             []string
 	VarsInline            string
 	DisabledResourceTypes []string
+	// CommandEnv holds extra environment variables for a command resource.
+	// They are added on top of the goss process environment.
+	CommandEnv map[string]string
 }
 
 // TimeOutMilliSeconds is the timeout as milliseconds

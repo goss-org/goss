@@ -168,6 +168,8 @@ command:
     - go version go1.6 linux/amd64
     stderr: []
     timeout: 10000 # in milliseconds
+    env: # extra environment variables, added to the ones goss runs with
+      LANG: C
     skip: false
     retry_count: 1   # Enables retry mechanism when greater than 0; number of additional attempts
     retry_delay: 500  # Delay in milliseconds before each retry; duration strings like 500ms or 2s also work
@@ -188,6 +190,19 @@ command:
     exit-status: 0
     # exec style: run /figlet directly with argument "test"
     exec: ["/figlet", "test"]
+```
+
+The `env` attribute sets extra environment variables for the command. The command
+still gets the environment goss itself runs with, and a variable listed in `env`
+overrides one with the same name. It works with both forms of `exec`.
+
+```yaml
+command:
+  vault status:
+    exit-status: 0
+    env:
+      VAULT_ADDR: "https://vault.example.com:8200"
+      VAULT_CACERT: /etc/ssl/my-internal-ca.pem
 ```
 
 `stdout` and `stderr` can be a string or [pattern](#patterns). A list of

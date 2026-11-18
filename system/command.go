@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
+	"sort"
 	"time"
 
 	"github.com/goss-org/goss/util"
@@ -38,6 +40,7 @@ type DefCommand struct {
 	stderr     io.Reader
 	loaded     bool
 	Timeout    int
+	env        map[string]string
 	err        error
 }
 
@@ -51,6 +54,7 @@ func NewDefCommand(ctx context.Context, command any, system *System, config util
 	c := &DefCommand{
 		Ctx:     ctx,
 		Timeout: config.TimeOutMilliSeconds(),
+		env:     config.CommandEnv,
 	}
 	switch cmd := command.(type) {
 	case string:
@@ -80,6 +84,9 @@ func (c *DefCommand) setup() error {
 		c.err = errEmptyCommand
 		return c.err
 	}
+	if len(c.env) > 0 {
+		cmd.Cmd.Env = commandEnv(os.Environ(), c.env)
+	}
 	err := runCommand(cmd, c.Timeout)
 
 	// We don't care about ExitError since it's covered by status
@@ -97,6 +104,22 @@ func (c *DefCommand) setup() error {
 	c.stderr = bytes.NewReader(stderrB)
 
 	return c.err
+}
+
+// commandEnv appends extra to base in a stable key order. os/exec keeps the
+// last value for a duplicate key, so extra wins over the inherited environment.
+func commandEnv(base []string, extra map[string]string) []string {
+	keys := make([]string, 0, len(extra))
+	for k := range extra {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	env := make([]string, 0, len(base)+len(keys))
+	env = append(env, base...)
+	for _, k := range keys {
+		env = append(env, k+"="+extra[k])
+	}
+	return env
 }
 
 func (c *DefCommand) Command() util.ExecCommand {

@@ -24,6 +24,7 @@ type Command struct {
 	Skip       bool              `json:"skip,omitempty" yaml:"skip,omitempty"`
 	RetryCount int               `json:"retry_count,omitempty" yaml:"retry_count,omitempty"`
 	RetryDelay RetryDelay        `json:"retry_delay,omitempty" yaml:"retry_delay,omitempty"`
+	Env        map[string]string `json:"env,omitempty" yaml:"env,omitempty"`
 }
 
 const (
@@ -71,7 +72,10 @@ func (c *Command) Validate(ctx context.Context, sys *system.System) []TestResult
 	var results []TestResult
 
 	runWithRetry(c.RetryCount, c.RetryDelay, func() bool {
-		sysCommand := sys.NewCommand(ctx, c.GetExec(), sys, util.Config{Timeout: time.Duration(c.Timeout) * time.Millisecond})
+		sysCommand := sys.NewCommand(ctx, c.GetExec(), sys, util.Config{
+			Timeout:    time.Duration(c.Timeout) * time.Millisecond,
+			CommandEnv: c.Env,
+		})
 
 		results = []TestResult{}
 		cExitStatus := deprecateAtoI(c.ExitStatus, fmt.Sprintf("%s: command.exit-status", c.ID()))

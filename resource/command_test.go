@@ -1,11 +1,13 @@
 package resource
 
 import (
+	"context"
 	"io"
 	"reflect"
 	"strings"
 	"testing"
 
+	"github.com/goss-org/goss/system"
 	"github.com/goss-org/goss/util"
 	"go.yaml.in/yaml/v3"
 )
@@ -130,5 +132,29 @@ func TestCommandInvalidExec(t *testing.T) {
 	var m CommandMap
 	if err := yaml.Unmarshal([]byte(input), &m); err == nil {
 		t.Fatalf("expected error for mapping exec, got %+v", m)
+	}
+}
+
+func TestCommandEnvPassedToSystem(t *testing.T) {
+	input := "vault status:\n  exit-status: 0\n  env:\n    VAULT_ADDR: https://vault:8200\n"
+	var m CommandMap
+	if err := yaml.Unmarshal([]byte(input), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	c := m["vault status"]
+	c.SetID("vault status")
+
+	var gotEnv map[string]string
+	sys := &system.System{
+		NewCommand: func(_ context.Context, _ any, _ *system.System, config util.Config) system.Command {
+			gotEnv = config.CommandEnv
+			return newFakeCommand("", "")
+		},
+	}
+	c.Validate(context.Background(), sys)
+
+	want := map[string]string{"VAULT_ADDR": "https://vault:8200"}
+	if !reflect.DeepEqual(gotEnv, want) {
+		t.Errorf("CommandEnv = %v, want %v", gotEnv, want)
 	}
 }
