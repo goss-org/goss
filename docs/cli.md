@@ -94,8 +94,8 @@ Commands are the actions goss can run.
 
 !!! abstract "Add system resource to test suite"
     ```console
-    goss add [--exclude-attr <pattern>] <test> [<test>]
-    goss a [--exclude-attr <pattern>] <test> [<test>]
+    goss add [--exclude-attr <pattern>] [--title <title>] <test> [<test>]
+    goss a [--exclude-attr <pattern>] [--title <title>] <test> [<test>]
     ```
 
 This will add a test for a resource. Non existent resources will add a test to ensure they do not exist on the system.
@@ -104,6 +104,10 @@ A sub-command *resource type* has to be provided when running `add`.
 `--exclude-attr`
 :   Ignore **non-required** attribute(s) matching the provided glob when adding a new resource,
     may be specified multiple times.
+
+`--title <title>`
+:   Set the `title` attribute on the added test. When several tests are added in one call,
+    they all get the same title.
 
 `--exact-match`
 :   Only for `command`. Capture `stdout`/`stderr` as a single string so `goss validate`
@@ -116,6 +120,7 @@ A sub-command *resource type* has to be provided when running `add`.
     goss a user nobody
     goss add --exclude-attr home --exclude-attr shell user nobody
     goss a --exclude-attr '*' user nobody
+    goss add --title 'Service.ini: ldap service address' addr ldap:389
     goss add command --exact-match 'kubectl get pod mypod -o yaml'
     ```
 

@@ -52,3 +52,8 @@ func NewGossfile(sysGossfile system.Gossfile, config util.Config) (*Gossfile, er
 		Path: path,
 	}, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (g *Gossfile) SetTitle(title string) {
+	g.Title = title
+}

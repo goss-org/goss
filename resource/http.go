@@ -112,3 +112,8 @@ func NewHTTP(sysHTTP system.HTTP, config util.Config) (*HTTP, error) {
 	}
 	return u, err
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (r *HTTP) SetTitle(title string) {
+	r.Title = title
+}

@@ -180,3 +180,8 @@ func readerToSlice(reader io.Reader) []string {
 
 	return slice
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (c *Command) SetTitle(title string) {
+	c.Title = title
+}

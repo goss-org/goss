@@ -89,3 +89,8 @@ func NewInterface(sysInterface system.Interface, config util.Config) (*Interface
 	}
 	return i, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (i *Interface) SetTitle(title string) {
+	i.Title = title
+}

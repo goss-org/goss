@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/goss-org/goss/outputs"
@@ -153,5 +154,30 @@ func TestSkipResourcesByType(t *testing.T) {
 
 	if skipped != 5 {
 		t.Fatalf("Expected to skip 5 tests, skipped %d", skipped)
+	}
+}
+
+func TestAddResourcesWithTitle(t *testing.T) {
+	ctx := t.Context()
+	for name, title := range map[string]string{"with title": "temp dir is there", "without title": ""} {
+		t.Run(name, func(t *testing.T) {
+			spec := filepath.Join(t.TempDir(), "goss.yaml")
+			cfg, err := util.NewConfig(util.WithSpecFile(spec))
+			checkErr(t, err, "new config failed")
+			cfg.Title = title
+
+			err = AddResources(ctx, spec, resource.FileResourceName, []string{os.TempDir()}, cfg)
+			checkErr(t, err, "could not add resource %q", os.TempDir())
+
+			g, err := ReadJSON(spec)
+			checkErr(t, err, "reading %s failed", spec)
+			f, ok := g.Files[os.TempDir()]
+			if !ok {
+				t.Fatalf("expected %q in the gossfile, got %v", os.TempDir(), g.Files)
+			}
+			if f.Title != title {
+				t.Fatalf("expected title %q, got %q", title, f.Title)
+			}
+		})
 	}
 }

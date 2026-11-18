@@ -66,3 +66,8 @@ func NewProcess(sysProcess system.Process, config util.Config) (*Process, error)
 		Running: running,
 	}, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (p *Process) SetTitle(title string) {
+	p.Title = title
+}

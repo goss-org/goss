@@ -81,3 +81,8 @@ func NewService(sysService system.Service, config util.Config) (*Service, error)
 		Running: running,
 	}, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (s *Service) SetTitle(title string) {
+	s.Title = title
+}

@@ -78,3 +78,8 @@ func NewAddr(sysAddr system.Addr, config util.Config) (*Addr, error) {
 	}
 	return a, err
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (a *Addr) SetTitle(title string) {
+	a.Title = title
+}
