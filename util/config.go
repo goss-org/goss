@@ -30,6 +30,8 @@ type Config struct {
 	FormatOptions         []string
 	IgnoreList            []string
 	ListenAddress         string
+	ServeCertFile         string
+	ServeKeyFile          string
 	LocalAddress          string
 	LogLevel              string
 	MaxConcurrent         int

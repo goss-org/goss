@@ -292,6 +292,13 @@ The end-point will return the stest results in the format requested and an http 
 `--max-concurrent <num>`
 :   Max number of tests to run concurrently
 
+`--tls-cert <file>`
+:   Serve over HTTPS using this PEM certificate. Needs `--tls-key` too.
+    The certificate file can hold the full chain.
+
+`--tls-key <file>`
+:   PEM private key for `--tls-cert`
+
 !!! example
     ```console
     $ goss serve &
