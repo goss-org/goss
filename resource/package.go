@@ -103,3 +103,8 @@ func NewPackage(sysPackage system.Package, config util.Config) (*Package, error)
 	}
 	return p, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (p *Package) SetTitle(title string) {
+	p.Title = title
+}

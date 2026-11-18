@@ -77,3 +77,8 @@ func NewGroup(sysGroup system.Group, config util.Config) (*Group, error) {
 	}
 	return g, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (g *Group) SetTitle(title string) {
+	g.Title = title
+}

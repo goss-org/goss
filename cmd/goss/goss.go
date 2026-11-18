@@ -43,6 +43,7 @@ func newRuntimeConfigFromCLI(c *cli.Command) *util.Config {
 		Sleep:             c.Duration("sleep"),
 		Spec:              c.String("gossfile"),
 		Timeout:           c.Duration("timeout"),
+		Title:             c.String("title"),
 		Username:          c.String("username"),
 		VarsInline:        c.String("vars-inline"),
 		VarsFiles:         c.StringSlice("vars"),
@@ -254,6 +255,10 @@ func main() {
 					&cli.StringSliceFlag{
 						Name:  "exclude-attr",
 						Usage: "Exclude the following attributes when adding a new resource",
+					},
+					&cli.StringFlag{
+						Name:  "title",
+						Usage: "Title to set on the added resource",
 					},
 				},
 				Commands: []*cli.Command{

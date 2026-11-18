@@ -150,3 +150,8 @@ func NewFile(sysFile system.File, config util.Config) (*File, error) {
 	}
 	return f, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (f *File) SetTitle(title string) {
+	f.Title = title
+}

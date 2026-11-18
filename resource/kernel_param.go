@@ -68,3 +68,8 @@ func NewKernelParam(sysKernelParam system.KernelParam, config util.Config) (*Ker
 	}
 	return a, err
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (k *KernelParam) SetTitle(title string) {
+	k.Title = title
+}

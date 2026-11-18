@@ -40,6 +40,12 @@ type ResourceRead interface {
 	GetMeta() meta
 }
 
+// TitleSetter is implemented by resources that carry a title, so `goss add
+// --title` can set it on the resource it just created.
+type TitleSetter interface {
+	SetTitle(string)
+}
+
 type Retryable interface {
 	GetRetryCount() int
 	GetRetryDelay() RetryDelay

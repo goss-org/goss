@@ -49,6 +49,7 @@ type Config struct {
 	Sleep                 time.Duration
 	Spec                  string
 	Timeout               time.Duration
+	Title                 string
 	Username              string
 	CAFile                string
 	CertFile              string

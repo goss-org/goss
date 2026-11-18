@@ -91,3 +91,8 @@ func NewRegistry(sysRegistry system.Registry, config util.Config) (*Registry, er
 		Type:   regType,
 	}, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (r *Registry) SetTitle(title string) {
+	r.Title = title
+}

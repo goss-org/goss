@@ -120,3 +120,8 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
 	}
 	return d, err
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (d *DNS) SetTitle(title string) {
+	d.Title = title
+}

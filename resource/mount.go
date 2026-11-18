@@ -117,3 +117,8 @@ func NewMount(sysMount system.Mount, config util.Config) (*Mount, error) {
 	}
 	return m, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (m *Mount) SetTitle(title string) {
+	m.Title = title
+}

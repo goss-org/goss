@@ -116,3 +116,8 @@ func NewUser(sysUser system.User, config util.Config) (*User, error) {
 	}
 	return u, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (u *User) SetTitle(title string) {
+	u.Title = title
+}

@@ -126,3 +126,8 @@ func (ret *MatchingMap) UnmarshalYAML(unmarshal func(v any) error) error {
 	*ret = tmp
 	return nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (r *Matching) SetTitle(title string) {
+	r.Title = title
+}

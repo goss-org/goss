@@ -78,3 +78,8 @@ func NewPort(sysPort system.Port, config util.Config) (*Port, error) {
 	}
 	return p, nil
 }
+
+// SetTitle sets the title, used by `goss add --title`.
+func (p *Port) SetTitle(title string) {
+	p.Title = title
+}

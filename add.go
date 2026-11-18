@@ -91,6 +91,14 @@ func AddResource(ctx context.Context, fileName string, gossConfig GossConfig, re
 		return err
 	}
 
+	if config.Title != "" {
+		ts, ok := res.(resource.TitleSetter)
+		if !ok {
+			return fmt.Errorf("%s does not support a title", resourceName)
+		}
+		ts.SetTitle(config.Title)
+	}
+
 	resourcePrint(fileName, res, config.AnnounceToCLI)
 
 	return nil
